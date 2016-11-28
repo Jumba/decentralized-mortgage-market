@@ -2,6 +2,8 @@ from market.models import DatabaseModel
 
 
 class House(DatabaseModel):
+    _type = 'house'
+
     def __init__(self, id, postal_code, house_number, price):
         assert isinstance(id, str)
         assert isinstance(postal_code, str)

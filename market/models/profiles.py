@@ -2,6 +2,8 @@ from market.models import DatabaseModel
 
 
 class Profile(DatabaseModel):
+    _type = 'profile'
+
     def __init__(self, user_key, first_name, last_name, email, iban, phone_number):
         assert isinstance(user_key, str)
         assert isinstance(first_name, str)
@@ -19,6 +21,8 @@ class Profile(DatabaseModel):
 
 
 class BorrowersProfile(Profile):
+    _type = 'borrowers_profile'
+
     def __init__(self, user_key, first_name, last_name, email, iban, phone_number, current_postal_code, current_house_number, document_list):
         super(BorrowersProfile, self).__init__(user_key, first_name, last_name, email, iban, phone_number)
 
