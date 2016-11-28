@@ -8,14 +8,13 @@ class MarketAPI(object):
         self._database = database
 
     @property
-    def database(self):
+    def db(self):
         return self._database
 
 
     def create_user(self):
         """ save the user's public key in the database """
         # bla bla
-        self.post('user', ('example', 'example2'))
 
     def login_user(self):
         """ get the user_key """

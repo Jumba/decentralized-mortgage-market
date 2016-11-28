@@ -4,18 +4,12 @@ from market.models import DatabaseModel
 class Document(DatabaseModel):
     _type = 'document'
 
-    def __init__(self, id, mime, data):
-        assert isinstance(id, str)
+    def __init__(self, mime, data):
         assert isinstance(mime, str)
         assert isinstance(data, str)
 
-        self._id = id
         self._mime = mime
         self._data = data
-
-    @property
-    def id(self):
-        return self._id
 
     @property
     def mime(self):

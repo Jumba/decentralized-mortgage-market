@@ -4,8 +4,7 @@ from market.models import DatabaseModel
 class LoanRequest(DatabaseModel):
     _type = 'loan_request'
 
-    def __init__(self, id, user_key, house_id, mortgage_type, banks, personal_info, amount_wanted):
-        assert isinstance(id, str)
+    def __init__(self, user_key, house_id, mortgage_type, banks, personal_info, amount_wanted):
         assert isinstance(user_key, str)
         assert isinstance(house_id, str)
         assert isinstance(mortgage_type, int)
@@ -13,7 +12,6 @@ class LoanRequest(DatabaseModel):
         assert isinstance(personal_info, unicode)
         assert isinstance(amount_wanted, int)
 
-        self._id = id
         self._user_key = user_key
         self._house_id = house_id
         self._mortgage_type = mortgage_type
@@ -25,8 +23,7 @@ class LoanRequest(DatabaseModel):
 class Loan(DatabaseModel):
     _type = 'loan'
 
-    def __init__(self, id, request_id, user_key, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors):
-        assert isinstance(id, str)
+    def __init__(self, request_id, user_key, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors):
         assert isinstance(request_id, str)
         assert isinstance(user_key, str)
         assert isinstance(house_id, str)
@@ -40,7 +37,6 @@ class Loan(DatabaseModel):
         assert isinstance(risk, str)
         assert isinstance(investors, list)
 
-        self._id = id
         self._request_id = request_id
         self._user_key = user_key
         self._house_id = house_id
@@ -58,8 +54,7 @@ class Loan(DatabaseModel):
 class Investment(DatabaseModel):
     _type = 'investment'
 
-    def __init__(self, id, user_key, amount, duration, interest_rate, loan_id, accepted):
-        assert isinstance(id, str)
+    def __init__(self, user_key, amount, duration, interest_rate, loan_id, accepted):
         assert isinstance(user_key, str)
         assert isinstance(amount, int)
         assert isinstance(duration, int)
@@ -67,7 +62,6 @@ class Investment(DatabaseModel):
         assert isinstance(loan_id, str)
         assert isinstance(accepted, bool)
 
-        self._id = id
         self._user_key = user_key
         self._amount = amount
         self._duration = duration
