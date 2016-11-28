@@ -1,4 +1,7 @@
-class Document(object):
+from market.models import DatabaseModel
+
+
+class Document(DatabaseModel):
     def __init__(self, id, mime, data):
         assert isinstance(id, str)
         assert isinstance(mime, str)

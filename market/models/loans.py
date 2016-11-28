@@ -1,4 +1,7 @@
-class LoanRequest(object):
+from market.models import DatabaseModel
+
+
+class LoanRequest(DatabaseModel):
     def __init__(self, id, user_key, house_id, mortgage_type, banks, personal_info, amount_wanted):
         assert isinstance(id, str)
         assert isinstance(user_key, str)
@@ -17,7 +20,7 @@ class LoanRequest(object):
         self._amount_wanted = amount_wanted
 
 
-class Loan(object):
+class Loan(DatabaseModel):
     def __init__(self, id, request_id, user_key, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors):
         assert isinstance(id, str)
         assert isinstance(request_id, str)
@@ -48,7 +51,7 @@ class Loan(object):
         self._investors = investors
 
 
-class Investment(object):
+class Investment(DatabaseModel):
     def __init__(self, id, user_key, amount, duration, interest_rate, loan_id, accepted):
         assert isinstance(id, str)
         assert isinstance(user_key, str)
