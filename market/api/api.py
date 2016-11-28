@@ -1,21 +1,16 @@
+from market.database.database import Database
+
+
 class MarketAPI(object):
 
-    def get(self, id):
-        pass
+    def __init__(self, database):
+        assert isinstance(database, Database)
+        self._database = database
 
-    def put(self, id, payload):
-        pass
+    @property
+    def database(self):
+        return self._database
 
-    def post(self, payload):
-        if payload(type) == 'house':
-            # use the house handler
-            pass
-        elif payload(type) == 'loan':
-            # ditto
-            pass
-
-    def delete(self, id):
-        pass
 
     def create_user(self):
         """ save the user's public key in the database """
