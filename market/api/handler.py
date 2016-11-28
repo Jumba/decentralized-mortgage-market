@@ -1,12 +1,12 @@
 class Handler(object):
-    def get(self, hash):
+    def get(self, id):
         return NotImplementedError
 
-    def put(self, hash, payload):
+    def put(self, id, payload):
         return NotImplementedError
 
     def post(self, payload):
         return NotImplementedError
 
-    def delete(self, hash):
+    def delete(self, id):
         return NotImplementedError
