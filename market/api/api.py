@@ -89,3 +89,20 @@ class MarketAPI(object):
     def reject_offer(self):
         """ reject an offer """
         pass
+
+    def load_all_loan_request(self, bank_id):
+        """ load all pending loan requests for a specific bank """
+        pass
+
+    def load_single_loan_request(self, loan_request_id):
+        """ load a specific loan request to """
+        pass
+
+    def accept_loan_request(self, loan_request_id):
+        """ accept a pending loan request """
+        pass
+
+    def reject_loan_request(self, loan_request_id):
+        """ reject a pending loan request """
+        pass
+
