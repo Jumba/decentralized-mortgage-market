@@ -1,4 +1,7 @@
-class Profile(object):
+from market.models import DatabaseModel
+
+
+class Profile(DatabaseModel):
     def __init__(self, user_key, first_name, last_name, email, iban, phone_number):
         assert isinstance(user_key, str)
         assert isinstance(first_name, str)

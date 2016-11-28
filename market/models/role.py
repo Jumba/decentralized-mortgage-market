@@ -1,3 +1,5 @@
+from market.models import DatabaseModel
+
 ROLES = (
     'NONE',
     'BORROWER',
@@ -6,7 +8,7 @@ ROLES = (
 )
 
 
-class Role(object):
+class Role(DatabaseModel):
     def __init__(self, user_key, role):
         assert 0 <= role < len(ROLES)
 
