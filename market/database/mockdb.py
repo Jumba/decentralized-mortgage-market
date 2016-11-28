@@ -4,6 +4,7 @@ import uuid
 
 from market.database.backends import Backend
 from market.database.database import Database
+from market.models import DatabaseModel
 
 
 class MockDB(Database):
@@ -14,7 +15,7 @@ class MockDB(Database):
 
     def get(self, type, id):
         try:
-            return self._backend.get(type, id)
+            return DatabaseModel.decode(self._backend.get(type, id))
         except IndexError:
             return None
 
@@ -25,7 +26,7 @@ class MockDB(Database):
                 id = uuid.uuid4()
 
             obj.save(id)
-            self.backend.post(type, obj)
+            self.backend.post(type, id, obj.encode())
             return id
         except IndexError:
             return False
@@ -35,7 +36,7 @@ class MockDB(Database):
         assert id == obj.id
 
         try:
-            return self.backend.put(type, id, obj)
+            return self.backend.put(type, id, obj.encode())
         except IndexError:
             return False
 

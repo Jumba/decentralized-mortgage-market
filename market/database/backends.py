@@ -3,7 +3,7 @@ class Backend(object):
     def get(self, type, id):
         raise NotImplementedError
 
-    def post(self, type, obj):
+    def post(self, type, id, obj):
         raise NotImplementedError
 
     def put(self, type, id, obj):
@@ -29,14 +29,14 @@ class MemoryBackend(Backend):
         except:
             raise IndexError
 
-    def post(self, type, obj):
+    def post(self, type, id, obj):
         if type not in self._data:
             self._data[type] = {}
 
-        if not self.id_available(obj.id):
-            raise IndexError
+        if not self.id_available(id):
+            raise IndexError("Index already in use")
 
-        self._data[type][obj.id] = obj
+        self._data[type][id] = obj
         self._id[id] = True
 
     def put(self, type, id, obj):
@@ -55,3 +55,7 @@ class MemoryBackend(Backend):
         if type in self._data:
             return id in self._data[type]
         return False
+
+    def clear(self):
+        self._data = {}
+        self._id = {}
