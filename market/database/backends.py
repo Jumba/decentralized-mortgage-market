@@ -1,24 +1,22 @@
 class Backend(object):
 
     def get(self, type, id):
-        return NotImplementedError
+        raise NotImplementedError
 
     def post(self, type, obj):
-        return NotImplementedError
+        raise NotImplementedError
 
     def put(self, type, id, obj):
-        return NotImplementedError
+        raise NotImplementedError
 
     def delete(self, id):
-        return NotImplementedError
+        raise NotImplementedError
 
     def id_available(self, id):
-        return NotImplementedError
+        raise NotImplementedError
 
     def exists(self, type, id):
-       return NotImplementedError
-
-
+        raise NotImplementedError
 
 
 class MemoryBackend(Backend):
@@ -48,10 +46,10 @@ class MemoryBackend(Backend):
         return False
 
     def delete(self, id):
-        return NotImplementedError
+        raise NotImplementedError
 
     def id_available(self, id):
-        return id in self._id
+        return id not in self._id
 
     def exists(self, type, id):
         if type in self._data:
