@@ -1,16 +1,16 @@
 class MarketAPI(object):
 
-    def get(self, type, id):
+    def get(self, id):
         pass
 
-    def put(self, type, id, payload):
+    def put(self, id, payload):
         pass
 
-    def post(self, type, payload):
-        if type == 'house':
+    def post(self, payload):
+        if payload(type) == 'house':
             # use the house handler
             pass
-        elif type == 'loan':
+        elif payload(type) == 'loan':
             # ditto
             pass
 
