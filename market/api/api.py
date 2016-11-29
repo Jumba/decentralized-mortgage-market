@@ -2,9 +2,10 @@ import time
 
 from market.api.crypto import generate_key, get_public_key
 from market.database.database import Database
-from market.models.user import User
-from market.models.profiles import Profile
 from market.models.profiles import BorrowersProfile
+from market.models.profiles import Profile
+from market.models.role import Role
+from market.models.user import User
 
 
 class MarketAPI(object):
@@ -43,26 +44,37 @@ class MarketAPI(object):
         """
         if get_public_key(private_key):
             user = self.db.get('users', get_public_key(private_key))
+
             return user
 
-    def create_profile(self, user):
+    def create_profile(self, user, payload):
         """
-        Create a new empty profile and save it to the database.
-        :param user: the public key of the user
-        :return:a Profile-object if the user is an investor, a BorrowersProfile-object if the user is a borrower, None else.
-        """
-        user_role = self.db.get('role', user.id)
 
-        if user_role.role == 'INVESTOR':
-            new_profile = Profile(user.id, "", "", "", "", "")
-            self.db.post('profile', new_profile)
-            return new_profile
-        elif user_role.role == 'BORROWER':
-            new_profile = BorrowersProfile(user.id, "", "", "", "", "", "", "", "")
-            self.db.post('borrowers_profile', new_profile)
-            return new_profile
-        else:
-            return None
+        :param user:
+        :param payload:
+        :return:
+        """
+        assert isinstance(user, User)
+        assert isinstance(payload, dict)
+
+        try:
+            role = Role(user.id, payload['role'])
+            user.role_id = self.db.post(role.type, role)
+
+            profile = None
+            if role.role_name == 'INVESTOR':
+                profile = Profile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'], payload['phonenumber'])
+            elif role.role_name == 'BORROWER':
+                profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
+                                           payload['phonenumber'], payload['current_postalcode'], payload['current_housenumber'], payload['documents_list'])
+            else:
+                return False
+
+            user.profile_id = self.db.post(profile.type, profile)
+            self.db.put(user.type, user.id, user)
+            return profile
+        except KeyError:
+            return False
 
     def load_profile(self, user):
         pass
