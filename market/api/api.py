@@ -3,6 +3,8 @@ import time
 from market.api.crypto import generate_key, get_public_key
 from market.database.database import Database
 from market.models.user import User
+from market.models.profiles import Profile
+from market.models.profiles import BorrowersProfile
 
 
 class MarketAPI(object):
@@ -43,8 +45,26 @@ class MarketAPI(object):
             user = self.db.get('users', get_public_key(private_key))
             return user
 
-    def modify_profile(self):
-        """ post the data in profile """
+    def create_profile(self, user):
+        """
+        Create a new empty profile and save it to the database.
+        :param user: the public key of the user
+        :return:a Profile-object if the user is an investor, a BorrowersProfile-object if the user is a borrower, None else.
+        """
+        user_role = self.db.get('role', user.id)
+
+        if user_role.role == 'INVESTOR':
+            new_profile = Profile(user.id, "", "", "", "", "")
+            self.db.post('profile', new_profile)
+            return new_profile
+        elif user_role.role == 'BORROWER':
+            new_profile = BorrowersProfile(user.id, "", "", "", "", "", "", "", "")
+            self.db.post('borrowers_profile', new_profile)
+            return new_profile
+        else:
+            return None
+
+    def load_profile(self, user):
         pass
 
     def place_loan_offer(self):
@@ -77,14 +97,6 @@ class MarketAPI(object):
 
     def check_role(self):
         """ check which role the user has """
-        pass
-
-    def create_borrowers_profile(self):
-        """ save the borrower's personal information """
-        pass
-
-    def load_borrowers_profile(self):
-        """ display the borrower's personal information """
         pass
 
     def create_loan_request(self):

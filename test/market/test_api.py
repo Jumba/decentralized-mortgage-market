@@ -5,6 +5,8 @@ from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.dispersy.crypto import ECCrypto
 from market.models.user import User
+from market.models.profiles import Profile
+from market.models.profiles import BorrowersProfile
 
 
 class APITestSuite(unittest.TestCase):
@@ -24,7 +26,7 @@ class APITestSuite(unittest.TestCase):
         self.assertTrue(self.ec.is_valid_private_bin(priv.decode("HEX")))
 
     def test_login_user(self):
-        # Create a user
+        # Create an user
         user, pub, priv = self.api.create_user()
 
         # Login the user using his private key
@@ -32,3 +34,16 @@ class APITestSuite(unittest.TestCase):
 
         # Confirm is the user returned is equal to the user created.
         self.assertEqual(user, user_login)
+
+    def test_create_profile(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create profile
+        investors_profile = self.api.create_profile(user)
+        borrowers_profile = self.api.create_profile(user)
+
+        # Check if the Profile object is returned
+        self.assertIsInstance(investors_profile, Profile)
+        # Check if the BorrowersProfile object is returned
+        self.assertIsInstance(borrowers_profile, BorrowersProfile)
