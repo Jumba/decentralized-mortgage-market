@@ -6,6 +6,7 @@ from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
 from market.models.role import Role
 from market.models.user import User
+from market.models.loans import Investment
 
 
 class MarketAPI(object):
@@ -94,9 +95,32 @@ class MarketAPI(object):
 
         return profile
 
-    def place_loan_offer(self):
-        """ post the data needed for placing a loan offer """
-        pass
+    def place_loan_offer(self, user, payload):
+        """
+        Create a loan offer and save it to the database.
+        :param user:
+        :param payload:
+        :return:
+        """
+        assert isinstance(user, User)
+        assert isinstance(payload, dict)
+
+        try:
+            role = Role(user.id, payload['role'])
+            user.role_id = self.db.post(role.type, role)
+
+            loan_offer = None
+            if role.role_name == 'INVESTOR':
+                loan_offer = Investment(payload['user_key'], payload['amount'], payload['duration'], payload['interest_rate'],
+                                        payload['mortgage_id'], payload['status'])
+            else:
+                return False
+
+            user.investment_ids.append(self.db.post('investment', loan_offer))
+            self.db.put(user.type, user.id, user)
+            return loan_offer
+        except KeyError:
+            return False
 
     def resell_investment(self):
         """ post the data needed to resell the investment """

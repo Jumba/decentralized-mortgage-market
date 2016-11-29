@@ -7,6 +7,7 @@ from market.dispersy.crypto import ECCrypto
 from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
 from market.models.user import User
+from market.models.loans import Investment
 
 
 class APITestSuite(unittest.TestCase):
@@ -16,7 +17,8 @@ class APITestSuite(unittest.TestCase):
         self.ec = ECCrypto()
 
         self.payload = {'role': 1, 'first_name': 'Bob', 'last_name': 'Saget', 'email': 'example@example.com', 'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
-                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': []}
+                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': [],
+                        'user_key' : 'rfghiw98594pio3rjfkhs', 'amount' : 1000, 'duration' : 24, 'interest_rate' : 2.5, 'mortgage_id' : '8739-a875ru-hd938-9384', 'status' : 'pending'}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -120,3 +122,19 @@ class APITestSuite(unittest.TestCase):
         # Check if the returned profile is the profile in the database
         self.assertEqual(profile, loaded_profile)
         self.assertIsInstance(profile, Profile)
+
+    def test_place_loan_offer(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create an investors profile
+        self.payload['role'] = 2  # investor
+        profile = self.api.create_profile(user, self.payload)
+
+        # Create loan offer
+        loan_offer = self.api.place_loan_offer(user, self.payload)
+
+        # Check if the Investment object is returned
+        self.assertIsInstance(loan_offer, Investment)
+        # Check if the investment id is saved in the user's investment ids list
+        self.assertEqual(user.investment_ids[-1], loan_offer.id)
