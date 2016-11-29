@@ -23,9 +23,8 @@ class LoanRequest(DatabaseModel):
 class Mortgage(DatabaseModel):
     _type = 'mortgage'
 
-    def __init__(self, request_id, user_key, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, accepted):
+    def __init__(self, request_id, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, accepted):
         assert isinstance(request_id, str)
-        assert isinstance(user_key, str)
         assert isinstance(house_id, str)
         assert isinstance(bank, str)
         assert isinstance(amount, int)
@@ -39,7 +38,6 @@ class Mortgage(DatabaseModel):
         assert isinstance(accepted, bool)
 
         self._request_id = request_id
-        self._user_key = user_key
         self._house_id = house_id
         self._bank = bank
         self._amount = amount
@@ -70,3 +68,15 @@ class Investment(DatabaseModel):
         self._interest_rate = interest_rate
         self._loan_id = loan_id
         self._accepted = accepted
+
+class Campaign(DatabaseModel):
+    _type = 'campaign'
+
+    def __init__(self, mortgage_id, end_date, completed):
+        assert isinstance(mortgage_id, str)
+        assert isinstance(end_date, str)
+        assert isinstance(completed, bool)
+
+        self._mortgage_id = mortgage_id
+        self._end_date = end_date
+        self._completed = completed
