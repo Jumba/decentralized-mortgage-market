@@ -34,7 +34,6 @@ class DatabaseTestSuite(unittest.TestCase):
         self.model1 = DatabaseModel()
         self.model2 = DatabaseModel()
 
-
     def test_init(self):
         database = MockDatabase(MemoryBackend())
 
@@ -51,8 +50,6 @@ class DatabaseTestSuite(unittest.TestCase):
         # Check if id saved to model
         self.assertEqual(self.model1.id, self.database.get(self.model1.type, self.model1.id).id)
 
-
-
     def test_get(self):
         self.database.post(self.model1.type, self.model1)
 
@@ -61,7 +58,6 @@ class DatabaseTestSuite(unittest.TestCase):
 
         # Get a noneexisting model
         self.assertIsNone(self.database.get(self.model1.type, 'invalid_id'))
-
 
     def test_put(self):
         # Put an unsaved model
