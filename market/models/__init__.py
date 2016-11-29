@@ -1,4 +1,5 @@
 import pickle
+import uuid
 
 
 class DatabaseModel(object):
@@ -17,6 +18,10 @@ class DatabaseModel(object):
     @property
     def type(self):
         return self._type
+
+    def generate_id(self):
+        self._id = uuid.uuid4()
+        return self._id
 
     def encode(self, encoding='base64'):
         """

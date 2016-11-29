@@ -33,9 +33,9 @@ class MockDatabase(Database):
     def post(self, type, obj):
         assert isinstance(obj, DatabaseModel)
         try:
-            id = uuid.uuid4()
+            id = obj.generate_id()
             while not self.backend.id_available(id):
-                id = uuid.uuid4()
+                id = obj.generate_id()
 
             obj.save(id)
             self.backend.post(type, id, obj.encode())

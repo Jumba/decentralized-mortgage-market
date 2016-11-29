@@ -1,20 +1,34 @@
+import time
+
+from market.api.crypto import generate_key
 from market.database.database import Database
+from market.models.user import User
 
 
 class MarketAPI(object):
-
     def __init__(self, database):
         assert isinstance(database, Database)
         self._database = database
+        self._user_key = None
 
     @property
     def db(self):
         return self._database
 
+    @property
+    def user_key(self):
+        return self._user_key
 
     def create_user(self):
         """ save the user's public key in the database """
-        # bla bla
+        new_keys = generate_key()
+        user = User(new_keys[0], time.time())  # Save the public key bin (HEX) in the database along with the register time.
+
+        if self.db.post(user.type, user):
+            self._user_key = new_keys[0]
+            return [self.user_key, new_keys]
+        else:
+            return None
 
     def login_user(self):
         """ get the user_key """
@@ -99,4 +113,3 @@ class MarketAPI(object):
     def reject_loan_request(self, loan_request_id):
         """ reject a pending loan request """
         pass
-
