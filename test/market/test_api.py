@@ -56,11 +56,11 @@ class APITestSuite(unittest.TestCase):
         # Create an user
         user, pub, priv = self.api.create_user()
 
-        # Create a borrowers profile
+        # Create an investors profile
         self.payload['role'] = 2  # investor
         profile = self.api.create_profile(user, self.payload)
 
-        # Check if the BorrowersProfile object is returned
+        # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
 
         # Check if the profile id is saved in the user.
@@ -70,11 +70,11 @@ class APITestSuite(unittest.TestCase):
         # Create an user
         user, pub, priv = self.api.create_user()
 
-        # Create a borrowers profile
-        self.payload['role'] = 3  # investor
+        # Create a bank profile
+        self.payload['role'] = 3  # bank
         profile = self.api.create_profile(user, self.payload)
 
-        # Check if the BorrowersProfile object is returned
+        # Check if the Profile object is returned
         self.assertFalse(profile)
 
         # Check if the profile id is empty in the user
@@ -88,7 +88,7 @@ class APITestSuite(unittest.TestCase):
         del self.payload['role']
         profile = self.api.create_profile(user, self.payload)
 
-        # Check if the BorrowersProfile object is returned
+        # Check if the Profile object is returned
         self.assertFalse(profile)
 
     def test_load_profile_borrower(self):
