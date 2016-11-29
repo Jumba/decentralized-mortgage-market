@@ -20,10 +20,10 @@ class LoanRequest(DatabaseModel):
         self._amount_wanted = amount_wanted
 
 
-class Loan(DatabaseModel):
-    _type = 'loan'
+class Mortgage(DatabaseModel):
+    _type = 'mortgage'
 
-    def __init__(self, request_id, user_key, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors):
+    def __init__(self, request_id, user_key, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, accepted):
         assert isinstance(request_id, str)
         assert isinstance(user_key, str)
         assert isinstance(house_id, str)
@@ -36,6 +36,7 @@ class Loan(DatabaseModel):
         assert isinstance(duration, int)
         assert isinstance(risk, str)
         assert isinstance(investors, list)
+        assert isinstance(accepted, bool)
 
         self._request_id = request_id
         self._user_key = user_key
@@ -49,6 +50,7 @@ class Loan(DatabaseModel):
         self._duration = duration
         self._risk = risk
         self._investors = investors
+        self._accepted = accepted
 
 
 class Investment(DatabaseModel):
