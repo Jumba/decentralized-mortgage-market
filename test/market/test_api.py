@@ -104,6 +104,7 @@ class APITestSuite(unittest.TestCase):
 
         # Check if the returned profile is the profile in the database
         self.assertEqual(profile, loaded_profile)
+        self.assertIsInstance(profile, BorrowersProfile)
 
     def test_load_profile_investor(self):
         # Create an user
@@ -118,3 +119,4 @@ class APITestSuite(unittest.TestCase):
 
         # Check if the returned profile is the profile in the database
         self.assertEqual(profile, loaded_profile)
+        self.assertIsInstance(profile, Profile)
