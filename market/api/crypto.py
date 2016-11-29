@@ -1,9 +1,7 @@
-from hashlib import sha1
-
-from M2Crypto import EC
-from market.dispersy.crypto import ECCrypto, _CURVES
+from market.dispersy.crypto import ECCrypto
 
 _DEFAULT_CURVE = u'high'
+
 
 def generate_key(curve=_DEFAULT_CURVE):
     """
@@ -25,8 +23,15 @@ def generate_key(curve=_DEFAULT_CURVE):
     private_bin = eccrypto.key_to_bin(ec)
     public_bin = eccrypto.key_to_bin(ec.pub())
 
-    return (public_bin.encode("HEX"), private_bin.encode("HEX"), public_pem.strip(), private_pem.strip())
+    return public_bin.encode("HEX"), private_bin.encode("HEX"), public_pem.strip(), private_pem.strip()
 
 
-
-
+def get_public_key(private_key):
+    eccrypto = ECCrypto()
+    try:
+        if eccrypto.is_valid_private_bin(private_key.decode("HEX")):
+            priv = eccrypto.key_from_private_bin(private_key.decode("HEX"))
+            return priv.pub().key_to_bin().encode("HEX")
+        return None
+    except TypeError:
+        return None

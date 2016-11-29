@@ -1,6 +1,6 @@
 import time
 
-from market.api.crypto import generate_key
+from market.api.crypto import generate_key, get_public_key
 from market.database.database import Database
 from market.models.user import User
 
@@ -20,19 +20,28 @@ class MarketAPI(object):
         return self._user_key
 
     def create_user(self):
-        """ save the user's public key in the database """
+        """
+        Create a new user and saves it to the database.
+        :return: A tuple (User, public_key, private_key) or None if saving failed.
+        """
         new_keys = generate_key()
-        user = User(new_keys[0], time.time())  # Save the public key bin (HEX) in the database along with the register time.
+        user = User(new_keys[0], time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
 
         if self.db.post(user.type, user):
-            self._user_key = new_keys[0]
-            return [self.user_key, new_keys]
+            return user, new_keys[0], new_keys[1]
         else:
             return None
 
-    def login_user(self):
-        """ get the user_key """
-        pass
+    def login_user(self, private_key):
+        """
+        Login a user by generating the public key from the private key and grabbing the user object using the generated key.
+        :param public_key:
+        :param private_key:
+        :return:
+        """
+        if get_public_key(private_key):
+            user = self.db.get('users', get_public_key(private_key))
+            return user
 
     def modify_profile(self):
         """ post the data in profile """
