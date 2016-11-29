@@ -49,7 +49,7 @@ class MarketAPI(object):
 
     def create_profile(self, user, payload):
         """
-
+        Creates a new profile and saves it to the database.
         :param user:
         :param payload:
         :return:
@@ -77,7 +77,22 @@ class MarketAPI(object):
             return False
 
     def load_profile(self, user):
-        pass
+        """
+        Get the profile from the database.
+        :param user:
+        :return:
+        """
+        role = self.db.get('role', user.role_id)
+
+        profile = None
+        if role.role_name == 'INVESTOR':
+            profile = self.db.get('profile', user.profile_id)
+        elif role.role_name == 'BORROWER':
+            profile = self.db.get('borrowers_profile', user.profile_id)
+        else:
+            return False
+
+        return profile
 
     def place_loan_offer(self):
         """ post the data needed for placing a loan offer """

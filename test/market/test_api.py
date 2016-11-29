@@ -91,3 +91,30 @@ class APITestSuite(unittest.TestCase):
         # Check if the BorrowersProfile object is returned
         self.assertFalse(profile)
 
+    def test_load_profile_borrower(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrowers profile
+        self.payload['role'] = 1  # borrower
+        profile = self.api.create_profile(user, self.payload)
+
+        # Get the profile
+        loaded_profile = self.api.load_profile(user)
+
+        # Check if the returned profile is the profile in the database
+        self.assertEqual(profile, loaded_profile)
+
+    def test_load_profile_investor(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrowers profile
+        self.payload['role'] = 2  # investor
+        profile = self.api.create_profile(user, self.payload)
+
+        # Get the profile
+        loaded_profile = self.api.load_profile(user)
+
+        # Check if the returned profile is the profile in the database
+        self.assertEqual(profile, loaded_profile)
