@@ -1,6 +1,3 @@
-[submodule "dispersy"]
-	path = dispersy
-	url = git@github.com:Jumba/dispersy.git
 [submodule "market/dispersy"]
 	path = market/dispersy
 	url = git@github.com:Jumba/dispersy.git
