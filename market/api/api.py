@@ -54,6 +54,7 @@ class MarketAPI(object):
             user = self.db.get('users', get_public_key(private_key))
 
             return user
+        return None
 
     def create_profile(self, user, payload):
         """
