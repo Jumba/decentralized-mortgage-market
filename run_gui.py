@@ -10,8 +10,12 @@ class LoginController(QMainWindow, login.Ui_Form):
     def __init__(self, parent=None):
         super(LoginController, self).__init__(parent)
         self.setupUi(self)
-        self.toolButton.clicked.connect(self.browse)
-        self.pushButton.clicked.connect(self.login)
+        self.browseButton.clicked.connect(self.browse)
+        self.loginButton.clicked.connect(self.login)
+        self.generateButton.clicked.connect(self.generate)
+        if os.path.exists('remembered'):
+            f = open('remembered', 'r')
+            self.keyField.setText(f.readline())
 
     def browse(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
@@ -27,11 +31,22 @@ class LoginController(QMainWindow, login.Ui_Form):
         codec = QTextCodec.codecForUtfText(data)
         unistr = codec.toUnicode(data)
 
-        self.lineEdit.setText(unistr)
+        self.keyField.setText(unistr)
 
     def login(self):
         #if remember me == true
-        print self.lineEdit.text()
+        if not self.rememberMeCheckBox.checkState():
+            if os.path.exists('remembered'):
+                os.remove('remembered')
+        #do the user check
+        else:
+            f = open('remembered', 'w+');
+            f.write(self.keyField.text())
+            f.close()
+
+    def generate(self):
+        #generate new user
+        return NotImplemented
 
 
 def main():
