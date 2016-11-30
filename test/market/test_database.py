@@ -104,7 +104,6 @@ class DatabaseTestSuite(unittest.TestCase):
 class DatabasePersistentTestSuite(unittest.TestCase):
     def setUp(self):
         self.database = MockDatabase(PersistentBackend('.'))
-        self.database.backend.open()
         self.database.backend.clear()
         # Some database models
         self.model1 = DatabaseModel()
