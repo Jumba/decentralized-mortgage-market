@@ -168,9 +168,13 @@ class MarketAPI(object):
         """ generate a new key pair """
         pass
 
-    def check_role(self):
-        """ check which role the user has """
-        pass
+    def check_role(self, user):
+        """
+        Get the role of the user from the database.
+        :param user:
+        :return:
+        """
+        return self.db.get('role', user.role_id)
 
     def create_loan_request(self, user, payload):
         """ Create a new loan request """
