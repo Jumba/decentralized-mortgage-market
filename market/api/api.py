@@ -7,6 +7,7 @@ from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
 from market.models.role import Role
 from market.models.user import User
+from market.models.loans import Investment
 
 STATUS = (
     'NONE',
@@ -56,7 +57,7 @@ class MarketAPI(object):
 
     def create_profile(self, user, payload):
         """
-
+        Creates a new profile and saves it to the database.
         :param user:
         :param payload:
         :return:
@@ -84,11 +85,49 @@ class MarketAPI(object):
             return False
 
     def load_profile(self, user):
-        pass
+        """
+        Get the profile from the database.
+        :param user:
+        :return:
+        """
+        role = self.db.get('role', user.role_id)
 
-    def place_loan_offer(self):
-        """ post the data needed for placing a loan offer """
-        pass
+        profile = None
+        if role.role_name == 'INVESTOR':
+            profile = self.db.get('profile', user.profile_id)
+        elif role.role_name == 'BORROWER':
+            profile = self.db.get('borrowers_profile', user.profile_id)
+        else:
+            return False
+
+        return profile
+
+    def place_loan_offer(self, user, payload):
+        """
+        Create a loan offer and save it to the database.
+        :param user:
+        :param payload:
+        :return:
+        """
+        assert isinstance(user, User)
+        assert isinstance(payload, dict)
+
+        try:
+            role = Role(user.id, payload['role'])
+            user.role_id = self.db.post(role.type, role)
+
+            loan_offer = None
+            if role.role_name == 'INVESTOR':
+                loan_offer = Investment(payload['user_key'], payload['amount'], payload['duration'], payload['interest_rate'],
+                                        payload['mortgage_id'], payload['status'])
+            else:
+                return False
+
+            user.investment_ids.append(self.db.post('investment', loan_offer))
+            self.db.put(user.type, user.id, user)
+            return loan_offer
+        except KeyError:
+            return False
 
     def resell_investment(self):
         """ post the data needed to resell the investment """

@@ -77,19 +77,19 @@ class Mortgage(DatabaseModel):
 class Investment(DatabaseModel):
     _type = 'investment'
 
-    def __init__(self, user_key, amount, duration, interest_rate, loan_id, status):
+    def __init__(self, user_key, amount, duration, interest_rate, mortgage_id, status):
         assert isinstance(user_key, str)
         assert isinstance(amount, int)
         assert isinstance(duration, int)
         assert isinstance(interest_rate, float)
-        assert isinstance(loan_id, str)
+        assert isinstance(mortgage_id, str)
         assert isinstance(status, str)
 
         self._user_key = user_key
         self._amount = amount
         self._duration = duration
         self._interest_rate = interest_rate
-        self._loan_id = loan_id
+        self._mortgage_id = mortgage_id
         self._status = status
 
 class Campaign(DatabaseModel):

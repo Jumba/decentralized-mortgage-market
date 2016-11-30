@@ -53,6 +53,10 @@ class User(DatabaseModel):
     def role_id(self, value):
         self._role_id = value
 
+    @investment_ids.setter
+    def investment_ids(self, value):
+        self._investment_ids.append(value)
+
     # TODO add functions to add and remove mortgages and investments from their list
     def add_mortgage_id(self, mortgage_id):
         # TODO
@@ -75,4 +79,3 @@ class User(DatabaseModel):
         pass
 
     # TODO add functions to add and remove pending loan requests from their lists
-
