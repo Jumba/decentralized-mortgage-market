@@ -17,8 +17,9 @@ class APITestSuite(unittest.TestCase):
         self.ec = ECCrypto()
 
         self.payload = {'role': 1, 'first_name': 'Bob', 'last_name': 'Saget', 'email': 'example@example.com', 'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
-                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': [],
-                        'user_key' : 'rfghiw98594pio3rjfkhs', 'amount' : 1000, 'duration' : 24, 'interest_rate' : 2.5, 'mortgage_id' : '8739-a875ru-hd938-9384', 'status' : 'pending'}
+                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': []}
+        self.payload1 = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24, 'interest_rate': 2.5,
+                         'mortgage_id': '8739-a875ru-hd938-9384', 'status': 'pending'}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -145,10 +146,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create an investor profile
         self.payload['role'] = 2  # investor
+        self.payload1['role'] = 2  # investor
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
-        loan_offer = self.api.place_loan_offer(user, self.payload)
+        self.payload1['user_key'] = user.id # set user_key to the investor's public key
+        loan_offer = self.api.place_loan_offer(user, self.payload1)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
@@ -163,10 +166,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create an borrower profile
         self.payload['role'] = 1  # borrower
+        self.payload1['role'] = 1 # borrower
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
-        loan_offer = self.api.place_loan_offer(user, self.payload)
+        self.payload1['user_key'] = user.id  # set user_key to the borrower's public key
+        loan_offer = self.api.place_loan_offer(user, self.payload1)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
@@ -180,11 +185,13 @@ class APITestSuite(unittest.TestCase):
         user, pub, priv = self.api.create_user()
 
         # Create an borrower profile
-        self.payload['role'] = 3  # boank
+        self.payload['role'] = 3  # bank
+        self.payload1['role'] = 3 # bank
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
-        loan_offer = self.api.place_loan_offer(user, self.payload)
+        self.payload1['user_key'] = user.id  # set user_key to the bank's public key
+        loan_offer = self.api.place_loan_offer(user, self.payload1)
 
         # Check if the Profile object is returned
         self.assertFalse(profile)
