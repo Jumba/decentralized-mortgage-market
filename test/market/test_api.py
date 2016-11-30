@@ -154,18 +154,28 @@ class APITestSuite(unittest.TestCase):
         # Create an investor profile
         self.payload['role'] = 2  # investor
         self.payload_loan_offer1['role'] = 2  # investor
+        self.payload_loan_offer2['role'] = 2  # investor
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
         self.payload_loan_offer1['user_key'] = user.id # set user_key to the investor's public key
+        self.payload_loan_offer2['user_key'] = user.id  # set user_key to the investor's public key
         loan_offer = self.api.place_loan_offer(user, self.payload_loan_offer1)
+        loan_offer2 = self.api.place_loan_offer(user, self.payload_loan_offer2)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
         # Check if the Investment object is returned
         self.assertIsInstance(loan_offer, Investment)
-        # Check if the investment id is saved in the user's investment ids list
-        self.assertEqual(user.investment_ids[-1], loan_offer.id)
+        self.assertIsInstance(loan_offer2, Investment)
+
+        # Check if the investments have separate id.
+        self.assertNotEqual(loan_offer, loan_offer2)
+
+        # Check if the investment ids are saved in the user's investment ids list
+        self.assertIn(loan_offer.id, user.investment_ids)
+        self.assertIn(loan_offer2.id, user.investment_ids)
+
 
     def test_place_loan_offer_borrower(self):
         # Create an user
@@ -185,7 +195,7 @@ class APITestSuite(unittest.TestCase):
         # Check if the Investment object is returned
         self.assertFalse(loan_offer)
         # Check if the investment ids list is empty
-        self.assertEquals(user.investment_ids, [])
+        self.assertEqual(user.investment_ids, [])
 
     def test_place_loan_offer_bank(self):
         # Create an user
@@ -205,7 +215,7 @@ class APITestSuite(unittest.TestCase):
         # Check if the Investment object is returned
         self.assertFalse(loan_offer)
         # Check if the investment ids list is empty
-        self.assertEquals(user.investment_ids, [])
+        self.assertEqual(user.investment_ids, [])
 
     #def test_create_loan_request_borrower(self):
         # Create a user

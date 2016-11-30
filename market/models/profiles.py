@@ -17,25 +17,25 @@ class Profile(DatabaseModel):
         self._iban = iban
         self._phonenumber = phone_number
 
-        @property
-        def first_name(self):
-            return self._first_name
+    @property
+    def first_name(self):
+        return self._first_name
 
-        @property
-        def last_name(self):
-            return self._last_name
+    @property
+    def last_name(self):
+        return self._last_name
 
-        @property
-        def email(self):
-            return self._email
+    @property
+    def email(self):
+        return self._email
 
-        @property
-        def iban(self):
-            return self._iban
+    @property
+    def iban(self):
+        return self._iban
 
-        @property
-        def phone_number(self):
-            return self._phone_number
+    @property
+    def phone_number(self):
+        return self._phone_number
 
 class BorrowersProfile(Profile):
     _type = 'borrowers_profile'
@@ -51,15 +51,15 @@ class BorrowersProfile(Profile):
         self._current_house_number = current_house_number
         self._document_list = document_list
 
-        @property
-        def current_postal_code(self):
-            return self._current_postal_code
+    @property
+    def current_postal_code(self):
+        return self._current_postal_code
 
-        @property
-        def current_house_number(self):
-            return self._current_house_number
+    @property
+    def current_house_number(self):
+        return self._current_house_number
 
-        @property
-        def document_list(self):
-            return self._document_list
+    @property
+    def document_list(self):
+        return self._document_list
 

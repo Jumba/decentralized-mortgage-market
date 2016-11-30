@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="titleLabel">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -37,7 +37,7 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="keyFieldLabel">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -65,7 +65,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QToolButton" name="browse">
+  <widget class="QToolButton" name="browseButton">
    <property name="geometry">
     <rect>
      <x>530</x>
@@ -74,11 +74,14 @@
      <height>22</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Browse</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="login">
+  <widget class="QPushButton" name="loginButton">
    <property name="geometry">
     <rect>
      <x>430</x>
@@ -91,7 +94,10 @@
     <string>Login</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="rememberMe">
+  <widget class="QCheckBox" name="rememberMeCheckBox">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>304</x>
@@ -100,11 +106,20 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Remember Me</string>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="tristate">
+    <bool>false</bool>
+   </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="generateLabel">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -128,7 +143,7 @@
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="generate">
+  <widget class="QPushButton" name="generateButton">
    <property name="geometry">
     <rect>
      <x>30</x>
