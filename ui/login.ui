@@ -55,7 +55,7 @@
     <string>Private key</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="keyField">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -65,7 +65,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QToolButton" name="toolButton">
+  <widget class="QToolButton" name="browse">
    <property name="geometry">
     <rect>
      <x>530</x>
@@ -78,7 +78,7 @@
     <string>Browse</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="login">
    <property name="geometry">
     <rect>
      <x>430</x>
@@ -91,7 +91,7 @@
     <string>Login</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox">
+  <widget class="QCheckBox" name="rememberMe">
    <property name="geometry">
     <rect>
      <x>304</x>
@@ -128,7 +128,7 @@
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="generate">
    <property name="geometry">
     <rect>
      <x>30</x>
