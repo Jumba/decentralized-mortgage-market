@@ -123,18 +123,72 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(profile, loaded_profile)
         self.assertIsInstance(profile, Profile)
 
-    def test_place_loan_offer(self):
+    def test_load_profile_bank(self):
         # Create an user
         user, pub, priv = self.api.create_user()
 
-        # Create an investors profile
+        # Create a bank profile
+        self.payload['role'] = 3  # bank
+        profile = self.api.create_profile(user, self.payload)
+        # Get the profile
+        loaded_profile = self.api.load_profile(user)
+
+        # Check if the Profile object is returned
+        self.assertFalse(profile)
+        self.assertFalse(loaded_profile)
+        # Check if the profile id is empty in the user
+        self.assertIsNone(user.profile_id)
+
+    def test_place_loan_offer_investor(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create an investor profile
         self.payload['role'] = 2  # investor
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
         loan_offer = self.api.place_loan_offer(user, self.payload)
 
+        # Check if the Profile object is returned
+        self.assertIsInstance(profile, Profile)
         # Check if the Investment object is returned
         self.assertIsInstance(loan_offer, Investment)
         # Check if the investment id is saved in the user's investment ids list
         self.assertEqual(user.investment_ids[-1], loan_offer.id)
+
+    def test_place_loan_offer_borrower(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create an borrower profile
+        self.payload['role'] = 1  # borrower
+        profile = self.api.create_profile(user, self.payload)
+
+        # Create loan offer
+        loan_offer = self.api.place_loan_offer(user, self.payload)
+
+        # Check if the Profile object is returned
+        self.assertIsInstance(profile, Profile)
+        # Check if the Investment object is returned
+        self.assertFalse(loan_offer)
+        # Check if the investment ids list is empty
+        self.assertEquals(user.investment_ids, [])
+
+    def test_place_loan_offer_bank(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create an borrower profile
+        self.payload['role'] = 3  # boank
+        profile = self.api.create_profile(user, self.payload)
+
+        # Create loan offer
+        loan_offer = self.api.place_loan_offer(user, self.payload)
+
+        # Check if the Profile object is returned
+        self.assertFalse(profile)
+        # Check if the Investment object is returned
+        self.assertFalse(loan_offer)
+        # Check if the investment ids list is empty
+        self.assertEquals(user.investment_ids, [])
