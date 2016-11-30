@@ -154,13 +154,21 @@ class APITestSuite(unittest.TestCase):
         # Create loan offer
         self.payload1['user_key'] = user.id # set user_key to the investor's public key
         loan_offer = self.api.place_loan_offer(user, self.payload1)
-
+        loan_offer2 = self.api.place_loan_offer(user, self.payload1)
+        print user.investment_ids
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
         # Check if the Investment object is returned
         self.assertIsInstance(loan_offer, Investment)
-        # Check if the investment id is saved in the user's investment ids list
-        self.assertEqual(user.investment_ids[-1], loan_offer.id)
+        self.assertIsInstance(loan_offer2, Investment)
+
+        # Check if the investments have separate id.
+        self.assertNotEqual(loan_offer, loan_offer2)
+
+        # Check if the investment ids are saved in the user's investment ids list
+        self.assertIn(loan_offer.id, user.investment_ids)
+        self.assertIn(loan_offer2.id, user.investment_ids)
+
 
     def test_place_loan_offer_borrower(self):
         # Create an user
