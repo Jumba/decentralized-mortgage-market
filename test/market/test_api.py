@@ -4,6 +4,7 @@ from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.dispersy.crypto import ECCrypto
+from market.models.loans import LoanRequest, Mortgage
 from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
 from market.models.user import User
@@ -90,4 +91,27 @@ class APITestSuite(unittest.TestCase):
 
         # Check if the BorrowersProfile object is returned
         self.assertFalse(profile)
+
+    def test_accept_loan_request(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+        self.payload['role'] = 3  # bank
+
+        self.payload['loan_request_id'] = 1
+        loan_request, mortgage = self.api.accept_loan_request(user, self.payload)
+
+        assert isinstance(loan_request, LoanRequest)
+        assert isinstance(mortgage, Mortgage)
+        self.assertEquals(loan_request.status, 'ACCEPTED')
+
+    def test_reject_loan_request(self):
+        self.payload['loan_request_id'] = 1
+
+        loan_request = self.api.reject_loan_request(self.payload)
+        assert isinstance(loan_request, LoanRequest)
+
+        print loan_request.status
+        self.assertEquals(loan_request.status, 3)
+
+
 

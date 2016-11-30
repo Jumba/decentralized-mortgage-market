@@ -4,7 +4,7 @@ from market.models import DatabaseModel
 class User(DatabaseModel):
     _type = 'users'
 
-    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, mortgage_ids=[], investment_ids=[]):
+    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, mortgage_ids=[], investment_ids=[], pending_loan_request_ids=[]):
         self._public_key = public_key
         self._time_added = time_added
         self._role_id = role_id
@@ -12,6 +12,7 @@ class User(DatabaseModel):
         self._loan_request_id = loan_request_id
         self._mortgage_ids = mortgage_ids
         self._investment_ids = investment_ids
+        self._pending_loan_request_ids = pending_loan_request_ids
 
     @property
     def user_key(self):
@@ -51,3 +52,27 @@ class User(DatabaseModel):
     @role_id.setter
     def role_id(self, value):
         self._role_id = value
+
+    # TODO add functions to add and remove mortgages and investments from their list
+    def add_mortgage_id(self, mortgage_id):
+        # TODO
+        self._mortgage_ids = self._mortgage_ids.append(mortgage_id)
+        pass
+
+    def remove_mortgage_id(self, mortgage_id):
+        # TODO
+        self._mortgage_ids = self._mortgage_ids.remove(mortgage_id)
+        pass
+
+    def add_investment(self, investment_id):
+        # TODO
+        self._investment_ids = self._investment_ids.append(investment_id)
+        pass
+
+    def remove_investment(self, investment_id):
+        # TODO
+        self._investment_ids = self._investment_ids.remove(investment_id)
+        pass
+
+    # TODO add functions to add and remove pending loan requests from their lists
+

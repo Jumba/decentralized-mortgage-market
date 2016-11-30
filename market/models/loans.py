@@ -3,20 +3,44 @@ from market.models import DatabaseModel
 class LoanRequest(DatabaseModel):
     _type = 'loan_request'
 
-    def __init__(self, house_id, mortgage_type, banks, personal_info, amount_wanted, status):
+    def __init__(self, house_id, mortgage_type, banks, description, amount_wanted, status):
         assert isinstance(house_id, str)
         assert isinstance(mortgage_type, int)
         assert isinstance(banks, list)
-        assert isinstance(personal_info, unicode)
+        assert isinstance(description, unicode)
         assert isinstance(amount_wanted, int)
         assert isinstance(status, str)
 
         self._house_id = house_id
         self._mortgage_type = mortgage_type
         self._banks = banks
-        self._personal_info = personal_info
+        self._description = description
         self._amount_wanted = amount_wanted
         self._status = status
+
+    @property
+    def house_id(self):
+        return self._house_id
+
+    @property
+    def mortgage_type(self):
+        return self._mortgage_type
+
+    @property
+    def banks(self):
+        return self._banks
+
+    @property
+    def description(self):
+        return self._description
+
+    @property
+    def amount_wanted(self):
+        return self._amount_wanted
+
+    @property
+    def status(self):
+        return self._status
 
 
 class Mortgage(DatabaseModel):
