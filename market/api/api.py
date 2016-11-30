@@ -126,7 +126,8 @@ class MarketAPI(object):
             user.investment_ids.append(self.db.post('investment', loan_offer))
             self.db.put(user.type, user.id, user)
             return loan_offer
-        except KeyError:
+        except KeyError as e:
+            print "KeyError: " + str(e)
             return False
 
     def resell_investment(self):
