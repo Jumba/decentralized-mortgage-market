@@ -36,7 +36,7 @@ class MarketAPI(object):
         :return: A tuple (User, public_key, private_key) or None if saving failed.
         """
         new_keys = generate_key()
-        user = User(new_keys[0], time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
+        user = User(public_key=new_keys[0], time_added=time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
 
         if self.db.post(user.type, user):
             return user, new_keys[0], new_keys[1]
@@ -124,7 +124,8 @@ class MarketAPI(object):
             else:
                 return False
 
-            user.investment_ids = self.db.post('investment', loan_offer)
+            user.investment_ids.append(self.db.post('investment', loan_offer))
+
             self.db.put(user.type, user.id, user)
             return loan_offer
         except KeyError as e:
