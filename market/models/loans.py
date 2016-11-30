@@ -92,6 +92,10 @@ class Investment(DatabaseModel):
         self._mortgage_id = mortgage_id
         self._status = status
 
+    @property
+    def status(self):
+        return self._status
+
 class Campaign(DatabaseModel):
     _type = 'campaign'
 
