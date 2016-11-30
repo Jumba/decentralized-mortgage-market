@@ -123,7 +123,7 @@ class MarketAPI(object):
             else:
                 return False
 
-            user.investment_ids.append(self.db.post('investment', loan_offer))
+            user.investment_ids = self.db.post('investment', loan_offer)
             self.db.put(user.type, user.id, user)
             return loan_offer
         except KeyError as e:
@@ -134,9 +134,22 @@ class MarketAPI(object):
         """ post the data needed to resell the investment """
         pass
 
-    def load_investments(self):
-        """ get the data from current and pending investments """
-        pass
+    def load_investments(self, user):
+        """
+        Get the current investments list and the pending investments list from the database.
+        :param user:
+        :return:
+        """
+        current_investments = []
+        pending_investments = []
+        for investment_id in user.investment_ids:
+            if self.db.get('investment', investment_id).status == "accepted":
+                current_investments.append(self.db.get('investment', investment_id))
+            elif self.db.get('investment', investment_id).status == "pending":
+                pending_investments.append(self.db.get('investment', investment_id))
+            else:
+                pass
+        return current_investments, pending_investments
 
     def load_open_market(self):
         """ get the 'to be displayed on the open market' data  """

@@ -19,10 +19,15 @@ class APITestSuite(unittest.TestCase):
 
         self.payload = {'role': 1, 'first_name': 'Bob', 'last_name': 'Saget', 'email': 'example@example.com', 'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
                         'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': []}
-        self.payload1 = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24, 'interest_rate': 2.5,
+        self.payload_loan_offer1 = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24, 'interest_rate': 2.5,
                          'mortgage_id': '8739-a875ru-hd938-9384', 'status': 'pending'}
-        self.payload2 = {'role' : 0, 'user_key' : 'rfghiw98594pio3rjfkhs', 'house_id' : '8739-a875ru-hd938-9384', 'mortgage_type' : 1, 'banks' : [], 'description' : unicode('I want to buy a house'), 'amount_wanted' : 123456}
-
+        self.payload_loan_offer2 = {'role': 1, 'user_key': 'rfghiw93iuedij3565534', 'amount': 20000, 'duration': 36, 'interest_rate': 3.5,
+                         'mortgage_id': '8jd39-a875ru-h09ru8-9384', 'status': 'accepted'}
+        self.payload_loan_offer3 = {'role': 1, 'user_key': 'r98iw98594p09eikhs', 'amount': 500, 'duration': 12, 'interest_rate': 7.0,
+                         'mortgage_id': '3757-a876u-h1m38-dm83', 'status': 'rejected'}
+        self.payload2 = {'role': 0, 'user_key': 'rfghiw98594pio3rjfkhs', 'house_id': '8739-a875ru-hd938-9384',
+                         'mortgage_type': 1, 'banks': [], 'description': unicode('I want to buy a house'),
+                         'amount_wanted': 123456}
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
 
@@ -148,12 +153,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create an investor profile
         self.payload['role'] = 2  # investor
-        self.payload1['role'] = 2  # investor
+        self.payload_loan_offer1['role'] = 2  # investor
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
-        self.payload1['user_key'] = user.id # set user_key to the investor's public key
-        loan_offer = self.api.place_loan_offer(user, self.payload1)
+        self.payload_loan_offer1['user_key'] = user.id # set user_key to the investor's public key
+        loan_offer = self.api.place_loan_offer(user, self.payload_loan_offer1)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
@@ -168,12 +173,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create an borrower profile
         self.payload['role'] = 1  # borrower
-        self.payload1['role'] = 1 # borrower
+        self.payload_loan_offer1['role'] = 1 # borrower
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
-        self.payload1['user_key'] = user.id  # set user_key to the borrower's public key
-        loan_offer = self.api.place_loan_offer(user, self.payload1)
+        self.payload_loan_offer1['user_key'] = user.id  # set user_key to the borrower's public key
+        loan_offer = self.api.place_loan_offer(user, self.payload_loan_offer1)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
@@ -188,12 +193,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create an borrower profile
         self.payload['role'] = 3  # bank
-        self.payload1['role'] = 3 # bank
+        self.payload_loan_offer1['role'] = 3 # bank
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan offer
-        self.payload1['user_key'] = user.id  # set user_key to the bank's public key
-        loan_offer = self.api.place_loan_offer(user, self.payload1)
+        self.payload_loan_offer1['user_key'] = user.id  # set user_key to the bank's public key
+        loan_offer = self.api.place_loan_offer(user, self.payload_loan_offer1)
 
         # Check if the Profile object is returned
         self.assertFalse(profile)
@@ -202,8 +207,47 @@ class APITestSuite(unittest.TestCase):
         # Check if the investment ids list is empty
         self.assertEquals(user.investment_ids, [])
 
-    def test_create_loan_request_borrower(self):
+    #def test_create_loan_request_borrower(self):
         # Create a user
+
+    def test_load_investments(self):
+        # Create an user
+        user, pub, priv = self.api.create_user()
+
+        # Create an investor's profile
+        self.payload['role'] = 2  # investor
+        self.payload_loan_offer1['role'] = 2  # investor
+        self.payload_loan_offer2['role'] = 2  # investor
+        self.payload_loan_offer3['role'] = 2  # investor
+        profile = self.api.create_profile(user, self.payload)
+
+        # Create loan offers
+        self.payload_loan_offer1['user_key'] = user.id  # set user_key to the investor's public key
+        self.payload_loan_offer2['user_key'] = user.id  # set user_key to the investor's public key
+        self.payload_loan_offer3['user_key'] = user.id  # set user_key to the investor's public key
+        loan_offer1 = self.api.place_loan_offer(user, self.payload_loan_offer1)
+        loan_offer2 = self.api.place_loan_offer(user, self.payload_loan_offer2)
+        loan_offer3 = self.api.place_loan_offer(user, self.payload_loan_offer3)
+
+        # Get the investments
+        current_investment, pending_investment = self.api.load_investments(user)
+
+        # Check if the returned objects are Lists
+        self.assertIsInstance(current_investment, list)
+        self.assertIsInstance(pending_investment, list)
+        # Check if the elements of the lists are Investment-objects
+        for investment in current_investment:
+            self.assertIsInstance(investment, Investment)
+        for investment in pending_investment:
+            self.assertIsInstance(investment, Investment)
+        # Check if the Investment-objects are saved in the correct list
+        self.assertIn(loan_offer1, pending_investment)
+        self.assertIn(loan_offer2, current_investment)
+        self.assertNotIn(loan_offer3, pending_investment)
+        self.assertNotIn(loan_offer3, current_investment)
+
+    def test_accept_loan_request(self):
+        # create a user
         user, pub, priv = self.api.create_user()
 
         # Create a borrower profile
