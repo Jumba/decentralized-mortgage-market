@@ -21,6 +21,7 @@ class APITestSuite(unittest.TestCase):
                         'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': []}
         self.payload1 = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24, 'interest_rate': 2.5,
                          'mortgage_id': '8739-a875ru-hd938-9384', 'status': 'pending'}
+        self.payload2 = {'role' : 0, 'user_key' : 'rfghiw98594pio3rjfkhs', 'house_id' : '8739-a875ru-hd938-9384', 'mortgage_type' : 1, 'banks' : [], 'description' : unicode('I want to buy a house'), 'amount_wanted' : 123456}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -201,23 +202,82 @@ class APITestSuite(unittest.TestCase):
         # Check if the investment ids list is empty
         self.assertEquals(user.investment_ids, [])
 
-    def test_accept_loan_request(self):
-        # create a user
+    def test_create_loan_request_borrower(self):
+        # Create a user
         user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 1  # borrower
+        self.payload2['role'] = 1  # borrower
+        profile = self.api.create_profile(user, self.payload)
+
+        # Create loan request
+        self.payload['user_key'] = user.id  # set user_key to the borrower's public key
+        loan_request = self.api.create_loan_request(user, self.payload2)
+
+        # Check if the Profile object is returned
+        self.assertIsInstance(profile, Profile)
+        # Check if the LoanRequest object is returned
+        self.assertIsInstance(loan_request, LoanRequest)
+        # Check if the loan request id is saved in the user's loan_request_id
+        self.assertEqual(user.loan_request_id, loan_request.id)
+
+    def test_create_loan_request_investor(self):
+        # Create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a investor profile
+        self.payload['role'] = 2  # investor
+        self.payload2['role'] = 2  # investor
+        profile = self.api.create_profile(user, self.payload)
+
+        # Create loan request
+        self.payload['user_key'] = user.id  # set user_key to the borrower's public key
+        loan_request = self.api.create_loan_request(user, self.payload2)
+
+        # Check if the Profile object is returned
+        self.assertIsInstance(profile, Profile)
+        # Check if the LoanRequest object is returned
+        self.assertFalse(loan_request)
+        # Check if the loan_request_id is empty
+        self.assertEquals(user.loan_request_id, None)
+
+    def test_create_loan_request_bank(self):
+        # Create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a bank profile
         self.payload['role'] = 3  # bank
+        self.payload2['role'] = 3  # bank
+        profile = self.api.create_profile(user, self.payload)
 
-        self.payload['loan_request_id'] = 1
-        loan_request, mortgage = self.api.accept_loan_request(user, self.payload)
+        # Create loan request
+        self.payload['user_key'] = user.id  # set user_key to the borrower's public key
+        loan_request = self.api.create_loan_request(user, self.payload2)
 
-        assert isinstance(loan_request, LoanRequest)
-        assert isinstance(mortgage, Mortgage)
-        self.assertEquals(loan_request.status, 'ACCEPTED')
+        # Check if the Profile object is returned
+        self.assertFalse(profile)
+        # Check if the LoanRequest object is returned
+        self.assertFalse(loan_request)
+        # Check if the loan_request_id is empty
+        self.assertEquals(user.loan_request_id, None)
 
-    def test_reject_loan_request(self):
-        self.payload['loan_request_id'] = 1
+#    def test_accept_loan_request(self):
+#        # create a user
+#        user, pub, priv = self.api.create_user()
+#        self.payload['role'] = 3  # bank
 
-        loan_request = self.api.reject_loan_request(self.payload)
-        assert isinstance(loan_request, LoanRequest)
+#        self.payload['loan_request_id'] = 1
+#        loan_request, mortgage = self.api.accept_loan_request(user, self.payload)
 
-        print loan_request.status
-        self.assertEquals(loan_request.status, 3)
+#        assert isinstance(loan_request, LoanRequest)
+#        assert isinstance(mortgage, Mortgage)
+#        self.assertEquals(loan_request.status, 'ACCEPTED')
+
+#    def test_reject_loan_request(self):
+#        self.payload['loan_request_id'] = 1
+
+#        loan_request = self.api.reject_loan_request(self.payload)
+#        assert isinstance(loan_request, LoanRequest)
+
+#        self.assertEquals(loan_request.status, 3)

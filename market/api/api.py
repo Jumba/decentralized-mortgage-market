@@ -158,9 +158,30 @@ class MarketAPI(object):
         """ check which role the user has """
         pass
 
-    def create_loan_request(self):
-        """ create a new loan request """
-        pass
+    def create_loan_request(self, user, payload):
+        """ Create a new loan request """
+
+        assert isinstance(user, User)
+        assert isinstance(payload, dict)
+
+        try:
+            role = Role(user.id, payload['role'])
+            user.role_id = self.db.post(role.type, role)
+
+            loan_request = None
+            if role.role_name == 'BORROWER':
+                loan_request = LoanRequest(payload['house_id'], payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], STATUS[1])
+            else:
+                return False
+
+            assert isinstance(loan_request, LoanRequest)
+            user.loan_request_id(self.db.post('loan_request', loan_request))
+            self.db.put(user.type, user.id, user)
+
+            return loan_request
+        except KeyError as e:
+            print "KeyError: " + str(e)
+            return False
 
     def load_borrowers_loans(self):
         """ display all of the borrower's current loans """
@@ -204,7 +225,7 @@ class MarketAPI(object):
 
         mortgage = Mortgage(payload['loan_request_id'], loan_request.house_id, user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
 
-        if self.db.put('loan_request', payload['loan_request_id'], accepted_loan_request) and self.db.post('mortgage', mortgage):
+        if self.db.put(loan_request.type, payload['loan_request_id'], accepted_loan_request) and self.db.post(mortgage.type, mortgage):
             return accepted_loan_request, mortgage
         else:
             return None
