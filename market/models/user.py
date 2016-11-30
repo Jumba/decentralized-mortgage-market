@@ -53,6 +53,10 @@ class User(DatabaseModel):
     def role_id(self, value):
         self._role_id = value
 
+    @loan_request_id.setter
+    def loan_request_id(self, value):
+        self._loan_request_id = value
+
     @investment_ids.setter
     def investment_ids(self, value):
         self._investment_ids.append(value)

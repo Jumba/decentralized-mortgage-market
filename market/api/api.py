@@ -160,7 +160,6 @@ class MarketAPI(object):
 
     def create_loan_request(self, user, payload):
         """ Create a new loan request """
-
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
@@ -175,7 +174,7 @@ class MarketAPI(object):
                 return False
 
             assert isinstance(loan_request, LoanRequest)
-            user.loan_request_id(self.db.post('loan_request', loan_request))
+            user.loan_request_id = self.db.post('loan_request', loan_request)
             self.db.put(user.type, user.id, user)
 
             return loan_request
