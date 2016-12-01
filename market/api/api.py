@@ -157,18 +157,6 @@ class MarketAPI(object):
         """ get the 'to be displayed on the open market' data  """
         pass
 
-    def browse_system(self):
-        """ open a dialog window to browse the user's system (to upload their private key) """
-        pass
-
-    def remember_user(self):
-        """ save the user's login credentials on their system """
-        pass
-
-    def generate_keys(self):
-        """ generate a new key pair """
-        pass
-
     def check_role(self, user):
         """
         Get the role of the user from the database.
@@ -205,9 +193,31 @@ class MarketAPI(object):
         """ display all of the borrower's current loans """
         pass
 
-    def load_borrowers_offers(self):
-        """ display all of the borrower's current offers """
-        pass
+    def load_borrowers_offers(self, user):
+        """
+        Get all the borrower's offers(mortgage offers or loan offers) from the database.
+        :param user:
+        :return:
+        """
+        offers = []
+        for mortgage_id in user.mortgage_ids:
+            if self.db.get('mortgage', mortgage_id).status == "accepted":
+                mortgage = self.db.get('mortgage', mortgage_id)
+                for investor_id in mortgage.investors:
+                    investor = self.db.get('users', investor_id)
+                    for investment_id in investor.investment_ids:
+                        if self.db.get('investment', investment_id).status == "pending":
+                            investment_offer = self.db.get('investment', investment_id)
+                            (amount, interest, duration) = (investment_offer.amount, investment_offer.interest_rate, investment_offer.duration)
+                            offers.append((amount, interest, duration))
+
+                return offers
+            elif self.db.get('mortgage', mortgage_id).status == "pending":
+                mortgage = self.db.get('mortgage', mortgage_id)
+                t = (mortgage.amount, mortgage.interest_rate, mortgage.default_rate, mortgage.duration, mortgage.mortgage_type)
+                offers.append(t)
+
+        return offers
 
     def accept_offer(self):
         """ accept an offer """

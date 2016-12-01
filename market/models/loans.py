@@ -73,6 +73,30 @@ class Mortgage(DatabaseModel):
         self._investors = investors
         self._status = status
 
+    @property
+    def amount(self):
+        return self._amount
+
+    @property
+    def mortgage_type(self):
+        return self._mortgage_type
+
+    @property
+    def interest_rate(self):
+        return self._interest_rate
+
+    @property
+    def default_rate(self):
+        return self._default_rate
+
+    @property
+    def duration(self):
+        return self._duration
+
+    @property
+    def status(self):
+        return self._status
+
 
 class Investment(DatabaseModel):
     _type = 'investment'
@@ -95,6 +119,18 @@ class Investment(DatabaseModel):
     @property
     def status(self):
         return self._status
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @property
+    def duration(self):
+        return self._duration
+
+    @property
+    def interest_rate(self):
+        return self._interest_rate
 
 class Campaign(DatabaseModel):
     _type = 'campaign'
