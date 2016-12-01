@@ -1,3 +1,4 @@
 .idea
 *.pyc
 remembered
+market/controllers/market.db

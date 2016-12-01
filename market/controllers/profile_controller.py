@@ -3,6 +3,7 @@ import os
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+from run_gui import LoginController
 from market.views import profile_view
 from market.api.api import MarketAPI
 from marketGUI.market_app import MarketApplication
@@ -30,7 +31,6 @@ class ProfileController(QMainWindow, profile_view.Ui_MainWindow):
         print payload
         # MarketAPI.create_profile(self.app.user, payload)
 
-        print 'saved'
 
 def main():
     app = MarketApplication(sys.argv)
