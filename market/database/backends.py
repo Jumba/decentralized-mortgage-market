@@ -89,6 +89,7 @@ class PersistentBackend(Database, Backend):
 
     def __init__(self, working_directory):
         super(PersistentBackend, self).__init__(path.join(working_directory, self.DATABASE_PATH))
+        self.open()
 
     def open(self, initial_statements=True, prepare_visioning=True):
         return super(PersistentBackend, self).open(initial_statements, prepare_visioning)

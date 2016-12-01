@@ -103,7 +103,6 @@ class MemoryBackendTestSuite(unittest.TestCase):
 class PersistentBackendTestSuite(unittest.TestCase):
     def setUp(self):
         self.backend = PersistentBackend('.')
-        self.backend.open()
 
         # Create some data
         self.block1 = DatabaseModel('1')

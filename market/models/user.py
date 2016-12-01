@@ -4,15 +4,15 @@ from market.models import DatabaseModel
 class User(DatabaseModel):
     _type = 'users'
 
-    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, mortgage_ids=[], investment_ids=[], pending_loan_request_ids=[]):
+    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, mortgage_ids=None, investment_ids=None, pending_loan_request_ids=None):
         self._public_key = public_key
         self._time_added = time_added
         self._role_id = role_id
         self._profile_id = profile_id
         self._loan_request_id = loan_request_id
-        self._mortgage_ids = mortgage_ids
-        self._investment_ids = investment_ids
-        self._pending_loan_request_ids = pending_loan_request_ids
+        self._mortgage_ids = mortgage_ids or []
+        self._investment_ids = investment_ids or []
+        self._pending_loan_request_ids = pending_loan_request_ids or []
 
     @property
     def user_key(self):
@@ -53,9 +53,9 @@ class User(DatabaseModel):
     def role_id(self, value):
         self._role_id = value
 
-    @investment_ids.setter
-    def investment_ids(self, value):
-        self._investment_ids.append(value)
+    @loan_request_id.setter
+    def loan_request_id(self, value):
+        self._loan_request_id = value
 
     # TODO add functions to add and remove mortgages and investments from their list
     def add_mortgage_id(self, mortgage_id):

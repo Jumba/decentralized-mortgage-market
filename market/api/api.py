@@ -188,7 +188,7 @@ class MarketAPI(object):
 
             loan_request = None
             if role.role_name == 'BORROWER':
-                payload['status'] = dict.fromkeys(payload['banks'], 0)
+                payload['status'] = dict.fromkeys(payload['banks'], 'pending')
                 loan_request = LoanRequest(user.user_key, payload['house_id'], payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
             else:
                 return False

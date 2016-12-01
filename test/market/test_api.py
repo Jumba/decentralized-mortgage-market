@@ -303,7 +303,7 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(role.id, user.role_id)
         self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
 
-    def test_accept_loan_request(self):
+    def test_create_loan_request_borrower(self):
         # create a user
         user, pub, priv = self.api.create_user()
 
@@ -324,7 +324,7 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(user.loan_request_id, loan_request.id)
         # Check if the status is set to pending
         for bank in self.payload_loan_request['status']:
-            self.assertEquals(self.payload_loan_request['status'][bank], 'pending')
+            self.assertEqual(self.payload_loan_request['status'][bank], 'pending')
 
     def test_create_loan_request_investor(self):
         # Create a user
