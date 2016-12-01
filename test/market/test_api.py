@@ -25,9 +25,11 @@ class APITestSuite(unittest.TestCase):
                          'mortgage_id': '8jd39-a875ru-h09ru8-9384', 'status': 'accepted'}
         self.payload_loan_offer3 = {'role': 1, 'user_key': 'r98iw98594p09eikhs', 'amount': 500, 'duration': 12, 'interest_rate': 7.0,
                          'mortgage_id': '3757-a876u-h1m38-dm83', 'status': 'rejected'}
-        self.payload2 = {'role': 0, 'user_key': 'rfghiw98594pio3rjfkhs', 'house_id': '8739-a875ru-hd938-9384',
-                         'mortgage_type': 1, 'banks': [], 'description': unicode('I want to buy a house'),
-                         'amount_wanted': 123456}
+        self.payload_loan_request = {'role': 0, 'user_key': 'rfghiw98594pio3rjfkhs',
+                                     'house_id': '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'banks': [],
+                                     'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
+                                     'status': {'bank1': 'none', 'bank2': 'none', 'bank3': 'none', 'bank4': 'none'}}
+
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
 
@@ -307,12 +309,57 @@ class APITestSuite(unittest.TestCase):
 
         # Create a borrower profile
         self.payload['role'] = 1  # borrower
-        self.payload2['role'] = 1  # borrower
+        self.api.create_profile(user, self.payload)
+
+        # Get the role of the user
+        role = self.api.check_role(user)
+
+        # Check whether the returned role is indeed the user's role
+        self.assertEqual(role.id, user.role_id)
+        self.assertEqual(role.role_name, "BORROWER")
+
+    def test_check_role_investor(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 2  # investor
+        self.api.create_profile(user, self.payload)
+
+        # Get the role of the user
+        role = self.api.check_role(user)
+
+        # Check whether the returned role is indeed the user's role
+        self.assertEqual(role.id, user.role_id)
+        self.assertEqual(role.role_name, "INVESTOR")
+
+    def test_check_role_bank(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 3  # bank/financial institution
+        self.api.create_profile(user, self.payload)
+
+        # Get the role of the user
+        role = self.api.check_role(user)
+
+        # Check whether the returned role is indeed the user's role
+        self.assertEqual(role.id, user.role_id)
+        self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
+
+    def test_create_loan_request_borrower(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 1  # borrower
+        self.payload_loan_request['role'] = 1  # borrower
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan request
         self.payload['user_key'] = user.id  # set user_key to the borrower's public key
-        loan_request = self.api.create_loan_request(user, self.payload2)
+        loan_request = self.api.create_loan_request(user, self.payload_loan_request)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
@@ -320,6 +367,9 @@ class APITestSuite(unittest.TestCase):
         self.assertIsInstance(loan_request, LoanRequest)
         # Check if the loan request id is saved in the user's loan_request_id
         self.assertEqual(user.loan_request_id, loan_request.id)
+        # Check if the status is set to pending
+        for bank in self.payload_loan_request['status']:
+            self.assertEqual(self.payload_loan_request['status'][bank], 'pending')
 
     def test_create_loan_request_investor(self):
         # Create a user
@@ -327,12 +377,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create a investor profile
         self.payload['role'] = 2  # investor
-        self.payload2['role'] = 2  # investor
+        self.payload_loan_request['role'] = 2  # investor
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan request
         self.payload['user_key'] = user.id  # set user_key to the borrower's public key
-        loan_request = self.api.create_loan_request(user, self.payload2)
+        loan_request = self.api.create_loan_request(user, self.payload_loan_request)
 
         # Check if the Profile object is returned
         self.assertIsInstance(profile, Profile)
@@ -340,6 +390,9 @@ class APITestSuite(unittest.TestCase):
         self.assertFalse(loan_request)
         # Check if the loan_request_id is empty
         self.assertEquals(user.loan_request_id, None)
+        # Check if the status is not set to pending
+        for bank in self.payload_loan_request['status']:
+            self.assertEquals(self.payload_loan_request['status'][bank], 'none')
 
     def test_create_loan_request_bank(self):
         # Create a user
@@ -347,12 +400,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create a bank profile
         self.payload['role'] = 3  # bank
-        self.payload2['role'] = 3  # bank
+        self.payload_loan_request['role'] = 3  # bank
         profile = self.api.create_profile(user, self.payload)
 
         # Create loan request
         self.payload['user_key'] = user.id  # set user_key to the borrower's public key
-        loan_request = self.api.create_loan_request(user, self.payload2)
+        loan_request = self.api.create_loan_request(user, self.payload_loan_request)
 
         # Check if the Profile object is returned
         self.assertFalse(profile)
@@ -360,8 +413,12 @@ class APITestSuite(unittest.TestCase):
         self.assertFalse(loan_request)
         # Check if the loan_request_id is empty
         self.assertEquals(user.loan_request_id, None)
+        # Check if the status is not set to pending
+        for bank in self.payload_loan_request['status']:
+            self.assertEquals(self.payload_loan_request['status'][bank], 'none')
 
-#    def test_accept_loan_request(self):
+
+            #    def test_accept_loan_request(self):
 #        # create a user
 #        user, pub, priv = self.api.create_user()
 #        self.payload['role'] = 3  # bank
