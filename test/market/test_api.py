@@ -28,7 +28,7 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request = {'role': 0, 'user_key': 'rfghiw98594pio3rjfkhs',
                                      'house_id': '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'banks': [],
                                      'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
-                                     'status': {'bank1': 'none', 'bank2': 'none', 'bank3': 'none', 'bank4': 'none'}}
+                                     'status': {'bank1': 'none', 'bank2': 'none', 'bank3': 'none', 'bank4': 'none'}, 'postal_code' : '1111AA', 'house_number' : '11', 'price' : 123456}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -417,23 +417,33 @@ class APITestSuite(unittest.TestCase):
         for bank in self.payload_loan_request['status']:
             self.assertEquals(self.payload_loan_request['status'][bank], 'none')
 
+    def test_reject_loan_request(self):
+        # Create a borrower
+        borrower, pub0, priv0 = self.api.create_user()
+        self.assertIsInstance(borrower, User)
+        self.payload['role'] = 1
+        self.payload_loan_request['role'] = 1
 
-            #    def test_accept_loan_request(self):
-#        # create a user
-#        user, pub, priv = self.api.create_user()
-#        self.payload['role'] = 3  # bank
+        # Create banks
+        bank1, pub1, priv1 = self.api.create_user()
+        bank2, pub2, priv2 = self.api.create_user()
+        self.assertIsInstance(bank1, User)
+        self.assertIsInstance(bank2, User)
 
-#        self.payload['loan_request_id'] = 1
-#        loan_request, mortgage = self.api.accept_loan_request(user, self.payload)
+        # Create loan request
+        self.payload['user_key'] = borrower.id  # set user_key to the borrower's public key
+        self.payload['banks'] = {bank1.id, bank2.id}
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
+        self.assertIsInstance(loan_request, LoanRequest)
+        # Check if the loan request has been added to the borrower
+        self.assertNotEqual(borrower.loan_request_id, None)
 
-#        assert isinstance(loan_request, LoanRequest)
-#        assert isinstance(mortgage, Mortgage)
-#        self.assertEquals(loan_request.status, 'ACCEPTED')
+        loan_request_1 = self.api.reject_loan_request(bank1, self.payload_loan_request)
+        # Check if the status has changed to rejected
+        self.assertEqual(self.payload_loan_request['status'][bank1], 'REJECTED')
 
-#    def test_reject_loan_request(self):
-#        self.payload['loan_request_id'] = 1
-
-#        loan_request = self.api.reject_loan_request(self.payload)
-#        assert isinstance(loan_request, LoanRequest)
-
-#        self.assertEquals(loan_request.status, 3)
+        loan_request_2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
+        # Check if the status has changed to rejected
+        self.assertEqual(self.payload_loan_request['status'][bank1], 'REJECTED')
+        # Check if the loan request has been removed from borrower
+        self.assertEqual(borrower.loan_request_id, None)
