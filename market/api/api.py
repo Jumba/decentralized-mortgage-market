@@ -36,7 +36,7 @@ class MarketAPI(object):
         :return: A tuple (User, public_key, private_key) or None if saving failed.
         """
         new_keys = generate_key()
-        user = User(new_keys[0], time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
+        user = User(public_key=new_keys[0], time_added=time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
 
         if self.db.post(user.type, user):
             return user, new_keys[0], new_keys[1]
@@ -54,6 +54,7 @@ class MarketAPI(object):
             user = self.db.get('users', get_public_key(private_key))
 
             return user
+        return None
 
     def create_profile(self, user, payload):
         """
@@ -124,6 +125,7 @@ class MarketAPI(object):
                 return False
 
             user.investment_ids.append(self.db.post('investment', loan_offer))
+
             self.db.put(user.type, user.id, user)
             return loan_offer
         except KeyError as e:
@@ -134,9 +136,22 @@ class MarketAPI(object):
         """ post the data needed to resell the investment """
         pass
 
-    def load_investments(self):
-        """ get the data from current and pending investments """
-        pass
+    def load_investments(self, user):
+        """
+        Get the current investments list and the pending investments list from the database.
+        :param user:
+        :return:
+        """
+        current_investments = []
+        pending_investments = []
+        for investment_id in user.investment_ids:
+            if self.db.get('investment', investment_id).status == "accepted":
+                current_investments.append(self.db.get('investment', investment_id))
+            elif self.db.get('investment', investment_id).status == "pending":
+                pending_investments.append(self.db.get('investment', investment_id))
+            else:
+                pass
+        return current_investments, pending_investments
 
     def load_open_market(self):
         """ get the 'to be displayed on the open market' data  """
@@ -154,13 +169,16 @@ class MarketAPI(object):
         """ generate a new key pair """
         pass
 
-    def check_role(self):
-        """ check which role the user has """
-        pass
+    def check_role(self, user):
+        """
+        Get the role of the user from the database.
+        :param user:
+        :return:
+        """
+        return self.db.get('role', user.role_id)
 
     def create_loan_request(self, user, payload):
         """ Create a new loan request """
-
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
@@ -170,12 +188,13 @@ class MarketAPI(object):
 
             loan_request = None
             if role.role_name == 'BORROWER':
-                loan_request = LoanRequest(payload['house_id'], payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], STATUS[1])
+                payload['status'] = dict.fromkeys(payload['banks'], 0)
+                loan_request = LoanRequest(user.user_key, payload['house_id'], payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
             else:
                 return False
 
             assert isinstance(loan_request, LoanRequest)
-            user.loan_request_id(self.db.post('loan_request', loan_request))
+            user.loan_request_id = self.db.post('loan_request', loan_request)
             self.db.put(user.type, user.id, user)
 
             return loan_request
@@ -199,45 +218,40 @@ class MarketAPI(object):
         """ reject an offer """
         pass
 
-    def load_all_loan_request(self, bank_id):
+    def load_all_loan_request(self):
         """ load all pending loan requests for a specific bank """
         pass
 
-    def load_single_loan_request(self, loan_request_id):
+    def load_single_loan_request(self):
         """ load a specific loan request """
-        loan_request = self.db.get(self, loan_request_id)
-
-        assert isinstance(loan_request, LoanRequest)
-        # TODO load loan request details from database
-
         pass
 
     def accept_loan_request(self, user, payload):
         """ accept a pending loan request """
-        loan_request = self.db.get('loan_request', payload['loan_request_id'])
+#        loan_request = self.db.get('loan_request', payload['loan_request_id'])
 
-        assert isinstance(loan_request, LoanRequest)
-        accepted_loan_request = LoanRequest(loan_request.house_id, loan_request.mortgage_type, loan_request.banks,
-                                            loan_request.description, loan_request.amount_wanted, STATUS[3])
+#        assert isinstance(loan_request, LoanRequest)
+#        accepted_loan_request = LoanRequest(loan_request.house_id, loan_request.mortgage_type, loan_request.banks,
+#                                            loan_request.description, loan_request.amount_wanted, STATUS[3])
 
-        assert isinstance(user, User)
-        assert isinstance(payload, dict)
+#        assert isinstance(user, User)
+#        assert isinstance(payload, dict)
 
-        mortgage = Mortgage(payload['loan_request_id'], loan_request.house_id, user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
+#        mortgage = Mortgage(payload['loan_request_id'], loan_request.house_id, user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
 
-        if self.db.put(loan_request.type, payload['loan_request_id'], accepted_loan_request) and self.db.post(mortgage.type, mortgage):
-            return accepted_loan_request, mortgage
-        else:
-            return None
+#        if self.db.put(loan_request.type, payload['loan_request_id'], accepted_loan_request) and self.db.post(mortgage.type, mortgage):
+#            return accepted_loan_request, mortgage
+#        else:
+#            return None
 
     def reject_loan_request(self, payload):
         """ reject a pending loan request """
-        loan_request = self.db.get('loan_request', payload['loan_request_id'])
+#        loan_request = self.db.get('loan_request', payload['loan_request_id'])
 
-        assert isinstance(loan_request, LoanRequest)
-        rejected_loan_request = LoanRequest(loan_request.house_id, loan_request.mortgage_type, loan_request.banks, loan_request.description, loan_request.amount_wanted, STATUS[3])
+#        assert isinstance(loan_request, LoanRequest)
+#        rejected_loan_request = LoanRequest(loan_request.house_id, loan_request.mortgage_type, loan_request.banks, loan_request.description, loan_request.amount_wanted, STATUS[3])
 
-        if self.db.put('loan_request', payload['loan_request_id'], rejected_loan_request):
-            return rejected_loan_request
-        else:
-            return None
+#        if self.db.put('loan_request', payload['loan_request_id'], rejected_loan_request):
+#            return rejected_loan_request
+#        else:
+#            return None
