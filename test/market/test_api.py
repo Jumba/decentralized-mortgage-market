@@ -303,6 +303,51 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(role.id, user.role_id)
         self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
 
+    def test_accept_loan_request(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 1  # borrower
+        self.api.create_profile(user, self.payload)
+
+        # Get the role of the user
+        role = self.api.check_role(user)
+
+        # Check whether the returned role is indeed the user's role
+        self.assertEqual(role.id, user.role_id)
+        self.assertEqual(role.role_name, "BORROWER")
+
+    def test_check_role_investor(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 2  # investor
+        self.api.create_profile(user, self.payload)
+
+        # Get the role of the user
+        role = self.api.check_role(user)
+
+        # Check whether the returned role is indeed the user's role
+        self.assertEqual(role.id, user.role_id)
+        self.assertEqual(role.role_name, "INVESTOR")
+
+    def test_check_role_bank(self):
+        # create a user
+        user, pub, priv = self.api.create_user()
+
+        # Create a borrower profile
+        self.payload['role'] = 3  # bank/financial institution
+        self.api.create_profile(user, self.payload)
+
+        # Get the role of the user
+        role = self.api.check_role(user)
+
+        # Check whether the returned role is indeed the user's role
+        self.assertEqual(role.id, user.role_id)
+        self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
+
     def test_create_loan_request_borrower(self):
         # create a user
         user, pub, priv = self.api.create_user()
