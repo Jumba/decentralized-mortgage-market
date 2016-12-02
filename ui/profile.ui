@@ -14,10 +14,10 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="titleLabel">
+   <widget class="QLabel" name="profile_label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>10</y>
       <width>191</width>
       <height>21</height>
@@ -34,7 +34,7 @@
      <string>Profile</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="role_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -47,7 +47,7 @@
      <string>I am a:</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButtonBorrower">
+   <widget class="QRadioButton" name="role_borrower_radiobutton">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -60,7 +60,7 @@
      <string>Borrower</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButtonInvestor">
+   <widget class="QRadioButton" name="role_investor_radiobutton">
     <property name="geometry">
      <rect>
       <x>180</x>
@@ -72,11 +72,8 @@
     <property name="text">
      <string>Investor</string>
     </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="firstname_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -89,7 +86,7 @@
      <string>First Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="firstNameField">
+   <widget class="QLineEdit" name="firstname_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -99,7 +96,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="lastname_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -112,7 +109,7 @@
      <string>Last Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lastNameField">
+   <widget class="QLineEdit" name="lastname_lineedit">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -122,7 +119,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="postcode_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -135,10 +132,7 @@
      <string>Current Post Code</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="curPostalCodeField">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QLineEdit" name="postcode_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -148,7 +142,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="housenumber_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -161,10 +155,7 @@
      <string>Current House Number</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="curHouseNumberField">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QLineEdit" name="housenumber_lineedit">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -174,7 +165,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="address_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -187,7 +178,7 @@
      <string>Current Address</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="phonenumber_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -200,7 +191,7 @@
      <string>Telephone Number</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="telNumberField">
+   <widget class="QLineEdit" name="phonenumber_lineedit">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -213,7 +204,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="email_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -226,7 +217,7 @@
      <string>Email Address</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="emailAddressField">
+   <widget class="QLineEdit" name="email_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -236,7 +227,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="documents_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -249,7 +240,7 @@
      <string>Documents</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="saveButton">
+   <widget class="QPushButton" name="save_profile_button">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -262,10 +253,7 @@
      <string>Save Changes</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="documentsTable">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QTableWidget" name="documents_table">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -300,7 +288,7 @@
      </property>
     </row>
    </widget>
-   <widget class="QLineEdit" name="curAddressField">
+   <widget class="QLineEdit" name="address_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -313,7 +301,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_11">
+   <widget class="QLabel" name="iban_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -326,7 +314,7 @@
      <string>IBAN</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="IBANField">
+   <widget class="QLineEdit" name="iban_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -343,7 +331,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>
@@ -352,9 +340,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>radioButtonInvestor</sender>
+   <sender>role_investor_radiobutton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>curHouseNumberField</receiver>
+   <receiver>housenumber_lineedit</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -368,9 +356,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButtonInvestor</sender>
+   <sender>role_investor_radiobutton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>curPostalCodeField</receiver>
+   <receiver>postcode_lineedit</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -379,14 +367,14 @@
     </hint>
     <hint type="destinationlabel">
      <x>146</x>
-     <y>201</y>
+     <y>202</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>radioButtonInvestor</sender>
+   <sender>role_investor_radiobutton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>documentsTable</receiver>
+   <receiver>documents_table</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -396,6 +384,22 @@
     <hint type="destinationlabel">
      <x>237</x>
      <y>482</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>role_investor_radiobutton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>phonenumber_lineedit</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>277</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>348</y>
     </hint>
    </hints>
   </connection>
