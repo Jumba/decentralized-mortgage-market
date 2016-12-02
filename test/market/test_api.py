@@ -610,11 +610,11 @@ class APITestSuite(unittest.TestCase):
         # Check if the loan request has been added to the borrower
 #        self.assertNotEqual(borrower.loan_request_id, None)
 
-        loan_request_1 = self.api.reject_loan_request(bank1, self.payload_loan_request)
+#        loan_request_1 = self.api.reject_loan_request(bank1, self.payload_loan_request)
         # Check if the status has changed to rejected
 #        self.assertEqual(self.payload_loan_request['status'][bank1], 'REJECTED')
 
-        loan_request_2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
+#        loan_request_2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
         # Check if the status has changed to rejected
 #        self.assertEqual(self.payload_loan_request['status'][bank1], 'REJECTED')
         # Check if the loan request has been removed from borrower
