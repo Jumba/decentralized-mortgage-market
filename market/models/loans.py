@@ -99,6 +99,9 @@ class Mortgage(DatabaseModel):
     def status(self):
         return self._status
 
+    @property
+    def investors(self):
+        return self._investors
 
 class Investment(DatabaseModel):
     _type = 'investment'

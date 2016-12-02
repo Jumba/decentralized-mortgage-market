@@ -205,6 +205,7 @@ class MarketAPI(object):
         """
         offers = []
         for mortgage_id in user.mortgage_ids:
+            # If the mortgage is already accepted, we get the loan offers from the investors
             if self.db.get('mortgage', mortgage_id).status == "accepted":
                 mortgage = self.db.get('mortgage', mortgage_id)
                 for investor_id in mortgage.investors:
@@ -216,6 +217,7 @@ class MarketAPI(object):
                             offers.append((amount, interest, duration))
 
                 return offers
+            # If the mortgage has not yet been accepted, get the mortgage offers from the banks
             elif self.db.get('mortgage', mortgage_id).status == "pending":
                 mortgage = self.db.get('mortgage', mortgage_id)
                 t = (mortgage.amount, mortgage.interest_rate, mortgage.default_rate, mortgage.duration, mortgage.mortgage_type)
