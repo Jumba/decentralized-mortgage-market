@@ -235,9 +235,14 @@ class MarketAPI(object):
         """ load all pending loan requests for a specific bank """
         pass
 
-    def load_single_loan_request(self):
+    def load_single_loan_request(self, payload):
         """ load a specific loan request """
-        pass
+        assert isinstance(payload, dict)
+
+        loan_request = self.db.get('loan_request', payload['loan_request_id'])
+        assert isinstance(loan_request, LoanRequest)
+
+        return loan_request
 
     def accept_loan_request(self, user, payload):
         """ accept a pending loan request """

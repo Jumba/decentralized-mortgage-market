@@ -27,9 +27,6 @@ class APITestSuite(unittest.TestCase):
                          'mortgage_id': '8jd39-a875ru-h09ru8-9384', 'status': 'accepted'}
         self.payload_loan_offer3 = {'role': 1, 'user_key': 'r98iw98594p09eikhs', 'amount': 500, 'duration': 12, 'interest_rate': 7.0,
                          'mortgage_id': '3757-a876u-h1m38-dm83', 'status': 'rejected'}
-        self.payload2 = {'role': 0, 'user_key': 'rfghiw98594pio3rjfkhs', 'house_id': '8739-a875ru-hd938-9384',
-                         'mortgage_type': 1, 'banks': [], 'description': unicode('I want to buy a house'),
-                         'amount_wanted': 123456}
         self.payload_mortgage1 = {'request_id': '8374-8yrd-hiye-8923yu4', 'house_id': '83yyd-fe54-fr3-esf', 'bank': '387-sfe4r-ffrw3r-sfew4',
                                   'amount': 150000, 'mortgage_type': 1, 'interest_rate': 5.5, 'max_invest_rate': 10.5, 'default_rate': 2.5,
                                   'duration': 600, 'risk': 'B', 'investors': [], 'status': 'pending'}
@@ -572,6 +569,22 @@ class APITestSuite(unittest.TestCase):
         # Check if the status is not set to pending
         for bank in self.payload_loan_request['status']:
             self.assertEquals(self.payload_loan_request['status'][bank], 'none')
+
+    def test_load_single_loan_request(self):
+        # Create a borrower
+        borrower, pub0, priv0 = self.api.create_user()
+        self.assertIsInstance(borrower, User)
+        self.payload['role'] = 1
+        self.payload_loan_request['role'] = 1
+
+        # Create loan request
+        self.payload['user_key'] = borrower.id  # set user_key to the borrower's public key
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
+        self.assertIsInstance(loan_request, LoanRequest)
+        self.payload_loan_request['loan_request_id'] = loan_request.id
+
+        loaded_loan_request = self.api.load_single_loan_request(self.payload_loan_request)
+        assert isinstance(loaded_loan_request, LoanRequest)
 
     def test_reject_loan_request(self):
         # Create a borrower
