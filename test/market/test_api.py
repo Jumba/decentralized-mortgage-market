@@ -589,7 +589,6 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(loan_request.id, loaded_loan_request.id)
 
     def test_reject_loan_request(self):
-        # TODO Make this work
         # Create a borrower
 #        borrower, pub0, priv0 = self.api.create_user()
 #        self.assertIsInstance(borrower, User)
