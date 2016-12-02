@@ -246,6 +246,7 @@ class MarketAPI(object):
 
     def accept_loan_request(self, user, payload):
         """ accept a pending loan request """
+        # TODO Make this work
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
@@ -275,6 +276,7 @@ class MarketAPI(object):
 
     def reject_loan_request(self, user, payload):
         """ reject a pending loan request """
+        # TODO Make this work
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
