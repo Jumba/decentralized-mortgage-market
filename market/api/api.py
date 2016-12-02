@@ -193,7 +193,7 @@ class MarketAPI(object):
             print "KeyError: " + str(e)
             return False
 
-    def load_borrowers_loans(self):
+    def load_borrowers_loans(self, user):
         """ display all of the borrower's current loans """
         pass
 
@@ -213,15 +213,13 @@ class MarketAPI(object):
                     for investment_id in investor.investment_ids:
                         if self.db.get('investment', investment_id).status == "pending":
                             investment_offer = self.db.get('investment', investment_id)
-                            (amount, interest, duration) = (investment_offer.amount, investment_offer.interest_rate, investment_offer.duration)
-                            offers.append((amount, interest, duration))
+                            offers.append(investment_offer)
 
                 return offers
             # If the mortgage has not yet been accepted, get the mortgage offers from the banks
             elif self.db.get('mortgage', mortgage_id).status == "pending":
                 mortgage = self.db.get('mortgage', mortgage_id)
-                t = (mortgage.amount, mortgage.interest_rate, mortgage.default_rate, mortgage.duration, mortgage.mortgage_type)
-                offers.append(t)
+                offers.append(mortgage)
 
         return offers
 

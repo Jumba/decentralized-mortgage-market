@@ -328,21 +328,12 @@ class APITestSuite(unittest.TestCase):
         # Get the offers from the database
         offers = self.api.load_borrowers_offers(user)
 
-        # Check if the mortgage offers returned are the right ones
-        for offer in offers:
-            amount, interest, default, duration, mortgage = offer
-            if offer == offers[0]:
-                self.assertEqual(amount, self.payload_mortgage1['amount'])
-                self.assertEqual(interest, self.payload_mortgage1['interest_rate'])
-                self.assertEqual(default, self.payload_mortgage1['default_rate'])
-                self.assertEqual(duration, self.payload_mortgage1['duration'])
-                self.assertEqual(mortgage, self.payload_mortgage1['mortgage_type'])
-            elif offer == offers[1]:
-                self.assertEqual(amount, self.payload_mortgage2['amount'])
-                self.assertEqual(interest, self.payload_mortgage2['interest_rate'])
-                self.assertEqual(default, self.payload_mortgage2['default_rate'])
-                self.assertEqual(duration, self.payload_mortgage2['duration'])
-                self.assertEqual(mortgage, self.payload_mortgage2['mortgage_type'])
+        # Check if the objects in the returned list are Mortgage-objects
+        self.assertIsInstance(offers[0], Mortgage)
+        self.assertIsInstance(offers[1], Mortgage)
+        # Check if the mortgages in the list are the right ones
+        self.assertEqual(offers[0], mortgage1)
+        self.assertEqual(offers[1], mortgage2)
 
     def test_load_borrowers_offers_mortgage_accepted(self):
         # create users
@@ -415,17 +406,12 @@ class APITestSuite(unittest.TestCase):
         # Get the offers from the database
         offers = self.api.load_borrowers_offers(user)
 
-        # Check if the loan offers returned are the right ones
-        for offer in offers:
-            amount, interest, duration = offer
-            if offer == offers[0]:
-                self.assertEqual(amount, self.payload_investment1['amount'])
-                self.assertEqual(interest, self.payload_investment1['interest_rate'])
-                self.assertEqual(duration, self.payload_investment1['duration'])
-            elif offer == offers[1]:
-                self.assertEqual(amount, self.payload_investment2['amount'])
-                self.assertEqual(interest, self.payload_investment2['interest_rate'])
-                self.assertEqual(duration, self.payload_investment2['duration'])
+        # Check if the objects in the returned list are Mortgage-objects
+        self.assertIsInstance(offers[0], Investment)
+        self.assertIsInstance(offers[1], Investment)
+        # Check if the mortgages in the list are the right ones
+        self.assertEqual(offers[0], investment1)
+        self.assertEqual(offers[1], investment2)
 
 
     def test_check_role_borrower(self):
