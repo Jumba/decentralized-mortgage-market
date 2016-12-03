@@ -193,9 +193,32 @@ class MarketAPI(object):
             print "KeyError: " + str(e)
             return False
 
+    # TODO: write test for this function after the accept_offer has been implemented
     def load_borrowers_loans(self, user):
-        """ display all of the borrower's current loans """
-        pass
+        """
+        Get the borrower's current active loans (funding goal has been reached) or the not yet active loans (funding goal has not been reached yet)
+        :param user: User-object, in this case the user has the role of a borrower
+        :return: list of the loans, containing either the current active loans or the not yet active loans
+        """
+        loans = []
+        for mortgage_id in user.mortgage_ids:
+            if self.db.get('mortgage', mortgage_id).status == "accepted":
+                mortgage = self.db.get('mortgage', mortgage_id)
+                # Add the accepted mortgage in the loans list
+                loans.append(mortgage)
+                campaign = self.db.get('campaign', user.campaign_id)
+                for investor_id in mortgage.investors:
+                    investor = self.db.get('users', investor_id)
+                    for investment_id in investor.investment_ids:
+                        investment = self.db.get('investment', investment_id)
+                        # Add the loan to the loans list if the mortgage id's match and the funding goal has been reached
+                        if investment.mortgage_id == mortgage_id and campaign.status == True:
+                            loans.append(investment)
+                        # Add the loan to the loans list if the mortgage id's match and the funding goal has not been reached
+                        elif investment.mortgage_id == mortgage_id and campaign.status == False:
+                            loans.append(investment)
+
+        return loans
 
     def load_borrowers_offers(self, user):
         """
@@ -235,12 +258,18 @@ class MarketAPI(object):
         """ load all pending loan requests for a specific bank """
         pass
 
-    def load_single_loan_request(self):
+    def load_single_loan_request(self, payload):
         """ load a specific loan request """
-        pass
+        assert isinstance(payload, dict)
+
+        loan_request = self.db.get('loan_request', payload['loan_request_id'])
+        assert isinstance(loan_request, LoanRequest)
+
+        return loan_request
 
     def accept_loan_request(self, user, payload):
         """ accept a pending loan request """
+        # TODO Make this work
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
@@ -270,6 +299,7 @@ class MarketAPI(object):
 
     def reject_loan_request(self, user, payload):
         """ reject a pending loan request """
+        # TODO Make this work
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
