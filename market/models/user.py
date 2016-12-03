@@ -62,25 +62,11 @@ class User(DatabaseModel):
     def loan_request_id(self, value):
         self._loan_request_id = value
 
-    # TODO add functions to add and remove mortgages and investments from their list
-    def add_mortgage_id(self, mortgage_id):
-        # TODO
-        self._mortgage_ids = self._mortgage_ids.append(mortgage_id)
-        pass
+    @property
+    def pending_loan_request_ids(self):
+        return self._pending_loan_request_ids
 
-    def remove_mortgage_id(self, mortgage_id):
-        # TODO
-        self._mortgage_ids = self._mortgage_ids.remove(mortgage_id)
-        pass
-
-    def add_investment(self, investment_id):
-        # TODO
-        self._investment_ids = self._investment_ids.append(investment_id)
-        pass
-
-    def remove_investment(self, investment_id):
-        # TODO
-        self._investment_ids = self._investment_ids.remove(investment_id)
-        pass
-
-    # TODO add functions to add and remove pending loan requests from their lists
+    @pending_loan_request_ids.setter
+    def initialize_pending_loan_request_ids(self):
+        if self._pending_loan_request_ids is None:
+            self.pending_loan_request_ids = []
