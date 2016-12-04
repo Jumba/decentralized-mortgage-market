@@ -48,7 +48,7 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request = {'house_id': '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'banks': [],
                                      'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
                                      'status': {'bank1': 'none', 'bank2': 'none', 'bank3': 'none', 'bank4': 'none'}, 'postal_code' : '1111AA', 'house_number' : '11', 'price' : 123456}
-        self.payload_mortgage = {'amount' : 123000, 'interest_rate' : 5.5, 'max_invest_rate' : 7.0, 'default_rate' : 9.0, 'duration' : 30, 'risk' : 'hi', 'investors' : []}
+        self.payload_mortgage = {'house_id' : '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'amount' : 123000, 'interest_rate' : 5.5, 'max_invest_rate' : 7.0, 'default_rate' : 9.0, 'duration' : 30, 'risk' : 'hi', 'investors' : []}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -465,14 +465,7 @@ class APITestSuite(unittest.TestCase):
 
         # Create banks
         bank1, pub1, priv1 = self.api.create_user()
-        role_id = self.api.db.post('role', Role(bank1.id, 3))
-        bank1.role_id = role_id
-        self.api.db.put('users', bank1.id, bank1)
-
         bank2, pub2, priv2 = self.api.create_user()
-        role_id = self.api.db.post('role', Role(bank2.id, 3))
-        bank2.role_id = role_id
-        self.api.db.put('users', bank2.id, bank2)
 
         # Create loan request
         self.payload_loan_request['user_key'] = user.id  # Set user_key to the borrower's public key
@@ -486,9 +479,11 @@ class APITestSuite(unittest.TestCase):
         # Check if the status is set to pending
         for bank in loan_request_1.status:
             self.assertEqual(loan_request_1.status[bank], 'PENDING')
-        # Check if the loan request has been added to the banks' lists TODO fix
-        #self.assertIn(loan_request_1.id, bank1.pending_loan_request_ids)
-        #self.assertIn(loan_request_1.id, bank2.pending_loan_request_ids)
+        # Check if the loan request has been added to the banks' lists
+        updated_bank1 = self.api.db.get('users', bank1.id)
+        updated_bank2 = self.api.db.get('users', bank2.id)
+        self.assertIn(loan_request_1.id, updated_bank1.pending_loan_request_ids)
+        self.assertIn(loan_request_1.id, updated_bank2.pending_loan_request_ids)
 
         # Create another loan request; should not be possible
         self.payload['user_key'] = user.id  # set user_key to the borrower's public key
@@ -550,38 +545,30 @@ class APITestSuite(unittest.TestCase):
         borrower3.role_id = role_id
         self.api.db.put('users', borrower3.id, borrower3)
 
-        # Create loan requests
-        self.payload['user_key'] = borrower1.id  # set user_key to the borrower's public key
-        loan_request_1 = self.api.create_loan_request(borrower1, self.payload_loan_request)
-        loan_request_2 = self.api.create_loan_request(borrower2, self.payload_loan_request)
-        loan_request_3 = self.api.create_loan_request(borrower3, self.payload_loan_request)
-
         # Create a bank
         bank, pub, priv = self.api.create_user()
         role_id = self.api.db.post('role', Role(bank.id, 3))
         bank.role_id = role_id
         self.api.db.put('users', bank.id, bank)
 
-        # TODO Change the create_loan_request function to add the loan requests to the bank's list
-        # Set status of the loan requests to pending
-        loan_request_1.status[bank.id] = 'PENDING'
-        self.api.db.put('loan_request', loan_request_1.id, loan_request_1)
-        loan_request_2.status[bank.id] = 'PENDING'
-        self.api.db.put('loan_request', loan_request_2.id, loan_request_2)
-        loan_request_3.status[bank.id] = 'ACCEPTED'
-        self.api.db.put('loan_request', loan_request_3.id, loan_request_3)
-        # Add the loan requests to bank's pending loan request list
-        bank.pending_loan_request_ids.append(borrower1.loan_request_id)
-        bank.pending_loan_request_ids.append(borrower2.loan_request_id)
-        bank.pending_loan_request_ids.append(borrower3.loan_request_id)
-        self.api.db.put('users', bank.id, bank)
+        # Create loan requests
+        loan_request_1 = self.api.create_loan_request(borrower1, self.payload_loan_request)
+        self.payload_loan_request['banks'] = [bank.id]
+        loan_request_2 = self.api.create_loan_request(borrower2, self.payload_loan_request)
+        loan_request_3 = self.api.create_loan_request(borrower3, self.payload_loan_request)
+
+        # Accept one loan request TODO Check this
+        #self.payload_mortgage['user_key'] = borrower3.id
+        #self.payload_mortgage['loan_request_id'] = loan_request_3.id
+        #self.api.accept_loan_request(bank, self.payload_mortgage)
 
         # Check if the loan requests are (not) in the list
-        pending_loan_requests = self.api.load_all_loan_requests(bank)
+        updated_bank = self.api.db.get('users', bank.id)
+        pending_loan_requests = self.api.load_all_loan_requests(updated_bank)
         self.assertIsInstance(pending_loan_requests, list)
-        self.assertIn(borrower1.loan_request_id, pending_loan_requests)
-        self.assertIn(borrower2.loan_request_id, pending_loan_requests)
-        self.assertNotIn(borrower3.loan_request_id, pending_loan_requests)
+        self.assertNotIn(loan_request_1.id, pending_loan_requests)
+        self.assertIn(loan_request_2.id, pending_loan_requests)
+        self.assertIn(loan_request_3.id, pending_loan_requests)
 
     def test_load_single_loan_request(self):
         # Create a borrower

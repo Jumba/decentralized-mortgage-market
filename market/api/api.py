@@ -166,7 +166,6 @@ class MarketAPI(object):
         """
         return self.db.get('role', user.role_id)
 
-    # TODO Add the created loan request to the bank's pending loan request list
     def create_loan_request(self, user, payload):
         """ Create a new loan request """
         assert isinstance(user, User)
@@ -196,7 +195,7 @@ class MarketAPI(object):
         user.loan_request_id = self.db.post('loan_request', loan_request)
         self.db.put('users', user.id, user)
 
-        # Add the loan request to the banks' pending loan request list TODO
+        # Add the loan request to the banks' pending loan request list
         for bank_id in payload['banks']:
             bank = self.db.get('users', bank_id)
             assert isinstance(bank, User)
@@ -369,7 +368,6 @@ class MarketAPI(object):
 
     def accept_loan_request(self, user, payload):
         """ accept a pending loan request """
-        # TODO Make this work
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
