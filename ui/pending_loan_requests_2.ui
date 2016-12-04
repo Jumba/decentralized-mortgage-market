@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="property_address_label">
+   <widget class="QLabel" name="fiplr2_property_address_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -33,7 +33,7 @@
      <string>Property Address</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lastname_lineedit">
+   <widget class="QLineEdit" name="fiplr2_lastname_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -46,7 +46,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="personal_information_label">
+   <widget class="QLabel" name="fiplr2_personal_information_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -66,7 +66,7 @@
      <string>Personal Information</string>
     </property>
    </widget>
-   <widget class="QLabel" name="make_offer_label">
+   <widget class="QLabel" name="fiplr2_make_offer_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -86,7 +86,7 @@
      <string>Make Offer</string>
     </property>
    </widget>
-   <widget class="QLabel" name="property_value_label">
+   <widget class="QLabel" name="fiplr2_property_value_label">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -105,7 +105,7 @@
      <string>Property Value</string>
     </property>
    </widget>
-   <widget class="QLabel" name="pending_loan_requests_label">
+   <widget class="QLabel" name="fiplr2_title_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -125,7 +125,7 @@
      <string>Pending Loan Requests</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="property_value_lineedit">
+   <widget class="QLineEdit" name="fiplr2_property_value_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -138,7 +138,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="property_address_lineedit">
+   <widget class="QLineEdit" name="fiplr2_property_address_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -151,7 +151,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="lastname_label">
+   <widget class="QLabel" name="fiplr2_lastname_label">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -170,7 +170,7 @@
      <string>Last Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="offer_interest_lineedit">
+   <widget class="QLineEdit" name="fiplr2_offer_interest_lineedit">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -180,7 +180,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QListView" name="documents_listview">
+   <widget class="QListView" name="fiplr2_documents_listview">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -190,7 +190,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="address_label">
+   <widget class="QLabel" name="fiplr2_address_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -209,7 +209,7 @@
      <string>Address</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="phonenumber_lineedit">
+   <widget class="QLineEdit" name="fiplr2_phonenumber_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -222,7 +222,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="reject_request_button">
+   <widget class="QPushButton" name="fiplr2_reject_pushbutton">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -235,7 +235,7 @@
      <string>Reject</string>
     </property>
    </widget>
-   <widget class="QLabel" name="default_rate_label">
+   <widget class="QLabel" name="fiplr2_default_rate_label">
     <property name="geometry">
      <rect>
       <x>350</x>
@@ -254,7 +254,7 @@
      <string>Default Rate</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="firstname_lineedit">
+   <widget class="QLineEdit" name="fiplr2_firstname_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -267,7 +267,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="mortgage_type_lineedit">
+   <widget class="QLineEdit" name="fiplr2_mortgage_type_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -280,7 +280,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="mortgage_information_label">
+   <widget class="QLabel" name="fiplr2_mortgage_information_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -300,7 +300,7 @@
      <string>Mortgage Request Information</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="loan_amount_lineedit">
+   <widget class="QLineEdit" name="fiplr2_loan_amount_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -313,7 +313,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="accept_request_button">
+   <widget class="QPushButton" name="fiplr2_accept_pushbutton">
     <property name="geometry">
      <rect>
       <x>420</x>
@@ -326,7 +326,7 @@
      <string>Accept</string>
     </property>
    </widget>
-   <widget class="QLabel" name="offer_interest_label">
+   <widget class="QLabel" name="fiplr2_offer_interest_label">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -345,7 +345,7 @@
      <string>Interest (%)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="loan_duration_lineedit">
+   <widget class="QLineEdit" name="fiplr2_loan_duration_lineedit">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -355,7 +355,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="mortgage_type_label">
+   <widget class="QLabel" name="fiplr2_mortgage_type_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -374,7 +374,7 @@
      <string>Mortgage Type</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="default_rate_lineedit">
+   <widget class="QLineEdit" name="fiplr2_default_rate_lineedit">
     <property name="geometry">
      <rect>
       <x>350</x>
@@ -384,7 +384,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="loan_duration_label">
+   <widget class="QLabel" name="fiplr2_loan_duration_label">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -403,7 +403,7 @@
      <string>Loan Duration (months)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="phonenumber_label">
+   <widget class="QLabel" name="fiplr2_phonenumber_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -422,7 +422,7 @@
      <string>Telephone Number</string>
     </property>
    </widget>
-   <widget class="QLabel" name="loan_amount_label">
+   <widget class="QLabel" name="fiplr2_loan_amount_label">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -441,7 +441,7 @@
      <string>Requested Loan Amount</string>
     </property>
    </widget>
-   <widget class="QLabel" name="email_label">
+   <widget class="QLabel" name="fiplr2_email_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -460,7 +460,7 @@
      <string>Email Address</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="email_lineedit">
+   <widget class="QLineEdit" name="fiplr2_email_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -473,7 +473,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="loan_request_label">
+   <widget class="QLabel" name="fiplr2_loan_request_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -493,7 +493,7 @@
      <string>Loan Request</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="risk_lineedit">
+   <widget class="QLineEdit" name="fiplr2_risk_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -506,7 +506,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="offer_amount_lineedit">
+   <widget class="QLineEdit" name="fiplr2_offer_amount_lineedit">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -516,7 +516,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="offer_amount_label">
+   <widget class="QLabel" name="fiplr2_offer_amount_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -535,7 +535,7 @@
      <string>Loan Amount Offered (€)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="documents_label">
+   <widget class="QLabel" name="fiplr2_documents_label">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -554,7 +554,7 @@
      <string>Documents</string>
     </property>
    </widget>
-   <widget class="QLabel" name="firstname_label">
+   <widget class="QLabel" name="fiplr2_firstname_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -573,7 +573,7 @@
      <string>First Name</string>
     </property>
    </widget>
-   <widget class="QLabel" name="risk_label">
+   <widget class="QLabel" name="fiplr2_risk_label">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -592,7 +592,7 @@
      <string>Current Risk Rating</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="address_lineedit">
+   <widget class="QLineEdit" name="fiplr2_address_lineedit">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -612,7 +612,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

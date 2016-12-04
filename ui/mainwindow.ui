@@ -14,52 +14,48 @@
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>2</number>
+   <number>7</number>
   </property>
   <widget class="QWidget" name="login_page">
-   <widget class="QPushButton" name="loginButton">
+   <widget class="QLabel" name="login_title">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>330</y>
-      <width>80</width>
-      <height>23</height>
+      <x>360</x>
+      <y>130</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>Login</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="browseButton">
+   <widget class="QToolButton" name="login_browse_button">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>300</y>
+      <x>650</x>
+      <y>310</y>
       <width>71</width>
       <height>22</height>
      </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>Browse</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="rememberMeCheckBox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QCheckBox" name="login_remember_me_checkbox">
     <property name="geometry">
      <rect>
-      <x>374</x>
-      <y>330</y>
+      <x>394</x>
+      <y>340</y>
       <width>111</width>
       <height>21</height>
      </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
     </property>
     <property name="text">
      <string>Remember Me</string>
@@ -67,15 +63,30 @@
     <property name="checked">
      <bool>true</bool>
     </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
    </widget>
-   <widget class="QPushButton" name="generateButton">
+   <widget class="QLabel" name="login_private_key_label">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>410</y>
+      <x>120</x>
+      <y>280</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Private key&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="login_generate_button">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>460</y>
       <width>80</width>
       <height>23</height>
      </rect>
@@ -84,41 +95,36 @@
      <string>Generate </string>
     </property>
    </widget>
-   <widget class="QLabel" name="keyFieldLabel">
+   <widget class="QLineEdit" name="login_private_key_line">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>280</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Private key</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="keyField">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>300</y>
+      <x>120</x>
+      <y>310</y>
       <width>481</width>
       <height>23</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="generateLabel">
+   <widget class="QPushButton" name="login_push_button">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>370</y>
-      <width>651</width>
-      <height>51</height>
+      <x>520</x>
+      <y>340</y>
+      <width>80</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Login</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="login_no_private_key_label">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>430</y>
+      <width>401</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -130,43 +136,84 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="text">
-     <string>Don't have a private key?</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Don't have a private key?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="titleLabel">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>70</y>
-      <width>651</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>24</pointsize>
-     </font>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="text">
-     <string>Login</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
   </widget>
   <widget class="QWidget" name="profile_page">
-   <widget class="QLineEdit" name="profile_housenumber_lineedit">
+   <widget class="QLabel" name="profile_email_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>300</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Email Address</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_firstname_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>120</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>First Name</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_iban_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>380</y>
+      <width>401</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_housenumber_label">
     <property name="geometry">
      <rect>
       <x>270</x>
       <y>180</y>
+      <width>171</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current House Number</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_address_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>240</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current Address</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_phonenumber_lineedit">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>320</y>
       <width>191</width>
       <height>27</height>
      </rect>
@@ -179,115 +226,17 @@
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>240</y>
+      <y>260</y>
       <width>401</width>
       <height>31</height>
      </rect>
     </property>
    </widget>
-   <widget class="QRadioButton" name="profile_role_investor_radiobutton">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>70</y>
-      <width>104</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Investor</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_lastname_label_2">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>100</y>
-      <width>211</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Last Name</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_documents_label">
+   <widget class="QLabel" name="role_label">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>400</y>
-      <width>181</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Documents</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_firstname_lineedit_2">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>120</y>
-      <width>191</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_postcode_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>160</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Current Post Code</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_iban_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>340</y>
-      <width>57</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IBAN</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_email_lineedit_2">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>300</y>
-      <width>191</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="profile_role_borrower_radiobutton">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>70</y>
-      <width>104</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Borrower</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_role_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>70</y>
+      <y>90</y>
       <width>57</width>
       <height>21</height>
      </rect>
@@ -296,47 +245,37 @@
      <string>I am a:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="profile_lastname_lineedit_2">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>120</y>
-      <width>191</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_firstname_label_2">
+   <widget class="QLabel" name="profile_postcode_label">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>100</y>
-      <width>131</width>
+      <y>180</y>
+      <width>141</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>First Name</string>
+     <string>Current Post Code</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="profile_phonenumber_lineedit">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QLabel" name="profile_lastname_label">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>300</y>
-      <width>191</width>
-      <height>27</height>
+      <y>120</y>
+      <width>211</width>
+      <height>17</height>
      </rect>
     </property>
+    <property name="text">
+     <string>Last Name</string>
+    </property>
    </widget>
-   <widget class="QLabel" name="profile_label">
+   <widget class="QLabel" name="profile_title">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>40</y>
+      <y>60</y>
       <width>191</width>
       <height>21</height>
      </rect>
@@ -352,37 +291,47 @@
      <string>Profile</string>
     </property>
    </widget>
-   <widget class="QLabel" name="profile_address_label">
+   <widget class="QLineEdit" name="profile_postcode_lineedit">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>220</y>
-      <width>141</width>
-      <height>17</height>
+      <y>200</y>
+      <width>191</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="profile_borrower_radiobutton">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>90</y>
+      <width>104</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
-     <string>Current Address</string>
+     <string>Borrower</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="profile_housenumber_label">
+   <widget class="QLineEdit" name="profile_housenumber_lineedit">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>160</y>
-      <width>171</width>
-      <height>17</height>
+      <y>200</y>
+      <width>191</width>
+      <height>27</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Current House Number</string>
-    </property>
    </widget>
-   <widget class="QLabel" name="profile_phonenumber_label_2">
+   <widget class="QLabel" name="profile_phonenumber_label">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>280</y>
+      <y>300</y>
       <width>141</width>
       <height>17</height>
      </rect>
@@ -391,47 +340,73 @@
      <string>Telephone Number</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="profile_iban_lineedit">
+   <widget class="QLabel" name="profile_iban_label">
     <property name="geometry">
      <rect>
       <x>60</x>
       <y>360</y>
-      <width>401</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_email_label_2">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>280</y>
-      <width>141</width>
+      <width>57</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Email Address</string>
+     <string>IBAN</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="profile_save_button">
+   <widget class="QLineEdit" name="profile_email_lineedit">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>550</y>
-      <width>121</width>
+      <x>60</x>
+      <y>320</y>
+      <width>191</width>
       <height>27</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_lastname_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>140</y>
+      <width>191</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_documents_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>420</y>
+      <width>181</width>
+      <height>17</height>
+     </rect>
+    </property>
     <property name="text">
-     <string>Save Changes</string>
+     <string>Documents</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="profile_investor_radiobutton">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>90</y>
+      <width>104</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Investor</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QTableWidget" name="profile_documents_table">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>420</y>
+      <y>440</y>
       <width>541</width>
       <height>101</height>
      </rect>
@@ -462,14 +437,27 @@
      </property>
     </row>
    </widget>
-   <widget class="QLineEdit" name="profile_postcode_lineedit">
+   <widget class="QLineEdit" name="profile_firstname_lineedit">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>180</y>
+      <y>140</y>
       <width>191</width>
       <height>27</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="profile_save_button">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>570</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save Changes</string>
     </property>
    </widget>
   </widget>
@@ -477,15 +465,15 @@
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>70</y>
+      <x>60</x>
+      <y>50</y>
       <width>611</width>
       <height>589</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QLabel" name="place_loan_request_label">
+      <widget class="QLabel" name="bplr_title_label">
        <property name="font">
         <font>
          <pointsize>20</pointsize>
@@ -499,13 +487,13 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="housenumber_lineedit_2"/>
+      <widget class="QLineEdit" name="bplr_housenumber_lineedit"/>
      </item>
      <item row="5" column="0">
-      <widget class="QLineEdit" name="house_price_lineedit"/>
+      <widget class="QLineEdit" name="bplr_house_price_lineedit"/>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="postcode_label_2">
+      <widget class="QLabel" name="bplr_postcode_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -517,23 +505,23 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="postcode_lineedit_2"/>
+      <widget class="QLineEdit" name="bplr_postcode_lineedit"/>
      </item>
      <item row="8" column="0">
-      <widget class="QLineEdit" name="seller_phone_number_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit"/>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="house_link_lineedit"/>
+      <widget class="QLineEdit" name="bplr_house_link_lineedit"/>
      </item>
      <item row="18" column="1">
-      <widget class="QPushButton" name="submit_loan_request_button">
+      <widget class="QPushButton" name="bplr_submit_button">
        <property name="text">
         <string>Submit Loan Request</string>
        </property>
       </widget>
      </item>
      <item row="9" column="0">
-      <widget class="QLabel" name="mortgage_information_label_2">
+      <widget class="QLabel" name="bplr_mortgage_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -547,10 +535,10 @@
       </widget>
      </item>
      <item row="11" column="0">
-      <widget class="QLineEdit" name="amount_wanted_lineedit"/>
+      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit"/>
      </item>
      <item row="2" column="1">
-      <widget class="QLabel" name="housenumber_label_2">
+      <widget class="QLabel" name="bplr_housenumber_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -562,7 +550,7 @@
       </widget>
      </item>
      <item row="10" column="1">
-      <widget class="QLabel" name="mortgage_type_label_2">
+      <widget class="QLabel" name="bplr_mortgage_type_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -574,7 +562,7 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="house_price_label">
+      <widget class="QLabel" name="bplr_house_price_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -586,21 +574,21 @@
       </widget>
      </item>
      <item row="12" column="0">
-      <widget class="QLabel" name="preferred_banks_label">
+      <widget class="QLabel" name="bplr_preferred_banks_label">
        <property name="text">
         <string>Preferred Banks</string>
        </property>
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="QLabel" name="seller_phone_number_label">
+      <widget class="QLabel" name="bplr_seller_phone_number_label">
        <property name="text">
         <string>Phone Number</string>
        </property>
       </widget>
      </item>
      <item row="10" column="0">
-      <widget class="QLabel" name="aount_wanted_label">
+      <widget class="QLabel" name="bplr_amount_wanted_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -614,14 +602,14 @@
      <item row="11" column="1">
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QRadioButton" name="mortgage_linear_radiobutton">
+        <widget class="QRadioButton" name="bplr_linear_radiobutton">
          <property name="text">
           <string>Linear</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QRadioButton" name="mortgage_fixedrate_radiobutton">
+        <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
          <property name="text">
           <string>Fixed-Rate</string>
          </property>
@@ -630,7 +618,7 @@
       </layout>
      </item>
      <item row="4" column="1">
-      <widget class="QLabel" name="house_link_label">
+      <widget class="QLabel" name="bplr_house_link_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -642,7 +630,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="property_information_label">
+      <widget class="QLabel" name="bplr_property_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -656,10 +644,10 @@
       </widget>
      </item>
      <item row="17" column="0" colspan="2">
-      <widget class="QTextEdit" name="description_textedit"/>
+      <widget class="QTextEdit" name="bplr_description_textedit"/>
      </item>
      <item row="16" column="0" colspan="2">
-      <widget class="QLabel" name="description_label">
+      <widget class="QLabel" name="bplr_description_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -673,7 +661,7 @@
       </widget>
      </item>
      <item row="15" column="0">
-      <widget class="QLabel" name="personal_information_label_2">
+      <widget class="QLabel" name="bplr_personal_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -689,28 +677,28 @@
      <item row="14" column="0">
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="1">
-        <widget class="QCheckBox" name="bank2_checkbox">
+        <widget class="QCheckBox" name="bplr_bank2_checkbox">
          <property name="text">
           <string>Bank 2</string>
          </property>
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QCheckBox" name="bank1_checkbox">
+        <widget class="QCheckBox" name="bplr_bank1_checkbox">
          <property name="text">
           <string>Bank 1</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="bank3_checkbox">
+        <widget class="QCheckBox" name="bplr_bank3_checkbox">
          <property name="text">
           <string>Bank 3</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QCheckBox" name="bank4_checkbox">
+        <widget class="QCheckBox" name="bplr_bank4_checkbox">
          <property name="text">
           <string>Bank 4</string>
          </property>
@@ -722,7 +710,7 @@
       <layout class="QGridLayout" name="gridLayout_5"/>
      </item>
      <item row="6" column="0">
-      <widget class="QLabel" name="property_seller_information_label">
+      <widget class="QLabel" name="bplr_property_seller_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -736,24 +724,218 @@
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QLabel" name="seller_email_label">
+      <widget class="QLabel" name="bplr_seller_email_label">
        <property name="text">
         <string>Email address [optional]</string>
        </property>
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QLineEdit" name="seller_email_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_email_lineedit"/>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QWidget" name="page_2">
-   <widget class="QLabel" name="open_offers_label">
+  <widget class="QWidget" name="borrowers_portfolio">
+   <widget class="QTableWidget" name="bp_open_offers_table">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>300</y>
+      <x>60</x>
+      <y>340</y>
+      <width>601</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>641</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>false</bool>
+    </property>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>110</number>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Loan Amount (€)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Interest (%)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Default (%)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Duration (month)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Type</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+   </widget>
+   <widget class="QPushButton" name="bp_reject_pushbutton">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>520</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reject</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="bp_open_offers_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>310</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -769,393 +951,24 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Open offers&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_open_offeres">
+   <widget class="QPushButton" name="bp_accept_pushbutton">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>330</y>
-      <width>601</width>
-      <height>161</height>
+      <x>590</x>
+      <y>520</y>
+      <width>75</width>
+      <height>23</height>
      </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>641</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="alternatingRowColors">
-     <bool>false</bool>
-    </property>
-    <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>110</number>
-    </attribute>
-    <attribute name="horizontalHeaderStretchLastSection">
-     <bool>true</bool>
-    </attribute>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <column>
-     <property name="text">
-      <string>Loan Amount (€)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Interest (%)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Default (%)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Duration (month)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Type</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-   </widget>
-   <widget class="QTableWidget" name="tableWidget_ongoing_loans">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>120</y>
-      <width>601</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>641</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="alternatingRowColors">
-     <bool>false</bool>
-    </property>
-    <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>110</number>
-    </attribute>
-    <attribute name="horizontalHeaderStretchLastSection">
-     <bool>true</bool>
-    </attribute>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <column>
-     <property name="text">
-      <string>Loan Amount (€)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Interest (%)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Default (%)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Duration (month)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Type</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-   </widget>
-   <widget class="QLabel" name="borrowers_portfolio_label">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>50</y>
-      <width>311</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
     </property>
     <property name="text">
-     <string>Borrower's Portfolio</string>
+     <string>Accept</string>
     </property>
    </widget>
-   <widget class="QLabel" name="ongoing_loans_label">
+   <widget class="QLabel" name="bp_ongoing_loans_label">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>90</y>
+      <x>60</x>
+      <y>100</y>
       <width>231</width>
       <height>31</height>
      </rect>
@@ -1171,48 +984,210 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overview ongoing loans&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="accept_push_button">
+   <widget class="QLabel" name="bp_title_label">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>510</y>
-      <width>75</width>
-      <height>23</height>
+      <x>60</x>
+      <y>60</y>
+      <width>311</width>
+      <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
-     <string>Accept</string>
+     <string>Borrower's Portfolio</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="reject_push_button">
+   <widget class="QTableWidget" name="bp_ongoing_loans_table">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>510</y>
-      <width>75</width>
-      <height>23</height>
+      <x>60</x>
+      <y>130</y>
+      <width>601</width>
+      <height>161</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Reject</string>
+    <property name="maximumSize">
+     <size>
+      <width>641</width>
+      <height>16777215</height>
+     </size>
     </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>false</bool>
+    </property>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>110</number>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Loan Amount (€)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Interest (%)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Default (%)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Duration (month)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Type</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
    </widget>
   </widget>
-  <widget class="QWidget" name="page_3">
-   <widget class="QPushButton" name="pushButton_4">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>360</y>
-      <width>121</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>View loan request</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="pending_loan_requests_label">
+  <widget class="QWidget" name="pending_loan_request_page1">
+   <widget class="QLabel" name="fiplr1_pending_loan_requests_label">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -1232,7 +1207,20 @@
      <string>Pending Loan Requests</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="loan_requests_table">
+   <widget class="QPushButton" name="fiplr1_pushbutton">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>360</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>View loan request</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="fiplr1_loan_requests_table">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -1333,14 +1321,14 @@
     </column>
    </widget>
   </widget>
-  <widget class="QWidget" name="page_4">
+  <widget class="QWidget" name="pending_loan_request_page2">
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
       <width>855</width>
-      <height>900</height>
+      <height>655</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -1352,91 +1340,27 @@
        <x>0</x>
        <y>0</y>
        <width>853</width>
-       <height>898</height>
+       <height>653</height>
       </rect>
      </property>
-     <widget class="QLabel" name="property_address_label">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>510</y>
-        <width>141</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Property Address</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="property_value_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>610</y>
-        <width>151</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="phonenumber_label">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>330</y>
-        <width>141</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Telephone Number</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="property_address_lineedit">
+     <widget class="QLineEdit" name="fiplr2_email_lineedit">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>540</y>
+        <y>420</y>
         <width>321</width>
         <height>27</height>
        </rect>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lastname_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>220</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="reject_request_button">
+     <widget class="QPushButton" name="fiplr2_reject_pushbutton">
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>760</y>
+        <y>750</y>
         <width>111</width>
         <height>31</height>
        </rect>
@@ -1445,35 +1369,12 @@
        <string>Reject</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="offer_amount_lineedit">
+     <widget class="QLabel" name="fiplr2_offer_interest_label">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>720</y>
+        <x>260</x>
+        <y>680</y>
         <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="loan_amount_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>540</y>
-        <width>151</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lastname_label">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>190</y>
-        <width>90</width>
         <height>20</height>
        </rect>
       </property>
@@ -1484,194 +1385,14 @@
        </font>
       </property>
       <property name="text">
-       <string>Last Name</string>
+       <string>Interest (%)</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="phonenumber_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>360</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="mortgage_type_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>610</y>
-        <width>151</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="firstname_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>220</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="loan_duration_lineedit">
+     <widget class="QLabel" name="fiplr2_loan_duration_label">
       <property name="geometry">
        <rect>
         <x>540</x>
-        <y>720</y>
-        <width>91</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="default_rate_label">
-      <property name="geometry">
-       <rect>
-        <x>400</x>
-        <y>690</y>
-        <width>141</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Default Rate</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="accept_request_button">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>760</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Accept</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="default_rate_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>400</x>
-        <y>720</y>
-        <width>81</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="loan_amount_label">
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>510</y>
-        <width>211</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Requested Loan Amount</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="documents_label">
-      <property name="geometry">
-       <rect>
-        <x>430</x>
-        <y>190</y>
-        <width>90</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Documents</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="address_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>290</y>
-        <width>321</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="firstname_label">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>190</y>
-        <width>90</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>First Name</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="offer_amount_label">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>690</y>
-        <width>161</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Loan Amount Offered (€)</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="loan_duration_label">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>690</y>
+        <y>680</y>
         <width>141</width>
         <height>20</height>
        </rect>
@@ -1686,32 +1407,25 @@
        <string>Loan Duration (months)</string>
       </property>
      </widget>
-     <widget class="QLabel" name="pending_loan_requests_label_2">
+     <widget class="QLineEdit" name="fiplr2_lastname_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>70</y>
-        <width>361</width>
-        <height>51</height>
+        <x>240</x>
+        <y>210</y>
+        <width>141</width>
+        <height>27</height>
        </rect>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>20</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Pending Loan Requests</string>
-      </property>
      </widget>
-     <widget class="QLabel" name="address_label">
+     <widget class="QLabel" name="fiplr2_loan_amount_label">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>260</y>
-        <width>370</width>
+        <x>420</x>
+        <y>500</y>
+        <width>211</width>
         <height>20</height>
        </rect>
       </property>
@@ -1722,40 +1436,52 @@
        </font>
       </property>
       <property name="text">
-       <string>Address</string>
+       <string>Requested Loan Amount</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="email_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
+     <widget class="QLabel" name="fiplr2_property_address_label">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>430</y>
-        <width>321</width>
-        <height>27</height>
+        <y>500</y>
+        <width>141</width>
+        <height>20</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QLineEdit" name="risk_lineedit">
-      <property name="enabled">
-       <bool>false</bool>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
       </property>
+      <property name="text">
+       <string>Property Address</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_documents_label">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>360</y>
-        <width>51</width>
-        <height>27</height>
+        <x>430</x>
+        <y>180</y>
+        <width>90</width>
+        <height>20</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Documents</string>
+      </property>
      </widget>
-     <widget class="QLabel" name="personal_information_label">
+     <widget class="QLabel" name="fiplr2_personal_information_label">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>160</y>
+        <y>150</y>
         <width>221</width>
         <height>21</height>
        </rect>
@@ -1771,11 +1497,24 @@
        <string>Personal Information</string>
       </property>
      </widget>
-     <widget class="QLabel" name="email_label">
+     <widget class="QLineEdit" name="fiplr2_phonenumber_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>400</y>
+        <y>350</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_email_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>390</y>
         <width>181</width>
         <height>20</height>
        </rect>
@@ -1790,11 +1529,121 @@
        <string>Email Address</string>
       </property>
      </widget>
-     <widget class="QLabel" name="make_offer_label">
+     <widget class="QLabel" name="fiplr2_risk_label">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>320</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Current Risk Rating</string>
+      </property>
+     </widget>
+     <widget class="QListView" name="fiplr2_documents_listview">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>210</y>
+        <width>281</width>
+        <height>231</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_property_value_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>600</y>
+        <width>151</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_loan_amount_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>530</y>
+        <width>151</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_offer_amount_lineedit">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>660</y>
+        <y>710</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_risk_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>350</y>
+        <width>51</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_offer_amount_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>680</y>
+        <width>161</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Loan Amount Offered (€)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_address_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>280</y>
+        <width>321</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_make_offer_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>650</y>
         <width>221</width>
         <height>21</height>
        </rect>
@@ -1810,79 +1659,11 @@
        <string>Make Offer</string>
       </property>
      </widget>
-     <widget class="QLabel" name="mortgage_information_label">
+     <widget class="QLabel" name="fiplr2_address_label">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>480</y>
-        <width>241</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Mortgage Request Information</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="offer_interest_label">
-      <property name="geometry">
-       <rect>
-        <x>260</x>
-        <y>690</y>
-        <width>141</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Interest (%)</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="mortgage_type_label">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>580</y>
-        <width>281</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Mortgage Type</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="offer_interest_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>260</x>
-        <y>720</y>
-        <width>81</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="property_value_label">
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>580</y>
+        <y>250</y>
         <width>370</width>
         <height>20</height>
        </rect>
@@ -1894,24 +1675,34 @@
        </font>
       </property>
       <property name="text">
-       <string>Property Value</string>
+       <string>Address</string>
       </property>
      </widget>
-     <widget class="QListView" name="documents_listview">
-      <property name="geometry">
-       <rect>
-        <x>430</x>
-        <y>220</y>
-        <width>281</width>
-        <height>231</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="loan_request_label">
+     <widget class="QLabel" name="fiplr2_title_label">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>130</y>
+        <y>60</y>
+        <width>361</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Pending Loan Requests</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_loan_request_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>120</y>
         <width>221</width>
         <height>21</height>
        </rect>
@@ -1927,12 +1718,25 @@
        <string>Loan Request</string>
       </property>
      </widget>
-     <widget class="QLabel" name="risk_label">
+     <widget class="QLineEdit" name="fiplr2_mortgage_type_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>330</y>
-        <width>121</width>
+        <x>60</x>
+        <y>600</y>
+        <width>151</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_firstname_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>180</y>
+        <width>90</width>
         <height>20</height>
        </rect>
       </property>
@@ -1943,18 +1747,228 @@
        </font>
       </property>
       <property name="text">
-       <string>Current Risk Rating</string>
+       <string>First Name</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_phonenumber_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>320</y>
+        <width>141</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Telephone Number</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_offer_interest_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>710</y>
+        <width>81</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_default_rate_label">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>680</y>
+        <width>141</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Default Rate</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_mortgage_information_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>470</y>
+        <width>241</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Mortgage Request Information</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_lastname_label">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>180</y>
+        <width>90</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Last Name</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="fiplr2_accept_pushbutton">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>750</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Accept</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_loan_duration_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>710</y>
+        <width>91</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_property_value_label">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>570</y>
+        <width>370</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Property Value</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fiplr2_mortgage_type_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>570</y>
+        <width>281</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Mortgage Type</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_default_rate_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>710</y>
+        <width>81</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_property_address_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>530</y>
+        <width>321</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fiplr2_firstname_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>210</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
       </property>
      </widget>
     </widget>
    </widget>
   </widget>
-  <widget class="QWidget" name="page_5">
-   <widget class="QLabel" name="sorting_rating_label">
+  <widget class="QWidget" name="open_market_page">
+   <widget class="QLineEdit" name="openmarket_duration2_lineedit">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>340</y>
+      <x>690</x>
+      <y>320</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>36</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="openmarket_search_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>110</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Type to search...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="openmarket_rating_label">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>350</y>
       <width>71</width>
       <height>16</height>
      </rect>
@@ -1969,24 +1983,24 @@
      <string>Rating</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_interest2_line">
+   <widget class="QPushButton" name="openmarket_search_pushbutton">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>260</y>
-      <width>41</width>
-      <height>20</height>
+      <x>750</x>
+      <y>110</y>
+      <width>75</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>100</string>
+     <string>Search</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="rating_checkbox_a">
+   <widget class="QCheckBox" name="openmarket_rating_checkbox_a">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>360</y>
+      <x>630</x>
+      <y>370</y>
       <width>70</width>
       <height>17</height>
      </rect>
@@ -1995,69 +2009,11 @@
      <string>A</string>
     </property>
    </widget>
-   <widget class="QLabel" name="interest_dash_label">
-    <property name="geometry">
-     <rect>
-      <x>700</x>
-      <y>260</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_duration2_line">
-    <property name="geometry">
-     <rect>
-      <x>710</x>
-      <y>310</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>36</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="sorting_interest_label">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>240</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Interest (%)</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="rating_checkbox_c">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>400</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>C</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="open_market_label">
+   <widget class="QLabel" name="openmarket_title_label">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>50</y>
+      <y>60</y>
       <width>311</width>
       <height>31</height>
      </rect>
@@ -2073,82 +2029,24 @@
      <string>Open Market</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_amount_label">
+   <widget class="QLabel" name="openmarket_interest_dash_label">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>160</y>
-      <width>121</width>
+      <x>680</x>
+      <y>270</y>
+      <width>16</width>
       <height>16</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
     <property name="text">
-     <string>Amount (€)</string>
+     <string>-</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_max_line">
+   <widget class="QLabel" name="openmarket_duration_label">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>180</y>
-      <width>113</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Max</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>480</y>
-      <width>111</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>View loan bids</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_min_line">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>210</y>
-      <width>113</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Min</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_interest1_line">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>260</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="sorting_duration_label">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>290</y>
+      <x>630</x>
+      <y>300</y>
       <width>141</width>
       <height>16</height>
      </rect>
@@ -2163,11 +2061,11 @@
      <string>Duration (month)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="invest_push_button">
+   <widget class="QPushButton" name="openmarket_invest_pushbutton">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>480</y>
+      <x>760</x>
+      <y>490</y>
       <width>61</width>
       <height>23</height>
      </rect>
@@ -2176,12 +2074,90 @@
      <string>Invest</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_open_market">
+   <widget class="QLabel" name="openmarket_duration_dash_label">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>320</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="openmarket_interest1_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>270</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="openmarket_interest_label">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>250</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Interest (%)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="openmarket_max_amount_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>190</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Max</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="openmarket_sorting_options_label">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>140</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Sorting Options</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="openmarket_open_market_table">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>100</y>
-      <width>571</width>
+      <y>110</y>
+      <width>541</width>
       <height>401</height>
      </rect>
     </property>
@@ -2354,50 +2330,43 @@
      </property>
     </column>
    </widget>
-   <widget class="QLineEdit" name="search_line">
+   <widget class="QLabel" name="openmarket_amount_label">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>100</y>
+      <x>630</x>
+      <y>170</y>
       <width>121</width>
-      <height>21</height>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Amount (€)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="openmarket_view_loan_bids_pushbutton">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>490</y>
+      <width>111</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
-     <string>Type to search...</string>
+     <string>View loan bids</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="search_push_button">
+   <widget class="QCheckBox" name="openmarket_rating_checkbox_b">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>100</y>
-      <width>75</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Search</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_duration1_line">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>310</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>12</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="rating_checkbox_b">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>380</y>
+      <x>630</x>
+      <y>390</y>
       <width>70</width>
       <height>17</height>
      </rect>
@@ -2406,11 +2375,78 @@
      <string>B</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_options_label">
+   <widget class="QCheckBox" name="openmarket_rating_checkbox_c">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>130</y>
+      <x>630</x>
+      <y>410</y>
+      <width>70</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>C</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="openmarket_interest2_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>270</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>100</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="openmarket_duration1_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>320</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>12</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="openmarket_min_amount_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>220</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Min</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="investors_portfolio">
+   <widget class="QLineEdit" name="ip_duration2_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>340</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>36</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ip_sorting_options_label">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>160</y>
       <width>161</width>
       <height>21</height>
      </rect>
@@ -2418,60 +2454,19 @@
     <property name="font">
      <font>
       <pointsize>12</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>Sorting Options</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sorting Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="duration_dash_label">
-    <property name="geometry">
-     <rect>
-      <x>700</x>
-      <y>310</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QWidget" name="page_6">
-   <widget class="QLineEdit" name="sorting_max_line_2">
+   <widget class="QLabel" name="ip_duration_label">
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>200</y>
-      <width>113</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Max</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_interest1_line_2">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>280</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="sorting_duration_label_2">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>310</y>
+      <y>320</y>
       <width>151</width>
       <height>16</height>
      </rect>
@@ -2486,11 +2481,24 @@
      <string>Duration (month)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="resell_push_button">
+   <widget class="QPushButton" name="ip_search_pushbutton">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>130</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Search</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ip_resell_pushbutton">
     <property name="geometry">
      <rect>
       <x>480</x>
-      <y>390</y>
+      <y>410</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -2499,42 +2507,272 @@
      <string>Resell</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="reject_push_button_2">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>910</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Reject</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_duration2_line_2">
+   <widget class="QLineEdit" name="ip_interest2_lineedit">
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>330</y>
+      <y>290</y>
       <width>41</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>36</string>
+     <string>100</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_ongoing_investments">
+   <widget class="QLabel" name="ip_duration_dash_label">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>340</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="ip_investing_opportunities_table">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>890</y>
+      <width>491</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>641</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>false</bool>
+    </property>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>110</number>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string/>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Property Address</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Amount Invested (€)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string> (%)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Duration (month)</string>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+    </column>
+   </widget>
+   <widget class="QLabel" name="ip_ongoing_investments_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>100</y>
+      <width>291</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overview ongoing investments&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ip_interest_dash_label">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>290</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ip_investors_portfolio_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>60</y>
+      <width>311</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Investor's Portfolio</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="ip_duration1_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>340</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>12</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="ip_ongoing_investments_table">
     <property name="geometry">
      <rect>
       <x>60</x>
       <y>130</y>
       <width>491</width>
-      <height>231</height>
+      <height>260</height>
      </rect>
     </property>
     <property name="maximumSize">
@@ -2702,24 +2940,40 @@
      </property>
     </column>
    </widget>
-   <widget class="QLineEdit" name="sorting_interest2_line_2">
+   <widget class="QLineEdit" name="ip_min_amount_lineedit">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>280</y>
-      <width>41</width>
+      <x>570</x>
+      <y>240</y>
+      <width>113</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>100</string>
+     <string>Min</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_amount_invested_label">
+   <widget class="QPushButton" name="ip_reject_pushbutton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>1060</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reject</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ip_amount_invested_label">
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>180</y>
+      <y>190</y>
       <width>171</width>
       <height>16</height>
      </rect>
@@ -2734,14 +2988,27 @@
      <string>Amount invested (€)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="investing_opportunities_label">
+   <widget class="QLineEdit" name="ip_max_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>210</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Max</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ip_investing_opportunities_label">
     <property name="enabled">
      <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>710</y>
+      <x>60</x>
+      <y>860</y>
       <width>221</width>
       <height>31</height>
      </rect>
@@ -2757,319 +3024,11 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Investing opportunities&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="duration_dash_label_2">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>330</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="accept_push_button_2">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>910</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Accept</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="sorting_duration1_line_2">
+   <widget class="QLabel" name="ip_interest_label">
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>330</y>
-      <width>41</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>12</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="search_line_2">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>120</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Type to search...</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="search_push_button_2">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>120</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Search</string>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="tableWidget_investing_opportunities">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>740</y>
-      <width>491</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>641</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="alternatingRowColors">
-     <bool>false</bool>
-    </property>
-    <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>110</number>
-    </attribute>
-    <attribute name="horizontalHeaderStretchLastSection">
-     <bool>true</bool>
-    </attribute>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string/>
-     </property>
-    </row>
-    <column>
-     <property name="text">
-      <string>Property Address</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Amount Invested (€)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string> (%)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Duration (month)</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </column>
-   </widget>
-   <widget class="QLabel" name="investors_portfolio_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>60</y>
-      <width>311</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Investor's Portfolio</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="interest_dash_label_2">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>280</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="ongoing_investments_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>100</y>
-      <width>291</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overview ongoing investments&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="sorting_options_label_2">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>150</y>
-      <width>161</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sorting Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="sorting_interest_label_2">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>260</y>
+      <y>270</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -3084,17 +3043,46 @@
      <string>Interest (%)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_min_line_2">
+   <widget class="QLineEdit" name="ip_interest1_lineedit">
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>230</y>
-      <width>113</width>
+      <y>290</y>
+      <width>41</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Min</string>
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ip_accept_pushbutton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>1060</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Accept</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="ip_search_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>130</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Type to search...</string>
     </property>
    </widget>
   </widget>

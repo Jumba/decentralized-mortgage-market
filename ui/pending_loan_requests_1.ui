@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="pending_loan_requests_label">
+   <widget class="QLabel" name="fiplr1_pending_loan_requests_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -34,7 +34,7 @@
      <string>Pending Loan Requests</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="loan_requests_table">
+   <widget class="QTableWidget" name="fiplr1_loan_requests_table">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -60,52 +60,52 @@
     </attribute>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <row>
      <property name="text">
-      <string> </string>
+      <string/>
      </property>
     </row>
     <column>
@@ -134,7 +134,7 @@
      </property>
     </column>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="fiplr1_pushbutton">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -155,7 +155,7 @@
      <x>0</x>
      <y>0</y>
      <width>661</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

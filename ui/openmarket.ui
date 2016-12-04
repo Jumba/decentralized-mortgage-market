@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="sorting_amount_label">
+   <widget class="QLabel" name="openmarket_amount_label">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -33,7 +33,7 @@
      <string>Amount (€)</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="rating_checkbox_c">
+   <widget class="QCheckBox" name="openmarket_rating_checkbox_c">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -46,7 +46,7 @@
      <string>C</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_max_line">
+   <widget class="QLineEdit" name="openmarket_max_amount_lineedit">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -59,7 +59,7 @@
      <string>Max</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_duration2_line">
+   <widget class="QLineEdit" name="openmarket_duration2_lineedit">
     <property name="geometry">
      <rect>
       <x>670</x>
@@ -72,7 +72,7 @@
      <string>36</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_options_label">
+   <widget class="QLabel" name="openmarket_sorting_options_label">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -92,7 +92,7 @@
      <string>Sorting Options</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="rating_checkbox_a">
+   <widget class="QCheckBox" name="openmarket_rating_checkbox_a">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -105,7 +105,7 @@
      <string>A</string>
     </property>
    </widget>
-   <widget class="QLabel" name="duration_dash_label">
+   <widget class="QLabel" name="openmarket_duration_dash_label">
     <property name="geometry">
      <rect>
       <x>660</x>
@@ -118,7 +118,7 @@
      <string>-</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_open_market">
+   <widget class="QTableWidget" name="openmarket_open_market_table">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -296,7 +296,7 @@
      </property>
     </column>
    </widget>
-   <widget class="QLabel" name="sorting_rating_label">
+   <widget class="QLabel" name="openmarket_rating_label">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -315,7 +315,7 @@
      <string>Rating</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_duration1_line">
+   <widget class="QLineEdit" name="openmarket_duration1_lineedit">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -328,7 +328,7 @@
      <string>12</string>
     </property>
    </widget>
-   <widget class="QLabel" name="open_market_label">
+   <widget class="QLabel" name="openmarket_title_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -348,7 +348,7 @@
      <string>Open Market</string>
     </property>
    </widget>
-   <widget class="QLabel" name="interest_dash_label">
+   <widget class="QLabel" name="openmarket_interest_dash_label">
     <property name="geometry">
      <rect>
       <x>660</x>
@@ -361,7 +361,7 @@
      <string>-</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_interest2_line">
+   <widget class="QLineEdit" name="openmarket_interest2_lineedit">
     <property name="geometry">
      <rect>
       <x>670</x>
@@ -374,7 +374,7 @@
      <string>100</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="rating_checkbox_b">
+   <widget class="QCheckBox" name="openmarket_rating_checkbox_b">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -387,7 +387,7 @@
      <string>B</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_interest1_line">
+   <widget class="QLineEdit" name="openmarket_interest1_lineedit">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -400,7 +400,7 @@
      <string>0</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="search_line">
+   <widget class="QLineEdit" name="openmarket_search_lineedit">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -413,7 +413,7 @@
      <string>Type to search...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="search_push_button">
+   <widget class="QPushButton" name="openmarket_search_pushbutton">
     <property name="geometry">
      <rect>
       <x>730</x>
@@ -426,7 +426,7 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_min_line">
+   <widget class="QLineEdit" name="openmarket_min_amount_lineedit">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -439,7 +439,7 @@
      <string>Min</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_interest_label">
+   <widget class="QLabel" name="openmarket_interest_label">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -458,7 +458,7 @@
      <string>Interest (%)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_duration_label">
+   <widget class="QLabel" name="openmarket_duration_label">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -477,7 +477,7 @@
      <string>Duration (month)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="invest_push_button">
+   <widget class="QPushButton" name="openmarket_invest_pushbutton">
     <property name="geometry">
      <rect>
       <x>740</x>
@@ -490,7 +490,7 @@
      <string>Invest</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="openmarket_view_loan_bids_pushbutton">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -510,7 +510,7 @@
      <x>0</x>
      <y>0</y>
      <width>825</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

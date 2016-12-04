@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="accept_push_button">
+   <widget class="QPushButton" name="ip_accept_pushbutton">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -27,7 +27,7 @@
      <string>Accept</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_ongoing_investments">
+   <widget class="QTableWidget" name="ip_ongoing_investments_table">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -191,7 +191,7 @@
      </property>
     </column>
    </widget>
-   <widget class="QPushButton" name="reject_push_button">
+   <widget class="QPushButton" name="ip_reject_pushbutton">
     <property name="geometry">
      <rect>
       <x>360</x>
@@ -204,7 +204,7 @@
      <string>Reject</string>
     </property>
    </widget>
-   <widget class="QLabel" name="ongoing_investments_label">
+   <widget class="QLabel" name="ip_ongoing_investments_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -224,7 +224,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overview ongoing investments&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="investors_portfolio_label">
+   <widget class="QLabel" name="ip_investors_portfolio_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -244,7 +244,7 @@
      <string>Investor's Portfolio</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_investing_opportunities">
+   <widget class="QTableWidget" name="ip_investing_opportunities_table">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -408,7 +408,7 @@
      </property>
     </column>
    </widget>
-   <widget class="QLabel" name="investing_opportunities_label">
+   <widget class="QLabel" name="ip_investing_opportunities_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -428,7 +428,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Investing opportunities&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_interest_label">
+   <widget class="QLabel" name="ip_interest_label">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -447,7 +447,7 @@
      <string>Interest (%)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_duration_label">
+   <widget class="QLabel" name="ip_duration_label">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -466,7 +466,7 @@
      <string>Duration (month)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_duration1_line">
+   <widget class="QLineEdit" name="ip_duration1_lineedit">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -479,7 +479,7 @@
      <string>12</string>
     </property>
    </widget>
-   <widget class="QLabel" name="duration_dash_label">
+   <widget class="QLabel" name="ip_duration_dash_label">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -492,7 +492,7 @@
      <string>-</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_min_line">
+   <widget class="QLineEdit" name="ip_min_amount_lineedit">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -505,7 +505,7 @@
      <string>Min</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="search_push_button">
+   <widget class="QPushButton" name="ip_search_pushbutton">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -518,7 +518,7 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_duration2_line">
+   <widget class="QLineEdit" name="ip_duration2_lineedit">
     <property name="geometry">
      <rect>
       <x>590</x>
@@ -531,7 +531,7 @@
      <string>36</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_interest2_line">
+   <widget class="QLineEdit" name="ip_interest2_lineedit">
     <property name="geometry">
      <rect>
       <x>590</x>
@@ -544,7 +544,7 @@
      <string>100</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_amount_invested_label">
+   <widget class="QLabel" name="ip_amount_invested_label">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -563,7 +563,7 @@
      <string>Amount invested (€)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="sorting_options_label">
+   <widget class="QLabel" name="ip_sorting_options_label">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -583,7 +583,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sorting Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="search_line">
+   <widget class="QLineEdit" name="ip_search_lineedit">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -596,7 +596,7 @@
      <string>Type to search...</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_interest1_line">
+   <widget class="QLineEdit" name="ip_interest1_lineedit">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -609,7 +609,7 @@
      <string>0</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="resell_push_button">
+   <widget class="QPushButton" name="ip_resell_pushbutton">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -622,7 +622,7 @@
      <string>Resell</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sorting_max_line">
+   <widget class="QLineEdit" name="ip_max_lineedit">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -635,7 +635,7 @@
      <string>Max</string>
     </property>
    </widget>
-   <widget class="QLabel" name="interest_dash_label">
+   <widget class="QLabel" name="ip_interest_dash_label">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -655,7 +655,7 @@
      <x>0</x>
      <y>0</y>
      <width>735</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

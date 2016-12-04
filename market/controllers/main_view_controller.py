@@ -1,32 +1,27 @@
-import sys
 import os
+import sys
+
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-import run_gui, profile_controller
-from market.views import main_screen
-from market.api.api import MarketAPI
+from market.views import main_view
 from marketGUI.market_app import MarketApplication
 
 
-class MainController(QStackedWidget, main_screen.Ui_StackedWidget):
+class MainWindowController(QStackedWidget, main_view.Ui_StackedWidget):
     def __init__(self, parent=None, app=None):
-        super(MainController, self).__init__(parent)
-        self.setupUi(self)
+        super(MainWindowController, self).__init__(parent)
         self.app = app
-        self.loginButton.clicked.connect(self.switchbitch)
-       # self.profile_controller = profile_controller.ProfileController()
-
-    def switchbitch(self):
-        self.setCurrentIndex(1)
-
+        self.setupUi(self)
+        self.setCurrentIndex(0)
 
 
 def main():
     app = MarketApplication(sys.argv)
-    form = MainController(app=app)
-    form.show()
+    mainwindow = MainWindowController(app=app)
+    mainwindow.show()
     app.exec_()
+
 
 if __name__ == '__main__':
     main()

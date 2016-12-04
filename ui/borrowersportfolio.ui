@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="borrowers_portfolio_label">
+   <widget class="QLabel" name="bp_title_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -34,7 +34,7 @@
      <string>Borrower's Portfolio</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_open_offeres">
+   <widget class="QTableWidget" name="bp_open_offers_table">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -215,7 +215,7 @@
      </property>
     </column>
    </widget>
-   <widget class="QPushButton" name="reject_push_button">
+   <widget class="QPushButton" name="bp_reject_pushbutton">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -228,7 +228,7 @@
      <string>Reject</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="accept_push_button">
+   <widget class="QPushButton" name="bp_accept_pushbutton">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -241,7 +241,7 @@
      <string>Accept</string>
     </property>
    </widget>
-   <widget class="QLabel" name="open_offers_label">
+   <widget class="QLabel" name="bp_open_offers_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -261,7 +261,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Open offers&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="ongoing_loans_label">
+   <widget class="QLabel" name="bp_ongoing_loans_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -281,7 +281,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overview ongoing loans&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_ongoing_loans">
+   <widget class="QTableWidget" name="bp_ongoing_loans_table">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -469,7 +469,7 @@
      <x>0</x>
      <y>0</y>
      <width>680</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

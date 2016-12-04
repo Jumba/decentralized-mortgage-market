@@ -25,7 +25,7 @@
     </property>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QLabel" name="place_loan_request_label">
+      <widget class="QLabel" name="bplr_title_label">
        <property name="font">
         <font>
          <pointsize>20</pointsize>
@@ -39,13 +39,13 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="housenumber_lineedit"/>
+      <widget class="QLineEdit" name="bplr_housenumber_lineedit"/>
      </item>
      <item row="5" column="0">
-      <widget class="QLineEdit" name="house_price_lineedit"/>
+      <widget class="QLineEdit" name="bplr_house_price_lineedit"/>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="postcode_label">
+      <widget class="QLabel" name="bplr_postcode_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -57,23 +57,23 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="postcode_lineedit"/>
+      <widget class="QLineEdit" name="bplr_postcode_lineedit"/>
      </item>
      <item row="8" column="0">
-      <widget class="QLineEdit" name="seller_phone_number_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit"/>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="house_link_lineedit"/>
+      <widget class="QLineEdit" name="bplr_house_link_lineedit"/>
      </item>
      <item row="18" column="1">
-      <widget class="QPushButton" name="submit_loan_request_button">
+      <widget class="QPushButton" name="bplr_submit_button">
        <property name="text">
         <string>Submit Loan Request</string>
        </property>
       </widget>
      </item>
      <item row="9" column="0">
-      <widget class="QLabel" name="mortgage_information_label">
+      <widget class="QLabel" name="bplr_mortgage_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -87,10 +87,10 @@
       </widget>
      </item>
      <item row="11" column="0">
-      <widget class="QLineEdit" name="amount_wanted_lineedit"/>
+      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit"/>
      </item>
      <item row="2" column="1">
-      <widget class="QLabel" name="housenumber_label">
+      <widget class="QLabel" name="bplr_housenumber_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -102,7 +102,7 @@
       </widget>
      </item>
      <item row="10" column="1">
-      <widget class="QLabel" name="mortgage_type_label">
+      <widget class="QLabel" name="bplr_mortgage_type_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -114,7 +114,7 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="house_price_label">
+      <widget class="QLabel" name="bplr_house_price_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -126,21 +126,21 @@
       </widget>
      </item>
      <item row="12" column="0">
-      <widget class="QLabel" name="preferred_banks_label">
+      <widget class="QLabel" name="bplr_preferred_banks_label">
        <property name="text">
         <string>Preferred Banks</string>
        </property>
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="QLabel" name="seller_phone_number_label">
+      <widget class="QLabel" name="bplr_seller_phone_number_label">
        <property name="text">
         <string>Phone Number</string>
        </property>
       </widget>
      </item>
      <item row="10" column="0">
-      <widget class="QLabel" name="aount_wanted_label">
+      <widget class="QLabel" name="bplr_amount_wanted_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -154,14 +154,14 @@
      <item row="11" column="1">
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QRadioButton" name="mortgage_linear_radiobutton">
+        <widget class="QRadioButton" name="bplr_linear_radiobutton">
          <property name="text">
           <string>Linear</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QRadioButton" name="mortgage_fixedrate_radiobutton">
+        <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
          <property name="text">
           <string>Fixed-Rate</string>
          </property>
@@ -170,7 +170,7 @@
       </layout>
      </item>
      <item row="4" column="1">
-      <widget class="QLabel" name="house_link_label">
+      <widget class="QLabel" name="bplr_house_link_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -182,7 +182,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="property_information_label">
+      <widget class="QLabel" name="bplr_property_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -196,10 +196,10 @@
       </widget>
      </item>
      <item row="17" column="0" colspan="2">
-      <widget class="QTextEdit" name="description_textedit"/>
+      <widget class="QTextEdit" name="bplr_description_textedit"/>
      </item>
      <item row="16" column="0" colspan="2">
-      <widget class="QLabel" name="description_label">
+      <widget class="QLabel" name="bplr_description_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -213,7 +213,7 @@
       </widget>
      </item>
      <item row="15" column="0">
-      <widget class="QLabel" name="personal_information_label">
+      <widget class="QLabel" name="bplr_personal_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -229,28 +229,28 @@
      <item row="14" column="0">
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="1">
-        <widget class="QCheckBox" name="bank2_checkbox">
+        <widget class="QCheckBox" name="bplr_bank2_checkbox">
          <property name="text">
           <string>Bank 2</string>
          </property>
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QCheckBox" name="bank1_checkbox">
+        <widget class="QCheckBox" name="bplr_bank1_checkbox">
          <property name="text">
           <string>Bank 1</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="bank3_checkbox">
+        <widget class="QCheckBox" name="bplr_bank3_checkbox">
          <property name="text">
           <string>Bank 3</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QCheckBox" name="bank4_checkbox">
+        <widget class="QCheckBox" name="bplr_bank4_checkbox">
          <property name="text">
           <string>Bank 4</string>
          </property>
@@ -262,7 +262,7 @@
       <layout class="QGridLayout" name="gridLayout_5"/>
      </item>
      <item row="6" column="0">
-      <widget class="QLabel" name="property_seller_information_label">
+      <widget class="QLabel" name="bplr_property_seller_information_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -276,14 +276,14 @@
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QLabel" name="seller_email_label">
+      <widget class="QLabel" name="bplr_seller_email_label">
        <property name="text">
         <string>Email address [optional]</string>
        </property>
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QLineEdit" name="seller_email_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_email_lineedit"/>
      </item>
     </layout>
    </widget>
@@ -294,7 +294,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
