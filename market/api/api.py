@@ -165,17 +165,17 @@ class MarketAPI(object):
         """
         return self.db.get('role', user.role_id)
 
+    # TODO Add the created loan request to the bank's pending loan request list
     def create_loan_request(self, user, payload):
         """ Create a new loan request """
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
-        try:
-            role = Role(user.id, payload['role'])
-            user.role_id = self.db.post(role.type, role)
+        role = self.db.get('role', user.role_id)
 
-            loan_request = None
-            if role.role_name == 'BORROWER':
+        loan_request = None
+        if role.role_name == 'BORROWER':
+            if user.loan_request_id is None:
                 house = House(payload['postal_code'], payload['house_number'], payload['price'])
                 house_id = str(self.db.post('house', house))
                 payload['house_id'] = house_id
@@ -183,14 +183,13 @@ class MarketAPI(object):
                 loan_request = LoanRequest(user.id, house_id, payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
             else:
                 return False
-
-            user.loan_request_id = self.db.post('loan_request', loan_request)
-            self.db.put('users', user.id, user)
-
-            return loan_request
-        except KeyError as e:
-            print "KeyError: " + str(e)
+        else:
             return False
+
+        user.loan_request_id = self.db.post('loan_request', loan_request)
+        self.db.put('users', user.id, user)
+
+        return loan_request
 
     # TODO: write test for this function after the accept_offer has been implemented
     def load_borrowers_loans(self, user):
@@ -326,9 +325,24 @@ class MarketAPI(object):
         """ reject an offer """
         pass
 
-    def load_all_loan_request(self):
+    def load_all_loan_requests(self, user):
         """ load all pending loan requests for a specific bank """
-        pass
+        assert isinstance(user, User)
+
+        role = self.db.get('role', user.role_id)
+        assert isinstance(role, Role)
+
+        if role.role_name == 'FINANCIAL_INSTITUTION':
+            pending_loan_requests = []
+
+            # Only show loan requests that are still pending
+            for pending_loan_request_id in user.pending_loan_request_ids:
+                if self.db.get('loan_request', pending_loan_request_id).status[user.id] == STATUS[1]:
+                    pending_loan_requests.append(pending_loan_request_id)
+
+            return pending_loan_requests
+        else:
+            return False
 
     def load_single_loan_request(self, payload):
         """ load a specific loan request """
