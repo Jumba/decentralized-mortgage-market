@@ -213,7 +213,7 @@ class MarketAPI(object):
                 mortgage = self.db.get('mortgage', mortgage_id)
                 # Add the accepted mortgage in the loans list
                 loans.append(mortgage)
-                campaign = self.db.get('campaign', user.campaign_id)
+                campaign = self.db.get('campaign', user.campaign_ids[0])
                 for investor_id in mortgage.investors:
                     investor = self.db.get('users', investor_id)
                     for investment_id in investor.investment_ids:
@@ -284,7 +284,7 @@ class MarketAPI(object):
                                     # Update the investor
                                     self.db.put('users', investor.id, investor)
                                     # Update the campaign
-                                    campaign = self.db.get('campaign', user.campaign_id)
+                                    campaign = self.db.get('campaign', user.campaign_ids[0])
                                     new_amount = campaign.amount - investment_offer.amount
                                     campaign.amount = new_amount
                                     if new_amount == 0:
@@ -317,9 +317,8 @@ class MarketAPI(object):
                         # Add the newly created campaign to the database
                         end_date = time.strftime("%d/%m/%Y") + timedelta(days=30)
                         campaign = Campaign(mortgage.id, loan_request.amount_wanted, end_date, "accepted")
-                        # TODO: change campaign_id to campaign_ids for banks or do they not need it (also for loan_request_id)?
-                        user.campaign_id = campaign.id
-                        current_bank.campaign_id = campaign.id
+                        user.campaign_ids.append(campaign.id)
+                        current_bank.campaign_ids.append(campaign.id)
                         self.db.post('campaign', campaign)
                         # Update the borrower
                         self.db.put('users', user.id, user)
