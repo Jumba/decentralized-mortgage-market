@@ -140,9 +140,9 @@ class MarketAPI(object):
         current_investments = []
         pending_investments = []
         for investment_id in user.investment_ids:
-            if self.db.get('investment', investment_id).status == "accepted":
+            if self.db.get('investment', investment_id).status == "ACCEPTED":
                 current_investments.append(self.db.get('investment', investment_id))
-            elif self.db.get('investment', investment_id).status == "pending":
+            elif self.db.get('investment', investment_id).status == "PENDING":
                 pending_investments.append(self.db.get('investment', investment_id))
             else:
                 pass
@@ -209,7 +209,7 @@ class MarketAPI(object):
         """
         loans = []
         for mortgage_id in user.mortgage_ids:
-            if self.db.get('mortgage', mortgage_id).status == "accepted":
+            if self.db.get('mortgage', mortgage_id).status == "ACCEPTED":
                 mortgage = self.db.get('mortgage', mortgage_id)
                 # Add the accepted mortgage in the loans list
                 loans.append(mortgage)
@@ -230,24 +230,24 @@ class MarketAPI(object):
     def load_borrowers_offers(self, user):
         """
         Get all the borrower's offers(mortgage offers or loan offers) from the database.
-        :param user:
-        :return:
+        :param user: User-object, in this case the user has the role of a borrower
+        :return: list of offers, containing either mortgage offers or investment offers
         """
         offers = []
         for mortgage_id in user.mortgage_ids:
             # If the mortgage is already accepted, we get the loan offers from the investors
-            if self.db.get('mortgage', mortgage_id).status == "accepted":
+            if self.db.get('mortgage', mortgage_id).status == "ACCEPTED":
                 mortgage = self.db.get('mortgage', mortgage_id)
                 for investor_id in mortgage.investors:
                     investor = self.db.get('users', investor_id)
                     for investment_id in investor.investment_ids:
-                        if self.db.get('investment', investment_id).status == "pending":
+                        if self.db.get('investment', investment_id).status == "PENDING":
                             investment_offer = self.db.get('investment', investment_id)
                             offers.append(investment_offer)
 
                 return offers
             # If the mortgage has not yet been accepted, get the mortgage offers from the banks
-            elif self.db.get('mortgage', mortgage_id).status == "pending":
+            elif self.db.get('mortgage', mortgage_id).status == "PENDING":
                 mortgage = self.db.get('mortgage', mortgage_id)
                 offers.append(mortgage)
 
@@ -270,7 +270,7 @@ class MarketAPI(object):
             if bank['status'] == "ACCEPTED":
                 for mortgage in user.mortgage_ids:
                     # Only when the mortgage has been accepted, can the borrower accept investment offers
-                    if mortgage.status == "accepted":
+                    if mortgage.status == "ACCEPTED":
                         current_mortgage = self.db.get('mortgage', mortgage.id)
                         for investment in user.investment_ids:
                             investment_offer = self.db.get('investment', investment.id)
@@ -279,7 +279,7 @@ class MarketAPI(object):
                                     and investment_offer.status == "pending" and investment_offer.amount == payload['amount'] \
                                     and investment_offer.duration == payload['duration'] and investment_offer.interest_rate == payload['interest_rate']:
                                     # Update the investment
-                                    investment_offer.status = "accepted"
+                                    investment_offer.status = "ACCEPTED"
                                     self.db.put('investment', investment_offer.id, investment_offer)
                                     # Update the investor
                                     self.db.put('users', investor.id, investor)
@@ -305,7 +305,7 @@ class MarketAPI(object):
                         and mortgage.risk == payload['risk'] and mortgage.investors == payload['investors'] and mortgage.status == payload['status']:
                         current_bank = self.db.get('users', payload['bank'])
                         # Update the mortgage
-                        mortgage.status = "accepted"
+                        mortgage.status = "ACCEPTED"
                         self.db.put('mortgage', mortgage.id, mortgage)
                         bank['status'] = "ACCEPTED"
                         # Set the status of other mortgage offers to 'REJECTED'
@@ -368,7 +368,7 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         # Accept the loan request
-        accepted_loan_request = self.db.get('loan_request', payload['loan_request_id'])
+        accepted_loan_request = self.db.get('loan_request', payload['request_id'])
         assert isinstance(accepted_loan_request, LoanRequest)
         accepted_loan_request.status[user.id] = STATUS[2]
 
@@ -398,7 +398,7 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         # Reject the loan request
-        rejected_loan_request = self.db.get('loan_request', payload['loan_request_id'])
+        rejected_loan_request = self.db.get('loan_request', payload['request_id'])
         assert isinstance(rejected_loan_request, LoanRequest)
         rejected_loan_request.status[user.id] = STATUS[3]
 
