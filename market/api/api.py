@@ -169,9 +169,9 @@ class MarketAPI(object):
         role = self.db.get('role', user.role_id)
 
         # Only create a loan request if the user is a borrower
-        loan_request = None
+        loan_request = []
         if role.role_name == 'BORROWER':
-            if user.loan_request_id is None:
+            if not user.loan_request_ids:
                 # Create the house
                 house = House(payload['postal_code'], payload['house_number'], payload['price'])
                 house_id = str(self.db.post('house', house))
@@ -181,23 +181,24 @@ class MarketAPI(object):
                 payload['status'] = payload['status'].fromkeys(payload['banks'], STATUS[1])
 
                 loan_request = LoanRequest(user.id, house_id, payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
+
+                # Add the loan request to the borrower
+                user.loan_request_ids.append(self.db.post('loan_request', loan_request))
+                self.db.put('users', user.id, user)
+
+                # Add the loan request to the banks' pending loan request list
+                for bank_id in payload['banks']:
+                    bank = self.db.get('users', bank_id)
+                    assert isinstance(bank, User)
+                    bank.loan_request_ids.append(user.loan_request_ids[0])
+                    self.db.put('users', bank.id, bank)
+
+                return loan_request
+
             else:
                 return False
         else:
             return False
-
-        # Add the loan request to the borrower
-        user.loan_request_id = self.db.post('loan_request', loan_request)
-        self.db.put('users', user.id, user)
-
-        # Add the loan request to the banks' pending loan request list
-        for bank_id in payload['banks']:
-            bank = self.db.get('users', bank_id)
-            assert isinstance(bank, User)
-            bank.pending_loan_request_ids.append(user.loan_request_id)
-            self.db.put('users', bank.id, bank)
-
-        return loan_request
 
     # TODO: write test for this function after the accept_offer has been implemented
     def load_borrowers_loans(self, user):
@@ -328,8 +329,9 @@ class MarketAPI(object):
 
         return False
 
-    def reject_offer(self):
+    def reject_offer(self, user, payload):
         """ reject an offer """
+        # TODO offer can be mortgage or investment
         pass
 
     def load_all_loan_requests(self, user):
@@ -343,7 +345,7 @@ class MarketAPI(object):
             pending_loan_requests = []
 
             # Only show loan requests that are still pending
-            for pending_loan_request_id in user.pending_loan_request_ids:
+            for pending_loan_request_id in user.loan_request_ids:
                 if self.db.get('loan_request', pending_loan_request_id).status[user.id] == STATUS[1]:
                     pending_loan_requests.append(pending_loan_request_id)
 
@@ -374,7 +376,6 @@ class MarketAPI(object):
         mortgage = Mortgage(str(accepted_loan_request.id), payload['house_id'], user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
         borrower = self.db.get('users', payload['user_key'])
         assert isinstance(borrower, User)
-        loan_request_id = borrower.loan_request_id
 
         # Add mortgage to borrower
         mortgage_id = self.db.post('mortgage', mortgage)
@@ -386,7 +387,7 @@ class MarketAPI(object):
         self.db.put('users', user.id, user)
 
         # Save the accepted loan request
-        if self.db.put('loan_request', loan_request_id, accepted_loan_request):
+        if self.db.put('loan_request', accepted_loan_request.id, accepted_loan_request):
             return accepted_loan_request, mortgage
         else:
             return None
@@ -404,7 +405,7 @@ class MarketAPI(object):
         # Save rejected loan request
         borrower = self.db.get('users', payload['user_key'])
         assert isinstance(borrower, User)
-        loan_request_id = borrower.loan_request_id
+        loan_request_id = borrower.loan_request_ids[0]
 
         # Check if the loan request has been rejected by all selected banks
         rejected = True
@@ -414,7 +415,7 @@ class MarketAPI(object):
 
         # If all banks have rejected the loan request, remove the loan request from borrower
         if rejected:
-            borrower.loan_request_id = None
+            del borrower.loan_request_ids[:]
             self.db.put(borrower.type, borrower.id, borrower)
 
         # Save the rejected loan request
