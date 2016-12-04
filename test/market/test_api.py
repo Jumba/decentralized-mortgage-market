@@ -475,15 +475,15 @@ class APITestSuite(unittest.TestCase):
         # Check if the LoanRequest object is returned
         self.assertIsInstance(loan_request_1, LoanRequest)
         # Check if the loan request id is saved in the user's loan_request_id
-        self.assertEqual(user.loan_request_id, loan_request_1.id)
+        self.assertEqual(user.loan_request_ids, [loan_request_1.id])
         # Check if the status is set to pending
         for bank in loan_request_1.status:
             self.assertEqual(loan_request_1.status[bank], 'PENDING')
         # Check if the loan request has been added to the banks' lists
         updated_bank1 = self.api.db.get('users', bank1.id)
         updated_bank2 = self.api.db.get('users', bank2.id)
-        self.assertIn(loan_request_1.id, updated_bank1.pending_loan_request_ids)
-        self.assertIn(loan_request_1.id, updated_bank2.pending_loan_request_ids)
+        self.assertIn(loan_request_1.id, updated_bank1.loan_request_ids)
+        self.assertIn(loan_request_1.id, updated_bank2.loan_request_ids)
 
         # Create another loan request; should not be possible
         self.payload['user_key'] = user.id  # set user_key to the borrower's public key
@@ -504,7 +504,7 @@ class APITestSuite(unittest.TestCase):
         # Check if the LoanRequest object is returned
         self.assertFalse(loan_request)
         # Check if the loan_request_id is empty
-        self.assertEquals(user.loan_request_id, None)
+        self.assertEquals(user.loan_request_ids, [])
         # Check if the status is not set to pending
         for bank in self.payload_loan_request['status']:
             self.assertEquals(self.payload_loan_request['status'][bank], 'none')
@@ -523,7 +523,7 @@ class APITestSuite(unittest.TestCase):
         # Check if the LoanRequest object is returned
         self.assertFalse(loan_request)
         # Check if the loan_request_id is empty
-        self.assertEquals(user.loan_request_id, None)
+        self.assertEquals(user.loan_request_ids, [])
         # Check if the status is not set to pending
         for bank in self.payload_loan_request['status']:
             self.assertEquals(self.payload_loan_request['status'][bank], 'none')
@@ -639,7 +639,7 @@ class APITestSuite(unittest.TestCase):
         loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
         self.assertIsInstance(loan_request, LoanRequest)
         # Check if the loan request has been added to the borrower
-        self.assertNotEqual(borrower.loan_request_id, None)
+        self.assertNotEqual(borrower.loan_request_ids, [])
 
         self.payload_loan_request['loan_request_id'] = loan_request.id
 
@@ -648,11 +648,12 @@ class APITestSuite(unittest.TestCase):
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request1.status[bank1.id], 'REJECTED')
         # Check if the loan request hasn't been removed from borrower
-        self.assertNotEqual(borrower.loan_request_id, None)
+        self.assertTrue(borrower.loan_request_ids)
 
         rejected_loan_request2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request2.status[bank2.id], 'REJECTED')
         # Check if the loan request has been removed from borrower
         updated_borrower = self.api.db.get('users', borrower.id)
-        self.assertEqual(updated_borrower.loan_request_id, None)
+        #self.assertEqual(updated_borrower.loan_request_id, None)
+        self.assertFalse(updated_borrower.loan_request_ids)

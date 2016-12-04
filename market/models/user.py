@@ -4,16 +4,15 @@ from market.models import DatabaseModel
 class User(DatabaseModel):
     _type = 'users'
 
-    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, campaign_id=None, mortgage_ids=None, investment_ids=None, pending_loan_request_ids=None):
+    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_ids=None, campaign_id=None, mortgage_ids=None, investment_ids=None):
         self._public_key = public_key
         self._time_added = time_added
         self._role_id = role_id
         self._profile_id = profile_id
-        self._loan_request_id = loan_request_id
+        self._loan_request_ids = loan_request_ids or []
         self._campaign_id = campaign_id
         self._mortgage_ids = mortgage_ids or []
         self._investment_ids = investment_ids or []
-        self._pending_loan_request_ids = pending_loan_request_ids or []
 
     @property
     def user_key(self):
@@ -28,8 +27,8 @@ class User(DatabaseModel):
         return self._profile_id
 
     @property
-    def loan_request_id(self):
-        return self._loan_request_id
+    def loan_request_ids(self):
+        return self._loan_request_ids
 
     @property
     def mortgage_ids(self):
@@ -58,10 +57,10 @@ class User(DatabaseModel):
     def role_id(self, value):
         self._role_id = value
 
-    @loan_request_id.setter
-    def loan_request_id(self, value):
-        self._loan_request_id = value
+#    @loan_request_id.setter
+#    def loan_request_id(self, value):
+#        self._loan_request_id = value
 
-    @property
-    def pending_loan_request_ids(self):
-        return self._pending_loan_request_ids
+#    @property
+#    def pending_loan_request_ids(self):
+#        return self._pending_loan_request_ids
