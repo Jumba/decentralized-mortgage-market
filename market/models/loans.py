@@ -76,6 +76,14 @@ class Mortgage(DatabaseModel):
         self._status = status
 
     @property
+    def request_id(self):
+        return self._request_id
+
+    @property
+    def house_id(self):
+        return self._house_id
+
+    @property
     def amount(self):
         return self._amount
 
@@ -88,12 +96,20 @@ class Mortgage(DatabaseModel):
         return self._interest_rate
 
     @property
+    def max_invest_rate(self):
+        return self._max_invest_rate
+
+    @property
     def default_rate(self):
         return self._default_rate
 
     @property
     def duration(self):
         return self._duration
+
+    @property
+    def risk(self):
+        return self._risk
 
     @property
     def status(self):
@@ -122,6 +138,10 @@ class Investment(DatabaseModel):
         self._status = status
 
     @property
+    def user_key(self):
+        return self._user_key
+
+    @property
     def status(self):
         return self._status
 
@@ -137,14 +157,36 @@ class Investment(DatabaseModel):
     def interest_rate(self):
         return self._interest_rate
 
+    @property
+    def mortgage_id(self):
+        return self._mortgage_id
+
 class Campaign(DatabaseModel):
     _type = 'campaign'
 
-    def __init__(self, mortgage_id, end_date, completed):
+    def __init__(self, mortgage_id, amount, end_date, completed):
         assert isinstance(mortgage_id, str)
+        assert isinstance(amount, int)
         assert isinstance(end_date, str)
         assert isinstance(completed, bool)
 
         self._mortgage_id = mortgage_id
+        self._amount = amount
         self._end_date = end_date
         self._completed = completed
+
+    @property
+    def mortgage_id(self):
+        return self._mortgage_id
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @property
+    def end_date(self):
+        return self._end_date
+
+    @property
+    def completed(self):
+        return self._completed
