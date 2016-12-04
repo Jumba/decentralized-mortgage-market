@@ -14,7 +14,7 @@
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>1</number>
+   <number>4</number>
   </property>
   <widget class="QWidget" name="login_page">
    <widget class="QLabel" name="login_title">
@@ -1333,7 +1333,7 @@
       <x>60</x>
       <y>120</y>
       <width>571</width>
-      <height>211</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="maximumSize">
@@ -1341,6 +1341,24 @@
       <width>571</width>
       <height>16777215</height>
      </size>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="dragEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <property name="showGrid">
+     <bool>false</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
     </property>
     <attribute name="horizontalHeaderDefaultSectionSize">
      <number>138</number>
@@ -1457,8 +1475,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>871</width>
-      <height>655</height>
+      <width>855</width>
+      <height>850</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -1469,8 +1487,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>869</width>
-       <height>653</height>
+       <width>853</width>
+       <height>848</height>
       </rect>
      </property>
      <widget class="QLineEdit" name="fiplr2_email_lineedit">
