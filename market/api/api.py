@@ -155,7 +155,8 @@ class MarketAPI(object):
         return current_investments, pending_investments
 
     def load_open_market(self):
-        """ get the 'to be displayed on the open market' data  """
+        """ get all open campaigns  """
+
         pass
 
     def check_role(self, user):
@@ -174,21 +175,34 @@ class MarketAPI(object):
 
         role = self.db.get('role', user.role_id)
 
+        # Only create a loan request if the user is a borrower
         loan_request = None
         if role.role_name == 'BORROWER':
             if user.loan_request_id is None:
+                # Create the house
                 house = House(payload['postal_code'], payload['house_number'], payload['price'])
                 house_id = str(self.db.post('house', house))
                 payload['house_id'] = house_id
+
+                # Set status of the loan request to pending
                 payload['status'] = payload['status'].fromkeys(payload['banks'], STATUS[1])
+
                 loan_request = LoanRequest(user.id, house_id, payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
             else:
                 return False
         else:
             return False
 
+        # Add the loan request to the borrower
         user.loan_request_id = self.db.post('loan_request', loan_request)
         self.db.put('users', user.id, user)
+
+        # Add the loan request to the banks' pending loan request list TODO
+        for bank_id in payload['banks']:
+            bank = self.db.get('users', bank_id)
+            assert isinstance(bank, User)
+            bank.pending_loan_request_ids.append(user.loan_request_id)
+            self.db.put('users', bank.id, bank)
 
         return loan_request
 
@@ -313,25 +327,24 @@ class MarketAPI(object):
 
     def reject_loan_request(self, user, payload):
         """ reject a pending loan request """
-        # TODO Make this work
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
-        # Create the rejected loan request
-        payload['status'][user.id] = STATUS[3]
-
-        rejected_loan_request = LoanRequest(payload['user_key'], payload['house_id'], payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
+        # Reject the loan request
+        rejected_loan_request = self.db.get('loan_request', payload['loan_request_id'])
         assert isinstance(rejected_loan_request, LoanRequest)
+        rejected_loan_request.status[user.id] = STATUS[3]
 
-        # Check if the loan request has been rejected by all selected banks
-        rejected = True
-        for bank in payload['status']:
-            if payload['status'][bank] != STATUS[3]:
-                rejected = False
-
+        # Save rejected loan request
         borrower = self.db.get('users', payload['user_key'])
         assert isinstance(borrower, User)
         loan_request_id = borrower.loan_request_id
+
+        # Check if the loan request has been rejected by all selected banks
+        rejected = True
+        for bank in rejected_loan_request.status:
+            if rejected_loan_request.status[bank] != STATUS[3]:
+                rejected = False
 
         # If all banks have rejected the loan request, remove the loan request from borrower
         if rejected:

@@ -44,6 +44,10 @@ class LoanRequest(DatabaseModel):
     def status(self):
         return self._status
 
+    @status.setter
+    def status(self, value):
+        self._status = value
+
 
 class Mortgage(DatabaseModel):
     _type = 'mortgage'

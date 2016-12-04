@@ -65,8 +65,3 @@ class User(DatabaseModel):
     @property
     def pending_loan_request_ids(self):
         return self._pending_loan_request_ids
-
-    @pending_loan_request_ids.setter
-    def initialize_pending_loan_request_ids(self):
-        if self._pending_loan_request_ids is None:
-            self.pending_loan_request_ids = []
