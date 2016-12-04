@@ -4,13 +4,13 @@ from market.models import DatabaseModel
 class User(DatabaseModel):
     _type = 'users'
 
-    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, campaign_id=None, mortgage_ids=None, investment_ids=None, pending_loan_request_ids=None):
+    def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_id=None, campaign_ids=None, mortgage_ids=None, investment_ids=None, pending_loan_request_ids=None):
         self._public_key = public_key
         self._time_added = time_added
         self._role_id = role_id
         self._profile_id = profile_id
         self._loan_request_id = loan_request_id
-        self._campaign_id = campaign_id
+        self._campaign_ids = campaign_ids or []
         self._mortgage_ids = mortgage_ids or []
         self._investment_ids = investment_ids or []
         self._pending_loan_request_ids = pending_loan_request_ids or []
@@ -44,8 +44,8 @@ class User(DatabaseModel):
         return self._role_id
 
     @property
-    def campaign_id(self):
-        return self._campaign_id
+    def campaign_ids(self):
+        return self._campaign_ids
 
     def generate_id(self):
         return self.user_key
