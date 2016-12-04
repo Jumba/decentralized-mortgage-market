@@ -25,6 +25,10 @@ class DatabaseTestSuite(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.database.delete(None, None)
 
+    def test_get_all(self):
+        with self.assertRaises(NotImplementedError):
+            self.database.get_all(None)
+
 
 class DatabaseTestSuite(unittest.TestCase):
     def setUp(self):
@@ -99,6 +103,20 @@ class DatabaseTestSuite(unittest.TestCase):
     def test_delete(self):
         with self.assertRaises(NotImplementedError):
             self.database.delete(self.model1)
+
+    def test_get_all(self):
+        self.database.post(self.model1.type, self.model1)
+        self.database.post(self.model2.type, self.model2)
+
+        # Get the same object
+        all_tests = self.database.get_all(self.model1.type)
+        self.assertIsInstance(all_tests, list)
+        print all_tests
+        self.assertIn(self.model1, self.database.get_all(self.model1.type))
+        self.assertIn(self.model2, self.database.get_all(self.model2.type))
+
+        # Get a noneexisting model
+        self.assertIsNone(self.database.get_all('hi'))
 
 
 class DatabasePersistentTestSuite(unittest.TestCase):

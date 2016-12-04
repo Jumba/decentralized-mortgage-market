@@ -17,6 +17,9 @@ class Database(object):
     def delete(self, type, id):
         raise NotImplementedError
 
+    def get_all(self, type):
+        raise NotImplementedError
+
 
 class MockDatabase(Database):
     def __init__(self, backend):
@@ -57,6 +60,15 @@ class MockDatabase(Database):
     def delete(self, obj):
         assert isinstance(obj, DatabaseModel)
         raise NotImplementedError
+
+    def get_all(self, type):
+        try:
+            all = []
+            for key, value in self.backend.get_all(type).iteritems():
+                all.append(DatabaseModel.decode(self._backend.get(type, key)))
+            return all
+        except KeyError:
+            return None
 
     @property
     def backend(self):
