@@ -113,24 +113,19 @@ class MarketAPI(object):
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
-        try:
-            role = Role(user.id, payload['role'])
-            user.role_id = self.db.post(role.type, role)
+        role = self.db.get('role', user.role_id)
 
-            loan_offer = None
-            if role.role_name == 'INVESTOR':
-                loan_offer = Investment(payload['user_key'], payload['amount'], payload['duration'], payload['interest_rate'],
-                                        payload['mortgage_id'], payload['status'])
-            else:
-                return False
-
-            user.investment_ids.append(self.db.post('investment', loan_offer))
-
-            self.db.put(user.type, user.id, user)
-            return loan_offer
-        except KeyError as e:
-            print "KeyError: " + str(e)
+        loan_offer = None
+        if role.role_name == 'INVESTOR':
+            loan_offer = Investment(payload['user_key'], payload['amount'], payload['duration'], payload['interest_rate'],
+                                    payload['mortgage_id'], payload['status'])
+        else:
             return False
+
+        user.investment_ids.append(self.db.post('investment', loan_offer))
+
+        self.db.put(user.type, user.id, user)
+        return loan_offer
 
     def resell_investment(self):
         """ post the data needed to resell the investment """
