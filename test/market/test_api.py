@@ -45,10 +45,10 @@ class APITestSuite(unittest.TestCase):
                                       'amount_wanted': 200000, 'status': {'bank1': 'accepted', 'bank2': 'accepted'}}
         self.payload_loan_request2 = {'role': 1, 'house_id': '83yyd-fe54-fr3-esf', 'mortgage_type': 1, 'banks': [], 'description': unicode('Ho ho ho merry christmas'),
                                       'amount_wanted': 250000, 'status': {'bank1': 'pending', 'bank2': 'pending'}}
-        self.payload_loan_request = {'role': 0, 'user_key': 'rfghiw98594pio3rjfkhs',
-                                     'house_id': '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'banks': [],
+        self.payload_loan_request = {'house_id': '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'banks': [],
                                      'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
                                      'status': {'bank1': 'none', 'bank2': 'none', 'bank3': 'none', 'bank4': 'none'}, 'postal_code' : '1111AA', 'house_number' : '11', 'price' : 123456}
+        self.payload_mortgage = {'amount' : 123000, 'interest_rate' : 5.5, 'max_invest_rate' : 7.0, 'default_rate' : 9.0, 'duration' : 30, 'risk' : 'hi', 'investors' : []}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -484,8 +484,8 @@ class APITestSuite(unittest.TestCase):
         # Check if the loan request id is saved in the user's loan_request_id
         self.assertEqual(user.loan_request_id, loan_request_1.id)
         # Check if the status is set to pending
-        for bank in self.payload_loan_request['status']:
-            self.assertEqual(self.payload_loan_request['status'][bank], 'PENDING')
+        for bank in loan_request_1.status:
+            self.assertEqual(loan_request_1.status[bank], 'PENDING')
         # Check if the loan request has been added to the banks' lists TODO fix
         #self.assertIn(loan_request_1.id, bank1.pending_loan_request_ids)
         #self.assertIn(loan_request_1.id, bank2.pending_loan_request_ids)
@@ -601,6 +601,40 @@ class APITestSuite(unittest.TestCase):
         self.assertIsInstance(loaded_loan_request, LoanRequest)
         self.assertEqual(loan_request.id, loaded_loan_request.id)
 
+    def test_accept_loan_request(self):
+        # Create a borrower
+        borrower, pub0, priv0 = self.api.create_user()
+        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        borrower.role_id = role_id
+        self.api.db.put('users', borrower.id, borrower)
+
+        # Create a bank
+        bank, pub1, priv1 = self.api.create_user()
+
+        # Create loan request
+        self.payload_loan_request['user_key'] = borrower.id  # set user_key to the borrower's public key
+        self.payload_loan_request['banks'] = [bank.id, bank.id]
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
+        self.assertIsInstance(loan_request, LoanRequest)
+
+        # Set payload
+        self.payload_mortgage['user_key'] = borrower.id
+        self.payload_mortgage['loan_request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        # Accept the loan request
+        accepted_loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage)
+
+        # Check if the status has changed to accepted
+        self.assertEqual(accepted_loan_request.status[bank.id], 'ACCEPTED')
+        # Check if the mortgage has been added to the borrower
+        updated_borrower = self.api.db.get('users', borrower.id)
+        self.assertIn(mortgage.id, updated_borrower.mortgage_ids)
+        # Check if the mortgage has been added to the bank
+        updated_bank = self.api.db.get('users', bank.id)
+        self.assertIn(mortgage.id, updated_bank.mortgage_ids)
+
     def test_reject_loan_request(self):
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
@@ -622,6 +656,7 @@ class APITestSuite(unittest.TestCase):
 
         self.payload_loan_request['loan_request_id'] = loan_request.id
 
+        # Reject the loan request
         rejected_loan_request1 = self.api.reject_loan_request(bank1, self.payload_loan_request)
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request1.status[bank1.id], 'REJECTED')

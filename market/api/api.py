@@ -373,15 +373,13 @@ class MarketAPI(object):
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
-        # Create the accepted loan request
-        payload['status'][user.id] = STATUS[2]
-
-        accepted_loan_request = LoanRequest(payload['user_key'], payload['house_id'], payload['mortgage_type'],
-                                            payload['banks'], payload['description'], payload['amount_wanted'],
-                                            payload['status'])
+        # Accept the loan request
+        accepted_loan_request = self.db.get('loan_request', payload['loan_request_id'])
         assert isinstance(accepted_loan_request, LoanRequest)
+        accepted_loan_request.status[user.id] = STATUS[2]
 
-        mortgage = Mortgage(accepted_loan_request.id, payload['house_id'], user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
+        # Create a mortgage
+        mortgage = Mortgage(str(accepted_loan_request.id), payload['house_id'], user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
         borrower = self.db.get('users', payload['user_key'])
         assert isinstance(borrower, User)
         loan_request_id = borrower.loan_request_id
@@ -390,6 +388,10 @@ class MarketAPI(object):
         mortgage_id = self.db.post('mortgage', mortgage)
         borrower.mortgage_ids.append(mortgage_id)
         self.db.put(borrower.type, borrower.id, borrower)
+
+        # Add mortgage to bank
+        user.mortgage_ids.append(mortgage_id)
+        self.db.put('users', user.id, user)
 
         # Save the accepted loan request
         if self.db.put('loan_request', loan_request_id, accepted_loan_request):
