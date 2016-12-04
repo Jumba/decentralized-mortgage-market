@@ -14,6 +14,26 @@ class MainWindowController(QStackedWidget, main_view.Ui_StackedWidget):
         self.app = app
         self.setupUi(self)
         self.setCurrentIndex(0)
+        self.setNavigaiton()
+        # self.
+        # for i in range(1, 9):
+
+    def setNavigaiton(self):
+        self.next_1.clicked.connect(self.switchScreens)
+        self.next_2.clicked.connect(self.switchScreens)
+        self.next_3.clicked.connect(self.switchScreens)
+        self.next_4.clicked.connect(self.switchScreens)
+        self.next_5.clicked.connect(self.switchScreens)
+        self.next_6.clicked.connect(self.switchScreens)
+        self.next_7.clicked.connect(self.switchScreens)
+        self.next_8.clicked.connect(self.switchScreens)
+
+    def switchScreens(self):
+        # print 'next'
+        current = self.currentIndex()
+        print current
+        self.setCurrentIndex((current + 1) % 8)
+
 
 
 def main():
