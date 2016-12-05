@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>StackedWidget</class>
  <widget class="QStackedWidget" name="StackedWidget">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +17,7 @@
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>4</number>
+   <number>5</number>
   </property>
   <widget class="QWidget" name="login_page">
    <widget class="QLabel" name="login_title">
@@ -539,10 +542,18 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="bplr_housenumber_lineedit"/>
+      <widget class="QLineEdit" name="bplr_housenumber_lineedit">
+       <property name="text">
+        <string>123</string>
+       </property>
+      </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLineEdit" name="bplr_house_price_lineedit"/>
+      <widget class="QLineEdit" name="bplr_house_price_lineedit">
+       <property name="text">
+        <string>120.000</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="bplr_postcode_label">
@@ -557,10 +568,18 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="bplr_postcode_lineedit"/>
+      <widget class="QLineEdit" name="bplr_postcode_lineedit">
+       <property name="text">
+        <string>2625 BN</string>
+       </property>
+      </widget>
      </item>
      <item row="8" column="0">
-      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit">
+       <property name="text">
+        <string>0612345678</string>
+       </property>
+      </widget>
      </item>
      <item row="5" column="1">
       <widget class="QLineEdit" name="bplr_house_link_lineedit"/>
@@ -587,7 +606,11 @@
       </widget>
      </item>
      <item row="11" column="0">
-      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit"/>
+      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
+       <property name="text">
+        <string>80.000</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
       <widget class="QLabel" name="bplr_housenumber_label">
@@ -783,7 +806,11 @@
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QLineEdit" name="bplr_seller_email_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_email_lineedit">
+       <property name="text">
+        <string>bob@gmail.com</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -1311,10 +1338,10 @@
      <string>Pending Loan Requests</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="fiplr1_pushbutton">
+   <widget class="QPushButton" name="fiplr1_view_loan_request_pushbutton">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>510</x>
       <y>360</y>
       <width>121</width>
       <height>27</height>
@@ -1441,6 +1468,26 @@
       <string>House Price</string>
      </property>
     </column>
+    <item row="0" column="0">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+    <item row="0" column="1">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+    <item row="0" column="2">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+    <item row="0" column="3">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
    </widget>
    <widget class="QToolButton" name="prev_5">
     <property name="geometry">
@@ -1479,6 +1526,15 @@
       <height>850</height>
      </rect>
     </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOn</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+    </property>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
@@ -1487,7 +1543,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>853</width>
+       <width>841</width>
        <height>848</height>
       </rect>
      </property>
@@ -3350,7 +3406,7 @@
   <tabstop>bp_reject_pushbutton</tabstop>
   <tabstop>bp_accept_pushbutton</tabstop>
   <tabstop>bp_ongoing_loans_table</tabstop>
-  <tabstop>fiplr1_pushbutton</tabstop>
+  <tabstop>fiplr1_view_loan_request_pushbutton</tabstop>
   <tabstop>fiplr1_loan_requests_table</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>fiplr2_email_lineedit</tabstop>
