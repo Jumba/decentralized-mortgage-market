@@ -195,12 +195,10 @@ class MarketAPI(object):
 
                 return loan_request
 
-    def accept_offer(self, user, investment):
-        """ accept an offer """
-        assert isinstance(user, User)
-        assert isinstance(investment, Investment)
-
-        role = self.check_role(user)
+            else:
+                return False
+        else:
+            return False
 
     # TODO: write test for this function after the accept_offer has been implemented
     def load_borrowers_loans(self, user):
