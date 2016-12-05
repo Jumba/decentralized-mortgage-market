@@ -154,10 +154,11 @@ class MarketAPI(object):
         campaigns = self.db.get_all('campaign')
         mortgages = []
 
-        # If campaign is not completed or end time has not passed yet, get mortgage info
-        for campaign in campaigns:
-            if campaign.end_date > time.strftime("%d/%m/%Y") and not campaign.status:
-                mortgages.append(self.db.get('mortgage', campaign.mortgage_id))
+        if campaigns:
+            # If campaign is not completed or end time has not passed yet, get mortgage info
+            for campaign in campaigns:
+                if campaign.end_date > time.strftime("%d/%m/%Y") and not campaign.status:
+                    mortgages.append(self.db.get('mortgage', campaign.mortgage_id))
 
         return mortgages
 

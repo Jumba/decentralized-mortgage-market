@@ -448,7 +448,8 @@ class APITestSuite(unittest.TestCase):
 
     def test_load_open_market(self):
         # TODO
-        pass
+        open_market = self.api.load_open_market()
+        self.assertFalse(open_market)
 
     def test_create_loan_request_borrower(self):
         # Create a borrower
@@ -553,7 +554,7 @@ class APITestSuite(unittest.TestCase):
 
         # Accept one loan request TODO Check this
         #self.payload_mortgage['user_key'] = borrower3.id
-        #self.payload_mortgage['loan_request_id'] = loan_request_3.id
+        #self.payload_mortgage['request_id'] = loan_request_3.id
         #self.api.accept_loan_request(bank, self.payload_mortgage)
 
         # Check if the loan requests are (not) in the list
