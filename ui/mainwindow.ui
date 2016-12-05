@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>StackedWidget</class>
  <widget class="QStackedWidget" name="StackedWidget">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +17,7 @@
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>7</number>
+   <number>5</number>
   </property>
   <widget class="QWidget" name="login_page">
    <widget class="QLabel" name="login_title">
@@ -140,6 +143,32 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="prev_1">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="next_1">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
     </property>
    </widget>
   </widget>
@@ -460,6 +489,32 @@
      <string>Save Changes</string>
     </property>
    </widget>
+   <widget class="QToolButton" name="next_2">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="prev_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="place_loan_request">
    <widget class="QWidget" name="gridLayoutWidget">
@@ -487,10 +542,18 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="bplr_housenumber_lineedit"/>
+      <widget class="QLineEdit" name="bplr_housenumber_lineedit">
+       <property name="text">
+        <string>123</string>
+       </property>
+      </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLineEdit" name="bplr_house_price_lineedit"/>
+      <widget class="QLineEdit" name="bplr_house_price_lineedit">
+       <property name="text">
+        <string>120.000</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="bplr_postcode_label">
@@ -505,10 +568,18 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLineEdit" name="bplr_postcode_lineedit"/>
+      <widget class="QLineEdit" name="bplr_postcode_lineedit">
+       <property name="text">
+        <string>2625 BN</string>
+       </property>
+      </widget>
      </item>
      <item row="8" column="0">
-      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit">
+       <property name="text">
+        <string>0612345678</string>
+       </property>
+      </widget>
      </item>
      <item row="5" column="1">
       <widget class="QLineEdit" name="bplr_house_link_lineedit"/>
@@ -535,7 +606,11 @@
       </widget>
      </item>
      <item row="11" column="0">
-      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit"/>
+      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
+       <property name="text">
+        <string>80.000</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
       <widget class="QLabel" name="bplr_housenumber_label">
@@ -731,9 +806,39 @@
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QLineEdit" name="bplr_seller_email_lineedit"/>
+      <widget class="QLineEdit" name="bplr_seller_email_lineedit">
+       <property name="text">
+        <string>bob@gmail.com</string>
+       </property>
+      </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QToolButton" name="prev_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="next_3">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
    </widget>
   </widget>
   <widget class="QWidget" name="borrowers_portfolio">
@@ -1185,6 +1290,32 @@
      </property>
     </column>
    </widget>
+   <widget class="QToolButton" name="prev_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="next_4">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QWidget" name="pending_loan_request_page1">
    <widget class="QLabel" name="fiplr1_pending_loan_requests_label">
@@ -1207,10 +1338,10 @@
      <string>Pending Loan Requests</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="fiplr1_pushbutton">
+   <widget class="QPushButton" name="fiplr1_view_loan_request_pushbutton">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>510</x>
       <y>360</y>
       <width>121</width>
       <height>27</height>
@@ -1229,7 +1360,7 @@
       <x>60</x>
       <y>120</y>
       <width>571</width>
-      <height>211</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="maximumSize">
@@ -1237,6 +1368,24 @@
       <width>571</width>
       <height>16777215</height>
      </size>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="dragEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <property name="showGrid">
+     <bool>false</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
     </property>
     <attribute name="horizontalHeaderDefaultSectionSize">
      <number>138</number>
@@ -1319,6 +1468,52 @@
       <string>House Price</string>
      </property>
     </column>
+    <item row="0" column="0">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+    <item row="0" column="1">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+    <item row="0" column="2">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+    <item row="0" column="3">
+     <property name="text">
+      <string>  </string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QToolButton" name="prev_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="next_5">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
    </widget>
   </widget>
   <widget class="QWidget" name="pending_loan_request_page2">
@@ -1328,8 +1523,17 @@
       <x>0</x>
       <y>0</y>
       <width>855</width>
-      <height>655</height>
+      <height>850</height>
      </rect>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOn</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
@@ -1339,8 +1543,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>853</width>
-       <height>653</height>
+       <width>841</width>
+       <height>848</height>
       </rect>
      </property>
      <widget class="QLineEdit" name="fiplr2_email_lineedit">
@@ -1934,6 +2138,32 @@
        </rect>
       </property>
      </widget>
+     <widget class="QToolButton" name="prev_6">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>22</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="next_6">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>10</y>
+        <width>22</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&gt;</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -2425,6 +2655,32 @@
     </property>
     <property name="text">
      <string>Min</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="prev_7">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="next_7">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
     </property>
    </widget>
   </widget>
@@ -3085,8 +3341,119 @@
      <string>Type to search...</string>
     </property>
    </widget>
+   <widget class="QToolButton" name="prev_8">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="next_8">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+   </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>ip_ongoing_investments_table</tabstop>
+  <tabstop>ip_search_lineedit</tabstop>
+  <tabstop>ip_search_pushbutton</tabstop>
+  <tabstop>ip_max_lineedit</tabstop>
+  <tabstop>ip_min_amount_lineedit</tabstop>
+  <tabstop>ip_interest1_lineedit</tabstop>
+  <tabstop>ip_interest2_lineedit</tabstop>
+  <tabstop>ip_duration1_lineedit</tabstop>
+  <tabstop>ip_duration2_lineedit</tabstop>
+  <tabstop>ip_resell_pushbutton</tabstop>
+  <tabstop>profile_housenumber_lineedit</tabstop>
+  <tabstop>profile_email_lineedit</tabstop>
+  <tabstop>profile_lastname_lineedit</tabstop>
+  <tabstop>profile_investor_radiobutton</tabstop>
+  <tabstop>profile_documents_table</tabstop>
+  <tabstop>profile_firstname_lineedit</tabstop>
+  <tabstop>profile_save_button</tabstop>
+  <tabstop>bplr_housenumber_lineedit</tabstop>
+  <tabstop>bplr_house_price_lineedit</tabstop>
+  <tabstop>bplr_postcode_lineedit</tabstop>
+  <tabstop>bplr_seller_phone_number_lineedit</tabstop>
+  <tabstop>bplr_house_link_lineedit</tabstop>
+  <tabstop>bplr_submit_button</tabstop>
+  <tabstop>bplr_amount_wanted_lineedit</tabstop>
+  <tabstop>bplr_linear_radiobutton</tabstop>
+  <tabstop>bplr_fixedrate_radiobutton</tabstop>
+  <tabstop>bplr_description_textedit</tabstop>
+  <tabstop>bplr_bank2_checkbox</tabstop>
+  <tabstop>bplr_bank1_checkbox</tabstop>
+  <tabstop>bplr_bank3_checkbox</tabstop>
+  <tabstop>bplr_bank4_checkbox</tabstop>
+  <tabstop>bplr_seller_email_lineedit</tabstop>
+  <tabstop>bp_open_offers_table</tabstop>
+  <tabstop>bp_reject_pushbutton</tabstop>
+  <tabstop>bp_accept_pushbutton</tabstop>
+  <tabstop>bp_ongoing_loans_table</tabstop>
+  <tabstop>fiplr1_view_loan_request_pushbutton</tabstop>
+  <tabstop>fiplr1_loan_requests_table</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>fiplr2_email_lineedit</tabstop>
+  <tabstop>fiplr2_reject_pushbutton</tabstop>
+  <tabstop>fiplr2_lastname_lineedit</tabstop>
+  <tabstop>fiplr2_phonenumber_lineedit</tabstop>
+  <tabstop>fiplr2_documents_listview</tabstop>
+  <tabstop>fiplr2_property_value_lineedit</tabstop>
+  <tabstop>fiplr2_loan_amount_lineedit</tabstop>
+  <tabstop>fiplr2_offer_amount_lineedit</tabstop>
+  <tabstop>fiplr2_risk_lineedit</tabstop>
+  <tabstop>fiplr2_address_lineedit</tabstop>
+  <tabstop>fiplr2_mortgage_type_lineedit</tabstop>
+  <tabstop>fiplr2_offer_interest_lineedit</tabstop>
+  <tabstop>fiplr2_accept_pushbutton</tabstop>
+  <tabstop>fiplr2_loan_duration_lineedit</tabstop>
+  <tabstop>fiplr2_default_rate_lineedit</tabstop>
+  <tabstop>fiplr2_property_address_lineedit</tabstop>
+  <tabstop>fiplr2_firstname_lineedit</tabstop>
+  <tabstop>openmarket_duration2_lineedit</tabstop>
+  <tabstop>openmarket_search_lineedit</tabstop>
+  <tabstop>openmarket_search_pushbutton</tabstop>
+  <tabstop>openmarket_rating_checkbox_a</tabstop>
+  <tabstop>openmarket_invest_pushbutton</tabstop>
+  <tabstop>openmarket_interest1_lineedit</tabstop>
+  <tabstop>openmarket_max_amount_lineedit</tabstop>
+  <tabstop>openmarket_open_market_table</tabstop>
+  <tabstop>openmarket_view_loan_bids_pushbutton</tabstop>
+  <tabstop>openmarket_rating_checkbox_b</tabstop>
+  <tabstop>openmarket_rating_checkbox_c</tabstop>
+  <tabstop>openmarket_interest2_lineedit</tabstop>
+  <tabstop>openmarket_duration1_lineedit</tabstop>
+  <tabstop>openmarket_min_amount_lineedit</tabstop>
+  <tabstop>profile_postcode_lineedit</tabstop>
+  <tabstop>login_generate_button</tabstop>
+  <tabstop>profile_borrower_radiobutton</tabstop>
+  <tabstop>profile_phonenumber_lineedit</tabstop>
+  <tabstop>ip_investing_opportunities_table</tabstop>
+  <tabstop>profile_address_lineedit</tabstop>
+  <tabstop>login_browse_button</tabstop>
+  <tabstop>login_push_button</tabstop>
+  <tabstop>ip_reject_pushbutton</tabstop>
+  <tabstop>login_private_key_line</tabstop>
+  <tabstop>profile_iban_lineedit</tabstop>
+  <tabstop>ip_accept_pushbutton</tabstop>
+  <tabstop>login_remember_me_checkbox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
