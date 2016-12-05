@@ -643,7 +643,8 @@ class APITestSuite(unittest.TestCase):
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request1.status[bank1.id], 'REJECTED')
         # Check if the loan request hasn't been removed from borrower
-        self.assertTrue(borrower.loan_request_ids)
+        updated_borrower = self.api.db.get('users', borrower.id)
+        self.assertTrue(updated_borrower.loan_request_ids)
 
         rejected_loan_request2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
         # Check if the status has changed to rejected
