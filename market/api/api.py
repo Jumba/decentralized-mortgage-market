@@ -213,9 +213,12 @@ class MarketAPI(object):
         """ display all of the borrower's current offers """
         pass
 
-    def accept_offer(self):
+    def accept_offer(self, user, investment):
         """ accept an offer """
-        pass
+        assert isinstance(user, User)
+        assert isinstance(investment, Investment)
+
+        role = self.check_role(user)
 
     def reject_offer(self):
         """ reject an offer """

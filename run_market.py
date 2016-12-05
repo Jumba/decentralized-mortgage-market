@@ -9,5 +9,4 @@ if __name__ == "__main__":
     app = MarketApplication(sys.argv)
 
     window = MarketWindow()
-    window.setWindowTitle("Market")
     sys.exit(app.exec_())

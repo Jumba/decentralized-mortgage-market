@@ -10,63 +10,78 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QWidget
 
+# -*- coding: utf-8 -*-
 
-class LoginPage(QWidget):
-    def __init__(self):
-        QWidget.__init__(self)
+# Form implementation generated from reading ui file '/tmp/loginT12451.ui'
+#
+# Created by: PyQt5 UI code generator 5.4.2
+#
+# WARNING! All changes made in this file will be lost!
 
-    def initialize(self, Form=None):
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class LoginWidget(QWidget):
+
+    def __init__(self, parent=None):
+        super(LoginWidget, self).__init__(parent)
+
+    def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(650, 273)
-        self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(0, 0, 651, 51))
+
+        self.titleLabel = QtWidgets.QLabel(Form)
+        self.titleLabel.setGeometry(QtCore.QRect(0, 0, 651, 51))
         font = QtGui.QFont()
         font.setPointSize(24)
-        self.label.setFont(font)
-        self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(Form)
-        self.label_2.setGeometry(QtCore.QRect(30, 50, 101, 16))
+        self.titleLabel.setFont(font)
+        self.titleLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.titleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.titleLabel.setObjectName("titleLabel")
+        self.keyFieldLabel = QtWidgets.QLabel(Form)
+        self.keyFieldLabel.setGeometry(QtCore.QRect(30, 50, 101, 16))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.lineEdit = QtWidgets.QLineEdit(Form)
-        self.lineEdit.setGeometry(QtCore.QRect(30, 70, 481, 23))
-        self.lineEdit.setObjectName("lineEdit")
-        self.toolButton = QtWidgets.QToolButton(Form)
-        self.toolButton.setGeometry(QtCore.QRect(530, 70, 71, 22))
-        self.toolButton.setObjectName("toolButton")
-        self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setGeometry(QtCore.QRect(430, 100, 80, 23))
-        self.pushButton.setObjectName("pushButton")
-        self.checkBox = QtWidgets.QCheckBox(Form)
-        self.checkBox.setGeometry(QtCore.QRect(304, 100, 111, 21))
-        self.checkBox.setObjectName("checkBox")
-        self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setGeometry(QtCore.QRect(30, 140, 651, 51))
+        self.keyFieldLabel.setFont(font)
+        self.keyFieldLabel.setObjectName("keyFieldLabel")
+        self.keyField = QtWidgets.QLineEdit(Form)
+        self.keyField.setGeometry(QtCore.QRect(30, 70, 481, 23))
+        self.keyField.setObjectName("keyField")
+        self.browseButton = QtWidgets.QToolButton(Form)
+        self.browseButton.setGeometry(QtCore.QRect(530, 70, 71, 22))
+        self.browseButton.setObjectName("browseButton")
+        self.loginButton = QtWidgets.QPushButton(Form)
+        self.loginButton.setGeometry(QtCore.QRect(430, 100, 80, 23))
+        self.loginButton.setObjectName("loginButton")
+        self.rememberMeCheckBox = QtWidgets.QCheckBox(Form)
+        self.rememberMeCheckBox.setEnabled(True)
+        self.rememberMeCheckBox.setGeometry(QtCore.QRect(304, 100, 111, 21))
+        self.rememberMeCheckBox.setAutoFillBackground(False)
+        self.rememberMeCheckBox.setChecked(True)
+        self.rememberMeCheckBox.setTristate(False)
+        self.rememberMeCheckBox.setObjectName("rememberMeCheckBox")
+        self.generateLabel = QtWidgets.QLabel(Form)
+        self.generateLabel.setGeometry(QtCore.QRect(30, 140, 651, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.label_3.setFont(font)
-        self.label_3.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.label_3.setObjectName("label_3")
-        self.pushButton_2 = QtWidgets.QPushButton(Form)
-        self.pushButton_2.setGeometry(QtCore.QRect(30, 180, 80, 23))
-        self.pushButton_2.setObjectName("pushButton_2")
+        self.generateLabel.setFont(font)
+        self.generateLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.generateLabel.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.generateLabel.setObjectName("generateLabel")
+        self.generateButton = QtWidgets.QPushButton(Form)
+        self.generateButton.setGeometry(QtCore.QRect(30, 180, 80, 23))
+        self.generateButton.setObjectName("generateButton")
 
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+        self.retranslateUi()
 
-    def retranslateUi(self, Form):
+#        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
-        self.label.setText(_translate("Form", "Login"))
-        self.label_2.setText(_translate("Form", "Private key"))
-        self.toolButton.setText(_translate("Form", "Browse"))
-        self.pushButton.setText(_translate("Form", "Login"))
-        self.checkBox.setText(_translate("Form", "Remember Me"))
-        self.label_3.setText(_translate("Form", "Don\'t have a private key?"))
-        self.pushButton_2.setText(_translate("Form", "Generate "))
+        self.titleLabel.setText(_translate("Form", "Login"))
+        self.keyFieldLabel.setText(_translate("Form", "Private key"))
+        self.browseButton.setToolTip(_translate("Form", "<html><head/><body><p><br/></p></body></html>"))
+        self.browseButton.setText(_translate("Form", "Browse"))
+        self.loginButton.setText(_translate("Form", "Login"))
+        self.rememberMeCheckBox.setText(_translate("Form", "Remember Me"))
+        self.generateLabel.setText(_translate("Form", "Don\'t have a private key?"))
+        self.generateButton.setText(_translate("Form", "Generate "))
 
