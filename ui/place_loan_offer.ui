@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_12">
+   <widget class="QLabel" name="place_loan_offer_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -34,7 +34,7 @@
      <string>Place Loan Offer</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
+   <widget class="QLabel" name="offered_amount_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -44,10 +44,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Loan Amount Offered</string>
+     <string>Loan Amount Offered (€)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_6">
+   <widget class="QLineEdit" name="offered_amount_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -57,7 +57,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_14">
+   <widget class="QLabel" name="interest_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -67,10 +67,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Interest Wanted</string>
+     <string>Interest Wanted (%)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_8">
+   <widget class="QLineEdit" name="interest_min_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -80,7 +80,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_9">
+   <widget class="QLineEdit" name="interest_max_lineedit">
     <property name="geometry">
      <rect>
       <x>80</x>
@@ -90,7 +90,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_16">
+   <widget class="QLabel" name="duration_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -100,10 +100,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Loan Duration</string>
+     <string>Loan Duration (months)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_10">
+   <widget class="QLineEdit" name="duration_lineedit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -113,33 +113,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_17">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>186</y>
-      <width>57</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>months</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>126</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>%  -             %</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="submit_offer_button">
     <property name="geometry">
      <rect>
       <x>324</x>
@@ -150,6 +124,19 @@
     </property>
     <property name="text">
      <string>Submit Loan Offer</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="interest_dash_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>130</y>
+      <width>57</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string> -</string>
     </property>
    </widget>
   </widget>

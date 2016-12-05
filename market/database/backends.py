@@ -25,6 +25,9 @@ class Backend(object):
     def clear(self):
         raise NotImplementedError
 
+    def get_all(self, type):
+        raise NotImplementedError
+
 
 class MemoryBackend(Backend):
     _data = {}
@@ -66,6 +69,12 @@ class MemoryBackend(Backend):
     def clear(self):
         self._data = {}
         self._id = {}
+
+    def get_all(self, type):
+        try:
+            return self._data[type]
+        except:
+            raise KeyError
 
 
 class PersistentBackend(Database, Backend):

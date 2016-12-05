@@ -7,17 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>737</width>
-    <height>577</height>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="sorting_amount_invested_label">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>140</y>
       <width>161</width>
       <height>16</height>
@@ -33,10 +33,10 @@
      <string>Amount invested (€)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="sorting_max_line">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>160</y>
       <width>113</width>
       <height>20</height>
@@ -46,10 +46,10 @@
      <string>Max</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_7">
+   <widget class="QLineEdit" name="duration_interest2_line">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>560</x>
       <y>290</y>
       <width>41</width>
       <height>20</height>
@@ -59,30 +59,30 @@
      <string>36</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="sorting_options_label">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>110</y>
-      <width>141</width>
-      <height>16</height>
+      <x>500</x>
+      <y>100</y>
+      <width>151</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>Sorting Options</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sorting Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="duration_dash_label">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>550</x>
       <y>290</y>
       <width>16</width>
       <height>16</height>
@@ -92,11 +92,11 @@
      <string>-</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget">
+   <widget class="QTableWidget" name="tableWidget_banks_portfolio">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>80</y>
+      <x>20</x>
+      <y>70</y>
       <width>471</width>
       <height>411</height>
      </rect>
@@ -218,7 +218,7 @@
     </column>
     <column>
      <property name="text">
-      <string>Amount Invested</string>
+      <string>Amount Invested (€)</string>
      </property>
      <property name="font">
       <font>
@@ -229,7 +229,7 @@
     </column>
     <column>
      <property name="text">
-      <string>Interest</string>
+      <string>Interest (%)</string>
      </property>
      <property name="font">
       <font>
@@ -240,7 +240,7 @@
     </column>
     <column>
      <property name="text">
-      <string>Duration</string>
+      <string>Duration (month)</string>
      </property>
      <property name="font">
       <font>
@@ -250,10 +250,10 @@
      </property>
     </column>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_6">
+   <widget class="QLineEdit" name="duration_interest1_line">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>290</y>
       <width>41</width>
       <height>20</height>
@@ -263,11 +263,11 @@
      <string>12</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="banks_portfolio_label">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>30</y>
+      <x>20</x>
+      <y>20</y>
       <width>311</width>
       <height>31</height>
      </rect>
@@ -283,10 +283,10 @@
      <string>Bank's Portfolio</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="interest_dash_label">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>550</x>
       <y>240</y>
       <width>16</width>
       <height>16</height>
@@ -296,10 +296,10 @@
      <string>-</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_5">
+   <widget class="QLineEdit" name="sorting_interest2_line">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>560</x>
       <y>240</y>
       <width>41</width>
       <height>20</height>
@@ -309,10 +309,10 @@
      <string>100</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_4">
+   <widget class="QLineEdit" name="sorting_interest1_line">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>240</y>
       <width>41</width>
       <height>20</height>
@@ -322,11 +322,11 @@
      <string>0</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="search_line">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>80</y>
+      <x>500</x>
+      <y>70</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -335,11 +335,11 @@
      <string>Type to search...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="search_push_button">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>80</y>
+      <x>600</x>
+      <y>70</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -348,10 +348,10 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_3">
+   <widget class="QLineEdit" name="sorting_min_line">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>190</y>
       <width>113</width>
       <height>20</height>
@@ -361,10 +361,10 @@
      <string>Min</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="sorting_interest_label">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>220</y>
       <width>81</width>
       <height>16</height>
@@ -380,10 +380,10 @@
      <string>Interest (%)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="sorting_duration_label">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>500</x>
       <y>270</y>
       <width>141</width>
       <height>16</height>
@@ -399,17 +399,17 @@
      <string>Duration (month)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="see_pending_requests_push_button">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>470</y>
-      <width>75</width>
-      <height>23</height>
+      <x>500</x>
+      <y>460</y>
+      <width>171</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
-     <string>Resell</string>
+     <string>See pending loan requests</string>
     </property>
    </widget>
   </widget>
@@ -419,7 +419,7 @@
      <x>0</x>
      <y>0</y>
      <width>737</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

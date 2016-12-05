@@ -32,6 +32,10 @@ class BackendTestSuite(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.backend.exists(None, None)
 
+    def test_get_all(self):
+        with self.assertRaises(NotImplementedError):
+            self.backend.get_all(None)
+
 
 class MemoryBackendTestSuite(unittest.TestCase):
     def setUp(self):
@@ -98,6 +102,18 @@ class MemoryBackendTestSuite(unittest.TestCase):
         self.backend.clear()
         with self.assertRaises(NotImplementedError):
             self.backend.delete(self.block1.id)
+
+    def test_get_all(self):
+        self.backend.clear()
+        self.backend.post('test', self.block1.id, self.block1)
+        self.backend.post('test', self.block2.id, self.block2)
+        self.backend.post('boe', self.block3.id, self.block3)
+
+        all_tests = self.backend.get_all('test')
+        self.assertIsInstance(all_tests, dict)
+        self.assertIn(self.block1, all_tests.values())
+        self.assertIn(self.block2, all_tests.values())
+        self.assertNotIn(self.block3, all_tests.values())
 
 
 class PersistentBackendTestSuite(unittest.TestCase):
