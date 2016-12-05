@@ -21,6 +21,10 @@ class LoanRequest(DatabaseModel):
         self._status = status
 
     @property
+    def user_key(self):
+        return self._user_key
+
+    @property
     def house_id(self):
         return self._house_id
 
@@ -86,6 +90,10 @@ class Mortgage(DatabaseModel):
     @property
     def house_id(self):
         return self._house_id
+
+    @property
+    def bank(self):
+        return self._bank
 
     @property
     def amount(self):

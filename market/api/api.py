@@ -103,10 +103,11 @@ class MarketAPI(object):
 
         return profile
 
+    # TODO: fix this function: mortgage is None-type somehow
     def place_loan_offer(self, user, payload):
         """
         Create a loan offer and save it to the database.
-        :param user:
+        :param user: User-object, in this case the user has the role of a borrower
         :param payload:
         :return:
         """
@@ -115,17 +116,27 @@ class MarketAPI(object):
 
         role = self.db.get('role', user.role_id)
 
-        loan_offer = None
         if role.role_name == 'INVESTOR':
             loan_offer = Investment(payload['user_key'], payload['amount'], payload['duration'], payload['interest_rate'],
                                     payload['mortgage_id'], payload['status'])
+
+            # Update the investor
+            investment_id = self.db.post('investment', loan_offer)
+            user.investment_ids.append(investment_id)
+            self.db.put('users', user.id, user)
+
+            # Update the borrower
+            mortgage = self.db.get('mortgage', loan_offer.mortgage_id)
+            print "api - mortgage id = " + str(loan_offer.mortgage_id) # mortgage id exists
+            print "api - mortgage = " + str(mortgage) # how is the mortgage a None-type?
+            loan_request = self.db.get('loan_request', mortgage.request_id)
+            borrower = self.db.get('users', loan_request.user_key)
+            borrower.investment_ids.append(loan_offer.id)
+            self.db.put('users', borrower.id, borrower)
+
+            return loan_offer
         else:
             return False
-
-        user.investment_ids.append(self.db.post('investment', loan_offer))
-
-        self.db.put(user.type, user.id, user)
-        return loan_offer
 
     def resell_investment(self):
         """ post the data needed to resell the investment """
