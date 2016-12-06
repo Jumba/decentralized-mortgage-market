@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from market.models import DatabaseModel
 
 class LoanRequest(DatabaseModel):
@@ -57,8 +59,8 @@ class Mortgage(DatabaseModel):
     _type = 'mortgage'
 
     def __init__(self, request_id, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, status):
-        assert isinstance(request_id, str)
-        assert isinstance(house_id, str)
+        assert isinstance(request_id, UUID)
+        assert isinstance(house_id, UUID)
         assert isinstance(bank, str)
         assert isinstance(amount, int)
         assert isinstance(mortgage_type, int)
@@ -139,7 +141,7 @@ class Investment(DatabaseModel):
         assert isinstance(amount, int)
         assert isinstance(duration, int)
         assert isinstance(interest_rate, float)
-        assert isinstance(mortgage_id, str)
+        assert isinstance(mortgage_id, UUID)
         assert isinstance(status, str)
 
         self._user_key = user_key

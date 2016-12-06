@@ -127,8 +127,6 @@ class MarketAPI(object):
 
             # Update the borrower
             mortgage = self.db.get('mortgage', loan_offer.mortgage_id)
-            print "api - mortgage id = " + str(loan_offer.mortgage_id) # mortgage id exists
-            print "api - mortgage = " + str(mortgage) # how is the mortgage a None-type?
             loan_request = self.db.get('loan_request', mortgage.request_id)
             borrower = self.db.get('users', loan_request.user_key)
             borrower.investment_ids.append(loan_offer.id)
@@ -244,11 +242,15 @@ class MarketAPI(object):
         :param user: User-object, in this case the user has the role of a borrower
         :return: list of offers, containing either mortgage offers or investment offers
         """
+        # Reload the user to get the latest data from the database.
+        user = self.db.get(user.type, user.id)
         offers = []
         for mortgage_id in user.mortgage_ids:
             # If the mortgage is already accepted, we get the loan offers from the investors
             if self.db.get('mortgage', mortgage_id).status == "ACCEPTED":
                 mortgage = self.db.get('mortgage', mortgage_id)
+                print "mort stat ", mortgage.status
+
                 for investor_id in mortgage.investors:
                     investor = self.db.get('users', investor_id)
                     for investment_id in investor.investment_ids:
@@ -384,7 +386,7 @@ class MarketAPI(object):
         accepted_loan_request.status[user.id] = STATUS[2]
 
         # Create a mortgage
-        mortgage = Mortgage(str(accepted_loan_request.id), payload['house_id'], user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
+        mortgage = Mortgage(accepted_loan_request.id, payload['house_id'], user.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'], payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS[1])
         borrower = self.db.get('users', payload['user_key'])
         assert isinstance(borrower, User)
 
