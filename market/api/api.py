@@ -103,7 +103,7 @@ class MarketAPI(object):
 
         return profile
 
-    # TODO: fix this function: mortgage is None-type somehow
+    # TODO: fix this function
     def place_loan_offer(self, user, payload):
         """
         Create a loan offer and save it to the database.
@@ -129,8 +129,10 @@ class MarketAPI(object):
             mortgage = self.db.get('mortgage', loan_offer.mortgage_id)
             loan_request = self.db.get('loan_request', mortgage.request_id)
             borrower = self.db.get('users', loan_request.user_key)
+            print "api - borrower_id = " + str(borrower.id)
             borrower.investment_ids.append(loan_offer.id)
             self.db.put('users', borrower.id, borrower)
+            print "api - borrower.investment_ids = " + str(borrower.investment_ids)
 
             return loan_offer
         else:
@@ -183,7 +185,7 @@ class MarketAPI(object):
             if not user.loan_request_ids:
                 # Create the house
                 house = House(payload['postal_code'], payload['house_number'], payload['price'])
-                house_id = str(self.db.post('house', house))
+                house_id = self.db.post('house', house)
                 payload['house_id'] = house_id
 
                 # Set status of the loan request to pending
@@ -393,7 +395,7 @@ class MarketAPI(object):
         # Add mortgage to borrower
         mortgage_id = self.db.post('mortgage', mortgage)
         borrower.mortgage_ids.append(mortgage_id)
-        self.db.put(borrower.type, borrower.id, borrower)
+        self.db.put('users', borrower.id, borrower)
 
         # Add mortgage to bank
         user.mortgage_ids.append(mortgage_id)

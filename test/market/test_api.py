@@ -24,23 +24,23 @@ class APITestSuite(unittest.TestCase):
         self.payload_investor = {'role': 2, 'first_name': 'Ruby', 'last_name': 'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30393', 'phonenumber': '+3170253719290'}
         self.payload_bank = {'role': 3}
         self.payload_loan_offer1 = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24, 'interest_rate': 2.5,
-                         'mortgage_id': '8739-a875ru-hd938-9384', 'status': 'PENDING'}
+                         'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': 'PENDING'}
         self.payload_loan_offer2 = {'role': 1, 'user_key': 'rfghiw93iuedij3565534', 'amount': 20000, 'duration': 36, 'interest_rate': 3.5,
-                         'mortgage_id': '8jd39-a875ru-h09ru8-9384', 'status': 'ACCEPTED'}
+                         'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': 'ACCEPTED'}
         self.payload_loan_offer3 = {'role': 1, 'user_key': 'r98iw98594p09eikhs', 'amount': 500, 'duration': 12, 'interest_rate': 7.0,
-                         'mortgage_id': '3757-a876u-h1m38-dm83', 'status': 'REJECTED'}
-        self.payload_mortgage1 = {'request_id': '8374-8yrd-hiye-8923yu4', 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'bank': '387-sfe4r-ffrw3r-sfew4',
+                         'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': 'REJECTED'}
+        self.payload_mortgage1 = {'request_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'bank': '387-sfe4r-ffrw3r-sfew4',
                                   'amount': 150000, 'mortgage_type': 1, 'interest_rate': 5.5, 'max_invest_rate': 10.5, 'default_rate': 2.5,
                                   'duration': 600, 'risk': 'B', 'investors': [], 'status': 'PENDING'}
-        self.payload_mortgage2 = {'request_id': '8374-8ru48-r4w4r-yu4', 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'bank': '89rui-434y-r7y3wf-5ty',
+        self.payload_mortgage2 = {'request_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'bank': '89rui-434y-r7y3wf-5ty',
                                   'amount': 140000, 'mortgage_type': 1, 'interest_rate': 4.5, 'max_invest_rate': 8.5,
                                   'default_rate': 6.5, 'duration': 588, 'risk': 'A', 'investors': [], 'status': 'PENDING'}
-        self.payload_mortgage3 = {'request_id': '8jft4-856d-h43e-8909js', 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'bank': '093ru-crh8tyh3-drw8',
+        self.payload_mortgage3 = {'request_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'bank': '093ru-crh8tyh3-drw8',
                                   'amount': 150000, 'mortgage_type': 0, 'interest_rate': 6.5, 'max_invest_rate': 9.5,
                                   'default_rate': 3.5, 'duration': 360, 'risk': 'A', 'investors': [], 'status': 'ACCEPTED'}
-        self.payload_investment1 = {'user_key': '67ee-fwr4t-4ewdw3', 'amount': 2000, 'duration': 48, 'interest_rate': 2.5, 'mortgage_id': '8734e8ydfhui4' , 'status': 'PENDING'}
-        self.payload_investment2 = {'user_key': '67903dwiejf3', 'amount': 3000, 'duration': 60, 'interest_rate': 4.5, 'mortgage_id': '8734e8ydfhui4', 'status': 'PENDING'}
-        self.payload_investment3 = {'user_key': 'kfee-f9874uwe', 'amount': 1000, 'duration': 72, 'interest_rate': 7.5, 'mortgage_id': '8734e8ydfhui4', 'status': 'PENDING'}
+        self.payload_investment1 = {'user_key': '67ee-fwr4t-4ewdw3', 'amount': 2000, 'duration': 48, 'interest_rate': 2.5, 'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'status': 'PENDING'}
+        self.payload_investment2 = {'user_key': '67903dwiejf3', 'amount': 3000, 'duration': 60, 'interest_rate': 4.5, 'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': 'PENDING'}
+        self.payload_investment3 = {'user_key': 'kfee-f9874uwe', 'amount': 1000, 'duration': 72, 'interest_rate': 7.5, 'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': 'PENDING'}
         self.payload_loan_request1 = {'postal_code': '1210 BV', 'house_number': '89', 'price': 150000, 'role': 1, 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'mortgage_type': 1, 'banks' : [], 'description': unicode('La la la'),
                                       'amount_wanted': 200000, 'status': {'bank1': 'REJECTED', 'bank2': 'ACCEPTED'}}
         self.payload_loan_request2 = {'postal_code': '1011 TV', 'house_number': '55', 'price': 160000, 'role': 1, 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'mortgage_type': 1, 'banks': [], 'description': unicode('Ho ho ho merry christmas'),
@@ -48,7 +48,7 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request = {'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'mortgage_type': 1, 'banks': [],
                                      'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
                                      'status': {'bank1': 'none', 'bank2': 'none', 'bank3': 'none', 'bank4': 'none'}, 'postal_code' : '1111AA', 'house_number' : '11', 'price' : 123456}
-        self.payload_mortgage = {'house_id' : '8739-a875ru-hd938-9384', 'mortgage_type': 1, 'amount' : 123000, 'interest_rate' : 5.5, 'max_invest_rate' : 7.0, 'default_rate' : 9.0, 'duration' : 30, 'risk' : 'hi', 'investors' : []}
+        self.payload_mortgage = {'house_id' : UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'mortgage_type': 1, 'amount' : 123000, 'interest_rate' : 5.5, 'max_invest_rate' : 7.0, 'default_rate' : 9.0, 'duration' : 30, 'risk' : 'hi', 'investors' : []}
 
     def test_create_user(self):
         user, pub, priv = self.api.create_user()
@@ -172,21 +172,21 @@ class APITestSuite(unittest.TestCase):
     # TODO: Fix the test. Fails due to place_loan_offer function
     def test_place_loan_offer_investor(self):
         # Create an user
-        user, pub, priv = self.api.create_user()
-        borrower, pub2, priv2 = self.api.create_user()
-        bank, pub3, priv3 = self.api.create_user()
+        investor, pub0, priv0 = self.api.create_user()
+        borrower, pub1, priv1 = self.api.create_user()
+        bank, pub2, priv2 = self.api.create_user()
 
         # Create an investor profile
         self.payload['role'] = 2  # investor
         self.payload_loan_offer1['role'] = 2  # investor
         self.payload_loan_offer2['role'] = 2  # investor
-        profile = self.api.create_profile(user, self.payload)
+        profile = self.api.create_profile(investor, self.payload)
         # Create a borrower profile
         self.payload['role'] = 1 # borrower
         profile2 = self.api.create_profile(borrower, self.payload)
         # Create a bank profile
         self.payload['role'] = 3  # bank
-        profile2 = self.api.create_profile(bank, self.payload_bank)
+        profile3 = self.api.create_profile(bank, self.payload_bank)
 
         # Create loan request
         loan_request = self.api.create_loan_request(borrower, self.payload_loan_request2)
@@ -199,27 +199,21 @@ class APITestSuite(unittest.TestCase):
 
         # Let the bank accept the request
         loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage3)
-        print "loan_request = " + str(loan_request)
-        print "mortgage = "+ str(self.api.db.get('mortgage', mortgage.id))
-
-        # Create mortgage
-        #mortgage = Mortgage(self.payload_mortgage3['request_id'], self.payload_mortgage3['house_id'], self.payload_mortgage3['bank'],
-        #                    self.payload_mortgage3['amount'], self.payload_mortgage3['mortgage_type'], self.payload_mortgage3['interest_rate'],
-        #                    self.payload_mortgage3['max_invest_rate'], self.payload_mortgage3['default_rate'], self.payload_mortgage3['duration'],
-        #                    self.payload_mortgage3['risk'], self.payload_mortgage3['investors'], self.payload_mortgage3['status'])
-        #self.db.post('mortgage', mortgage)
 
         # Create loan offer
-        self.payload_loan_offer1['user_key'] = user.id # set user_key to the investor's public key
-        self.payload_loan_offer1['mortgage_id'] = str(mortgage.id)
-        print "mortgage id = " + str(mortgage.id)
-        loan_offer = self.api.place_loan_offer(user, self.payload_loan_offer1)
+        self.payload_loan_offer1['user_key'] = investor.id # set user_key to the investor's public key
+        self.payload_loan_offer1['mortgage_id'] = mortgage.id
+        loan_offer = self.api.place_loan_offer(investor, self.payload_loan_offer1)
+
+        print "investor.investment_ids = " + str(investor.investment_ids)
+        print "borrower.investment_ids = " + str(borrower.investment_ids)
+        print "borrower.id = " + str(borrower.id)
 
         # Check if the Investment object is returned
         self.assertIsInstance(loan_offer, Investment)
 
         # Check if the investment id is saved in the user's investment ids list (for borrower ditto)
-        self.assertIn(loan_offer.id, user.investment_ids)
+        self.assertIn(loan_offer.id, investor.investment_ids)
         self.assertIn(loan_offer.id, borrower.investment_ids)
 
     def test_place_loan_offer_borrower(self):
@@ -327,9 +321,9 @@ class APITestSuite(unittest.TestCase):
 
     def test_load_borrowers_offers_mortgage_pending(self):
         # create users
-        user, pub, priv = self.api.create_user()
-        bank1, pub, priv = self.api.create_user()
-        bank2, pub, priv = self.api.create_user()
+        user, pub0, priv0 = self.api.create_user()
+        bank1, pub1, priv1 = self.api.create_user()
+        bank2, pub2, priv2 = self.api.create_user()
 
         # Create a borrower profile
         self.payload['role'] = 1  # borrower
@@ -341,24 +335,20 @@ class APITestSuite(unittest.TestCase):
 
         # Create a loan request
         loan_request = self.api.create_loan_request(user, self.payload_loan_request2) # loan request accepted, mortgage pending
-        #self.api.db.post('loan_request', loan_request)
-        #user.loan_request_id = loan_request.id
 
         # Set payload
         self.payload_mortgage1['request_id'] = loan_request.id
         self.payload_mortgage2['request_id'] = loan_request.id
         self.payload_mortgage1['user_key'] = user.id
         self.payload_mortgage2['user_key'] = user.id
+        self.payload_mortgage1['house_id'] = loan_request.house_id
+        self.payload_mortgage2['house_id'] = loan_request.house_id
+        self.payload_mortgage1['bank'] = bank1.id
+        self.payload_mortgage2['bank'] = bank2.id
 
         # Let the bank accept the request
         loan_request1, mortgage1 = self.api.accept_loan_request(bank1, self.payload_mortgage1)
         loan_request2, mortgage2 = self.api.accept_loan_request(bank2, self.payload_mortgage2)
-
-        self.api.db.post('mortgage', mortgage1)
-        self.api.db.post('mortgage', mortgage2)
-        user.mortgage_ids.append(mortgage1.id)
-        user.mortgage_ids.append(mortgage2.id)
-        self.api.db.put('user', user.id, user)
 
         # Get the offers from the database
         offers = self.api.load_borrowers_offers(user)
@@ -366,6 +356,7 @@ class APITestSuite(unittest.TestCase):
         # Check if the objects in the returned list are Mortgage-objects
         self.assertIsInstance(offers[0], Mortgage)
         self.assertIsInstance(offers[1], Mortgage)
+
         # Check if the mortgages in the list are the right ones
         self.assertEqual(offers[0], mortgage1)
         self.assertEqual(offers[1], mortgage2)
@@ -401,34 +392,14 @@ class APITestSuite(unittest.TestCase):
         # Let the bank accept the request
         loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage3)
 
-        # Connect the mortgage with the investors
-        # TODO: Shouldn't this happen in the place_loan_offer function? When place_loan_offer is called with the payload.
-        mortgage.investors.append(investor1.id)
-        mortgage.investors.append(investor2.id)
-
         # Create the actual investments.
         self.payload_investment1['mortgage_id'] = mortgage.id
         self.payload_investment2['mortgage_id'] = mortgage.id
         investment1 = self.api.place_loan_offer(investor1, self.payload_investment1)
         investment2 = self.api.place_loan_offer(investor2, self.payload_investment2)
 
-        print investment1.id
-        print investment2.id
-
-        # Update the database with the investments
-        #self.api.db.post('investment', investment1)
-        #self.api.db.post('investment', investment2)
-
-        # Connect the investors with the investments
-        #investor1.investment_ids.append(investment1.id)
-        #investor2.investment_ids.append(investment2.id)
-        #user.investment_ids.append(investment1.id)
-        #user.investment_ids.append(investment2.id)
-
-        # Update the users
-        #self.api.db.put('users', investor1.id, investor1)
-        #self.api.db.put('users', investor2.id, investor2)
-        #self.api.db.put('users', user.id, user)
+        print "investment1.id = " + str(investment1.id)
+        print "investment2.id = " + str(investment2.id)
 
         # Get the offers from the database
         offers = self.api.load_borrowers_offers(user)

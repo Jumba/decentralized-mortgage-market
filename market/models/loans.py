@@ -7,7 +7,7 @@ class LoanRequest(DatabaseModel):
 
     def __init__(self, user_key, house_id, mortgage_type, banks, description, amount_wanted, status):
         assert isinstance(user_key, str)
-        assert isinstance(house_id, str)
+        assert isinstance(house_id, UUID)
         assert isinstance(mortgage_type, int)
         assert isinstance(banks, list)
         assert isinstance(description, unicode)
@@ -179,7 +179,7 @@ class Campaign(DatabaseModel):
     _type = 'campaign'
 
     def __init__(self, mortgage_id, amount, end_date, completed):
-        assert isinstance(mortgage_id, str)
+        assert isinstance(mortgage_id, UUID)
         assert isinstance(amount, int)
         assert isinstance(end_date, str)
         assert isinstance(completed, bool)
