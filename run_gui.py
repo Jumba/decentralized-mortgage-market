@@ -14,7 +14,8 @@ class LoginController(QMainWindow, login.Ui_Form):
         self.app = app
         self.setupUi(self)
         self.browseButton.clicked.connect(self.browse)
-        self.loginButton.clicked.connect(self.login)
+
+#        self.loginButton.clicked.connect(self.login)
         self.generateButton.clicked.connect(self.generate)
         if os.path.exists('remembered'):
             f = open('remembered', 'r')

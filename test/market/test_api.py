@@ -462,6 +462,11 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(role.id, user.role_id)
         self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
 
+    def test_load_open_market(self):
+        # TODO
+        open_market = self.api.load_open_market()
+        self.assertFalse(open_market)
+
     def test_create_loan_request_borrower(self):
         # Create a borrower
         user, pub, priv = self.api.create_user()
@@ -560,7 +565,7 @@ class APITestSuite(unittest.TestCase):
 
         # Accept one loan request TODO Check this
         #self.payload_mortgage['user_key'] = borrower3.id
-        #self.payload_mortgage['loan_request_id'] = loan_request_3.id
+        #self.payload_mortgage['request_id'] = loan_request_3.id
         #self.api.accept_loan_request(bank, self.payload_mortgage)
 
         # Check if the loan requests are (not) in the list
@@ -659,5 +664,4 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(rejected_loan_request2.status[bank2.id], STATUS.REJECTED)
         # Check if the loan request has been removed from borrower
         updated_borrower = self.api.db.get('users', borrower.id)
-        #self.assertEqual(updated_borrower.loan_request_id, None)
         self.assertFalse(updated_borrower.loan_request_ids)

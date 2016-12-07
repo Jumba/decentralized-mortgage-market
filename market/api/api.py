@@ -243,10 +243,19 @@ class MarketAPI(object):
                 pass
         return current_investments, pending_investments
 
+    # TODO Tests
     def load_open_market(self):
         """ get all open campaigns  """
+        campaigns = self.db.get_all('campaign')
+        mortgages = []
 
-        pass
+        if campaigns:
+            # If campaign is not completed or end time has not passed yet, get mortgage info
+            for campaign in campaigns:
+                if campaign.end_date > time.strftime("%d/%m/%Y") and not campaign.status:
+                    mortgages.append(self.db.get('mortgage', campaign.mortgage_id))
+
+        return mortgages
 
     def check_role(self, user):
         """
@@ -620,3 +629,7 @@ class MarketAPI(object):
             return rejected_loan_request
         else:
             return None
+
+    def load_bids(self):
+        """ display the bids on a loan """
+        pass

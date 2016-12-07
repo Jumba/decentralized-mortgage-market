@@ -1,11 +1,10 @@
-import signal
 import sys
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStackedWidget, QVBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStackedWidget, QDesktopWidget, QStackedLayout
 
-from marketGUI.widgets.login import LoginPage
-from marketGUI.widgets.profile import ProfilePage
+from marketGUI.widgets.login import LoginWidget
+
 
 class MarketWindow(QMainWindow):
     resize_event = pyqtSignal()
@@ -21,32 +20,43 @@ class MarketWindow(QMainWindow):
 
         sys.excepthook = self.on_exception
 
-        # Install signal handler for ctrl+c events
-        def sigint_handler(*_):
-            self.close_market()
-
-        self.stackedWidget = QStackedWidget()
-        layout = QVBoxLayout()
-        layout.addWidget(self.stackedWidget)
-        self.setLayout(layout)
-        profile = ProfilePage()
-        #profile.initialize(self)
-
-        login = LoginPage()
-        #login.initialize(self)
-
-        li = self.stackedWidget.addWidget(login)
-        pi = self.stackedWidget.addWidget(profile)
+        # # Install signal handler for ctrl+c events
+        # def sigint_handler(*_):
+        #     self.close_market()
+        #
+        # signal.signal(signal.SIGINT, sigint_handler)
 
 
+        self.stackedLayout = QStackedLayout()
 
-        self.stackedWidget.setCurrentIndex(0)
+        #
+        login = LoginWidget(self)
+        login.setupUi(self)
 
+        login.loginButton.clicked.connect(lambda _: login.keyField.setText('aribaa'))
 
-        signal.signal(signal.SIGINT, sigint_handler)
+        self.central_widget = QStackedWidget()
+        self.setCentralWidget(self.central_widget)
 
+        self.central_widget.addWidget(login)
+        self.central_widget.setCurrentWidget(login)
+
+        self.initUI()
         self.show()
 
+    def initUI(self):
+        self.setWindowTitle('Decentralized Market Community')
+        self.resize(1300, 700)
+        self._center()
+
+    def set_status(self, status=''):
+        self.statusBar().showMessage(status)
+
+    def _center(self):
+        fg = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        fg.moveCenter(center_point)
+        self.move(fg.topLeft())
 
     def on_tribler_started(self):
         pass

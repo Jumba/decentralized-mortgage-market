@@ -1,3 +1,5 @@
+import mimetypes
+
 from market.models import DatabaseModel
 
 
@@ -20,6 +22,11 @@ class Document(DatabaseModel):
     def data(self):
         return self._data
 
+    def decode_document(self, path):
+        with open(path, 'wb') as file:
+            file.write(self.data.decode('base64'))
+
+
     @staticmethod
     def encode_document(path):
-        return open(path, 'rb').read().encode('base64', 'strict')
+        return Document(mimetypes.guess_type(path)[0], open(path, 'rb').read().encode('base64', 'strict'))
