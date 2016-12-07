@@ -464,6 +464,9 @@ class APITestSuite(unittest.TestCase):
 
     def test_load_open_market(self):
         # TODO
+        # Clear the database as a start.
+        self.database.backend.clear()
+
         open_market = self.api.load_open_market()
         self.assertFalse(open_market)
 
