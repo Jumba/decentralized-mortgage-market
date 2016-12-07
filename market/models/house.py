@@ -5,6 +5,7 @@ class House(DatabaseModel):
     _type = 'house'
 
     def __init__(self, postal_code, house_number, price):
+        super(House, self).__init__()
         assert isinstance(postal_code, str)
         assert isinstance(house_number, str)
         assert isinstance(price, int)

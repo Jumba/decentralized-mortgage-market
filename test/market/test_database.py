@@ -111,7 +111,6 @@ class DatabaseTestSuite(unittest.TestCase):
         # Get the same object
         all_tests = self.database.get_all(self.model1.type)
         self.assertIsInstance(all_tests, list)
-        print all_tests
         self.assertIn(self.model1, self.database.get_all(self.model1.type))
         self.assertIn(self.model2, self.database.get_all(self.model2.type))
 

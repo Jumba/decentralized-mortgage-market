@@ -1,11 +1,17 @@
+from enum import Enum
+from uuid import UUID
+
+from datetime import datetime
+
 from market.models import DatabaseModel
 
 class LoanRequest(DatabaseModel):
     _type = 'loan_request'
 
     def __init__(self, user_key, house_id, mortgage_type, banks, description, amount_wanted, status):
+        super(LoanRequest, self).__init__()
         assert isinstance(user_key, str)
-        assert isinstance(house_id, str)
+        assert isinstance(house_id, UUID)
         assert isinstance(mortgage_type, int)
         assert isinstance(banks, list)
         assert isinstance(description, unicode)
@@ -19,6 +25,10 @@ class LoanRequest(DatabaseModel):
         self._description = description
         self._amount_wanted = amount_wanted
         self._status = status
+
+    @property
+    def user_key(self):
+        return self._user_key
 
     @property
     def house_id(self):
@@ -53,8 +63,9 @@ class Mortgage(DatabaseModel):
     _type = 'mortgage'
 
     def __init__(self, request_id, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, status):
-        assert isinstance(request_id, str)
-        assert isinstance(house_id, str)
+        super(Mortgage, self).__init__()
+        assert isinstance(request_id, UUID)
+        assert isinstance(house_id, UUID)
         assert isinstance(bank, str)
         assert isinstance(amount, int)
         assert isinstance(mortgage_type, int)
@@ -64,7 +75,7 @@ class Mortgage(DatabaseModel):
         assert isinstance(duration, int)
         assert isinstance(risk, str)
         assert isinstance(investors, list)
-        assert isinstance(status, str)
+        assert isinstance(status, Enum)
 
         self._request_id = request_id
         self._house_id = house_id
@@ -86,6 +97,10 @@ class Mortgage(DatabaseModel):
     @property
     def house_id(self):
         return self._house_id
+
+    @property
+    def bank(self):
+        return self._bank
 
     @property
     def amount(self):
@@ -123,16 +138,22 @@ class Mortgage(DatabaseModel):
     def investors(self):
         return self._investors
 
+    @status.setter
+    def status(self, value):
+        self._status = value
+
+
 class Investment(DatabaseModel):
     _type = 'investment'
 
     def __init__(self, user_key, amount, duration, interest_rate, mortgage_id, status):
+        super(Investment, self).__init__()
         assert isinstance(user_key, str)
         assert isinstance(amount, int)
         assert isinstance(duration, int)
         assert isinstance(interest_rate, float)
-        assert isinstance(mortgage_id, str)
-        assert isinstance(status, str)
+        assert isinstance(mortgage_id, UUID)
+        assert isinstance(status, Enum)
 
         self._user_key = user_key
         self._amount = amount
@@ -165,19 +186,31 @@ class Investment(DatabaseModel):
     def mortgage_id(self):
         return self._mortgage_id
 
+    @status.setter
+    def status(self, value):
+        self._status = value
+
+
 class Campaign(DatabaseModel):
     _type = 'campaign'
 
     def __init__(self, mortgage_id, amount, end_date, completed):
-        assert isinstance(mortgage_id, str)
+        super(Campaign, self).__init__()
+        assert isinstance(mortgage_id, UUID)
         assert isinstance(amount, int)
-        assert isinstance(end_date, str)
+        assert isinstance(end_date, datetime)
         assert isinstance(completed, bool)
 
         self._mortgage_id = mortgage_id
         self._amount = amount
         self._end_date = end_date
         self._completed = completed
+
+    def subtract_amount(self, investment):
+        self._amount = self._amount - investment
+
+        if self._amount <= 0:
+            self._completed = True
 
     @property
     def mortgage_id(self):
