@@ -5,6 +5,7 @@ class Document(DatabaseModel):
     _type = 'document'
 
     def __init__(self, mime, data):
+        super(Document, self).__init__()
         assert isinstance(mime, str)
         assert isinstance(data, str)
 

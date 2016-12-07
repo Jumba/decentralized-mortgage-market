@@ -5,6 +5,7 @@ class Profile(DatabaseModel):
     _type = 'profile'
 
     def __init__(self, first_name, last_name, email, iban, phone_number):
+        super(Profile, self).__init__()
         assert isinstance(first_name, str)
         assert isinstance(last_name, str)
         assert isinstance(email, str)

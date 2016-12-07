@@ -4,8 +4,8 @@ from market.models import DatabaseModel
 class User(DatabaseModel):
     _type = 'users'
 
-
     def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_ids=None, campaign_ids=None, mortgage_ids=None, investment_ids=None):
+        super(User, self).__init__()
         self._public_key = public_key
         self._time_added = time_added
         self._role_id = role_id
@@ -58,7 +58,7 @@ class User(DatabaseModel):
     def role_id(self, value):
         self._role_id = value
 
-#    @loan_request_id.setter
+# @loan_request_id.setter
 #    def loan_request_id(self, value):
 #        self._loan_request_id = value
 

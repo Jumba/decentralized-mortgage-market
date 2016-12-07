@@ -12,6 +12,7 @@ class Role(DatabaseModel):
     _type = 'role'
 
     def __init__(self, user_key, role):
+        super(Role, self).__init__()
         assert 0 <= role < len(ROLES)
 
         self._user_key = user_key
