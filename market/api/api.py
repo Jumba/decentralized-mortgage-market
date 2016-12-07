@@ -18,6 +18,7 @@ class STATUS(Enum):
     ACCEPTED = 2
     REJECTED = 3
 
+
 CAMPAIGN_LENGTH_DAYS = 30
 
 
@@ -487,89 +488,6 @@ class MarketAPI(object):
             campaign.subtract_amount(investment.amount)
 
             return self.db.put(investment.type, investment.id, investment) and self.db.put(campaign.type, campaign.id, campaign)
-        return False
-
-
-
-
-
-
-    # TODO: write tests
-    def accept_offer(self, user, payload):
-        """
-        Accept a mortgage offer if the loan request has not been accepted yet or accept an investment offer if the user
-        has already accepted a mortgage offer.
-        :param user:
-        :param payload:
-        :return:
-        """
-        user = self._get_user(user)
-        loan_request = self.db.get('loan_request', payload['request_id'])
-        banks = loan_request.status
-        for bank in banks:
-            # If the loan request has been accepted, only investment offers can be accepted
-            if banks[bank] == STATUS.ACCEPTED:
-                for mortgage_id in user.mortgage_ids:
-                    mortgage = self.db.get('mortgage', mortgage_id)
-                    # Only when the mortgage has been accepted, can the borrower accept investment offers
-                    if mortgage.status == STATUS.ACCEPTED:
-                        for investment in user.investment_ids:
-                            investment_offer = self.db.get('investment', investment.id)
-                            investor = self.db.get('users', investment_offer.user_key)
-                            if investment_offer.mortgage_id == mortgage.id and investor.user_key == payload['user_key'] \
-                                    and investment_offer.status == STATUS.PENDING and investment_offer.amount == payload['amount'] \
-                                    and investment_offer.duration == payload['duration'] and investment_offer.interest_rate == payload['interest_rate']:
-                                # Update the investment
-                                investment_offer.status = STATUS.ACCEPTED
-                                self.db.put('investment', investment_offer.id, investment_offer)
-                                # Update the investor
-                                self.db.put('users', investor.id, investor)
-                                # Update the campaign
-                                campaign = self.db.get('campaign', user.campaign_ids[0])
-                                new_amount = campaign.amount - investment_offer.amount
-                                campaign.amount = new_amount
-                                if new_amount == 0:
-                                    campaign.amount = 0
-                                    campaign.completed = True
-                                self.db.put('campaign', campaign.id, campaign)
-                                # Update the user (borrower)
-                                self.db.put('users', user.id, user)
-
-                                return investment_offer
-            # If the loan request has not been accepted yet, only mortgage offers can be accepted
-            elif banks[bank] == STATUS.PENDING:
-                for mortgage_id in user.mortgage_ids:
-                    mortgage = self.db.get('mortgage', mortgage_id)
-
-                    if mortgage.request_id == payload['request_id'] and mortgage.house_id == payload['house_id'] and mortgage.bank == payload['bank'] \
-                            and mortgage.amount == payload['amount'] and mortgage.mortgage_type == payload['mortgage_type'] \
-                            and mortgage.interest_rate == payload['interest_rate'] and mortgage.max_invest_rate == payload['max_invest_rate'] \
-                            and mortgage.default_rate == payload['default_rate'] and mortgage.default_rate == payload['duration'] \
-                            and mortgage.risk == payload['risk'] and mortgage.investors == payload['investors'] and mortgage.status == payload['status']:
-                        current_bank = self.db.get('users', payload['bank'])
-                        # Update the mortgage
-                        mortgage.status = STATUS.ACCEPTED
-                        self.db.put('mortgage', mortgage.id, mortgage)
-                        bank['status'] = STATUS.ACCEPTED
-                        # Set the status of other mortgage offers to 'REJECTED'
-                        for bank_others in banks:
-                            if bank_others['status'] == STATUS.PENDING:
-                                bank_others['status'] = STATUS.REJECTED
-                        # Update loan request in the database
-                        loan_request.db.put('loan_request', loan_request.id, loan_request)
-                        # Add the newly created campaign to the database
-                        end_date = time.strftime("%d/%m/%Y") + timedelta(days=30)
-                        campaign = Campaign(mortgage.id, loan_request.amount_wanted, end_date, STATUS.ACCEPTED)  # TODO: What the fuck is that status doing there?
-                        user.campaign_ids.append(campaign.id)
-                        current_bank.campaign_ids.append(campaign.id)
-                        self.db.post('campaign', campaign)
-                        # Update the borrower
-                        self.db.put('users', user.id, user)
-                        # Update the bank
-                        self.db.put('users', current_bank.id, current_bank)
-
-                        return self.db.get('mortgage', mortgage)
-
         return False
 
     def reject_offer(self, user, payload):
