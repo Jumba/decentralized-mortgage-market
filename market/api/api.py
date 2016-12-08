@@ -171,8 +171,6 @@ class MarketAPI(object):
         +----------------+-----------------------------------------------------------+
         | Key            | Description                                               |
         +================+===========================================================+
-        | user_key       | The public key of the user who is the subject of the loan |
-        +----------------+-----------------------------------------------------------+
         | amount         | The amount being invested                                 |
         +----------------+-----------------------------------------------------------+
         | duration       | The duration of the loan in months                        |
@@ -196,7 +194,7 @@ class MarketAPI(object):
         role = self.db.get('role', investor.role_id)
 
         if role.role_name == 'INVESTOR':
-            investment = Investment(payload['user_key'], payload['amount'], payload['duration'], payload['interest_rate'],
+            investment = Investment(investor.id, payload['amount'], payload['duration'], payload['interest_rate'],
                                     payload['mortgage_id'], STATUS.PENDING)
 
             # Update the investor
@@ -207,7 +205,9 @@ class MarketAPI(object):
             self.db.put('users', investor.id, investor)
 
             # Update the borrower
-            borrower = self.db.get('users', investment.user_key)
+            mortgage = self.db.get('mortgage', payload['mortgage_id'])
+            loan_request = self.db.get('loan_request', mortgage.request_id)
+            borrower = self.db.get('users', loan_request.user_key)
             borrower.investment_ids.append(investment.id)
             self.db.put('users', borrower.id, borrower)
 

@@ -146,16 +146,16 @@ class Mortgage(DatabaseModel):
 class Investment(DatabaseModel):
     _type = 'investment'
 
-    def __init__(self, user_key, amount, duration, interest_rate, mortgage_id, status):
+    def __init__(self, investor_key, amount, duration, interest_rate, mortgage_id, status):
         super(Investment, self).__init__()
-        assert isinstance(user_key, str)
+        assert isinstance(investor_key, str)
         assert isinstance(amount, int)
         assert isinstance(duration, int)
         assert isinstance(interest_rate, float)
         assert isinstance(mortgage_id, UUID)
         assert isinstance(status, Enum)
 
-        self._user_key = user_key
+        self._investor_key = investor_key
         self._amount = amount
         self._duration = duration
         self._interest_rate = interest_rate
@@ -163,8 +163,8 @@ class Investment(DatabaseModel):
         self._status = status
 
     @property
-    def user_key(self):
-        return self._user_key
+    def investor_key(self):
+        return self._investor_key
 
     @property
     def status(self):
