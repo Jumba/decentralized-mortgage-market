@@ -461,6 +461,10 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
 
     def test_load_open_market(self):
+        """
+        This test checks the functionality of displaying all active campaigns
+        When the campaigns are being shown, they should only show if they're currently active
+        """
         # TODO
         # Clear the database as a start.
         self.database.backend.clear()
@@ -469,6 +473,13 @@ class APITestSuite(unittest.TestCase):
         self.assertFalse(open_market)
 
     def test_create_loan_request_borrower(self):
+        """
+        This test checks the functionality of a borrower creating a loan request
+        When a borrower creates a loan request, a loan request should be added to
+        Borrower.loan_request_ids and to Bank.loan_request_ids for the selected banks.
+        The status of the loan request should be set to STATUS.PENDING for each
+        selected bank
+        """
         # Create a borrower
         user, pub, priv = self.api.create_user()
         role_id = self.api.db.post('role', Role(user.id, 1))
@@ -503,7 +514,13 @@ class APITestSuite(unittest.TestCase):
         self.assertFalse(loan_request_2)
 
     def test_create_loan_request_investor(self):
-        # Create a investor
+        """
+        This test checks the functionality of an investor creating a loan request
+        When an investor creates a loan request, it should not be possible. Investor.loan_request_ids
+        should be empty
+        """
+
+        # Create an investor
         user, pub, priv = self.api.create_user()
         role_id = self.api.db.post('role', Role(user.id, 2))
         user.role_id = role_id
@@ -519,6 +536,12 @@ class APITestSuite(unittest.TestCase):
         self.assertEquals(user.loan_request_ids, [])
 
     def test_create_loan_request_bank(self):
+        """
+        This test checks the functionality of a bank creating a loan request
+        When a bank creates a loan request, it should not be possible. Bank.loan_request_ids
+        should be empty
+        """
+
         # Create a bank
         user, pub, priv = self.api.create_user()
         role_id = self.api.db.post('role', Role(user.id, 3))
@@ -536,6 +559,11 @@ class APITestSuite(unittest.TestCase):
         self.assertEquals(user.loan_request_ids, [])
 
     def test_load_all_loan_requests(self):
+        """
+        This test checks the functionality of displaying all pending loan requests that a bank has
+        It should be checking if only the loan requests that have STATUS.PENDING are being displayed,
+        and not the loan requests with STATUS.ACCEPTED or STATUS.REJECTED
+        """
         # Create borrowers
         borrower1, pub, priv = self.api.create_user()
         role_id = self.api.db.post('role', Role(borrower1.id, 1))
@@ -578,6 +606,10 @@ class APITestSuite(unittest.TestCase):
         self.assertIn(loan_request_3.id, pending_loan_requests)
 
     def test_load_single_loan_request(self):
+        """
+        This test checks the functionality of displaying a single loan request
+        When a loan request is selected, the information about the request should be displayed
+        """
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
         role_id = self.api.db.post('role', Role(borrower.id, 1))
@@ -596,6 +628,13 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(loan_request.id, loaded_loan_request.id)
 
     def test_accept_loan_request(self):
+        """
+        This test checks the functionality of a bank accepting a loan request
+        When a loan request is accepted, the status of the loan request will be set
+        to STATUS.ACCEPTED for the bank that accepts it. A Mortgage will be added to
+        Borrower.mortgage_ids and Bank.mortgage_ids
+        """
+
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
         role_id = self.api.db.post('role', Role(borrower.id, 1))
@@ -633,6 +672,12 @@ class APITestSuite(unittest.TestCase):
         self.assertIn(mortgage.id, updated_bank.mortgage_ids)
 
     def test_reject_loan_request(self):
+        """
+        This test checks the functionality of a bank rejecting a loan request
+        When a loan request is rejected, the status of the loan request will be set
+        to STATUS.REJECTED for the bank that rejects it. If all of the banks have
+        rejected the loan request, it will be removed from Borrower.loan_request_ids
+        """
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
         role_id = self.api.db.post('role', Role(borrower.id, 1))
