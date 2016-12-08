@@ -710,11 +710,11 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_offer1['mortgage_id'] = mortgage.id
         investment = self.api.place_loan_offer(investor, self.payload_loan_offer1)
 
-        borrower = self.api._get_user(borrower)
+        borrower.update(self.api.db)
 
         # Accept investment
         self.api.reject_investment_offer(borrower, {'investment_id': investment.id})
-        investment = self.api.db.get(investment.type, investment.id)
+        investment.update(self.api.db)
 
         investor_investments = self.api.load_investments(investor)
         borrower_investments = self.api.load_investments(borrower)
@@ -770,11 +770,10 @@ class APITestSuite(unittest.TestCase):
         self.api.reject_mortgage_offer(borrower, {'mortgage_id': mortgage.id})
 
         # Reload
-        borrower = self.api._get_user(borrower)
-        bank = self.api._get_user(bank)
-        mortgage = self.api.db.get(mortgage.type, mortgage.id)
-
-        loan_request = self.api.db.get(loan_request.type, loan_request.id)
+        #borrower = self.api._get_user(borrower)
+        #bank = self.api._get_user(bank)
+        mortgage.update(self.api.db)
+        loan_request.update(self.api.db)
 
         # Check if the mortgage is removed from the borrower but remains in the bank
         self.assertNotIn(mortgage.id, borrower.mortgage_ids)

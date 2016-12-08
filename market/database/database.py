@@ -53,7 +53,9 @@ class MockDatabase(Database):
         assert id == obj.id
 
         try:
-            return self.backend.put(type, id, obj.encode())
+            self.backend.put(type, id, obj.encode())
+            obj.update(self)
+            return True
         except IndexError:
             return False
 
