@@ -2,3 +2,4 @@
 *.pyc
 remembered
 market/controllers/market.db
+docs/_build/
