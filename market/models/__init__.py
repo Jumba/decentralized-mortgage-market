@@ -26,7 +26,9 @@ class DatabaseModel(object):
     def encode(self, encoding='base64'):
         """
         Pickles the object and encodes it using the given encoding. Defaults to 'base64'
+
         :param encoding: The chosen encoding
+        :type encoding: str
         :return: An `encoding` encoded representation of the object.
         """
         pickled = pickle.dumps(self)

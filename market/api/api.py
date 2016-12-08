@@ -215,8 +215,14 @@ class MarketAPI(object):
             return False
 
     def resell_investment(self):
-        """ post the data needed to resell the investment """
-        pass
+        """
+        Resell an invesment
+
+        Not implemented yet.
+
+        :raise: `NotImplementedError`
+        """
+        raise NotImplementedError
 
     def load_investments(self, user):
         """
@@ -484,7 +490,7 @@ class MarketAPI(object):
         :type payload: dict
         :return: Returns True if successful, False otherwise.
         :rtype: bool
-        :raises AssertionError if the user does not have a campaign assigned.
+        :raise: AssertionError if the user does not have a campaign assigned.
         """
         user = self._get_user(user)
 
