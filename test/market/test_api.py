@@ -1011,12 +1011,56 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(loan_request.status[bank.id], STATUS.REJECTED)
 
     def test_load_bids(self):
-        # TODO block start
-        # create loan request
-        # accept loan request
-        # accept mortgage
-        # check if bids are empty
-        # add some bids
-        # check if bids are in list
-        # TODO block end
-        pass
+        """
+        This test checks the functionality of displaying all bids on a campaign
+        Bids should only show when they are tied to the specified campaign
+        """
+
+        # Clear the database as a start.
+        self.database.backend.clear()
+
+        # Create users
+        borrower, _, _ = self.api.create_user()
+        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        borrower.role_id = role_id
+        self.api.db.put('users', borrower.id, borrower)
+
+        investor, pub, priv = self.api.create_user()
+        role_id = self.api.db.post('role', Role(investor.id, 2))
+        investor.role_id = role_id
+        self.api.db.put('users', investor.id, investor)
+
+        bank, _, _ = self.api.create_user()
+        role_id = self.api.db.post('role', Role(bank.id, 3))
+        bank.role_id = role_id
+        self.api.db.put('users', bank.id, bank)
+
+        # Create loan request
+        self.payload_loan_request['user_key'] = borrower.id  # set user_key to the borrower's public key
+        self.payload_loan_request['banks'] = [bank.id]
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
+        self.assertIsInstance(loan_request, LoanRequest)
+
+        # Set payload
+        self.payload_mortgage['user_key'] = borrower.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        # Accept the loan request
+        accepted_loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage)
+
+        # Accept mortgage offer
+        self.payload_mortgage['mortgage_id'] = mortgage.id
+        self.api.accept_mortgage_offer(borrower, self.payload_mortgage)
+
+        # Check if bids are empty
+        bids = self.api.load_bids(self.payload_mortgage)
+        self.assertFalse(bids)
+
+        # Place investment bid on the mortgage
+        self.api.place_loan_offer(investor, self.payload_mortgage)
+
+        # Check if bid is in the list
+        bids = self.api.load_bids(self.payload_mortgage)
+        self.assertTrue(bids)

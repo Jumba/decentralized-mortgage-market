@@ -257,7 +257,6 @@ class MarketAPI(object):
                 pass
         return current_investments, pending_investments
 
-    # TODO Tests
     def load_open_market(self):
         """
         Returns a list of all mortgages who have an active campaign going on.
@@ -719,8 +718,9 @@ class MarketAPI(object):
 
         # Get the list of all the pending/accepted bids on the campaign
         # TODO Also show rejected offers?
-        campaign = self.db.get('campaign', payload['campaign_id'])
-        mortgage = self.db.get('mortgage', campaign.mortgage_id)
+        #campaign = self.db.get('campaign', payload['campaign_id'])
+        #mortgage = self.db.get('mortgage', campaign.mortgage_id)
+        mortgage = self.db.get('mortgage', payload['mortgage_id'])
         loan_request = self.db.get('loan_request', mortgage.request_id)
         borrower = self.db.get('users', loan_request.user_key)
 
