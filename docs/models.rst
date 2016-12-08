@@ -1,4 +1,4 @@
-Installation
+Models
 ============
 .. autoclass:: market.models.DatabaseModel
     :members:
