@@ -23,6 +23,11 @@ CAMPAIGN_LENGTH_DAYS = 30
 
 
 class MarketAPI(object):
+    """
+    Create a MarketAPI object.
+
+    The constructor requires one variable, the `Database` used for storage.
+    """
     def __init__(self, database):
         assert isinstance(database, Database)
         self._database = database
