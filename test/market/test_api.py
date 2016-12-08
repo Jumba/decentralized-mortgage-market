@@ -127,6 +127,11 @@ class APITestSuite(unittest.TestCase):
         self.assertFalse(profile)
 
     def test_load_profile_borrower(self):
+        """
+        This test checks the functionality of loading a borrower's profile
+        When the function is called, it should return a BorrowersProfile
+        """
+
         # Create an user
         user, pub, priv = self.api.create_user()
 
@@ -142,6 +147,11 @@ class APITestSuite(unittest.TestCase):
         self.assertIsInstance(profile, BorrowersProfile)
 
     def test_load_profile_investor(self):
+        """
+        This test checks the functionality of loading an investor's profile
+        When the function is called, it should return a Profile
+        """
+
         # Create an user
         user, pub, priv = self.api.create_user()
 
@@ -157,6 +167,11 @@ class APITestSuite(unittest.TestCase):
         self.assertIsInstance(profile, Profile)
 
     def test_load_profile_bank(self):
+        """
+        This test checks the functionality of loading a bank's profile
+        When the function is called, it should return a None
+        """
+
         # Create an user
         user, pub, priv = self.api.create_user()
 
@@ -172,8 +187,14 @@ class APITestSuite(unittest.TestCase):
         # Check if the profile id is empty in the user
         self.assertIsNone(user.profile_id)
 
-    # TODO: Fix the test. Fails due to place_loan_offer function
     def test_place_loan_offer_investor(self):
+        """
+        This test checks the functionality of an investor placing a loan offer
+        When a loan offer is placed, an Investment-object is created. The Investment object is appended to
+        Investor.investment_ids and Borrower.investment_ids and the Investor.id is appended to Mortgage.investors.
+        The Investment.status is set to STATUS.PENDING
+        """
+
         # Create an user
         investor, pub0, priv0 = self.api.create_user()
         borrower, pub1, priv1 = self.api.create_user()
@@ -217,6 +238,12 @@ class APITestSuite(unittest.TestCase):
         self.assertIn(loan_offer.id, borrower.investment_ids)
 
     def test_place_loan_offer_borrower(self):
+        """
+        This test checks the functionality of a borrower placing a loan offer
+        When a borrower places a loan request, it should not be possible. An Investment-object should not be created.
+        Borrower.investment_ids should be empty
+        """
+
         # Create an user
         user, pub, priv = self.api.create_user()
 
@@ -237,6 +264,12 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(user.investment_ids, [])
 
     def test_place_loan_offer_bank(self):
+        """
+        This test checks the functionality of a bank placing a loan offer
+        When a bank places a loan request, it should not be possible. An Investment-object should not be created.
+        Financial_Institution.investment_ids should be empty
+        """
+
         # Create an user
         user, pub, priv = self.api.create_user()
 
@@ -260,6 +293,12 @@ class APITestSuite(unittest.TestCase):
         # Create a user
 
     def test_load_investments(self):
+        """
+        This test checks the functionality of loading a user's (borrower or investor) current and pending investments
+        Current investments should be appended to the CurrentInvestments and pending investments should be appended to PendingInvestments
+        The function should return a tuple(CurrentInvestments, PendingInvestments)
+        """
+
         # Create an user
         investor, _, _ = self.api.create_user()
         borrower, _, _ = self.api.create_user()
@@ -318,6 +357,11 @@ class APITestSuite(unittest.TestCase):
         self.assertIn(loan_offer3, pending_investment)
 
     def test_load_borrowers_offers_mortgage_pending(self):
+        """
+        This test checks the functionality of loading a borrower's pending mortgage offers
+        It should return a list containing the pending mortgage offers
+        """
+
         # create users
         user, _, _ = self.api.create_user()
         bank1, _, _ = self.api.create_user()
@@ -360,6 +404,11 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(offers[1], mortgage2)
 
     def test_load_borrowers_offers_mortgage_accepted(self):
+        """
+        This test checks the functionality of loading a borrower's pending loan offers
+        It should return a list containing the pending loan offers
+        """
+
         # create users
         user, _, _ = self.api.create_user()
         investor1, _, _ = self.api.create_user()
@@ -420,6 +469,7 @@ class APITestSuite(unittest.TestCase):
         This test checks the functionality of loading a borrower's loans
         When an investment has been accepted by the borrower, it should appear on the loans list of the borrower
         When an investment has been rejected by the borrower, it should not appear on the loans list of the borrower
+        This function should return a list with the loans
         """
 
         # create users
@@ -485,7 +535,12 @@ class APITestSuite(unittest.TestCase):
         # Check that the rejected offer is not in the list
         self.assertNotIn(investment3, loans)
 
-    def test_check_role_borrower(self):
+    def test_get_role_borrower(self):
+        """
+        This test checks the functionality of getting the role of a borrower
+        It should return BORROWER as the role
+        """
+
         # create a user
         user, pub, priv = self.api.create_user()
 
@@ -500,7 +555,12 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(role.id, user.role_id)
         self.assertEqual(role.role_name, "BORROWER")
 
-    def test_check_role_investor(self):
+    def test_get_role_investor(self):
+        """
+        This test checks the functionality of getting the role of an investor
+        It should return INVESTOR as the role
+        """
+
         # create a user
         user, pub, priv = self.api.create_user()
 
@@ -515,7 +575,12 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(role.id, user.role_id)
         self.assertEqual(role.role_name, "INVESTOR")
 
-    def test_check_role_bank(self):
+    def test_get_role_bank(self):
+        """
+        This test checks the functionality of getting the role of a bank
+        It should return FINANCIAL_INSTITUTION as the role
+        """
+
         # create a user
         user, pub, priv = self.api.create_user()
 
