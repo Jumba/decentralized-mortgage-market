@@ -208,8 +208,12 @@ class MarketAPI(object):
             # Save the updated investor
             self.db.put('users', investor.id, investor)
 
-            # Update the borrower
+            # Update the mortgage
             mortgage = self.db.get('mortgage', payload['mortgage_id'])
+            mortgage.investors.append(investor.id)
+            self.db.put('mortgage', mortgage.id, mortgage)
+
+            # Update the borrower
             loan_request = self.db.get('loan_request', mortgage.request_id)
             borrower = self.db.get('users', loan_request.user_key)
             borrower.investment_ids.append(investment.id)
@@ -348,7 +352,6 @@ class MarketAPI(object):
         else:
             return False
 
-    # TODO: write test for this function after the accept_offer has been implemented
     def load_borrowers_loans(self, user):
         """
         Get the borrower's current active loans (funding goal has been reached) or the not yet active loans (funding goal has not been reached yet)
@@ -367,11 +370,8 @@ class MarketAPI(object):
                     investor = self.db.get('users', investor_id)
                     for investment_id in investor.investment_ids:
                         investment = self.db.get('investment', investment_id)
-                        # Add the loan to the loans list if the mortgage id's match and the funding goal has been reached
-                        if investment.mortgage_id == mortgage_id and campaign.status == True:
-                            loans.append(investment)
-                        # Add the loan to the loans list if the mortgage id's match and the funding goal has not been reached
-                        elif investment.mortgage_id == mortgage_id and campaign.status == False:
+                        # Add the loan to the loans list if the investment has been accepted by the borrower and the mortgage id's match
+                        if investment.status == STATUS.ACCEPTED and investment.mortgage_id == mortgage_id:
                             loans.append(investment)
 
         return loans
@@ -532,7 +532,7 @@ class MarketAPI(object):
         +----------------+------------------------------------------------------------------+
 
 
-        :param user: The user accepting a mortgage offer
+        :param user: The user rejecting a mortgage offer
         :type user: :any:`User`
         :param payload: The payload containing the data for the :any:`Mortgage`, as described above.
         :type payload: dict
@@ -561,7 +561,7 @@ class MarketAPI(object):
         | investment_id  | The id of the investment                                         |
         +----------------+------------------------------------------------------------------+
 
-        :param user: The user accepting an investment offer.
+        :param user: The user rejecting an investment offer.
         :type user: :any:`User`
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict

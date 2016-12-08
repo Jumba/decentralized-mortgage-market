@@ -53,9 +53,7 @@ class MockDatabase(Database):
         assert id == obj.id
 
         try:
-            self.backend.put(type, id, obj.encode())
-            obj.update(self)
-            return True
+            return self.backend.put(type, id, obj.encode())
         except IndexError:
             return False
 
@@ -65,10 +63,9 @@ class MockDatabase(Database):
 
     def get_all(self, type):
         try:
-            all = []
-            for key, value in self.backend.get_all(type).iteritems():
-                all.append(DatabaseModel.decode(self._backend.get(type, key)))
-            return all
+            items = self.backend.get_all(type)
+            if items:
+                return [DatabaseModel.decode(t) for t in items]
         except KeyError:
             return None
 
