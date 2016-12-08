@@ -110,10 +110,10 @@ class MemoryBackendTestSuite(unittest.TestCase):
         self.backend.post('boe', self.block3.id, self.block3)
 
         all_tests = self.backend.get_all('test')
-        self.assertIsInstance(all_tests, dict)
-        self.assertIn(self.block1, all_tests.values())
-        self.assertIn(self.block2, all_tests.values())
-        self.assertNotIn(self.block3, all_tests.values())
+        self.assertIsInstance(all_tests, list)
+        self.assertIn(self.block1, all_tests)
+        self.assertIn(self.block2, all_tests)
+        self.assertNotIn(self.block3, all_tests)
 
 
 class PersistentBackendTestSuite(unittest.TestCase):
@@ -179,6 +179,18 @@ class PersistentBackendTestSuite(unittest.TestCase):
         self.backend.delete(self.block1.id)
 
         self.assertFalse(self.backend.exists('test', self.block1.id))
+
+    def test_get_all(self):
+        self.backend.clear()
+        self.backend.post('test', self.block1.id, self.block1.encode())
+        self.backend.post('test', self.block2.id, self.block2.encode())
+        self.backend.post('boe', self.block3.id, self.block3.encode())
+
+        all_tests = self.backend.get_all('test')
+        self.assertIsInstance(all_tests, list)
+        self.assertIn(self.block1.encode(), all_tests)
+        self.assertIn(self.block2.encode(), all_tests)
+        self.assertNotIn(self.block3.encode(), all_tests)
 
 
 if __name__ == '__main__':

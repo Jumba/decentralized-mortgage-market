@@ -72,12 +72,13 @@ class MemoryBackend(Backend):
 
     def get_all(self, type):
         try:
-            return self._data[type]
+            return self._data[type].values()
         except:
             raise KeyError
 
 
 class PersistentBackend(Database, Backend):
+
     # Path to the database location + dispersy._workingdirectory
     DATABASE_PATH = u"market.db"
     # Version to keep track if the db schema needs to be updated.
@@ -128,6 +129,12 @@ class PersistentBackend(Database, Backend):
             raise IndexError
 
         return db_result[0][0]
+
+    def get_all(self, type):
+        db_query = u"SELECT value FROM `market` WHERE type_name = ?"
+        db_result = self.execute(db_query, (unicode(type),)).fetchall()
+
+        return [t[0] for t in  db_result]
 
     def post(self, type, id, obj):
         if not self.id_available(id):
