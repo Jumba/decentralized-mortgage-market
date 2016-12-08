@@ -1,3 +1,4 @@
+import json
 import pickle
 import uuid
 
@@ -41,3 +42,19 @@ class DatabaseModel(object):
 
     def __eq__(self, other):
         return self.id == other.id
+
+    def update(self, database):
+        updated_self = database.get(self.type, self.id)
+        assert isinstance(updated_self, type(self))
+        assert updated_self.id == self.id
+        for attr in vars(self):
+            setattr(self, attr, getattr(updated_self, attr))
+
+    def serialize(self):
+        output = {'class': type(self).__name__ }
+        for attr in vars(self):
+            output[attr] = getattr(self, attr)
+
+        return json.dumps(output)
+
+

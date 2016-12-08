@@ -23,6 +23,11 @@ CAMPAIGN_LENGTH_DAYS = 30
 
 
 class MarketAPI(object):
+    """
+    Create a MarketAPI object.
+
+    The constructor requires one variable, the `Database` used for storage.
+    """
     def __init__(self, database):
         assert isinstance(database, Database)
         self._database = database
@@ -695,6 +700,28 @@ class MarketAPI(object):
         else:
             return None
 
-    def load_bids(self):
-        """ display the bids on a loan """
-        pass
+    def load_bids(self, payload):
+        """ Returns a list of all bids on the selected campaign.
+
+        The payload dictionary has the following composition
+
+        +----------------+------------------------------------------------------------------+
+        | Key            | Description                                                      |
+        +================+==================================================================+
+        | campaign_id    | The id of the selected campaign                                  |
+        +----------------+------------------------------------------------------------------+
+
+        :param payload: The payload containing the data for the :any:`Campaign`, as described above.
+        :type payload: dict
+        :return: A list of :any: 'Campaign' objects.
+        :rtype: list
+        """
+
+        # Get the list of all the pending/accepted bids on the campaign
+        # TODO Also show rejected offers?
+        campaign = self.db.get('campaign', payload['campaign_id'])
+        mortgage = self.db.get('mortgage', campaign.mortgage_id)
+        loan_request = self.db.get('loan_request', mortgage.request_id)
+        borrower = self.db.get('users', loan_request.user_key)
+
+        return borrower.investment_ids

@@ -9,7 +9,7 @@ Welcome to Decentralized Real Estate Market's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    Introduction <introduction>
    Models <models>
