@@ -227,3 +227,7 @@ class Campaign(DatabaseModel):
     @property
     def completed(self):
         return self._completed
+
+    @completed.setter
+    def completed(self, value):
+        self._completed = value

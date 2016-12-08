@@ -465,10 +465,57 @@ class APITestSuite(unittest.TestCase):
         This test checks the functionality of displaying all active campaigns
         When the campaigns are being shown, they should only show if they're currently active
         """
-        # TODO
         # Clear the database as a start.
         self.database.backend.clear()
 
+        # Check if the open market is empty when no campaigns have started yet
+        open_market = self.api.load_open_market()
+        self.assertFalse(open_market)
+
+        # Create users
+        borrower, _, _ = self.api.create_user()
+        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        borrower.role_id = role_id
+        self.api.db.put('users', borrower.id, borrower)
+
+        bank, _, _ = self.api.create_user()
+        role_id = self.api.db.post('role', Role(bank.id, 3))
+        bank.role_id = role_id
+        self.api.db.put('users', bank.id, bank)
+
+        # Create loan request
+        self.payload_loan_request['user_key'] = borrower.id  # set user_key to the borrower's public key
+        self.payload_loan_request['banks'] = [bank.id]
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
+        self.assertIsInstance(loan_request, LoanRequest)
+
+        # Set payload
+        self.payload_mortgage['user_key'] = borrower.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        # Accept the loan request
+        accepted_loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage)
+
+        # Accept mortgage offer
+        self.payload_mortgage['mortgage_id'] = mortgage.id
+        self.api.accept_mortgage_offer(borrower, self.payload_mortgage)
+
+        # Get the list of active campaigns
+        open_market = self.api.load_open_market()
+
+        # Check if the open market is not empty
+        self.assertTrue(open_market)
+
+        # Set the status of the campaign to completed
+        campaigns = self.api.db.get_all('campaign')
+
+        for campaign in campaigns:
+            campaign.completed = True
+            self.api.db.put('campaign', campaign.id, campaign)
+
+        # Check if the open market is empty
         open_market = self.api.load_open_market()
         self.assertFalse(open_market)
 
@@ -828,3 +875,13 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(mortgage.status, STATUS.REJECTED)
         self.assertEqual(loan_request.status[bank.id], STATUS.REJECTED)
 
+    def test_load_bids(self):
+        # TODO block start
+        # create loan request
+        # accept loan request
+        # accept mortgage
+        # check if bids are empty
+        # add some bids
+        # check if bids are in list
+        # TODO block end
+        pass
