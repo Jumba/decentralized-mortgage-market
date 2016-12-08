@@ -160,7 +160,6 @@ class MarketAPI(object):
 
         return profile
 
-    # TODO: fix this function
     def place_loan_offer(self, investor, payload):
         """
         Create a loan offer by an investor and save it to the database. This offer will always be created with status as 'PENDING' as the borrower involved is the only one
@@ -245,7 +244,12 @@ class MarketAPI(object):
 
     # TODO Tests
     def load_open_market(self):
-        """ get all open campaigns  """
+        """
+        Returns a list of all mortgages who have an active campaign going on.
+
+        :return: A list of :any:`Mortgage` objects.
+        :rtype: list
+        """
         campaigns = self.db.get_all('campaign')
         mortgages = []
 
@@ -257,11 +261,13 @@ class MarketAPI(object):
 
         return mortgages
 
-    def check_role(self, user):
+    def get_role(self, user):
         """
         Get the role of the user from the database.
-        :param user:
-        :return:
+
+        :param user: The :any:`User` whose role you want to retrieve
+        :return: : Returns the role or None.
+        :rtype: :any:`User` or `None`
         """
         return self.db.get('role', user.role_id)
 
@@ -364,6 +370,7 @@ class MarketAPI(object):
         Get all the borrower's offers(mortgage offers or loan offers) from the database.
         :param user: User-object, in this case the user has the role of a borrower
         :return: list of offers, containing either mortgage offers or investment offers
+        :rtype: list
         """
         # Reload the user to get the latest data from the database.
         user = self._get_user(user)
@@ -418,6 +425,8 @@ class MarketAPI(object):
     def accept_mortgage_offer(self, user, payload):
         """
         Accept a mortgage offer for the given user.
+
+        This action automatically rejects all other mortgage offers.
 
         The payload dictionary has the following composition
 
@@ -499,11 +508,61 @@ class MarketAPI(object):
             return self.db.put(investment.type, investment.id, investment) and self.db.put(campaign.type, campaign.id, campaign)
         return False
 
-    def reject_offer(self, user, payload):
-        """ reject an offer """
-        # TODO offer can be mortgage or investment
+    def reject_mortgage_offer(self, user, payload):
+        """
+        Decline a mortgage offer for the given user.
+
+        The payload dictionary has the following composition
+
+        +----------------+------------------------------------------------------------------+
+        | Key            | Description                                                      |
+        +================+==================================================================+
+        | mortgage_id    | The id of the mortgage                                           |
+        +----------------+------------------------------------------------------------------+
+
+
+        :param user: The user accepting a mortgage offer
+        :type user: :any:`User`
+        :param payload: The payload containing the data for the :any:`Mortgage`, as described above.
+        :type payload: dict
+        :return: Returns True if successful, False otherwise.
+        :rtype: bool
+        """
         user = self._get_user(user)
-        pass
+        mortgage = self.db.get('mortgage', payload['mortgage_id'])
+        loan_request = self.db.get('loan_request', mortgage.request_id)
+
+        mortgage.status = STATUS.REJECTED
+        loan_request.status[mortgage.bank] = STATUS.REJECTED
+        user.mortgage_ids.remove(mortgage.id)
+
+        return self.db.put(mortgage.type, mortgage.id, mortgage) and self.db.put(loan_request.type, loan_request.id, loan_request) and self.db.put(user.type, user.id, user)
+
+    def reject_investment_offer(self, user, payload):
+        """
+        Decline an investment offer for the given user.
+
+        The payload dictionary has the following composition
+
+        +----------------+------------------------------------------------------------------+
+        | Key            | Description                                                      |
+        +================+==================================================================+
+        | investment_id  | The id of the investment                                         |
+        +----------------+------------------------------------------------------------------+
+
+        :param user: The user accepting an investment offer.
+        :type user: :any:`User`
+        :param payload: The payload containing the data for the :any:`Investment`, as described above.
+        :type payload: dict
+        :return: Returns True if successful, False otherwise.
+        :rtype: bool
+        """
+        investment = self.db.get('investment', payload['investment_id'])
+
+        investment.status = STATUS.REJECTED
+        user.investment_ids.remove(investment.id)
+
+        return self.db.put(investment.type, investment.id, investment) and self.db.put(user.type, user.id, user)
 
     def load_all_loan_requests(self, user):
         """ load all pending loan requests for a specific bank """
@@ -569,7 +628,7 @@ class MarketAPI(object):
         """
         assert isinstance(bank, User)
         assert isinstance(payload, dict)
-        assert self.check_role(bank).role_name == 'FINANCIAL_INSTITUTION'
+        assert self.get_role(bank).role_name == 'FINANCIAL_INSTITUTION'
 
         # Accept the loan request
         loan_request = self.db.get('loan_request', payload['request_id'])

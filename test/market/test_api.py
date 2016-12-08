@@ -113,7 +113,7 @@ class APITestSuite(unittest.TestCase):
         self.assertIsNone(bank.profile_id)
 
         # Check if the role was set correctly.
-        self.assertEqual(self.api.check_role(bank).role, self.payload['role'])
+        self.assertEqual(self.api.get_role(bank).role, self.payload['role'])
 
     def test_create_profile_keyerror(self):
         # Create an user
@@ -259,7 +259,6 @@ class APITestSuite(unittest.TestCase):
     #def test_create_loan_request_borrower(self):
         # Create a user
 
-    # TODO: Fix the test. Fails due to place_loan_offer function
     def test_load_investments(self):
         # Create an user
         investor, _, _ = self.api.create_user()
@@ -360,7 +359,6 @@ class APITestSuite(unittest.TestCase):
         self.assertEqual(offers[0], mortgage1)
         self.assertEqual(offers[1], mortgage2)
 
-    # TODO: Fix the test. Fails due to place_loan_offer function
     def test_load_borrowers_offers_mortgage_accepted(self):
         # create users
         user, _, _ = self.api.create_user()
@@ -426,7 +424,7 @@ class APITestSuite(unittest.TestCase):
         self.api.create_profile(user, self.payload)
 
         # Get the role of the user
-        role = self.api.check_role(user)
+        role = self.api.get_role(user)
 
         # Check whether the returned role is indeed the user's role
         self.assertEqual(role.id, user.role_id)
@@ -441,7 +439,7 @@ class APITestSuite(unittest.TestCase):
         self.api.create_profile(user, self.payload)
 
         # Get the role of the user
-        role = self.api.check_role(user)
+        role = self.api.get_role(user)
 
         # Check whether the returned role is indeed the user's role
         self.assertEqual(role.id, user.role_id)
@@ -456,7 +454,7 @@ class APITestSuite(unittest.TestCase):
         self.api.create_profile(user, self.payload)
 
         # Get the role of the user
-        role = self.api.check_role(user)
+        role = self.api.get_role(user)
 
         # Check whether the returned role is indeed the user's role
         self.assertEqual(role.id, user.role_id)
@@ -669,3 +667,120 @@ class APITestSuite(unittest.TestCase):
         # Check if the loan request has been removed from borrower
         updated_borrower = self.api.db.get('users', borrower.id)
         self.assertFalse(updated_borrower.loan_request_ids)
+
+    def test_reject_investment(self):
+        """
+        This test checks the functionality of a borrower rejecting an investment
+        When an investment is rejecte it is removed from Borrower.investment_ids but remains in
+        Investor.investment_ids. The Investment.status is set to STATUS.REJECTED
+        """
+
+        # Create an user
+        investor, _, _ = self.api.create_user()
+        borrower, _, _ = self.api.create_user()
+        bank, _, _ = self.api.create_user()
+
+        # Create an investor's profile
+        self.payload['role'] = 2  # investor
+        self.api.create_profile(investor, self.payload)
+        # Create a borrower profile
+        self.payload['role'] = 1  # borrower
+        self.api.create_profile(borrower, self.payload)
+        # Create a bank profile
+        self.payload['role'] = 3  # bank
+        self.api.create_profile(bank, self.payload_bank)
+
+        # Create loan request
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request2)
+
+        # Set payload
+        self.payload_mortgage3['request_id'] = loan_request.id
+        self.payload_mortgage3['user_key'] = borrower.id
+        self.payload_mortgage3['house_id'] = loan_request.house_id
+        self.payload_mortgage3['bank'] = bank.id
+
+        # Let the bank accept the request
+        loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage3)
+
+        # the borrower accepts the mortgage offer
+        self.api.accept_mortgage_offer(borrower, {'mortgage_id': mortgage.id})
+
+        # Create loan offers
+        self.payload_loan_offer1['user_key'] = borrower.id # set user_key to the investor's public key
+        self.payload_loan_offer1['mortgage_id'] = mortgage.id
+        investment = self.api.place_loan_offer(investor, self.payload_loan_offer1)
+
+        borrower = self.api._get_user(borrower)
+
+        # Accept investment
+        self.api.reject_investment_offer(borrower, {'investment_id': investment.id})
+        investment = self.api.db.get(investment.type, investment.id)
+
+        investor_investments = self.api.load_investments(investor)
+        borrower_investments = self.api.load_investments(borrower)
+
+        # Check if the investment  isn't in neither accepted or pending of the borrower
+        self.assertNotIn(investment, borrower_investments[0])
+        self.assertNotIn(investment, borrower_investments[1])
+        self.assertNotIn(investment.id, borrower.investment_ids)
+
+        # Or of the investor.
+        self.assertNotIn(investment, investor_investments[0])
+        self.assertNotIn(investment, investor_investments[1])
+
+        # But it is in the investors full list
+        self.assertIn(investment.id, investor.investment_ids)
+        self.assertEqual(investment.status, STATUS.REJECTED)
+
+
+    def test_reject_mortgage(self):
+        """
+        This test checks the functionality of a borrower rejecting a mortgage
+        When a mortgage is rejected it is removed from Borrower.mortgage_ids but remains in
+        Bank.mortgage_ids. The Mortgage.status is set to STATUS.REJECTED
+        """
+
+        # Create an user
+        investor, _, _ = self.api.create_user()
+        borrower, _, _ = self.api.create_user()
+        bank, _, _ = self.api.create_user()
+
+        # Create an investor's profile
+        self.payload['role'] = 2  # investor
+        self.api.create_profile(investor, self.payload)
+        # Create a borrower profile
+        self.payload['role'] = 1  # borrower
+        self.api.create_profile(borrower, self.payload)
+        # Create a bank profile
+        self.payload['role'] = 3  # bank
+        self.api.create_profile(bank, self.payload_bank)
+
+        # Create loan request
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request2)
+
+        # Set payload
+        self.payload_mortgage3['request_id'] = loan_request.id
+        self.payload_mortgage3['user_key'] = borrower.id
+        self.payload_mortgage3['house_id'] = loan_request.house_id
+        self.payload_mortgage3['bank'] = bank.id
+
+        # Let the bank accept the request
+        loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage3)
+        # the borrower accepts the mortgage offer
+        self.api.reject_mortgage_offer(borrower, {'mortgage_id': mortgage.id})
+
+        # Reload
+        borrower = self.api._get_user(borrower)
+        bank = self.api._get_user(bank)
+        mortgage = self.api.db.get(mortgage.type, mortgage.id)
+
+        loan_request = self.api.db.get(loan_request.type, loan_request.id)
+
+        # Check if the mortgage is removed from the borrower but remains in the bank
+        self.assertNotIn(mortgage.id, borrower.mortgage_ids)
+        self.assertIn(mortgage.id, bank.mortgage_ids)
+
+        # Check the rejected status
+        self.assertEqual(mortgage.status, STATUS.REJECTED)
+        self.assertEqual(loan_request.status[bank.id], STATUS.REJECTED)
+
