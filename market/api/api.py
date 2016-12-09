@@ -422,7 +422,7 @@ class MarketAPI(object):
 
         # Add the newly created campaign to the database
         end_date = datetime.now() + timedelta(days=CAMPAIGN_LENGTH_DAYS)
-        finance_goal = house.price - loan_request.amount_wanted
+        finance_goal = house.price - mortgage.amount
 
         campaign = Campaign(mortgage.id, finance_goal, end_date, False)
         if self.db.post('campaign', campaign):
