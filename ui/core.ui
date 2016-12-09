@@ -38,9 +38,9 @@
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
-        <widget class="QWidget" name="page">
+        <widget class="QWidget" name="bplr_page">
          <widget class="QWidget" name="gridLayoutWidget">
           <property name="geometry">
            <rect>
@@ -75,7 +75,7 @@
            <item row="5" column="0">
             <widget class="QLineEdit" name="bplr_house_price_lineedit">
              <property name="text">
-              <string>120,000</string>
+              <string>120000</string>
              </property>
             </widget>
            </item>
@@ -132,7 +132,7 @@
            <item row="11" column="0">
             <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
              <property name="text">
-              <string>80,000</string>
+              <string>80000</string>
              </property>
             </widget>
            </item>
@@ -347,7 +347,7 @@
            </item>
           </layout>
          </widget>
-         <widget class="QToolButton" name="prev_3">
+         <widget class="QToolButton" name="prev_1">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -360,7 +360,7 @@
            <string>&lt;</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="next_3">
+         <widget class="QToolButton" name="next_1">
           <property name="geometry">
            <rect>
             <x>40</x>
@@ -374,8 +374,8 @@
           </property>
          </widget>
         </widget>
-        <widget class="QWidget" name="page_2">
-         <widget class="QToolButton" name="next_5">
+        <widget class="QWidget" name="fiplr1_page">
+         <widget class="QToolButton" name="next_2">
           <property name="geometry">
            <rect>
             <x>40</x>
@@ -562,7 +562,7 @@
            <string>View loan request</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="prev_5">
+         <widget class="QToolButton" name="prev_2">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -576,7 +576,7 @@
           </property>
          </widget>
         </widget>
-        <widget class="QWidget" name="page_3">
+        <widget class="QWidget" name="fiplr2_page">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QScrollArea" name="scrollArea">
@@ -599,7 +599,7 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-62</y>
+               <y>0</y>
                <width>823</width>
                <height>825</height>
               </rect>
@@ -641,7 +641,7 @@
               </item>
               <item>
                <widget class="QWidget" name="widget" native="true">
-                <widget class="QToolButton" name="next_6">
+                <widget class="QToolButton" name="next_3">
                  <property name="geometry">
                   <rect>
                    <x>30</x>
@@ -693,7 +693,7 @@
                   </rect>
                  </property>
                 </widget>
-                <widget class="QToolButton" name="prev_6">
+                <widget class="QToolButton" name="prev_3">
                  <property name="geometry">
                   <rect>
                    <x>10</x>
@@ -1258,46 +1258,6 @@
                   <string>Mortgage Type</string>
                  </property>
                 </widget>
-                <zorder>next_6</zorder>
-                <zorder>fiplr2_lastname_lineedit</zorder>
-                <zorder>fiplr2_property_value_lineedit</zorder>
-                <zorder>fiplr2_risk_lineedit</zorder>
-                <zorder>prev_6</zorder>
-                <zorder>fiplr2_property_address_label</zorder>
-                <zorder>fiplr2_lastname_label</zorder>
-                <zorder>fiplr2_loan_amount_label</zorder>
-                <zorder>fiplr2_reject_pushbutton</zorder>
-                <zorder>fiplr2_offer_amount_lineedit</zorder>
-                <zorder>fiplr2_mortgage_information_label</zorder>
-                <zorder>fiplr2_email_label</zorder>
-                <zorder>fiplr2_title_label</zorder>
-                <zorder>fiplr2_phonenumber_label</zorder>
-                <zorder>fiplr2_documents_listview</zorder>
-                <zorder>fiplr2_loan_request_label</zorder>
-                <zorder>fiplr2_loan_duration_label</zorder>
-                <zorder>fiplr2_loan_amount_lineedit</zorder>
-                <zorder>fiplr2_default_rate_lineedit</zorder>
-                <zorder>fiplr2_firstname_label</zorder>
-                <zorder>fiplr2_address_label</zorder>
-                <zorder>fiplr2_loan_duration_lineedit</zorder>
-                <zorder>fiplr2_mortgage_type_lineedit</zorder>
-                <zorder>fiplr2_address_lineedit</zorder>
-                <zorder>fiplr2_offer_amount_label</zorder>
-                <zorder>fiplr2_offer_interest_lineedit</zorder>
-                <zorder>fiplr2_phonenumber_lineedit</zorder>
-                <zorder>fiplr2_personal_information_label</zorder>
-                <zorder>fiplr2_risk_label</zorder>
-                <zorder>fiplr2_documents_label</zorder>
-                <zorder>fiplr2_make_offer_label</zorder>
-                <zorder>fiplr2_property_address_lineedit</zorder>
-                <zorder>fiplr2_email_lineedit</zorder>
-                <zorder>fiplr2_default_rate_label</zorder>
-                <zorder>fiplr2_property_value_label</zorder>
-                <zorder>fiplr2_firstname_lineedit</zorder>
-                <zorder>fiplr2_accept_pushbutton</zorder>
-                <zorder>fiplr2_offer_interest_label</zorder>
-                <zorder>fiplr2_mortgage_type_label</zorder>
-                <zorder>verticalSpacer</zorder>
                </widget>
               </item>
              </layout>
@@ -1306,7 +1266,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="page_4">
+        <widget class="QWidget" name="openmarket_page">
          <widget class="QPushButton" name="openmarket_view_loan_bids_pushbutton">
           <property name="geometry">
            <rect>
@@ -1339,7 +1299,7 @@
            <string>Duration (month)</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="next_7">
+         <widget class="QToolButton" name="next_4">
           <property name="geometry">
            <rect>
             <x>40</x>
@@ -1514,7 +1474,7 @@
            <string>Search</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="prev_7">
+         <widget class="QToolButton" name="prev_4">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -1838,8 +1798,8 @@
           </column>
          </widget>
         </widget>
-        <widget class="QWidget" name="page_5">
-         <widget class="QLineEdit" name="amount_lineedit">
+        <widget class="QWidget" name="icb_page">
+         <widget class="QLineEdit" name="icb_amount_lineedit">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -1849,7 +1809,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLineEdit" name="property_address_lineedit">
+         <widget class="QLineEdit" name="icb_property_address_lineedit">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -1862,7 +1822,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLineEdit" name="duration_lineedit">
+         <widget class="QLineEdit" name="icb_duration_lineedit">
           <property name="geometry">
            <rect>
             <x>330</x>
@@ -1872,7 +1832,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="duration_label">
+         <widget class="QLabel" name="icb_duration_label">
           <property name="geometry">
            <rect>
             <x>330</x>
@@ -1885,7 +1845,7 @@
            <string>Duration (months)</string>
           </property>
          </widget>
-         <widget class="QTableWidget" name="vb_current_binds_table">
+         <widget class="QTableWidget" name="icb__current_bids_table">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -2062,7 +2022,7 @@
            </property>
           </column>
          </widget>
-         <widget class="QLabel" name="place_bid_label">
+         <widget class="QLabel" name="icb_place_bid_label">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -2082,7 +2042,7 @@
            <string>Place Bid</string>
           </property>
          </widget>
-         <widget class="QLabel" name="amount_label">
+         <widget class="QLabel" name="icb_amount_label">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -2095,7 +2055,7 @@
            <string>Amount Offered (€)</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="place_bid_button">
+         <widget class="QPushButton" name="icb_place_bid_button">
           <property name="geometry">
            <rect>
             <x>580</x>
@@ -2108,7 +2068,7 @@
            <string>Place Bid</string>
           </property>
          </widget>
-         <widget class="QLabel" name="current_bids_label">
+         <widget class="QLabel" name="icb_current_bids_label">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -2128,7 +2088,7 @@
            <string>Current Bids</string>
           </property>
          </widget>
-         <widget class="QLabel" name="interest_label">
+         <widget class="QLabel" name="icb_interest_label">
           <property name="geometry">
            <rect>
             <x>580</x>
@@ -2141,7 +2101,7 @@
            <string>Interest Rate (%)</string>
           </property>
          </widget>
-         <widget class="QLineEdit" name="interest_lineedit">
+         <widget class="QLineEdit" name="icb_interest_lineedit">
           <property name="geometry">
            <rect>
             <x>580</x>
@@ -2151,7 +2111,7 @@
            </rect>
           </property>
          </widget>
-         <widget class="QLabel" name="biew_loan_bids_label">
+         <widget class="QLabel" name="icb_title_label">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -2171,7 +2131,7 @@
            <string>Campaign Bids</string>
           </property>
          </widget>
-         <widget class="QLabel" name="property_address_label">
+         <widget class="QLabel" name="icb_property_address_label">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -2184,7 +2144,7 @@
            <string>Property Address</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="prev_9">
+         <widget class="QToolButton" name="prev_5">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -2197,7 +2157,7 @@
            <string>&lt;</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="next_9">
+         <widget class="QToolButton" name="next_5">
           <property name="geometry">
            <rect>
             <x>40</x>
@@ -2211,8 +2171,8 @@
           </property>
          </widget>
         </widget>
-        <widget class="QWidget" name="page_6">
-         <widget class="QToolButton" name="next_8">
+        <widget class="QWidget" name="ip_page">
+         <widget class="QToolButton" name="next_6">
           <property name="geometry">
            <rect>
             <x>40</x>
@@ -2294,7 +2254,7 @@
            <string>Investor's Portfolio</string>
           </property>
          </widget>
-         <widget class="QToolButton" name="prev_8">
+         <widget class="QToolButton" name="prev_6">
           <property name="geometry">
            <rect>
             <x>20</x>
@@ -2307,7 +2267,7 @@
            <string>&lt;</string>
           </property>
          </widget>
-         <widget class="QTableWidget" name="fiplr1_loan_requests_table_3">
+         <widget class="QTableWidget" name="ip_investments_table">
           <property name="enabled">
            <bool>true</bool>
           </property>
