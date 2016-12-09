@@ -23,9 +23,11 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.set_navigation()
         self.bplr_submit_button.clicked.connect(self.bplr_submit_loan_request)
         self.fiplr1_loan_requests_table.doubleClicked.connect(self.fiplr2_view_loan_request)
+        self.openmarket_open_market_table.doubleClicked.connect(self.openmarket_view_campaign)
         self.fiplr1_view_loan_request_pushbutton.clicked.connect(self.fiplr2_view_loan_request)
         self.fiplr2_accept_pushbutton.clicked.connect(self.fiplr2_accept_loan_request)
         self.fiplr2_reject_pushbutton.clicked.connect(self.fiplr2_reject_loan_request)
+        self.icb_place_bid_pushbutton.clicked.connect(self.icb_place_bid)
         self.setupObjects()
 
         self.stackedWidget.setCurrentIndex(0)
@@ -88,21 +90,21 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.fiplr1_loan_requests_table.setRowCount(len(payload))
         for i in range(0, len(payload)):
             row = payload[i]
-            self.fiplr1_loan_requests_table.item(i, 0).setText(row['house_number']+' , '+row['postal_code'])
+            self.fiplr1_loan_requests_table.item(i, 0).setText('Bouwerslaan ' + row['house_number']+' , '+row['postal_code'])
             self.fiplr1_loan_requests_table.item(i, 1).setText(str(row['mortgage_type']))
             self.fiplr1_loan_requests_table.item(i, 2).setText(str(row['amount_wanted']))
             self.fiplr1_loan_requests_table.item(i, 3).setText(str(row['price']))
 
     def fiplr2_view_loan_request(self):
         content = [self.bplr_payload]
-        chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row();
+        chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row()
         chosen_request = content[chosen_index]     # index of the row
         print 'content'
         print content
         #personal information
         self.fiplr2_firstname_lineedit.setText(str(self.borrower_profile_payload['first_name']))
         self.fiplr2_lastname_lineedit.setText(str(self.borrower_profile_payload['last_name']))
-        self.fiplr2_address_lineedit.setText(str('Laanlaan' + self.borrower_profile_payload['current_housenumber'] + ' ' + self.borrower_profile_payload['current_postalcode']))
+        self.fiplr2_address_lineedit.setText(str('Laanlaan ' + self.borrower_profile_payload['current_housenumber'] + ' ' + self.borrower_profile_payload['current_postalcode']))
         self.fiplr2_phonenumber_lineedit.setText(str(self.borrower_profile_payload['phonenumber']))
         self.fiplr2_email_lineedit.setText(str(self.borrower_profile_payload['email']))
 
@@ -116,13 +118,15 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.nextScreen()
 
     def fiplr2_accept_loan_request(self):
+        # TODO api does not accept payload set by the bank in the fiplr2 screen
         bank_offer = {
             'amount': self.fiplr2_offer_amount_lineedit.text(),
-            'duration': self.fiplr2_offer_interest_lineedit.text(),
-            'interest_rate': self.fiplr2_default_rate_lineedit.text(),
-            'mortgage_id': self.fiplr2_loan_duration_lineedit.text()
+            'interest_rate': self.fiplr2_offer_interest_lineedit.text(),
+            'default_rate': self.fiplr2_default_rate_lineedit.text(),
+            'duration': self.fiplr2_loan_duration_lineedit.text()
+            # 'mortgage_id': self.fiplr2_loan_duration_lineedit.text()
         }
-        self.op_view_open_market([bank_offer])
+        self.openmarket_view_open_market(bank_offer)
         # TODO send the payload to the api
         # self.api.accept_loan_request()
 
@@ -130,19 +134,32 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.previousScreen()
         # TODO do an actual reject with the api
 
-    def op_view_open_market(self, fi_payload):
+    def openmarket_view_open_market(self, fi_payload):
+        # print self.openmarket_open_market_table.selectedIndexes()
+        # TODO add new items in, instead of editing ones that exist.
         self.openmarket_open_market_table.setRowCount(len(fi_payload))
-        for i in range(0, len(fi_payload)):
-            row = fi_payload[i]
-            print row
-            # val =
-            # self.fiplr1_loan_requests_table.item(i, 0).setText(row['house_number'] + ' , ' + row['postal_code'])
-            # self.fiplr1_loan_requests_table.item(i, 1).setText(str(row['mortgage_type']))
-            # self.fiplr1_loan_requests_table.item(i, 2).setText(str(row['amount_wanted']))
-            # self.fiplr1_loan_requests_table.item(i, 3).setText(str(row['price']))
+        for i in range(0, 1):
+            # row = fi_payload[i]
+            self.openmarket_open_market_table.item(i, 0).setText('Bouwerslaan ' + self.bplr_payload['house_number'] + ' , ' + self.bplr_payload['postal_code'])
+            self.openmarket_open_market_table.item(i, 1).setText(str(self.bplr_payload['amount_wanted']))
+            self.openmarket_open_market_table.item(i, 2).setText(str(fi_payload['interest_rate']))
+            self.openmarket_open_market_table.item(i, 3).setText(str(fi_payload['duration']))
 
         self.nextScreen()
 
+    def openmarket_view_campaign(self):
+        address = 'Bouwerslaan ' + self.bplr_payload['house_number'] + ' , ' + self.bplr_payload['postal_code']
+        self.icb_property_address_lineedit.setText(address)
+        # self.icb_current_bids_table.setRowCount(0)
+        self.nextScreen()
+
+    def icb_place_bid(self):
+        # row_count = self.icb_current_bids_table.rowCount()
+        # self.icb_current_bids_table.insertRow(row_count)
+        # print row_count
+        self.icb_current_bids_table.item(0, 0).setText(self.icb_amount_lineedit.text())
+        self.icb_current_bids_table.item(0, 1).setText(self.icb_duration_lineedit.text())
+        self.icb_current_bids_table.item(0, 2).setText(self.icb_interest_lineedit.text())
 
 #################################################bs#####################################################################
 
