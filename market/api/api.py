@@ -588,7 +588,7 @@ class MarketAPI(object):
             # Only show loan requests that are still pending
             for pending_loan_request_id in user.loan_request_ids:
                 if self.db.get('loan_request', pending_loan_request_id).status[user.id] == STATUS.PENDING:
-                    pending_loan_requests.append(pending_loan_request_id)
+                    pending_loan_requests.append(self.db.get('loan_request', pending_loan_request_id))
 
             return pending_loan_requests
         else:

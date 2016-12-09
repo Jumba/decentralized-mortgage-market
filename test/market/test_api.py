@@ -783,9 +783,9 @@ class APITestSuite(unittest.TestCase):
         updated_bank = self.api.db.get('users', bank.id)
         pending_loan_requests = self.api.load_all_loan_requests(updated_bank)
         self.assertIsInstance(pending_loan_requests, list)
-        self.assertNotIn(loan_request_1.id, pending_loan_requests)
-        self.assertIn(loan_request_2.id, pending_loan_requests)
-        self.assertIn(loan_request_3.id, pending_loan_requests)
+        self.assertNotIn(loan_request_1, pending_loan_requests)
+        self.assertIn(loan_request_2, pending_loan_requests)
+        self.assertIn(loan_request_3, pending_loan_requests)
 
     def test_load_single_loan_request(self):
         """
