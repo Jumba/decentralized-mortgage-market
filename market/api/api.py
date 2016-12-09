@@ -711,6 +711,9 @@ class MarketAPI(object):
         assert isinstance(borrower, User)
         loan_request_id = borrower.loan_request_ids[0]
 
+        # Remove the loan request from the bank's list
+        user.loan_request_ids.remove(loan_request_id)
+
         # Check if the loan request has been rejected by all selected banks
         rejected = True
         for bank in rejected_loan_request.status:
@@ -719,7 +722,8 @@ class MarketAPI(object):
 
         # If all banks have rejected the loan request, remove the loan request from borrower
         if rejected:
-            del borrower.loan_request_ids[:]
+            borrower.loan_request_ids.remove(loan_request_id)
+            #del borrower.loan_request_ids[:]
             self.db.put(borrower.type, borrower.id, borrower)
 
         # Save the rejected loan request
