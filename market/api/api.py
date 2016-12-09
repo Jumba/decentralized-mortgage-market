@@ -707,7 +707,7 @@ class MarketAPI(object):
         rejected_loan_request.status[user.id] = STATUS.REJECTED
 
         # Save rejected loan request
-        borrower = self.db.get('users', payload['user_key'])
+        borrower = self.db.get('users', rejected_loan_request.user_key)
         assert isinstance(borrower, User)
         loan_request_id = borrower.loan_request_ids[0]
 
