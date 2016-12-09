@@ -30,7 +30,6 @@ sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'rst2pdf.pdfbuilder',
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
@@ -288,4 +287,3 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 
-pdf_documents = [('index', u'Decentralized_Market_API', u'Decentralized Market API', u'BEP 2016'),]
