@@ -707,21 +707,23 @@ class MarketAPI(object):
         +----------------+------------------------------------------------------------------+
         | Key            | Description                                                      |
         +================+==================================================================+
-        | campaign_id    | The id of the selected campaign                                  |
+        | mortgage_id    | The id of the selected mortgage                                  |
         +----------------+------------------------------------------------------------------+
 
-        :param payload: The payload containing the data for the :any:`Campaign`, as described above.
+        :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: A list of :any: 'Campaign' objects.
+        :return: A list of :any: 'Investment' objects.
         :rtype: list
         """
 
         # Get the list of all the pending/accepted bids on the campaign
         # TODO Also show rejected offers?
-        #campaign = self.db.get('campaign', payload['campaign_id'])
-        #mortgage = self.db.get('mortgage', campaign.mortgage_id)
         mortgage = self.db.get('mortgage', payload['mortgage_id'])
         loan_request = self.db.get('loan_request', mortgage.request_id)
         borrower = self.db.get('users', loan_request.user_key)
 
-        return borrower.investment_ids
+        bids = []
+        for investment_bid in borrower.investment_ids:
+            bids.append(self.db.get('investment', investment_bid))
+
+        return bids
