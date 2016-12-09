@@ -881,16 +881,22 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request['request_id'] = loan_request.id
 
         # Reject the loan request
+        bank1 = self.api.db.get('users', bank1.id)
         rejected_loan_request1 = self.api.reject_loan_request(bank1, self.payload_loan_request)
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request1.status[bank1.id], STATUS.REJECTED)
+        # Check if the loan request has been removed from bank1's loan request list
+        self.assertNotIn(rejected_loan_request1, bank1.loan_request_ids)
         # Check if the loan request hasn't been removed from borrower
         updated_borrower = self.api.db.get('users', borrower.id)
         self.assertTrue(updated_borrower.loan_request_ids)
 
+        bank2 = self.api.db.get('users', bank2.id)
         rejected_loan_request2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request2.status[bank2.id], STATUS.REJECTED)
+        # Check if the loan request has been removed from bank2's loan request list
+        self.assertNotIn(rejected_loan_request2, bank2.loan_request_ids)
         # Check if the loan request has been removed from borrower
         updated_borrower = self.api.db.get('users', borrower.id)
         self.assertFalse(updated_borrower.loan_request_ids)
