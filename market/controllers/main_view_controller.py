@@ -23,18 +23,13 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.set_navigation()
         self.bplr_submit_button.clicked.connect(self.bplr_submit_loan_request)
         self.fiplr1_loan_requests_table.doubleClicked.connect(self.fiplr2_view_loan_request)
+        self.fiplr1_view_loan_request_pushbutton.clicked.connect(self.fiplr2_view_loan_request)
+        self.fiplr2_accept_pushbutton.clicked.connect(self.fiplr2_accept_loan_request)
+        self.fiplr2_reject_pushbutton.clicked.connect(self.fiplr2_reject_loan_request)
         self.setupObjects()
 
         self.stackedWidget.setCurrentIndex(0)
         print self.stackedWidget.count()
-
-    def fiplr2_view_loan_request(self):
-        chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row();
-        request = self.bplr_payload[chosen_index]     # index of the row
-        #personal information
-        #information about the request
-        self.fiplr2_property_address_lineedit.text('Bouwerslaan '+request['house_number']+' , '+request['postal_code'])
-        # self.fiplr2_property_address_lineedit
 
     def bplr_submit_loan_request(self):
         fields = {'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
@@ -77,26 +72,79 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         print self.api.create_loan_request(self.user_borrower, self.bplr_payload)
         # self.bplr_payload = [self.bplr_payload]
         # self.fiplr1_populate_table(self.bplr_payload)
-        self.loadAllPendingLoanRequests()
+        self.fiplr1_load_all_pending_loan_requests()
 
-    def loadAllPendingLoanRequests(self):
-        pop = self.api.load_all_loan_requests(self.user_bank)
-        print pop
-        self.fiplr1_populate_table(pop)
+    def fiplr1_load_all_pending_loan_requests(self):
+        print 'Loading second screen!'
+        # TODO request the contents with the uuid that is being returned from the following:
+        # pop = self.api.load_all_loan_requests(self.user_bank)
+        # print pop
+        self.fiplr1_populate_table([self.bplr_payload])
+        self.nextScreen()
+
 
     # method for populating the pending resquest table.
     def fiplr1_populate_table(self, payload):
         self.fiplr1_loan_requests_table.setRowCount(len(payload))
         for i in range(0, len(payload)):
             row = payload[i]
-            # print row
-            val = row['house_number']+' , '+row['postal_code']
-            self.fiplr1_loan_requests_table.item(i, 0).setText(val)
+            self.fiplr1_loan_requests_table.item(i, 0).setText(row['house_number']+' , '+row['postal_code'])
             self.fiplr1_loan_requests_table.item(i, 1).setText(str(row['mortgage_type']))
-            self.fiplr1_loan_requests_table.item(i, 2).setText(row['amount_wanted'])
-            self.fiplr1_loan_requests_table.item(i, 3).setText(row['price'])
+            self.fiplr1_loan_requests_table.item(i, 2).setText(str(row['amount_wanted']))
+            self.fiplr1_loan_requests_table.item(i, 3).setText(str(row['price']))
+
+    def fiplr2_view_loan_request(self):
+        content = [self.bplr_payload]
+        chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row();
+        chosen_request = content[chosen_index]     # index of the row
+        print 'content'
+        print content
+        #personal information
+        self.fiplr2_firstname_lineedit.setText(str(self.borrower_profile_payload['first_name']))
+        self.fiplr2_lastname_lineedit.setText(str(self.borrower_profile_payload['last_name']))
+        self.fiplr2_address_lineedit.setText(str('Laanlaan' + self.borrower_profile_payload['current_housenumber'] + ' ' + self.borrower_profile_payload['current_postalcode']))
+        self.fiplr2_phonenumber_lineedit.setText(str(self.borrower_profile_payload['phonenumber']))
+        self.fiplr2_email_lineedit.setText(str(self.borrower_profile_payload['email']))
+
+        #information about the request
+        self.fiplr2_property_address_lineedit.setText('Bouwerslaan '+chosen_request['house_number']+' , '+chosen_request['postal_code'])
+        # TODO rename the fiplr2_loan_amount_lineedit
+        self.fiplr2_loan_amount_lineedit.setText(str(chosen_request['amount_wanted']))
+        self.fiplr2_mortgage_type_lineedit.setText(str(chosen_request['mortgage_type']))
+        self.fiplr2_property_value_lineedit.setText(str(chosen_request['price']))
+        self.fiplr2_description_textedit.setText(str(chosen_request['description']))
+        self.nextScreen()
+
+    def fiplr2_accept_loan_request(self):
+        bank_offer = {
+            'amount': self.fiplr2_offer_amount_lineedit.text(),
+            'duration': self.fiplr2_offer_interest_lineedit.text(),
+            'interest_rate': self.fiplr2_default_rate_lineedit.text(),
+            'mortgage_id': self.fiplr2_loan_duration_lineedit.text()
+        }
+        self.op_view_open_market([bank_offer])
+        # TODO send the payload to the api
+        # self.api.accept_loan_request()
+
+    def fiplr2_reject_loan_request(self):
+        self.previousScreen()
+        # TODO do an actual reject with the api
+
+    def op_view_open_market(self, fi_payload):
+        self.openmarket_open_market_table.setRowCount(len(fi_payload))
+        for i in range(0, len(fi_payload)):
+            row = fi_payload[i]
+            print row
+            # val =
+            # self.fiplr1_loan_requests_table.item(i, 0).setText(row['house_number'] + ' , ' + row['postal_code'])
+            # self.fiplr1_loan_requests_table.item(i, 1).setText(str(row['mortgage_type']))
+            # self.fiplr1_loan_requests_table.item(i, 2).setText(str(row['amount_wanted']))
+            # self.fiplr1_loan_requests_table.item(i, 3).setText(str(row['price']))
+
+        self.nextScreen()
 
 
+#################################################bs#####################################################################
 
     def setupObjects(self):
         #create user
@@ -108,38 +156,38 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         # self._basic_forms = {'role': ROLES[1], 'first_name': 'Bob', 'last_name': 'Bauwer, de', 'email': 'bob@gmail.com', 'iban': 'ING 0256 0213', 'phonenumber': '0625457845'}
         # self._borrower_forms = {'current_postalcode': '1234 BA', 'current_housenumber': '123', 'documents_list': []}
 
-        borrower_payload = {'role': 1, 'first_name': 'Bob', 'last_name': 'Bouwer, de', 'email': 'bob@gmail.com',
+        self.borrower_profile_payload = {'role': 1, 'first_name': 'Bob', 'last_name': 'Bouwer, de', 'email': 'bob@gmail.com',
                     'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+31632549865',
                     'current_postalcode': '1234 CD', 'current_housenumber': '24', 'documents_list': []}
         investor_payload = {'role': 2, 'first_name': 'Ruby', 'last_name': 'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30394', 'phonenumber': '+3170253719290'}
         bank_payload = {'role': 3}
 
-        print self.api.create_profile(self.user_borrower, borrower_payload)
+        print self.api.create_profile(self.user_borrower, self.borrower_profile_payload)
         print self.api.create_profile(self.user_investor, investor_payload)
         print self.api.create_profile(self.user_bank, bank_payload)
 
     def set_navigation(self):
-        self.next_1.clicked.connect(self.next_screen)
-        self.next_2.clicked.connect(self.next_screen)
-        self.next_3.clicked.connect(self.next_screen)
-        self.next_4.clicked.connect(self.next_screen)
-        self.next_5.clicked.connect(self.next_screen)
-        self.next_6.clicked.connect(self.next_screen)
+        self.next_1.clicked.connect(self.nextScreen)
+        self.next_2.clicked.connect(self.nextScreen)
+        self.next_3.clicked.connect(self.nextScreen)
+        self.next_4.clicked.connect(self.nextScreen)
+        self.next_5.clicked.connect(self.nextScreen)
+        self.next_6.clicked.connect(self.nextScreen)
         # self.next_7.clicked.connect(self.next_screen)
         # self.next_8.clicked.connect(self.next_screen)
-        self.prev_1.clicked.connect(self.prev_screen)
-        self.prev_2.clicked.connect(self.prev_screen)
-        self.prev_3.clicked.connect(self.prev_screen)
-        self.prev_4.clicked.connect(self.prev_screen)
-        self.prev_5.clicked.connect(self.prev_screen)
-        self.prev_6.clicked.connect(self.prev_screen)
+        self.prev_1.clicked.connect(self.previousScreen)
+        self.prev_2.clicked.connect(self.previousScreen)
+        self.prev_3.clicked.connect(self.previousScreen)
+        self.prev_4.clicked.connect(self.previousScreen)
+        self.prev_5.clicked.connect(self.previousScreen)
+        self.prev_6.clicked.connect(self.previousScreen)
         # self.prev_7.clicked.connect(self.prev_screen)
         # self.prev_8.clicked.connect(self.prev_screen)
 
-    def next_screen(self):
+    def nextScreen(self):
         self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() + 1) % self.stackedWidget.count())
 
-    def prev_screen(self):
+    def previousScreen(self):
         self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() - 1) % self.stackedWidget.count())
 
 
