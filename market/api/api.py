@@ -575,7 +575,14 @@ class MarketAPI(object):
         return self.db.put(investment.type, investment.id, investment) and self.db.put(user.type, user.id, user)
 
     def load_all_loan_requests(self, user):
-        """ load all pending loan requests for a specific bank """
+        """
+        Display all pending loan requests for the specific bank
+
+        :param user: The bank :any:`User`
+        :type user: :any:`User`
+        :return: A list of the :any: 'LoanRequest's if there are any, False otherwise.
+        :rtype: list or False
+        """
         assert isinstance(user, User)
 
         user = self._get_user(user)
@@ -595,7 +602,12 @@ class MarketAPI(object):
             return False
 
     def load_single_loan_request(self, payload):
-        """ load a specific loan request """
+        """
+        Display the selected pending loan request
+
+        :return: The :any: 'LoanRequest's
+        :rtype: LoanRequest
+        """
         assert isinstance(payload, dict)
 
         loan_request = self.db.get('loan_request', payload['loan_request_id'])
@@ -668,7 +680,24 @@ class MarketAPI(object):
 
     # TODO: Add a way to signal events to Users
     def reject_loan_request(self, user, payload):
-        """ reject a pending loan request """
+        """
+        Decline an investment offer for the given user.
+
+        The payload dictionary has the following composition
+
+        +----------------+------------------------------------------------------------------+
+        | Key            | Description                                                      |
+        +================+==================================================================+
+        | request_id     | The id of the loan request                                       |
+        +----------------+------------------------------------------------------------------+
+
+        :param user: The bank rejecting a loan request.
+        :type user: :any:`User`
+        :param payload: The payload containing the data for the :any:`LoanRequest`, as described above.
+        :type payload: dict
+        :return: Returns the rejected :any: 'LoanRequest' if successful, None otherwise.
+        :rtype: LoanRequest or None
+        """
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
