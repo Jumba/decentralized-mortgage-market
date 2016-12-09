@@ -38,7 +38,7 @@ class MockDatabase(Database):
         try:
             id = obj.generate_id()
             while not self.backend.id_available(id):
-                id = obj.generate_id()
+                id = obj.generate_id(force=True)
 
             obj.save(id)
             self.backend.post(type, id, obj.encode())

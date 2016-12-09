@@ -20,8 +20,9 @@ class DatabaseModel(object):
     def type(self):
         return self._type
 
-    def generate_id(self):
-        self._id = uuid.uuid4()
+    def generate_id(self, force=False):
+        if not self._id or force:
+            self._id = uuid.uuid4()
         return self._id
 
     def encode(self, encoding='base64'):
