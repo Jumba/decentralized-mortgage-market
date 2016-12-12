@@ -955,7 +955,6 @@ class APITestSuite(unittest.TestCase):
         # Check if the investment  isn't in neither accepted or pending of the borrower
         self.assertNotIn(investment, borrower_investments[0])
         self.assertNotIn(investment, borrower_investments[1])
-        self.assertNotIn(investment.id, borrower.investment_ids)
 
         # Or of the investor.
         self.assertNotIn(investment, investor_investments[0])
