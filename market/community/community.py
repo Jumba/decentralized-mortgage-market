@@ -9,6 +9,7 @@ from market.dispersy.distribution import DirectDistribution
 from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
+from market.models.loans import Investment, Mortgage, Campaign
 from payload import DatabaseModelPayload
 from twisted.internet import reactor
 
@@ -244,24 +245,47 @@ class MortgageMarketCommunity(Community):
         pass
 
     def on_mortgage_accept_unsigned(self, messages):
-        pass
+        for message in messages:
+            mortgage = message.payload.models[Mortgage._type]
+            campaign = message.payload.models[Campaign._type]
+
+            self.api.db.post(Mortgage._type, mortgage)
+            self.api.db.post(Campaign._type, campaign)
 
     def on_mortgage_reject(self, messages):
-        pass
+        for message in messages:
+            mortgage = message.payload.models[Mortgage._type]
+
+            self.api.db.post(Mortgage._type, mortgage)
 
     def on_investment_offer(self, messages):
-        pass
+        for message in messages:
+            investment = message.payload.models[Investment._type]
+
+            self.api.db.post(Investment._type, investment)
 
     def on_investment_accept(self, messages):
-        pass
+        for message in messages:
+            investment = message.payload.models[Investment._type]
+
+            self.api.db.post(Investment._type, investment)
 
     def on_investment_reject(self, messages):
-        pass
+        for message in messages:
+            investment = message.payload.models[Investment._type]
+
+            self.api.db.post(Investment._type, investment)
 
     def on_model_request(self, messages):
+        for message in messages:
+            # Payload is a dictionary with {type : uuid}
+            for type, id in message.payload.models:
+                self.api.db.get(type, id)
+                # TODO Send a message back to the user that has requested the models
         pass
 
     def on_model_request_response(self, messages):
+        # TODO
         pass
 
     def allow_signature_request(self):
