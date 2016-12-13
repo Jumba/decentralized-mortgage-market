@@ -6,7 +6,7 @@ from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.dispersy.crypto import ECCrypto
-from market.models.loans import LoanRequest, Mortgage
+from market.models.loans import LoanRequest, Mortgage, Campaign
 from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
 from market.models.user import User
@@ -289,9 +289,6 @@ class APITestSuite(unittest.TestCase):
         # Check if the investment ids list is empty
         self.assertEqual(user.investment_ids, [])
 
-    #def test_create_loan_request_borrower(self):
-        # Create a user
-
     def test_load_investments(self):
         """
         This test checks the functionality of loading a user's (borrower or investor) current and pending investments
@@ -517,7 +514,7 @@ class APITestSuite(unittest.TestCase):
         investment3 = self.api.place_loan_offer(investor3, self.payload_investment3)
 
         # Get the updated borrower
-        updated_borrower = self.api.db.get('users', borrower.id)
+        updated_borrower = self.api.db.get(User._type, borrower.id)
 
         # The borrower now accept two offers
         self.api.accept_investment_offer(updated_borrower, {'investment_id': investment1.id})
@@ -609,14 +606,14 @@ class APITestSuite(unittest.TestCase):
 
         # Create users
         borrower, _, _ = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
         borrower.role_id = role_id
-        self.api.db.put('users', borrower.id, borrower)
+        self.api.db.put(User._type, borrower.id, borrower)
 
         bank, _, _ = self.api.create_user()
-        role_id = self.api.db.post('role', Role(bank.id, 3))
+        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
         bank.role_id = role_id
-        self.api.db.put('users', bank.id, bank)
+        self.api.db.put(User._type, bank.id, bank)
 
         # Create loan request
         self.payload_loan_request['user_key'] = borrower.id  # set user_key to the borrower's public key
@@ -644,11 +641,11 @@ class APITestSuite(unittest.TestCase):
         self.assertTrue(open_market)
 
         # Set the status of the campaign to completed
-        campaigns = self.api.db.get_all('campaign')
+        campaigns = self.api.db.get_all(Campaign._type)
 
         for campaign in campaigns:
             campaign.completed = True
-            self.api.db.put('campaign', campaign.id, campaign)
+            self.api.db.put(Campaign._type, campaign.id, campaign)
 
         # Check if the open market is empty
         open_market = self.api.load_open_market()
@@ -664,9 +661,9 @@ class APITestSuite(unittest.TestCase):
         """
         # Create a borrower
         user, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(user.id, 1))
+        role_id = self.api.db.post(Role._type, Role(user.id, 1))
         user.role_id = role_id
-        self.api.db.put('users', user.id, user)
+        self.api.db.put(User._type, user.id, user)
 
         # Create banks
         bank1, pub1, priv1 = self.api.create_user()
@@ -685,8 +682,8 @@ class APITestSuite(unittest.TestCase):
         for bank in loan_request_1.status:
             self.assertEqual(loan_request_1.status[bank], STATUS.PENDING)
         # Check if the loan request has been added to the banks' lists
-        updated_bank1 = self.api.db.get('users', bank1.id)
-        updated_bank2 = self.api.db.get('users', bank2.id)
+        updated_bank1 = self.api.db.get(User._type, bank1.id)
+        updated_bank2 = self.api.db.get(User._type, bank2.id)
         self.assertIn(loan_request_1.id, updated_bank1.loan_request_ids)
         self.assertIn(loan_request_1.id, updated_bank2.loan_request_ids)
 
@@ -704,9 +701,9 @@ class APITestSuite(unittest.TestCase):
 
         # Create an investor
         user, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(user.id, 2))
+        role_id = self.api.db.post(Role._type, Role(user.id, 2))
         user.role_id = role_id
-        self.api.db.put('users', user.id, user)
+        self.api.db.put(User._type, user.id, user)
 
         # Create loan request
         self.payload['user_key'] = user.id  # set user_key to the investor's public key
@@ -726,9 +723,9 @@ class APITestSuite(unittest.TestCase):
 
         # Create a bank
         user, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(user.id, 3))
+        role_id = self.api.db.post(Role._type, Role(user.id, 3))
         user.role_id = role_id
-        self.api.db.put('users', user.id, user)
+        self.api.db.put(User._type, user.id, user)
 
         # Create loan request
         self.payload['user_key'] = user.id  # set user_key to the bank's public key
@@ -748,25 +745,25 @@ class APITestSuite(unittest.TestCase):
         """
         # Create borrowers
         borrower1, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower1.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower1.id, 1))
         borrower1.role_id = role_id
-        self.api.db.put('users', borrower1.id, borrower1)
+        self.api.db.put(User._type, borrower1.id, borrower1)
 
         borrower2, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower2.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower2.id, 1))
         borrower2.role_id = role_id
-        self.api.db.put('users', borrower2.id, borrower2)
+        self.api.db.put(User._type, borrower2.id, borrower2)
 
         borrower3, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower3.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower3.id, 1))
         borrower3.role_id = role_id
-        self.api.db.put('users', borrower3.id, borrower3)
+        self.api.db.put(User._type, borrower3.id, borrower3)
 
         # Create a bank
         bank, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(bank.id, 3))
+        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
         bank.role_id = role_id
-        self.api.db.put('users', bank.id, bank)
+        self.api.db.put(User._type, bank.id, bank)
 
         # Create loan requests
         loan_request_1 = self.api.create_loan_request(borrower1, self.payload_loan_request)
@@ -780,7 +777,7 @@ class APITestSuite(unittest.TestCase):
         #self.api.accept_loan_request(bank, self.payload_mortgage)
 
         # Check if the loan requests are (not) in the list
-        updated_bank = self.api.db.get('users', bank.id)
+        updated_bank = self.api.db.get(User._type, bank.id)
         pending_loan_requests = self.api.load_all_loan_requests(updated_bank)
         self.assertIsInstance(pending_loan_requests, list)
         self.assertNotIn(loan_request_1, pending_loan_requests)
@@ -794,9 +791,9 @@ class APITestSuite(unittest.TestCase):
         """
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
         borrower.role_id = role_id
-        self.api.db.put('users', borrower.id, borrower)
+        self.api.db.put(User._type, borrower.id, borrower)
 
         # Create loan request
         self.payload['user_key'] = borrower.id  # set user_key to the borrower's public key
@@ -819,15 +816,15 @@ class APITestSuite(unittest.TestCase):
 
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
         borrower.role_id = role_id
-        self.api.db.put('users', borrower.id, borrower)
+        self.api.db.put(User._type, borrower.id, borrower)
 
         # Create a bank
         bank, pub1, priv1 = self.api.create_user()
-        role_id = self.api.db.post('role', Role(bank.id, 3))
+        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
         bank.role_id = role_id
-        self.api.db.put('users', bank.id, bank)
+        self.api.db.put(User._type, bank.id, bank)
 
         # Create loan request
         self.payload_loan_request['user_key'] = borrower.id  # set user_key to the borrower's public key
@@ -847,10 +844,10 @@ class APITestSuite(unittest.TestCase):
         # Check if the status has changed to accepted
         self.assertEqual(accepted_loan_request.status[bank.id], STATUS.ACCEPTED)
         # Check if the mortgage has been added to the borrower
-        updated_borrower = self.api.db.get('users', borrower.id)
+        updated_borrower = self.api.db.get(User._type, borrower.id)
         self.assertIn(mortgage.id, updated_borrower.mortgage_ids)
         # Check if the mortgage has been added to the bank
-        updated_bank = self.api.db.get('users', bank.id)
+        updated_bank = self.api.db.get(User._type, bank.id)
         self.assertIn(mortgage.id, updated_bank.mortgage_ids)
 
     def test_reject_loan_request(self):
@@ -862,9 +859,9 @@ class APITestSuite(unittest.TestCase):
         """
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
         borrower.role_id = role_id
-        self.api.db.put('users', borrower.id, borrower)
+        self.api.db.put(User._type, borrower.id, borrower)
 
         # Create banks
         bank1, pub1, priv1 = self.api.create_user()
@@ -881,24 +878,24 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request['request_id'] = loan_request.id
 
         # Reject the loan request
-        bank1 = self.api.db.get('users', bank1.id)
+        bank1 = self.api.db.get(User._type, bank1.id)
         rejected_loan_request1 = self.api.reject_loan_request(bank1, self.payload_loan_request)
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request1.status[bank1.id], STATUS.REJECTED)
         # Check if the loan request has been removed from bank1's loan request list
         self.assertNotIn(rejected_loan_request1, bank1.loan_request_ids)
         # Check if the loan request hasn't been removed from borrower
-        updated_borrower = self.api.db.get('users', borrower.id)
+        updated_borrower = self.api.db.get(User._type, borrower.id)
         self.assertTrue(updated_borrower.loan_request_ids)
 
-        bank2 = self.api.db.get('users', bank2.id)
+        bank2 = self.api.db.get(User._type, bank2.id)
         rejected_loan_request2 = self.api.reject_loan_request(bank2, self.payload_loan_request)
         # Check if the status has changed to rejected
         self.assertEqual(rejected_loan_request2.status[bank2.id], STATUS.REJECTED)
         # Check if the loan request has been removed from bank2's loan request list
         self.assertNotIn(rejected_loan_request2, bank2.loan_request_ids)
         # Check if the loan request has been removed from borrower
-        updated_borrower = self.api.db.get('users', borrower.id)
+        updated_borrower = self.api.db.get(User._type, borrower.id)
         self.assertFalse(updated_borrower.loan_request_ids)
 
     def test_reject_investment(self):
@@ -1026,19 +1023,19 @@ class APITestSuite(unittest.TestCase):
 
         # Create users
         borrower, _, _ = self.api.create_user()
-        role_id = self.api.db.post('role', Role(borrower.id, 1))
+        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
         borrower.role_id = role_id
-        self.api.db.put('users', borrower.id, borrower)
+        self.api.db.put(User._type, borrower.id, borrower)
 
         investor, pub, priv = self.api.create_user()
-        role_id = self.api.db.post('role', Role(investor.id, 2))
+        role_id = self.api.db.post(Role._type, Role(investor.id, 2))
         investor.role_id = role_id
-        self.api.db.put('users', investor.id, investor)
+        self.api.db.put(User._type, investor.id, investor)
 
         bank, _, _ = self.api.create_user()
-        role_id = self.api.db.post('role', Role(bank.id, 3))
+        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
         bank.role_id = role_id
-        self.api.db.put('users', bank.id, bank)
+        self.api.db.put(User._type, bank.id, bank)
 
         # Create loan request
         self.payload_loan_request['user_key'] = borrower.id  # set user_key to the borrower's public key
