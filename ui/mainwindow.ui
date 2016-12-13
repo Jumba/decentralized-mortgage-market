@@ -17,7 +17,7 @@
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>6</number>
+   <number>1</number>
   </property>
   <widget class="QWidget" name="login_page">
    <widget class="QLabel" name="login_title">
@@ -173,177 +173,30 @@
    </widget>
   </widget>
   <widget class="QWidget" name="profile_page">
-   <widget class="QLabel" name="profile_email_label">
+   <widget class="QToolButton" name="next_2">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>300</y>
-      <width>141</width>
-      <height>17</height>
+      <x>40</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>Email Address</string>
+     <string>&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="profile_firstname_label">
+   <widget class="QToolButton" name="prev_2">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>120</y>
-      <width>131</width>
-      <height>17</height>
+      <x>20</x>
+      <y>10</y>
+      <width>22</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>First Name</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_iban_lineedit">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>380</y>
-      <width>401</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_housenumber_label">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>180</y>
-      <width>171</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Current House Number</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_address_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>240</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Current Address</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_phonenumber_lineedit">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>320</y>
-      <width>191</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_address_lineedit">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>260</y>
-      <width>401</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="role_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>90</y>
-      <width>57</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>I am a:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_postcode_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>180</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Current Post Code</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_lastname_label">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>120</y>
-      <width>211</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Last Name</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_title">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>60</y>
-      <width>191</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Profile</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_postcode_lineedit">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>200</y>
-      <width>191</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="profile_borrower_radiobutton">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>90</y>
-      <width>104</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Borrower</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
+     <string>&lt;</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="profile_housenumber_lineedit">
@@ -351,42 +204,6 @@
      <rect>
       <x>270</x>
       <y>200</y>
-      <width>191</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_phonenumber_label">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>300</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Telephone Number</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile_iban_label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>360</y>
-      <width>57</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IBAN</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="profile_email_lineedit">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>320</y>
       <width>191</width>
       <height>27</height>
      </rect>
@@ -402,33 +219,14 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="profile_documents_label">
+   <widget class="QLineEdit" name="profile_firstname_lineedit">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>420</y>
-      <width>181</width>
-      <height>17</height>
+      <y>140</y>
+      <width>191</width>
+      <height>27</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>Documents</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="profile_investor_radiobutton">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>90</y>
-      <width>104</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Investor</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
     </property>
    </widget>
    <widget class="QTableWidget" name="profile_documents_table">
@@ -466,14 +264,66 @@
      </property>
     </row>
    </widget>
-   <widget class="QLineEdit" name="profile_firstname_lineedit">
+   <widget class="QLabel" name="profile_documents_label">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>140</y>
+      <y>420</y>
+      <width>181</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Documents</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_postcode_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>200</y>
       <width>191</width>
       <height>27</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_firstname_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>120</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>First Name</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_address_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>240</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current Address</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_email_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>300</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Email Address</string>
     </property>
    </widget>
    <widget class="QPushButton" name="profile_save_button">
@@ -489,30 +339,180 @@
      <string>Save Changes</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="next_2">
+   <widget class="QLineEdit" name="profile_phonenumber_lineedit">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>10</y>
-      <width>22</width>
-      <height>25</height>
+      <x>270</x>
+      <y>320</y>
+      <width>191</width>
+      <height>27</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>&gt;</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="prev_2">
+   <widget class="QLabel" name="profile_title">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>22</width>
-      <height>25</height>
+      <x>60</x>
+      <y>60</y>
+      <width>191</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Profile</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_address_lineedit">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>260</y>
+      <width>401</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="role_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>90</y>
+      <width>57</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>&lt;</string>
+     <string>I am a:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_housenumber_label">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>180</y>
+      <width>171</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current House Number</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_iban_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>380</y>
+      <width>401</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_email_lineedit">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>320</y>
+      <width>191</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="profile_investor_radiobutton">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>90</y>
+      <width>104</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Investor</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_iban_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>360</y>
+      <width>57</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IBAN</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_phonenumber_label">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>300</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Telephone Number</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_lastname_label">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>120</y>
+      <width>211</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Last Name</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="profile_postcode_label">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>180</y>
+      <width>141</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current Post Code</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="profile_borrower_radiobutton">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>90</y>
+      <width>104</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Borrower</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
@@ -3375,13 +3375,6 @@
   <tabstop>ip_interest2_lineedit</tabstop>
   <tabstop>ip_duration1_lineedit</tabstop>
   <tabstop>ip_duration2_lineedit</tabstop>
-  <tabstop>profile_housenumber_lineedit</tabstop>
-  <tabstop>profile_email_lineedit</tabstop>
-  <tabstop>profile_lastname_lineedit</tabstop>
-  <tabstop>profile_investor_radiobutton</tabstop>
-  <tabstop>profile_documents_table</tabstop>
-  <tabstop>profile_firstname_lineedit</tabstop>
-  <tabstop>profile_save_button</tabstop>
   <tabstop>bplr_housenumber_lineedit</tabstop>
   <tabstop>bplr_house_price_lineedit</tabstop>
   <tabstop>bplr_postcode_lineedit</tabstop>
@@ -3435,17 +3428,12 @@
   <tabstop>openmarket_interest2_lineedit</tabstop>
   <tabstop>openmarket_duration1_lineedit</tabstop>
   <tabstop>openmarket_min_amount_lineedit</tabstop>
-  <tabstop>profile_postcode_lineedit</tabstop>
   <tabstop>login_generate_button</tabstop>
-  <tabstop>profile_borrower_radiobutton</tabstop>
-  <tabstop>profile_phonenumber_lineedit</tabstop>
   <tabstop>ip_investing_opportunities_table</tabstop>
-  <tabstop>profile_address_lineedit</tabstop>
   <tabstop>login_browse_button</tabstop>
   <tabstop>login_push_button</tabstop>
   <tabstop>ip_reject_pushbutton</tabstop>
   <tabstop>login_private_key_line</tabstop>
-  <tabstop>profile_iban_lineedit</tabstop>
   <tabstop>ip_accept_pushbutton</tabstop>
   <tabstop>login_remember_me_checkbox</tabstop>
  </tabstops>

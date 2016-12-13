@@ -570,9 +570,8 @@ class MarketAPI(object):
         investment = self.db.get('investment', payload['investment_id'])
 
         investment.status = STATUS.REJECTED
-        user.investment_ids.remove(investment.id)
 
-        return self.db.put(investment.type, investment.id, investment) and self.db.put(user.type, user.id, user)
+        return self.db.put(investment.type, investment.id, investment)
 
     def load_all_loan_requests(self, user):
         """
@@ -749,8 +748,7 @@ class MarketAPI(object):
         :rtype: list
         """
 
-        # Get the list of all the pending/accepted bids on the campaign
-        # TODO Also show rejected offers?
+        # Get the list of all the bids (pending/accepted/rejected) on the campaign
         mortgage = self.db.get('mortgage', payload['mortgage_id'])
         loan_request = self.db.get('loan_request', mortgage.request_id)
         borrower = self.db.get('users', loan_request.user_key)

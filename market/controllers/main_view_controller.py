@@ -9,6 +9,7 @@ from market.database.database import MockDatabase
 from market.views import main_view
 from marketGUI.market_app import MarketApplication
 from market.api.api import MarketAPI
+import login_controller
 
 
 class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
@@ -29,6 +30,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.fiplr2_reject_pushbutton.clicked.connect(self.fiplr2_reject_loan_request)
         self.icb_place_bid_pushbutton.clicked.connect(self.icb_place_bid)
         self.setupObjects()
+        self.login_controller = login_controller.LoginController(self)
 
         self.stackedWidget.setCurrentIndex(0)
         print self.stackedWidget.count()
@@ -161,6 +163,8 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.icb_current_bids_table.item(0, 1).setText(self.icb_duration_lineedit.text())
         self.icb_current_bids_table.item(0, 2).setText(self.icb_interest_lineedit.text())
 
+
+
 #################################################bs#####################################################################
 
     def setupObjects(self):
@@ -190,16 +194,16 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.next_4.clicked.connect(self.nextScreen)
         self.next_5.clicked.connect(self.nextScreen)
         self.next_6.clicked.connect(self.nextScreen)
-        # self.next_7.clicked.connect(self.next_screen)
-        # self.next_8.clicked.connect(self.next_screen)
+        self.next_7.clicked.connect(self.nextScreen)
+        self.next_8.clicked.connect(self.nextScreen)
         self.prev_1.clicked.connect(self.previousScreen)
         self.prev_2.clicked.connect(self.previousScreen)
         self.prev_3.clicked.connect(self.previousScreen)
         self.prev_4.clicked.connect(self.previousScreen)
         self.prev_5.clicked.connect(self.previousScreen)
         self.prev_6.clicked.connect(self.previousScreen)
-        # self.prev_7.clicked.connect(self.prev_screen)
-        # self.prev_8.clicked.connect(self.prev_screen)
+        self.prev_7.clicked.connect(self.previousScreen)
+        self.prev_8.clicked.connect(self.previousScreen)
 
     def nextScreen(self):
         self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() + 1) % self.stackedWidget.count())
