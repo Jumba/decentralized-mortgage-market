@@ -9,12 +9,11 @@ from market.dispersy.distribution import DirectDistribution
 from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
-from market.models.document import Document
-from market.models.house import House
-from market.models.loans import Mortgage, LoanRequest, Campaign, Investment
-from market.models.profiles import BorrowersProfile
 from payload import DatabaseModelPayload, ModelRequestPayload
-from twisted.internet import reactor
+from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
+from market.models.house import House
+from market.models.profiles import BorrowersProfile
+from market.models.document import Document
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -289,39 +288,84 @@ class MortgageMarketCommunity(Community):
                 print message.payload.models[field]
 
     def on_loan_request(self, messages):
-        pass
+        for message in messages:
+            loan_request = message.payload.models[LoanRequest._type]
+            house = message.payload.models[House._type]
+            profile = message.payload.models[BorrowersProfile._type]
+
+            self.db.post(LoanRequest._type, loan_request)
+            self.db.post(House._type, house)
+            self.db.post(BorrowersProfile._type, profile)
 
     def on_document(self, messages):
-        pass
+        for message in messages:
+            document = message.payload.models[Document._type]
+
+            self.db.post(Document._type, document)
 
     def on_loan_request_reject(self, messages):
-        pass
+        for message in messages:
+            loan_request = message.payload.models[LoanRequest._type]
+
+            self.db.post(LoanRequest._type, loan_request)
 
     def on_mortgage_offer(self, messages):
-        pass
+        for message in messages:
+            loan_request = message.payload.models[LoanRequest._type]
+            mortgage = message.payload.models[Mortgage._type]
+
+            self.db.post(Mortgage._type, mortgage)
 
     def on_mortgage_accept_signed(self, messages):
-        pass
+        for message in messages:
+            mortgage = message.payload.models[Mortgage._type]
+            campaign = message.payload.models[Campaign._type]
+
+            self.db.post(Mortgage._type, mortgage)
+            self.db.post(Campaign._type, campaign)
 
     def on_mortgage_accept_unsigned(self, messages):
-        pass
+        for message in messages:
+            mortgage = message.payload.models[Mortgage._type]
+            campaign = message.payload.models[Campaign._type]
+
+            self.api.db.post(Mortgage._type, mortgage)
+            self.api.db.post(Campaign._type, campaign)
 
     def on_mortgage_reject(self, messages):
-        pass
+        for message in messages:
+            mortgage = message.payload.models[Mortgage._type]
+
+            self.api.db.post(Mortgage._type, mortgage)
 
     def on_investment_offer(self, messages):
-        pass
+        for message in messages:
+            investment = message.payload.models[Investment._type]
+
+            self.api.db.post(Investment._type, investment)
 
     def on_investment_accept(self, messages):
-        pass
+        for message in messages:
+            investment = message.payload.models[Investment._type]
+
+            self.api.db.post(Investment._type, investment)
 
     def on_investment_reject(self, messages):
-        pass
+        for message in messages:
+            investment = message.payload.models[Investment._type]
+
+            self.api.db.post(Investment._type, investment)
 
     def on_model_request(self, messages):
+        for message in messages:
+            # Payload is a dictionary with {type : uuid}
+            for model_type, model_id in message.payload.models:
+                self.api.db.get(model_type, model_id)
+                # TODO Send a message back to the user that has requested the models
         pass
 
     def on_model_request_response(self, messages):
+        # TODO
         pass
 
 
