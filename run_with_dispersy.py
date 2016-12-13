@@ -33,7 +33,7 @@ def start_dispersy():
 
     house = House('2617Hm', '340', 9003)
 
-    #LoopingCall(lambda:community.send_community_model(['house', 'joy'], {'house': house, 'joy': house})).start(1.0)
+    LoopingCall(lambda:community.send_model_request([('users', '3081a7301006072a8648ce3d020106052b810400270381920004008b7da3e9cf183cd8a709179fcf915b223c338fdb6a87245d25585af47b64164efeb531685423afeea580563f95fabf0a2e10f90afd4ee5f79adc6a46f5d6f1e6b2d4174d6329ac004b3e974e237c1c9a28025f3f10d2dd9802d2ef5f61d742ac80ece2a742b45cb201ae10003991ed54606e123ccc8c1939a02a786a6e381ff5e5f1264c9727074b42d3e1d9a67e76'), ('house', '12321')])).start(1.0)
 
 
 def main():

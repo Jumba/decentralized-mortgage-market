@@ -22,7 +22,7 @@ class DatabaseModel(object):
 
     def generate_id(self, force=False):
         if not self._id or force:
-            self._id = uuid.uuid4()
+            self._id = uuid.uuid1()
         return self._id
 
     def encode(self, encoding='base64'):

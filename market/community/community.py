@@ -145,7 +145,7 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CandidateDestination(),
+                    CommunityDestination(node_count=50),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_model_request_response),
@@ -269,15 +269,14 @@ class MortgageMarketCommunity(Community):
                             payload=(models,),)
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_model_request_response(self, fields, models, candidates, store=True, update=True, forward=True):
+    def send_model_request_response(self, fields, models, store=True, update=True, forward=True):
         for field in fields:
             assert isinstance(models[field], DatabaseModel)
 
         meta = self.get_meta_message(u"model_request_response")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
+                            payload=(fields, models,),)
         self.dispersy.store_update_forward([message], store, update, forward)
 
 
@@ -324,6 +323,23 @@ class MortgageMarketCommunity(Community):
 
     def on_model_request_response(self, messages):
         pass
+
+
+    # def on_model_request(self, messages):
+    #     for message in messages:
+    #         for data in  message.payload.models:
+    #             type, id = data
+    #             obj = self.api._database.get(type, id)
+    #             if obj:
+    #                 print "sending ", obj
+    #                 self.send_model_request_response([obj.id], {obj.id: obj})
+    #
+    # def on_model_request_response(self, messages):
+    #     for message in messages:
+    #         for field in message.payload.fields:
+    #             print "got it"
+    #             print message.payload.models[field]
+
 
     def allow_signature_request(self):
         pass

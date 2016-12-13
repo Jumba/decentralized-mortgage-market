@@ -54,8 +54,8 @@ class MortgageMarketConversion(BinaryConversion):
         return offset, placeholder.meta.payload.implement(fields, decoded_models)
 
     def _encode_model_request(self, message):
-        packet = encode((message.payloads.models, ))
-        return packet
+        packet = encode((message.payload.models, ))
+        return packet,
 
     def _decode_model_request(self, placeholder, offset, data):
         try:
@@ -66,7 +66,7 @@ class MortgageMarketConversion(BinaryConversion):
         if not isinstance(payload, tuple):
             raise DropPacket("Invalid payload type")
 
-        models = payload
+        models = payload[0]
         if not isinstance(models, list):
             raise DropPacket("Invalid 'models' type")
 
