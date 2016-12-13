@@ -321,7 +321,6 @@ class MortgageMarketCommunity(Community):
             mortgage = message.payload.models[Mortgage._type]
 
             self.db.post(Mortgage._type, mortgage)
-        pass
 
     def on_mortgage_accept_signed(self, messages):
         for message in messages:
@@ -330,7 +329,6 @@ class MortgageMarketCommunity(Community):
 
             self.db.post(Mortgage._type, mortgage)
             self.db.post(Campaign._type, campaign)
-        pass
 
     def on_mortgage_accept_unsigned(self, messages):
         pass
