@@ -11,6 +11,9 @@ from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
 from payload import DatabaseModelPayload
 from twisted.internet import reactor
+from market.models.loans import LoanRequest
+from market.models.house import House
+from market.models.profiles import Profile, BorrowersProfile
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -229,7 +232,14 @@ class MortgageMarketCommunity(Community):
                 print message.payload.models[field]
 
     def on_loan_request(self, messages):
-        pass
+        for message in messages:
+            loan_request = message.payload.models[LoanRequest._type]
+            house = message.payload.models[House._type]
+            profile = message.payload.models[BorrowersProfile._type]
+
+            self.db.post(LoanRequest._type, loan_request)
+            self.db.post(House._type, house)
+            self.db.post(BorrowersProfile._type, profile)
 
     def on_document(self, messages):
         pass
