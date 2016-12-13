@@ -360,9 +360,8 @@ class MortgageMarketCommunity(Community):
         for message in messages:
             # Payload is a dictionary with {type : uuid}
             for model_type, model_id in message.payload.models:
-                self.api.db.get(model_type, model_id)
-                # TODO Send a message back to the user that has requested the models
-        pass
+                obj = self.api.db.get(model_type, model_id)
+                self.send_model_request_response([obj.id], {obj.id: obj})
 
     def on_model_request_response(self, messages):
         # TODO
