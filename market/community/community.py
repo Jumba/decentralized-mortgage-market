@@ -9,7 +9,11 @@ from market.dispersy.distribution import DirectDistribution
 from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
-from payload import DatabaseModelPayload
+from market.models.document import Document
+from market.models.house import House
+from market.models.loans import Mortgage, LoanRequest, Campaign, Investment
+from market.models.profiles import BorrowersProfile
+from payload import DatabaseModelPayload, ModelRequestPayload
 from twisted.internet import reactor
 
 logger = logging.getLogger(__name__)
@@ -44,7 +48,7 @@ class MortgageMarketCommunity(Community):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
         for message in messages:
             print "adding ", message.candidate
-            #self.candidates.add(message.candidate)
+            self.candidates.add(message.candidate)
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
@@ -93,7 +97,7 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CandidateDestination(),
+                    CommunityDestination(node_count=50),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_mortgage_accept_signed),
@@ -125,7 +129,7 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CandidateDestination(),
+                    CommunityDestination(node_count=50),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_investment_reject),
@@ -133,8 +137,8 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
+                    CommunityDestination(node_count=50),
+                    ModelRequestPayload(),
                     self.check_message,
                     self.on_model_request),
             Message(self, u"model_request_response",
@@ -166,60 +170,117 @@ class MortgageMarketCommunity(Community):
     def api(self, api):
         self._api = api
 
-    def send_direct_model(self, model, time, candidates, store=True, update=True, forward=True):
-        logger.debug("sending direct model")
-        meta = self.get_meta_message(u"databasemodel_direct")
+    def send_loan_request(self, fields, models, candidates, store=True, update=True, forward=True):
+        assert LoanRequest._type in fields and LoanRequest._type in models
+        assert House._type in fields and House._type in models
+        assert BorrowersProfile._type in fields and BorrowersProfile._type in models
+
+        meta = self.get_meta_message(u"loan_request")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            destination=tuple(candidates),
-                            payload=(model, time,),
-                            )
-
+                            payload=(fields, models,),
+                            destination=candidates)
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_community_model(self, model, time, store=True, update=True, forward=True):
-        logger.debug("sending community model")
-        meta = self.get_meta_message(u"databasemodel_flood")
+        #TODO: Actually send documents too
+
+
+
+    def send_document(self, fields, models, candidates, store=True, update=True, forward=True):
+        for field in fields:
+            assert isinstance(models[field], Document)
+
+        meta = self.get_meta_message(u"document")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(model,time,),)
+                            payload=(fields, models,),
+                            destination=candidates)
         self.dispersy.store_update_forward([message], store, update, forward)
-        
-    def send_loan_request(self, fields, models, store=True, update=True, forward=True):
-        pass
 
-    def send_document(self, fields, models, store=True, update=True, forward=True):
-        pass
+    def send_loan_request_reject(self, fields, models, candidates, store=True, update=True, forward=True):
+        assert LoanRequest._type in fields and LoanRequest._type in models
 
-    def send_loan_request_reject(self, fields, models, store=True, update=True, forward=True):
-        pass
+        meta = self.get_meta_message(u"loan_request_reject")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),
+                            destination=candidates)
+        self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_mortgage_offer(self, fields, models, store=True, update=True, forward=True):
-        pass
+
+    def send_mortgage_offer(self, fields, models, candidates, store=True, update=True, forward=True):
+        assert LoanRequest._type in fields and LoanRequest._type in models
+        assert Mortgage._type in fields and Mortgage._type in models
+
+        meta = self.get_meta_message(u"mortgage_offer")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),
+                            destination=candidates)
+        self.dispersy.store_update_forward([message], store, update, forward)
+
 
     def send_mortgage_accept_signed(self, fields, models, store=True, update=True, forward=True):
         pass
 
     def send_mortgage_accept_unsigned(self, fields, models, store=True, update=True, forward=True):
-        pass
+        assert Campaign._type in fields and Campaign._type in models
+        assert Mortgage._type in fields and Mortgage._type in models
 
-    def send_mortgage_reject(self, fields, models, store=True, update=True, forward=True):
-        pass
+        meta = self.get_meta_message(u"mortgage_accept_unsigned")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),)
+        self.dispersy.store_update_forward([message], store, update, forward)
+
+    def send_mortgage_reject(self, fields, models, candidates, store=True, update=True, forward=True):
+        assert Mortgage.type in fields and Mortgage._type in models
+
+        meta = self.get_meta_message(u"mortgage_reject")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),
+                            destination=candidates)
+        self.dispersy.store_update_forward([message], store, update, forward)
+
 
     def send_investment_offer(self, fields, models, store=True, update=True, forward=True):
-        pass
+        pass # TODO: Ignore signed for now
 
     def send_investment_accept(self, fields, models, store=True, update=True, forward=True):
-        pass
+        pass # TODO: Ignore singned for now
 
     def send_investment_reject(self, fields, models, store=True, update=True, forward=True):
-        pass
+        assert Investment._type in fields and Investment._type in models
 
-    def send_model_request(self, fields, models, store=True, update=True, forward=True):
-        pass
+        meta = self.get_meta_message(u"investment_reject")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),)
+        self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_model_request_respsendse(self, fields, models, store=True, update=True, forward=True):
-        pass
+
+    def send_model_request(self, models, store=True, update=True, forward=True):
+        assert isinstance(models, list)
+
+        meta = self.get_meta_message(u"model_request")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(models,),)
+        self.dispersy.store_update_forward([message], store, update, forward)
+
+    def send_model_request_response(self, fields, models, candidates, store=True, update=True, forward=True):
+        for field in fields:
+            assert isinstance(models[field], DatabaseModel)
+
+        meta = self.get_meta_message(u"model_request_response")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),
+                            destination=candidates)
+        self.dispersy.store_update_forward([message], store, update, forward)
+
+
 
     def on_model(self, messages):
         print "message in?"

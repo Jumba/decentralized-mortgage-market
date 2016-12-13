@@ -18,7 +18,7 @@ class MortgageMarketConversion(BinaryConversion):
         self.define_meta_message(chr(8), community.get_meta_message(u"investment_offer"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(9), community.get_meta_message(u"investment_accept"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(10), community.get_meta_message(u"investment_reject"), self._encode_model, self._decode_model)
-        self.define_meta_message(chr(11), community.get_meta_message(u"model_request"), self._encode_model, self._decode_model)
+        self.define_meta_message(chr(11), community.get_meta_message(u"model_request"), self._encode_model_request, self._decode_model_request)
         self.define_meta_message(chr(12), community.get_meta_message(u"model_request_response"), self._encode_model, self._decode_model)
 
 
@@ -53,3 +53,21 @@ class MortgageMarketConversion(BinaryConversion):
 
         return offset, placeholder.meta.payload.implement(fields, decoded_models)
 
+    def _encode_model_request(self, message):
+        packet = encode((message.payloads.models, ))
+        return packet
+
+    def _decode_model_request(self, placeholder, offset, data):
+        try:
+            offset, payload = decode(data, offset)
+        except ValueError:
+            raise DropPacket("Unable to decode the model request payload")
+
+        if not isinstance(payload, tuple):
+            raise DropPacket("Invalid payload type")
+
+        models = payload
+        if not isinstance(models, list):
+            raise DropPacket("Invalid 'models' type")
+
+        return offset, placeholder.meta.payload.implement(models)
