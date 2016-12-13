@@ -11,9 +11,10 @@ from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
 from payload import DatabaseModelPayload
 from twisted.internet import reactor
-from market.models.loans import LoanRequest
+from market.models.loans import LoanRequest, Mortgage, Campaign
 from market.models.house import House
 from market.models.profiles import Profile, BorrowersProfile
+from market.models.document import Document
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -242,15 +243,32 @@ class MortgageMarketCommunity(Community):
             self.db.post(BorrowersProfile._type, profile)
 
     def on_document(self, messages):
-        pass
+        for message in messages:
+            document = message.payload.models[Document._type]
+
+            self.db.post(Document._type, document)
 
     def on_loan_request_reject(self, messages):
-        pass
+        for message in messages:
+            loan_request = message.payload.models[LoanRequest._type]
+
+            self.db.post(LoanRequest._type, loan_request)
 
     def on_mortgage_offer(self, messages):
+        for message in messages:
+            loan_request = message.payload.models[LoanRequest._type]
+            mortgage = message.payload.models[Mortgage._type]
+
+            self.db.post(Mortgage._type, mortgage)
         pass
 
     def on_mortgage_accept_signed(self, messages):
+        for message in messages:
+            mortgage = message.payload.models[Mortgage._type]
+            campaign = message.payload.models[Campaign._type]
+
+            self.db.post(Mortgage._type, mortgage)
+            self.db.post(Campaign._type, campaign)
         pass
 
     def on_mortgage_accept_unsigned(self, messages):
