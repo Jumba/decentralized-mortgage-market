@@ -1,5 +1,3 @@
-import time
-
 from market.dispersy.payload import Payload
 from market.models import DatabaseModel
 
@@ -11,6 +9,7 @@ class DatabaseModelPayload(Payload):
 
     `fields' is a list of fields being based in the `models` dictionary. Thus the amount of models transfered is determined by the amount of fields defined.
     """
+
     class Implementation(Payload.Implementation):
         def __init__(self, meta, fields, models):
             assert isinstance(fields, list)
@@ -37,3 +36,13 @@ class DatabaseModelPayload(Payload):
                 return self._models[field]
 
 
+class ModelRequestPayload(Payload):
+    class Implementation(Payload.Implementation):
+        def __init__(self, meta, models):
+            assert isinstance(models, list)
+            super(ModelRequestPayload.Implementation, self).__init__(meta)
+            self._model_ids = models
+
+        @property
+        def models(self):
+            return self._model_ids
