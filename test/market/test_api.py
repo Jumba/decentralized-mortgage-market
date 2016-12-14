@@ -113,7 +113,7 @@ class APITestSuite(unittest.TestCase):
         self.assertIsNone(bank.profile_id)
 
         # Check if the role was set correctly.
-        self.assertEqual(self.api.get_role(bank).role, self.payload['role'])
+        self.assertEqual(self.api.get_role(bank).value, self.payload['role'])
 
     def test_create_profile_keyerror(self):
         # Create an user
@@ -549,8 +549,8 @@ class APITestSuite(unittest.TestCase):
         role = self.api.get_role(user)
 
         # Check whether the returned role is indeed the user's role
-        self.assertEqual(role.id, user.role_id)
-        self.assertEqual(role.role_name, "BORROWER")
+        self.assertEqual(role.value, user.role_id)
+        self.assertEqual(role.name, "BORROWER")
 
     def test_get_role_investor(self):
         """
@@ -569,8 +569,8 @@ class APITestSuite(unittest.TestCase):
         role = self.api.get_role(user)
 
         # Check whether the returned role is indeed the user's role
-        self.assertEqual(role.id, user.role_id)
-        self.assertEqual(role.role_name, "INVESTOR")
+        self.assertEqual(role.value, user.role_id)
+        self.assertEqual(role.name, "INVESTOR")
 
     def test_get_role_bank(self):
         """
@@ -589,8 +589,8 @@ class APITestSuite(unittest.TestCase):
         role = self.api.get_role(user)
 
         # Check whether the returned role is indeed the user's role
-        self.assertEqual(role.id, user.role_id)
-        self.assertEqual(role.role_name, "FINANCIAL_INSTITUTION")
+        self.assertEqual(role.value, user.role_id)
+        self.assertEqual(role.name, "FINANCIAL_INSTITUTION")
 
     def test_load_open_market(self):
         """
@@ -606,12 +606,12 @@ class APITestSuite(unittest.TestCase):
 
         # Create users
         borrower, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
+        role_id = Role(1)
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
         bank, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
+        role_id = Role(3)
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
 
@@ -661,7 +661,7 @@ class APITestSuite(unittest.TestCase):
         """
         # Create a borrower
         user, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(user.id, 1))
+        role_id = Role(1)
         user.role_id = role_id
         self.api.db.put(User._type, user.id, user)
 
@@ -701,7 +701,7 @@ class APITestSuite(unittest.TestCase):
 
         # Create an investor
         user, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(user.id, 2))
+        role_id = Role(2)
         user.role_id = role_id
         self.api.db.put(User._type, user.id, user)
 
@@ -723,7 +723,7 @@ class APITestSuite(unittest.TestCase):
 
         # Create a bank
         user, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(user.id, 3))
+        role_id = Role(3)
         user.role_id = role_id
         self.api.db.put(User._type, user.id, user)
 
@@ -745,23 +745,23 @@ class APITestSuite(unittest.TestCase):
         """
         # Create borrowers
         borrower1, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower1.id, 1))
+        role_id = Role.BORROWER.value
         borrower1.role_id = role_id
         self.api.db.put(User._type, borrower1.id, borrower1)
 
         borrower2, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower2.id, 1))
+        role_id = Role.BORROWER.value
         borrower2.role_id = role_id
         self.api.db.put(User._type, borrower2.id, borrower2)
 
         borrower3, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower3.id, 1))
+        role_id = Role.BORROWER.value
         borrower3.role_id = role_id
         self.api.db.put(User._type, borrower3.id, borrower3)
 
         # Create a bank
         bank, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
+        role_id = Role(3).value
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
 
@@ -791,7 +791,7 @@ class APITestSuite(unittest.TestCase):
         """
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
+        role_id = Role(1)
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
@@ -816,13 +816,13 @@ class APITestSuite(unittest.TestCase):
 
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
+        role_id = Role(1)
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
         # Create a bank
         bank, pub1, priv1 = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
+        role_id = Role(3)
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
 
@@ -859,7 +859,7 @@ class APITestSuite(unittest.TestCase):
         """
         # Create a borrower
         borrower, pub0, priv0 = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
+        role_id = Role(1)
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
@@ -1023,17 +1023,17 @@ class APITestSuite(unittest.TestCase):
 
         # Create users
         borrower, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower.id, 1))
+        role_id = Role(1)
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
         investor, pub, priv = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(investor.id, 2))
+        role_id = Role(2)
         investor.role_id = role_id
         self.api.db.put(User._type, investor.id, investor)
 
         bank, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
+        role_id = Role(3)
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
 
@@ -1075,18 +1075,18 @@ class APITestSuite(unittest.TestCase):
 
         # Create borrowers
         borrower1, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower1.id, 1))
+        role_id = Role.BORROWER.value
         borrower1.role_id = role_id
         self.api.db.put(User._type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(borrower2.id, 1))
+        role_id = Role.BORROWER.value
         borrower2.role_id = role_id
         self.api.db.put(User._type, borrower2.id, borrower2)
 
         # Create a bank
         bank, _, _ = self.api.create_user()
-        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
+        role_id = Role(3)
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
 

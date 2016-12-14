@@ -1,6 +1,7 @@
 import logging
 
 from conversion import MortgageMarketConversion
+from market import Global
 from market.dispersy.authentication import MemberAuthentication, DoubleMemberAuthentication
 from market.dispersy.community import Community
 from market.dispersy.conversion import DefaultConversion
@@ -40,7 +41,6 @@ class MortgageMarketCommunity(Community):
         self._user = None
 
 
-
     def initialize(self):
         super(MortgageMarketCommunity, self).initialize()
         logger.info("Example community initialized")
@@ -50,7 +50,7 @@ class MortgageMarketCommunity(Community):
         # Ignore if we aren't ready.
         for message in messages:
             print "Introducing myself to ", message.candidate, " as ", self.user
-            self.send_introduce_user(['User',], {'User': self.user}, message.candidate)
+            self.send_introduce_user(['User',], {'user': self.user}, message.candidate)
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
@@ -392,12 +392,20 @@ class MortgageMarketCommunity(Community):
                 self.api.db.post(obj.type, obj)
 
     def on_user_introduction(self, messages):
+        print "Intro request"
         for message in messages:
             for field in message.payload.fields:
                 obj = message.payload.models[field]
-                if not obj == self.user:
-                    print "I just met user ", obj
-                    self.api.db.post(obj.type, obj)
+                if isinstance(obj, User) and not obj == self.user:
+                    print "I just met user ", obj, " connected at ", message.candidate
+                    self.api.user_candidate[obj.id] = message.candidate
+                    # Banks need to be overwritten
+                    if obj.role_id == 3:
+                        print "bank ay"
+                        self.api.db.put(obj.type, obj.id, obj)
+                    else:
+                        self.api.db.post(obj.type, obj)
+
 
     # def on_model_request(self, messages):
     #     for message in messages:
