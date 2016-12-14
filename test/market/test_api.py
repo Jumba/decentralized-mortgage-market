@@ -65,7 +65,7 @@ class APITestSuite(unittest.TestCase):
         user, pub, priv = self.api.create_user()
 
         # Login the user using his private key
-        user_login = self.api.login_user(priv)
+        user_login = self.api.login_user(priv.encode("HEX"))
 
         # Confirm is the user returned is equal to the user created.
         self.assertEqual(user, user_login)
