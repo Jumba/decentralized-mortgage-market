@@ -80,6 +80,8 @@ class Scenario(object):
                 self.api.accept_investment_offer(user, FakePayload.accept_investment_offer(investment))
 
     def create_rejected_investment_offer(self, user):
+        assert user.role_id == 1    # borrower
+
         investments = []
 
         # Find all pending investment offers from the user
@@ -98,18 +100,22 @@ class Scenario(object):
         self.api.load_profile(user)
 
     def load_investments(self, user):
+        assert user.role_id == 2    # investor
         self.api.load_investments(user)
 
     def load_open_market(self):
         self.api.load_open_market()
 
     def load_borrowers_loans(self, user):
+        assert user.role_id == 1    # borrower
         self.api.load_borrowers_loans(user)
 
     def load_borrowers_offers(self, user):
+        assert user.role_id == 1    # borrower
         self.api.load_borrowers_offers(user)
 
     def load_all_loan_requests(self, user):
+        assert user.role_id == 3    # bank
         self.api.load_all_loan_requests(user)
 
     def load_single_loan_request(self):
