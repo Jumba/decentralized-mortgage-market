@@ -1,42 +1,42 @@
 import sys
-import os
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from run_gui import LoginController
-from market.views import profile_view
-from market.api.api import MarketAPI
+from market.views.main_view import Ui_MainWindow
 from marketGUI.market_app import MarketApplication
+from market.api.api import MarketAPI
 
 
-class ProfileController(QMainWindow, profile_view.Ui_MainWindow):
-    def __init__(self, parent=None, app=None):
-        super(ProfileController, self).__init__(parent)
-        self.setupUi(self)
-        self.app = app
-        self.saveButton.clicked.connect(self.save_form)
+class ProfileController:
+    def __init__(self, mainwindow):
+        # self.mainwindow = Ui_MainWindow  # Comment before running
+        self.mainwindow = mainwindow  # Uncomment before running
 
-        self._basic_forms = {'first_name': self.firstNameField, 'last_name': self.lastNameField, 'email': self.emailAddressField, 'iban': self.IBANField, 'phonenumber': self.telNumberField};
-        self._borrower_forms = {'current_postalcode': self.curPostalCodeField, 'current_housenumber': self.curHouseNumberField}; #missing 'documents_list': self.documentsTable
+        # check if the profile already exists
+        # self.user = self.mainwindow.app.user
+
+
+    def setup_view(self):
+        current_profile = self.mainwindow.api.load_profile(self.mainwindow.app.user)
+        print current_profile
 
     def save_form(self):
-        payload = {'role': 'INVESTOR'}
-        for key in self._basic_forms:
-            payload[key] = self._basic_forms[key].text()
+        self.payload = {}
 
-        if self.radioButtonBorrower.isChecked():
-            for key in self._borrower_forms:
-                payload[key] = self._borrower_forms[key].text()
+        self.payload = {'role': 2, 'first_name': str(self.mainwindow.profile_firstname_lineedit.text()),
+                             'last_name': str(self.mainwindow.profile_lastname_lineedit.text()),
+                             'email': str(self.mainwindow.profile_email_lineedit.text()),
+                             'iban': str(self.mainwindow.profile_iban_lineedit.text()),
+                             'phonenumber': int(self.mainwindow.profile_phonenumber_lineedit.text())}
 
-        print payload
+        # for key in self._basic_forms:
+        #     payload[key] = self._basic_forms[key].text()
+
+        if self.mainwindow.profile_borrower_radiobutton.isChecked():
+            self.payload['role'] = 1
+            self.payload['current_postalcode'] = str(self.mainwindow.profile_postcode_lineedit.text())
+            self.payload['current_housenumber'] = int(self.mainwindow.profile_housenumber_lineedit.text()) # missing 'documents_list': self.documentsTable
+
+        print self.payload
+        print self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload)
         # MarketAPI.create_profile(self.app.user, payload)
-
-
-def main():
-    app = MarketApplication(sys.argv)
-    form = ProfileController(app=app)
-    form.show()
-    app.exec_()
-
-if __name__ == '__main__':
-    main()

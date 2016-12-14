@@ -10,6 +10,8 @@ from market.views import main_view
 from marketGUI.market_app import MarketApplication
 from market.api.api import MarketAPI
 import login_controller
+import profile_controller
+import navigation
 
 
 class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
@@ -19,8 +21,9 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.api = MarketAPI(self.database)
         self.mainwindow = self #to make moving to another class easier
         self.app = app
-        self.bplr_payload = {}
         self.setupUi(self)
+        self.navigation = navigation.NavigateUser(self)
+        self.bplr_payload = {}
         self.set_navigation()
         self.bplr_submit_button.clicked.connect(self.bplr_submit_loan_request)
         self.fiplr1_loan_requests_table.doubleClicked.connect(self.fiplr2_view_loan_request)
@@ -31,9 +34,9 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.icb_place_bid_pushbutton.clicked.connect(self.icb_place_bid)
         self.setupObjects()
         self.login_controller = login_controller.LoginController(self)
+        self.profile_controller = profile_controller.ProfileController(self)
 
         self.stackedWidget.setCurrentIndex(0)
-        print self.stackedWidget.count()
 
     def bplr_submit_loan_request(self):
         fields = {'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
@@ -84,7 +87,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         # pop = self.api.load_all_loan_requests(self.user_bank)
         # print pop
         self.fiplr1_populate_table([self.bplr_payload])
-        self.nextScreen()
+        self.next_screen()
 
 
     # method for populating the pending resquest table.
@@ -117,7 +120,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.fiplr2_mortgage_type_lineedit.setText(str(chosen_request['mortgage_type']))
         self.fiplr2_property_value_lineedit.setText(str(chosen_request['price']))
         self.fiplr2_description_textedit.setText(str(chosen_request['description']))
-        self.nextScreen()
+        self.next_screen()
 
     def fiplr2_accept_loan_request(self):
         # TODO api does not accept payload set by the bank in the fiplr2 screen
@@ -133,7 +136,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         # self.api.accept_loan_request()
 
     def fiplr2_reject_loan_request(self):
-        self.previousScreen()
+        self.previous_screen()
         # TODO do an actual reject with the api
 
     def openmarket_view_open_market(self, fi_payload):
@@ -147,13 +150,13 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
             self.openmarket_open_market_table.item(i, 2).setText(str(fi_payload['interest_rate']))
             self.openmarket_open_market_table.item(i, 3).setText(str(fi_payload['duration']))
 
-        self.nextScreen()
+        self.next_screen()
 
     def openmarket_view_campaign(self):
         address = 'Bouwerslaan ' + self.bplr_payload['house_number'] + ' , ' + self.bplr_payload['postal_code']
         self.icb_property_address_lineedit.setText(address)
         # self.icb_current_bids_table.setRowCount(0)
-        self.nextScreen()
+        self.next_screen()
 
     def icb_place_bid(self):
         # row_count = self.icb_current_bids_table.rowCount()
@@ -173,10 +176,8 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.user_investor,pub_key2,priv_key2 = self.api.create_user()
         self.user_bank,pub_key3,priv_key3 = self.api.create_user()
 
-        #create profile for users
-        # self._basic_forms = {'role': ROLES[1], 'first_name': 'Bob', 'last_name': 'Bauwer, de', 'email': 'bob@gmail.com', 'iban': 'ING 0256 0213', 'phonenumber': '0625457845'}
-        # self._borrower_forms = {'current_postalcode': '1234 BA', 'current_housenumber': '123', 'documents_list': []}
 
+        #create profile for users
         self.borrower_profile_payload = {'role': 1, 'first_name': 'Bob', 'last_name': 'Bouwer, de', 'email': 'bob@gmail.com',
                     'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+31632549865',
                     'current_postalcode': '1234 CD', 'current_housenumber': '24', 'documents_list': []}
@@ -187,30 +188,33 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         print self.api.create_profile(self.user_investor, investor_payload)
         print self.api.create_profile(self.user_bank, bank_payload)
 
-    def set_navigation(self):
-        self.next_1.clicked.connect(self.nextScreen)
-        self.next_2.clicked.connect(self.nextScreen)
-        self.next_3.clicked.connect(self.nextScreen)
-        self.next_4.clicked.connect(self.nextScreen)
-        self.next_5.clicked.connect(self.nextScreen)
-        self.next_6.clicked.connect(self.nextScreen)
-        self.next_7.clicked.connect(self.nextScreen)
-        self.next_8.clicked.connect(self.nextScreen)
-        self.prev_1.clicked.connect(self.previousScreen)
-        self.prev_2.clicked.connect(self.previousScreen)
-        self.prev_3.clicked.connect(self.previousScreen)
-        self.prev_4.clicked.connect(self.previousScreen)
-        self.prev_5.clicked.connect(self.previousScreen)
-        self.prev_6.clicked.connect(self.previousScreen)
-        self.prev_7.clicked.connect(self.previousScreen)
-        self.prev_8.clicked.connect(self.previousScreen)
 
-    def nextScreen(self):
+    def screen_role_distribution(self):
+        pass
+
+    def set_navigation(self):
+        self.next_1.clicked.connect(self.next_screen)
+        self.next_2.clicked.connect(self.next_screen)
+        self.next_3.clicked.connect(self.next_screen)
+        self.next_4.clicked.connect(self.next_screen)
+        self.next_5.clicked.connect(self.next_screen)
+        self.next_6.clicked.connect(self.next_screen)
+        self.next_7.clicked.connect(self.next_screen)
+        self.next_8.clicked.connect(self.next_screen)
+        self.prev_1.clicked.connect(self.previous_screen)
+        self.prev_2.clicked.connect(self.previous_screen)
+        self.prev_3.clicked.connect(self.previous_screen)
+        self.prev_4.clicked.connect(self.previous_screen)
+        self.prev_5.clicked.connect(self.previous_screen)
+        self.prev_6.clicked.connect(self.previous_screen)
+        self.prev_7.clicked.connect(self.previous_screen)
+        self.prev_8.clicked.connect(self.previous_screen)
+
+    def next_screen(self):
         self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() + 1) % self.stackedWidget.count())
 
-    def previousScreen(self):
+    def previous_screen(self):
         self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() - 1) % self.stackedWidget.count())
-
 
 
 def main():

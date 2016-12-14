@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import *
 import main_view_controller
 from market.views.main_view import Ui_MainWindow
 
+USER = 1
+
 
 class LoginController:
     def __init__(self, mainwindow):
@@ -57,27 +59,26 @@ class LoginController:
             print "Keyfile found. Not overwriting."
 
     def login(self):
-        key_file = open(self.mainwindow.login_private_key_lineedit.text(), 'r').read()
-        # if remember me == true
-        if not self.mainwindow.login_remember_me_checkbox.checkState():
-            if os.path.exists('remembered'):
-                os.remove('remembered')
-        # do the user check
+        if self.mainwindow.login_private_key_lineedit.text():
+            key_file = open(self.mainwindow.login_private_key_lineedit.text(), 'r').read()
+            # if remember me == true
+            if not self.mainwindow.login_remember_me_checkbox.checkState():
+                if os.path.exists('remembered'):
+                    os.remove('remembered')
+            # do the user check
+            else:
+                f = open('remembered', 'w+');
+                f.write(self.mainwindow.login_private_key_lineedit.text())
+                f.close()
+
+            # Login
+            user = self.app.api.login_user(key_file.encode('HEX'))
+            if user:
+                self.app.user = user
+                print 'Login successful.'
+                self.mainwindow.navigation.prepare_views_for_user()
+            else:
+                print 'Login failed.'
         else:
-            f = open('remembered', 'w+');
-            f.write(self.mainwindow.login_private_key_lineedit.text())
-            f.close()
+            print 'Key field is empty'
 
-        # Login
-        user = self.app.api.login_user(key_file)
-        if user:
-            self.app.user = user
-            print 'Login successful.'
-            self.prepare_views_for_user()
-        else:
-            print 'Login failed.'
-
-
-
-    def prepare_views_for_user(self):
-        self.mainwindow.nextScreen()
