@@ -36,57 +36,93 @@ class Scenario(object):
     def create_accepted_loan_request(self, user):
         assert user.role_id == 3
 
-        while x == True:
-            loan_request = self.db.get('loan_request', random.randint(0, len(user.loan_request_ids)-1))
-            if loan_request.status == self.api.STATUS.PENDING:
-                x = False
-                self.api.accept_loan_request(user, FakePayload.accept_loan_request(loan_request))
+        loan_requests = []
+
+        # Find all pending loan requests from the user
+        for loan_request_id in user.loan_request_ids:
+            loan_request = self.api.db.get(LoanRequest._type, loan_request_id)
+            if loan_request.status == STATUS.PENDING:
+                loan_requests.append(loan_request)
+
+        # Accept a random pending loan request
+        rand = random.randint(0, len(loan_requests) - 1)
+        self.api.accept_loan_request(user, FakePayload.accept_loan_request(loan_requests[rand]))
 
     def create_rejected_loan_request(self, user):
         assert user.role_id == 3
 
-        while x == True:
-            loan_request = self.db.get('loan_request', random.randint(0, len(user.loan_request_ids)-1))
-            if loan_request.status == self.api.STATUS.PENDING:
-                x = False
-                self.api.reject_loan_request(user, FakePayload.reject_loan_request(loan_request))
+        loan_requests = []
 
+        # Find all pending loan requests from the user
+        for loan_request_id in user.loan_request_ids:
+            loan_request = self.api.db.get(LoanRequest._type, loan_request_id)
+            if loan_request.status == STATUS.PENDING:
+                loan_requests.append(loan_request)
+
+        # Reject a random pending loan request
+        rand = random.randint(0, len(loan_requests) - 1)
+        self.api.reject_loan_request(user, FakePayload.reject_loan_requests(loan_request[rand]))
 
     def create_accepted_mortgage_offer(self, user):
         assert user.role_id == 1
 
-        while x == True:
-            mortgage = self.db.get('mortgage', random.randint(0, len(user.mortgage_ids)-1))
-            if mortgage.status == self.api.STATUS.PENDING:
-                x = False
-                self.api.accept_mortgage_offer(user, FakePayload.accept_mortgage_offer(mortgage))
+        mortgages = []
+
+        # Find all pending mortgages from the user
+        for mortgage_id in user.mortgage_ids:
+            mortgage = self.api.db.get(Mortgage._type, mortgage_id)
+            if mortgage.status == STATUS.PENDING:
+                mortgages.append(mortgage)
+
+        # Accept a random pending mortgage offer
+        rand = random.randint(0, len(mortgages) - 1)
+        self.api.accept_mortgage_offer(user, FakePayload.accept_mortgage_offer(mortgage[rand]))
 
     def create_rejected_mortgage_offer(self, user):
         assert user.role_id == 1
 
-        while x == True:
-            mortgage = self.db.get('mortgage', random.randint(0, len(user.mortgage_ids)-1))
-            if mortgage.status == self.api.STATUS.PENDING:
-                x = False
-                self.api.reject_mortgage_offer(user, FakePayload.reject_mortgage_offer(mortgage))
+        mortgages = []
+
+        # Find all pending mortgages from the user
+        for mortgage_id in user.mortgage_ids:
+            mortgage = self.api.db.get(Mortgage._type, mortgage_id)
+            if mortgage.status == STATUS.PENDING:
+                mortgages.append(mortgage)
+
+        # Reject a random pending mortgage offer
+        rand = random.randint(0, len(mortgages) - 1)
+        self.api.reject_mortgage_offer(user, FakePayload.reject_mortgage_offer(mortgages[rand]))
 
     def create_investment_offer(self, user):
         assert user.role_id == 2
 
-        while x == True:
-            mortgage = random.choice(self.api.db.get_all('mortgage'))
-            if mortgage.status == self.api.STATUS.ACCEPTED:
-                x = False
-                self.api.place_loan_offer(user, FakePayload.place_investment_offer(mortgage))
+        mortgages = []
+
+        # Find all accepted mortgages
+        mortgage = self.api.db.get_all(Mortgage._type)
+        if mortgage.status == STATUS.ACCEPTED:
+            mortgages.append(mortgage)
+
+        # Create an investment offer on a random mortgage
+        rand = random.randint(0, len(mortgages) - 1)
+        self.api.place_loan_offer(user, FakePayload.place_investment_offer(mortgage[rand]))
 
     def create_accepted_investment_offer(self, user):
         assert user.role_id == 1
 
-        while x == True:
-            investment = self.db.get('investment', random.randint(0, len(user.investment_ids)-1))
-            if investment.status == self.api.STATUS.ACCEPTED:
-                x = False
-                self.api.accept_investment_offer(user, FakePayload.accept_investment_offer(investment))
+        investments = []
+
+        # Find all pending investment offers from the user
+        for investment_id in user.investment_ids:
+            investment = self.api.db.get(Investment._type, investment_id)
+            assert isinstance(investment, Investment)
+
+            if investment.status == STATUS.PENDING:
+                investments.append(investment)
+
+        # Accept a random pending investment
+        rand = random.randint(0, len(investments) - 1)
+        self.api.accept_investment_offer(user, FakePayload.accept_investment_offer(investment[rand]))
 
     def create_rejected_investment_offer(self, user):
         assert user.role_id == 1    # borrower
