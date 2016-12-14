@@ -22,7 +22,7 @@ class Scenario(object):
 
     def create_loan_request(self, user):
         assert user.role_id == 1    # borrower
-        self.api.create_loan_request(user, FakePayload.loan_request())
+        self.api.create_loan_request(user, FakePayload.create_loan_request())
 
     def create_accepted_loan_request(self, user):
         assert user.role_id == 3
@@ -116,6 +116,8 @@ class Scenario(object):
         self.api.accept_investment_offer(user, FakePayload.accept_investment_offer(investment[rand]))
 
     def create_rejected_investment_offer(self, user):
+        assert user.role_id == 1    # borrower
+
         investments = []
 
         # Find all pending investment offers from the user
@@ -134,26 +136,38 @@ class Scenario(object):
         self.api.load_profile(user)
 
     def load_investments(self, user):
+        assert user.role_id == 2    # investor
         self.api.load_investments(user)
 
     def load_open_market(self):
         self.api.load_open_market()
 
     def load_borrowers_loans(self, user):
+        assert user.role_id == 1    # borrower
         self.api.load_borrowers_loans(user)
 
     def load_borrowers_offers(self, user):
+        assert user.role_id == 1    # borrower
         self.api.load_borrowers_offers(user)
 
     def load_all_loan_requests(self, user):
+        assert user.role_id == 3    # bank
         self.api.load_all_loan_requests(user)
 
     def load_single_loan_request(self):
-        # Get a random loan request
-        loan_requests = self.api.db.get_all(LoanRequest._type)
-        rand = random.randint(0, len(loan_requests) - 1)
+        pending_loan_requests = []
 
-        self.api.load_single_loan_request(loan_requests[rand])
+        # Get a random pending loan request
+        loan_requests = self.api.db.get_all(LoanRequest._type)
+        for loan_request in loan_requests:
+            for loan_status in loan_request.status:
+                if loan_status == STATUS.PENDING:
+                    pending_loan_requests.append(loan_request)
+
+        pending_loan_requests = list(set(pending_loan_requests))    # remove duplicate entries
+        rand = random.randint(0, len(pending_loan_requests) - 1)
+
+        self.api.load_single_loan_request(pending_loan_requests[rand])
 
     def load_bids(self):
         # Get all running campaigns

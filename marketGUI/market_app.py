@@ -22,6 +22,10 @@ from market.dispersy.endpoint import StandaloneEndpoint
 
 
 class MarketApplication(QApplication):
+
+    port = 1236
+    bank_name = ''
+
     """
     This class represents the main Market application.
     """
@@ -61,7 +65,7 @@ class MarketApplication(QApplication):
 
 
     def start_dispersy(self):
-        dispersy = Dispersy(StandaloneEndpoint(1236, '0.0.0.0'), unicode('.'), u'dispersy.db')
+        dispersy = Dispersy(StandaloneEndpoint(self.port, '0.0.0.0'), unicode('.'), u'dispersy-%s.db' % self.bank_name)
         dispersy.statistics.enable_debug_statistics(True)
         dispersy.start(autoload_discovery=True)
 
@@ -69,8 +73,14 @@ class MarketApplication(QApplication):
         master_member = dispersy.get_member(public_key=Global.MASTER_KEY)
         self.community = MortgageMarketCommunity.init_community(dispersy, master_member, my_member)
         self.community.api = self.api
+        self.community.user = self.user
         self.api.community = self.community
 
+        # Run the scenario every 5 seconds
+        LoopingCall(lambda: self._scenario()).start(5.0)
+
+    def _scenario(self):
+        pass
 
 
     @property
@@ -82,6 +92,7 @@ class MarketApplication(QApplication):
 class MarketApplicationABN(MarketApplication):
 
     bank_name = 'ABN'
+    port = 1237
 
     def initialize_api(self):
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.bank_name)))

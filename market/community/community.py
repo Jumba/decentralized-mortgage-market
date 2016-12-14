@@ -9,6 +9,7 @@ from market.dispersy.distribution import DirectDistribution
 from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
+from market.models.user import User
 from payload import DatabaseModelPayload, ModelRequestPayload
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.house import House
@@ -36,6 +37,7 @@ class MortgageMarketCommunity(Community):
     def __init__(self, dispersy, master, my_member):
         super(MortgageMarketCommunity, self).__init__(dispersy, master, my_member)
         self._api = None
+        self._user = None
 
 
 
@@ -45,8 +47,10 @@ class MortgageMarketCommunity(Community):
 
     def on_introduction_response(self, messages):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
+        # Ignore if we aren't ready.
         for message in messages:
-            print "Discovered ", message.candidate
+            print "Introducing myself to ", message.candidate, " as ", self.user
+            self.send_model_request_response(['User',], {'User': self.user}, (message.candidate,))
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
@@ -168,6 +172,14 @@ class MortgageMarketCommunity(Community):
     def api(self, api):
         self._api = api
 
+    @property
+    def user(self):
+        return self._user
+
+    @user.setter
+    def user(self, user):
+        self._user = user
+
     def send_loan_request(self, fields, models, candidates, store=True, update=True, forward=True):
         assert LoanRequest._type in fields and LoanRequest._type in models
         assert House._type in fields and House._type in models
@@ -267,7 +279,7 @@ class MortgageMarketCommunity(Community):
                             payload=(models,),)
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_model_request_response(self, fields, models, store=True, update=True, forward=True):
+    def send_model_request_response(self, fields, models, candidates, store=True, update=True, forward=True):
         for field in fields:
             assert isinstance(models[field], DatabaseModel)
 
@@ -275,6 +287,7 @@ class MortgageMarketCommunity(Community):
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
                             payload=(fields, models,),)
+        print "Sending ", message
         self.dispersy.store_update_forward([message], store, update, forward)
 
 
@@ -363,9 +376,13 @@ class MortgageMarketCommunity(Community):
                 self.send_model_request_response([obj.id], {obj.id: obj})
 
     def on_model_request_response(self, messages):
-        # TODO
-        pass
-
+        print "Got message"
+        for message in messages:
+            for field in message.payload.fields:
+                obj = message.payload.models[field]
+                if not obj == self.user:
+                    print "new user wadup"
+                    self.api.db.post(obj.type, obj)
 
     # def on_model_request(self, messages):
     #     for message in messages:
@@ -373,7 +390,6 @@ class MortgageMarketCommunity(Community):
     #             type, id = data
     #             obj = self.api._database.get(type, id)
     #             if obj:
-    #                 print "sending ", obj
     #                 self.send_model_request_response([obj.id], {obj.id: obj})
     #
     # def on_model_request_response(self, messages):
