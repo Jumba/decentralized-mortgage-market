@@ -254,3 +254,7 @@ class FakePayload(object):
 
         return payload
 
+
+    @classmethod
+    def accept_loan_request(self, loan_request):
+        pass
