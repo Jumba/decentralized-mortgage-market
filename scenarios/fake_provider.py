@@ -269,11 +269,15 @@ class FakePayload(object):
             'investors': []
         }
 
+        return payload
+
     @classmethod
     def reject_loan_request(self, loan_request):
         payload = {
             'request_id': loan_request.id
         }
+
+        return payload
 
     @classmethod
     def accept_mortgage_offer(self, mortgage):
@@ -281,11 +285,15 @@ class FakePayload(object):
             'mortgage_id': mortgage.id
         }
 
+        return payload
+
     @classmethod
     def reject_mortgage_offer(self, mortgage):
         payload = {
             'mortgage_id': mortgage.id
         }
+
+        return payload
 
     @classmethod
     def place_investment_offer(self, mortgage):
@@ -297,11 +305,15 @@ class FakePayload(object):
             'mortgage_id': mortgage.id
         }
 
+        return payload
+
     @classmethod
     def accept_investment_offer(self, investment_offer):
         payload = {
             'investment_id': investment_offer.id
         }
+
+        return payload
 
     @classmethod
     def reject_investment_offer(self, investment_offer):
@@ -309,14 +321,20 @@ class FakePayload(object):
             'investment_id': investment_offer.id
         }
 
+        return payload
+
     @classmethod
     def load_single_loan_request(self, loan_request):
         payload = {
             'loan_request_id': loan_request.id
         }
 
+        return payload
+
     @classmethod
     def load_bids(self, mortgage):
         payload = {
             'mortgage_id': mortgage.id
         }
+
+        return payload
