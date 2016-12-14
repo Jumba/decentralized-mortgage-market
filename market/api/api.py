@@ -34,12 +34,12 @@ class MarketAPI(object):
         self._database = database
         self._user_key = None
         self.crypto = ECCrypto()
+        self.community = None
 
     @property
     def db(self):
         return self._database
 
-    @property
     def user_key(self):
         return self._user_key
 

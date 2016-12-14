@@ -240,7 +240,7 @@ class FakePayload(object):
         return payload
 
     @classmethod
-    def loan_request(self):
+    def create_loan_request(self):
         price = random.randrange(100000, 200000, 1000)
         payload = {
             'postal_code': self.fake.postcode(),
@@ -257,4 +257,66 @@ class FakePayload(object):
 
     @classmethod
     def accept_loan_request(self, loan_request):
-        pass
+        price = random.randrange(100000, 200000, 1000)
+        payload = {
+            'request_id': loan_request.id,
+            'amount': random.randrange(1000, price, 1000),
+            'mortgage_type': random.randrange(1,2,1),
+            'interest_rate': random.uniform(0, 20),
+            'default_rate': random.uniform(0, 20),
+            'max_invest_rate': random.uniform(0, 10),
+            'duration': random.randint(6, 120),
+            'investors': []
+        }
+
+    @classmethod
+    def reject_loan_request(self, loan_request):
+        payload = {
+            'request_id': loan_request.id
+        }
+
+    @classmethod
+    def accept_mortgage_offer(self, mortgage):
+        payload = {
+            'mortgage_id': mortgage.id
+        }
+
+    @classmethod
+    def reject_mortgage_offer(self, mortgage):
+        payload = {
+            'mortgage_id': mortgage.id
+        }
+
+    @classmethod
+    def place_investment_offer(self, mortgage):
+        amount_wanted = random.randrange(40000, 200000, 1000)
+        payload = {
+            'amount': random.randint(1, 200000),
+            'duration':random.randint(6, 120),
+            'interest_rate': random.uniform(0, 20),
+            'mortgage_id': mortgage.id
+        }
+
+    @classmethod
+    def accept_investment_offer(self, investment_offer):
+        payload = {
+            'investment_id': investment_offer.id
+        }
+
+    @classmethod
+    def reject_investment_offer(self, investment_offer):
+        payload = {
+            'investment_id': investment_offer.id
+        }
+
+    @classmethod
+    def load_single_loan_request(self, loan_request):
+        payload = {
+            'loan_request_id': loan_request.id
+        }
+
+    @classmethod
+    def load_bids(self, mortgage):
+        payload = {
+            'mortgage_id': mortgage.id
+        }
