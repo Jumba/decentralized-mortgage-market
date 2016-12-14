@@ -1,5 +1,4 @@
 import logging
-from mercurial.util import sha1
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 
@@ -9,7 +8,6 @@ from market.database.backends import PersistentBackend
 from market.database.database import MockDatabase
 from market.dispersy.dispersy import Dispersy
 from market.dispersy.endpoint import StandaloneEndpoint
-from market.models.house import House
 
 logging.basicConfig(level=logging.DEBUG, filename="logfile", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
