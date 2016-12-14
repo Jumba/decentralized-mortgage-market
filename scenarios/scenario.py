@@ -119,11 +119,19 @@ class Scenario(object):
         self.api.load_all_loan_requests(user)
 
     def load_single_loan_request(self):
-        # Get a random loan request
-        loan_requests = self.api.db.get_all(LoanRequest._type)
-        rand = random.randint(0, len(loan_requests) - 1)
+        pending_loan_requests = []
 
-        self.api.load_single_loan_request(loan_requests[rand])
+        # Get a random pending loan request
+        loan_requests = self.api.db.get_all(LoanRequest._type)
+        for loan_request in loan_requests:
+            for loan_status in loan_request.status:
+                if loan_status == STATUS.PENDING:
+                    pending_loan_requests.append(loan_request)
+
+        pending_loan_requests = list(set(pending_loan_requests))    # remove duplicate entries
+        rand = random.randint(0, len(pending_loan_requests) - 1)
+
+        self.api.load_single_loan_request(pending_loan_requests[rand])
 
     def load_bids(self):
         # Get all running campaigns
