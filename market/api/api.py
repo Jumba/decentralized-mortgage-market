@@ -4,6 +4,7 @@ from enum import Enum
 
 from market.api.crypto import generate_key, get_public_key
 from market.database.database import Database
+from market.dispersy.crypto import ECCrypto
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Investment, Campaign
 from market.models.profiles import BorrowersProfile
@@ -32,6 +33,7 @@ class MarketAPI(object):
         assert isinstance(database, Database)
         self._database = database
         self._user_key = None
+        self.crypto = ECCrypto()
 
     @property
     def db(self):
@@ -59,11 +61,16 @@ class MarketAPI(object):
            :return: A tuple with the User object, the public key and the private key. The keys encoded in HEX.
            :rtype: (:any:`User`, Public, Private) or None
         """
-        new_keys = generate_key()
-        user = User(public_key=new_keys[0], time_added=time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
+        key = self.crypto.generate_key(u'high')
+        public_bin = self.crypto.key_to_bin(key.pub())
+        private_bin = self.crypto.key_to_bin(key)
+
+        user = User(public_key=public_bin.encode("HEX"), time_added=time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
+        self.db.backend.set_option('user_key_pub', public_bin.encode("HEX"))
+        self.db.backend.set_option('user_key_priv', private_bin.encode("HEX"))
 
         if self.db.post(User._type, user):
-            return user, new_keys[0], new_keys[1]
+            return user, public_bin.encode("HEX"), private_bin.encode("HEX")
         else:
             return None
 
@@ -75,6 +82,7 @@ class MarketAPI(object):
         :type private_key: str
         :return: The logged in User if successful, None otherwise.
         """
+        private_key = private_key.decode("HEX")
         if get_public_key(private_key):
             user = self.db.get(User._type, get_public_key(private_key))
 

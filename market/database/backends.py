@@ -28,9 +28,15 @@ class Backend(object):
     def get_all(self, type):
         raise NotImplementedError
 
+    def get_option(self, option_name):
+        raise NotImplementedError
+
+    def set_option(self, option_name, value):
+        raise NotImplementedError
+
 
 class MemoryBackend(Backend):
-    _data = {}
+    _data = {'__option': {}}
     _id = {}
 
     def get(self, type, id):
@@ -73,6 +79,15 @@ class MemoryBackend(Backend):
     def get_all(self, type):
         try:
             return self._data[type].values()
+        except:
+            raise KeyError
+
+    def set_option(self, option_name, value):
+        self._data['__option'][option_name] = value
+
+    def get_option(self, option_name):
+        try:
+            return self._data['__option'][option_name]
         except:
             raise KeyError
 
@@ -170,3 +185,17 @@ class PersistentBackend(Database, Backend):
 
     def clear(self):
         self.execute(u"DELETE FROM market")
+
+    def set_option(self, option_name, value):
+        db_query = u"INSERT INTO `option` (key, value) VALUES (?, ?)"
+        self.execute(db_query, (unicode(option_name), unicode(value),))
+        self.commit()
+
+    def get_option(self, option_name):
+        db_query = u"SELECT value FROM `option` WHERE key = ?"
+        db_result = self.execute(db_query, (unicode(option_name),)).fetchall()
+
+        if len(db_result) != 1:
+            raise IndexError
+
+        return db_result[0][0]
