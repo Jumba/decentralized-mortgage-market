@@ -353,8 +353,6 @@ class MarketAPI(object):
 
                 # Compile the candidates list
                 candidates = []
-                print "LETS REQUEST THAT LOAN BABY"
-                print "WE GOT THESE BITCHES ONLINE"
                 print self.user_candidate
                 # Add the loan request to the banks' pending loan request list
                 for bank_id in payload['banks']:
@@ -375,7 +373,9 @@ class MarketAPI(object):
                                House._type: house,
                               BorrowersProfile._type: self.load_profile(user)
                     }
-                    self.community.send_loan_request(fields, models, tuple(candidates))
+                    self.community.send_loan_request(fields, models, candidates[0])
+                    self.community.send_introduce_user(fields, models, candidates[0])
+
 
                 LoopingCall(send).start(5)
 

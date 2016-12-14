@@ -58,7 +58,7 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CommunityDestination(node_count=50),
+                    CandidateDestination(),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_loan_request),
@@ -196,8 +196,8 @@ class MortgageMarketCommunity(Community):
         meta = self.get_meta_message(u"loan_request")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),)
-                            #destination=candidates)
+                            payload=(fields, models,),
+                            destination=(candidates, ))
         self.dispersy.store_update_forward([message], store, update, forward)
         #TODO: Actually send documents too
 
@@ -395,6 +395,7 @@ class MortgageMarketCommunity(Community):
     def on_user_introduction(self, messages):
         for message in messages:
             for field in message.payload.fields:
+                print "As introduce ", message.payload.fields
                 obj = message.payload.models[field]
                 if isinstance(obj, User) and not obj == self.user:
                     self.api.user_candidate[obj.id] = message.candidate
