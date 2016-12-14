@@ -1,4 +1,7 @@
 from market import Global
+from market.api.api import MarketAPI
+from market.database.backends import PersistentBackend, MemoryBackend
+from market.database.database import MockDatabase
 from marketGUI.market_app import MarketApplication, MarketApplicationABN
 from scenarios.scenario import Scenario
 from scenarios.tasks import Tasks
@@ -18,14 +21,17 @@ class MarketAppSceneBorrower(MarketApplication):
 
         MarketApplication.__init__(self, *argv)
 
+    def initialize_api(self):
+        #self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MockDatabase(MemoryBackend()))
+
     def _scenario(self):
         self.scenario = Scenario(self.api)
-        print "====== BORROWER SCENARIO EXECUTING ======"
 
         if not self.profile and not self.loan_request and not self.mortgage_accept and not self.investor_accept:
             for bank_id in Global.BANKS:
                 user = self.api._get_user(Global.BANKS[bank_id])
-                if user.id in self.api.user_candidate and self.bank_status[bank_id] == False:
+                if user.id in self.api.user_candidate:
                     print bank_id, " is ONLINE"
                     self.bank_status[bank_id] = True
                     self.profile = True
@@ -45,9 +51,10 @@ class MarketAppSceneBorrower(MarketApplication):
         # Creating a loan request
         if self.loan_request:
             print "Creating loan request"
+            self.user.update(self.api.db)
             self.scenario.create_loan_request(self.user)
             self.loan_request = False
-            self.mortgage_accept = True
+            self.mortgage_accept = False
 
         # Try an accept an offer
         if self.mortgage_accept:

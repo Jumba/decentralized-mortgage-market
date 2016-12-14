@@ -20,6 +20,7 @@ class Scenario(object):
     def create_banks(self):
         for bank_name in Global.BANKS:
             user = self.api._get_user(Global.BANKS[bank_name]) or User(public_key=Global.BANKS[bank_name], time_added=0)
+            self.api.db.post(user.type, user)
             self.make_bank(user)
 
     def make_borrower(self, user):
@@ -34,6 +35,7 @@ class Scenario(object):
     def create_loan_request(self, user):
         assert user.role_id == 1    # borrower
         self.api.create_loan_request(user, FakePayload.create_loan_request())
+
 
     def create_accepted_loan_request(self, user):
         assert user.role_id == 3

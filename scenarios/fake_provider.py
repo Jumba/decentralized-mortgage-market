@@ -222,9 +222,9 @@ class FakePayload(object):
     def profile(self, role):
         payload = {
             'role': role,
-            'first_name': str(self.fake.first_name()),
-            'last_name': str(self.fake.last_name()),
-            'email': str(self.fake.email()),
+            'first_name': self.fake.first_name(),
+            'last_name': self.fake.last_name(),
+            'email': str(self.fake.safe_email()),
             'iban': self.fake.iban(),
             'phonenumber': str(self.fake.phone_number()),
         }
