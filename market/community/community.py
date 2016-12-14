@@ -50,7 +50,7 @@ class MortgageMarketCommunity(Community):
         # Ignore if we aren't ready.
         for message in messages:
             print "Introducing myself to ", message.candidate, " as ", self.user
-            self.send_model_request_response(['User',], {'User': self.user}, (message.candidate,))
+            self.send_introduce_user(['User',], {'User': self.user}, message.candidate)
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
@@ -147,10 +147,18 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CommunityDestination(node_count=50),
+                    CandidateDestination(),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_model_request_response),
+             Message(self, u"introduce_user",
+                    MemberAuthentication(),
+                    PublicResolution(),
+                    DirectDistribution(),
+                    CandidateDestination(),
+                    DatabaseModelPayload(),
+                    self.check_message,
+                    self.on_user_introduction),
         ]
 
     def initiate_conversions(self):
@@ -286,18 +294,20 @@ class MortgageMarketCommunity(Community):
         meta = self.get_meta_message(u"model_request_response")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),)
-        print "Sending ", message
+                            payload=(fields, models,),
+                            destination=candidates)
         self.dispersy.store_update_forward([message], store, update, forward)
 
+    def send_introduce_user(self, fields, models, candidate, store=True, update=True, forward=True):
+        for field in fields:
+            assert isinstance(models[field], DatabaseModel)
 
-
-    def on_model(self, messages):
-        print "message in?"
-        for message in messages:
-            print message.payload.fields
-            for field in message.payload.fields:
-                print message.payload.models[field]
+        meta = self.get_meta_message(u"introduce_user")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),
+                            destination=(candidate, ))
+        self.dispersy.store_update_forward([message], store, update, forward)
 
     def on_loan_request(self, messages):
         for message in messages:
@@ -376,12 +386,17 @@ class MortgageMarketCommunity(Community):
                 self.send_model_request_response([obj.id], {obj.id: obj})
 
     def on_model_request_response(self, messages):
-        print "Got message"
+        for message in messages:
+            for field in message.payload.fields:
+                obj = message.payload.models[field]
+                self.api.db.post(obj.type, obj)
+
+    def on_user_introduction(self, messages):
         for message in messages:
             for field in message.payload.fields:
                 obj = message.payload.models[field]
                 if not obj == self.user:
-                    print "new user wadup"
+                    print "I just met user ", obj
                     self.api.db.post(obj.type, obj)
 
     # def on_model_request(self, messages):

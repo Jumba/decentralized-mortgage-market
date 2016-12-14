@@ -20,6 +20,8 @@ class MortgageMarketConversion(BinaryConversion):
         self.define_meta_message(chr(10), community.get_meta_message(u"investment_reject"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(11), community.get_meta_message(u"model_request"), self._encode_model_request, self._decode_model_request)
         self.define_meta_message(chr(12), community.get_meta_message(u"model_request_response"), self._encode_model, self._decode_model)
+        self.define_meta_message(chr(13), community.get_meta_message(u"introduce_user"), self._encode_model, self._decode_model)
+
 
 
 
