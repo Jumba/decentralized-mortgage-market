@@ -8,3 +8,5 @@ test/*.db
 test/market/*.db
 sqlite/*.db
 docs/pdf
+market.log
+*.db-wal

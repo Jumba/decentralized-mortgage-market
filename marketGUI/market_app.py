@@ -39,7 +39,7 @@ class MarketApplication(QApplication):
         reactor.run()
 
     def initialize_api(self):
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.')))
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/market.db')))
 
 
     def identify(self):
@@ -84,7 +84,7 @@ class MarketApplicationABN(MarketApplication):
     bank_name = 'ABN'
 
     def initialize_api(self):
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'%s-market.db' % self.bank_name)))
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.bank_name)))
 
 
     def identify(self):
