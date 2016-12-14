@@ -22,7 +22,7 @@ class Scenario(object):
 
     def create_loan_request(self, user):
         assert user.role_id == 1    # borrower
-        self.api.create_loan_request(user, FakePayload.loan_request())
+        self.api.create_loan_request(user, FakePayload.create_loan_request())
 
     def create_accepted_loan_request(self, user):
         assert user.role_id == 3
