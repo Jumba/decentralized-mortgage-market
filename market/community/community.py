@@ -46,8 +46,7 @@ class MortgageMarketCommunity(Community):
     def on_introduction_response(self, messages):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
         for message in messages:
-            print "adding ", message.candidate
-            self.candidates.add(message.candidate)
+            print "Discovered ", message.candidate
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
