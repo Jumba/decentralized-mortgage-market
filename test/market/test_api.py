@@ -1066,3 +1066,60 @@ class APITestSuite(unittest.TestCase):
         # Check if bid is in the list
         bids = self.api.load_bids(self.payload_mortgage)
         self.assertTrue(bids)
+
+    def test_load_mortgages(self):
+        """
+        This test checks the functionality of displaying all running mortgages for a bank
+        Mortgages should only show when they're accepted
+        """
+
+        # Create borrowers
+        borrower1, _, _ = self.api.create_user()
+        role_id = self.api.db.post(Role._type, Role(borrower1.id, 1))
+        borrower1.role_id = role_id
+        self.api.db.put(User._type, borrower1.id, borrower1)
+
+        borrower2, _, _ = self.api.create_user()
+        role_id = self.api.db.post(Role._type, Role(borrower2.id, 1))
+        borrower2.role_id = role_id
+        self.api.db.put(User._type, borrower2.id, borrower2)
+
+        # Create a bank
+        bank, _, _ = self.api.create_user()
+        role_id = self.api.db.post(Role._type, Role(bank.id, 3))
+        bank.role_id = role_id
+        self.api.db.put(User._type, bank.id, bank)
+
+        # Create loan requests
+        self.payload_loan_request['user_key'] = borrower1.id  # set user_key to the borrower's public key
+        self.payload_loan_request['banks'] = [bank.id]
+        loan_request1 = self.api.create_loan_request(borrower1, self.payload_loan_request)
+        self.assertIsInstance(loan_request1, LoanRequest)
+
+        self.payload_loan_request['user_key'] = borrower2.id  # set user_key to the borrower's public key
+        self.payload_loan_request['banks'] = [bank.id]
+        loan_request2 = self.api.create_loan_request(borrower2, self.payload_loan_request)
+        self.assertIsInstance(loan_request2, LoanRequest)
+
+        # Accept loan requests
+        self.payload_mortgage['user_key'] = borrower1.id
+        self.payload_mortgage['request_id'] = loan_request1.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+        _, mortgage1 = self.api.accept_loan_request(bank, self.payload_mortgage)
+
+        self.payload_mortgage['user_key'] = borrower1.id
+        self.payload_mortgage['request_id'] = loan_request1.id
+        _, mortgage2 = self.api.accept_loan_request(bank, self.payload_mortgage)
+
+        # Accept one mortgage
+        payload = {'mortgage_id' : mortgage1.id}
+        self.api.accept_mortgage_offer(borrower1, payload)
+
+        # Get the list of mortgages
+        bank = self.api.db.get(User._type, bank.id)
+        mortgages = self.api.load_mortgages(bank)
+
+        # Check if only the accepted mortgage is in the bank's list
+        self.assertIn(mortgage1, mortgages)
+        self.assertNotIn(mortgage2, mortgages)
