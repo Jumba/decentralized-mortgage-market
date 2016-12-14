@@ -1,9 +1,12 @@
 import random
 
+import time
 from faker import Faker
 
+from market import Global
 from market.api.api import MarketAPI, STATUS
 from market.models.loans import Campaign, Mortgage, LoanRequest, Investment
+from market.models.user import User
 from scenarios.fake_provider import FakePayload
 
 import random
@@ -13,6 +16,12 @@ class Scenario(object):
     def __init__(self, api):
         assert isinstance(api, MarketAPI)
         self.api = api
+
+    def create_banks(self):
+        for bank_name in Global.BANKS:
+            user = User(public_key=Global.BANKS[bank_name], time_added=0)
+            user.role_id = 3
+            self.api.db.post(user.type, user)
 
     def make_borrower(self, user):
         self.api.create_profile(user, FakePayload.profile(1))

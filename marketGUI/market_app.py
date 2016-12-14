@@ -3,6 +3,7 @@ import logging
 import time
 
 from market.models.user import User
+from scenarios.scenario import Scenario
 
 logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
@@ -32,6 +33,11 @@ class MarketApplication(QApplication):
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
         self.initialize_api()
+
+        # Load banks
+        scenario = Scenario(self.api)
+        scenario.create_banks()
+
         self.private_key = None
         self.user = None
         self.community = None
@@ -107,7 +113,8 @@ class MarketApplicationABN(MarketApplication):
                 raise IndexError
         except IndexError:
             print "Creating new user"
-            self.user = User(public_key=Global.BANKS[self.bank_name], time_added=time.time())
+            self.user = User(public_key=Global.BANKS[self.bank_name], time_added=0)
+            self.user.role_id = 3
             print self.user, " has been created."
             self.api.db.post(self.user.type, self.user)
 

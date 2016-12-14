@@ -47,7 +47,10 @@ class User(DatabaseModel):
     def campaign_ids(self):
         return self._campaign_ids
 
-    def generate_id(self):
+    def generate_id(self, force=False):
+        if force:
+            raise IndexError("User key is immutable")
+
         return self.user_key
 
     @profile_id.setter

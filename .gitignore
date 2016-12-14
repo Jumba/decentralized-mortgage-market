@@ -10,4 +10,5 @@ sqlite/*.db
 docs/pdf
 market.log
 *.db-wal
+*.db-shm
 peercache.txt
