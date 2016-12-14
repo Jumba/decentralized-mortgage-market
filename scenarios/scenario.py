@@ -65,3 +65,6 @@ class Scenario(object):
     def load_bids(self):
         pass
 
+    def load_mortages(self):
+        pass
+
