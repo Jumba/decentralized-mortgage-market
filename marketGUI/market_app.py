@@ -62,7 +62,7 @@ class MarketApplication(QApplication):
             self.private_key = self.api.db.backend.get_option('user_key_priv')
             self.user = self.api.login_user(self.private_key.encode("HEX"))
             print "Using an existing user"
-        except IndexError:
+        except KeyError:
             user, _, priv = self.api.create_user()
             self.user = user
             self.private_key = priv
@@ -86,7 +86,7 @@ class MarketApplication(QApplication):
         LoopingCall(lambda: self._scenario()).start(3.0)
 
     def _scenario(self):
-        print "scenario"
+        pass
 
     @property
     def api(self):

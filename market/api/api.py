@@ -1,6 +1,7 @@
 import time
 from datetime import timedelta, datetime
 from enum import Enum
+from twisted.internet.task import LoopingCall
 
 from market.api.crypto import generate_key, get_public_key
 from market.community.community import MortgageMarketCommunity
@@ -90,7 +91,6 @@ class MarketAPI(object):
         private_key = private_key.decode("HEX")
         if get_public_key(private_key):
             user = self.db.get(User._type, get_public_key(private_key))
-
             return user
         return None
 
@@ -339,6 +339,7 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         role = Role(user.role_id)
+        print "CREAting loan req for ", role.name
 
         # Only create a loan request if the user is a borrower
         if role.name == 'BORROWER':
@@ -357,12 +358,18 @@ class MarketAPI(object):
                 user.loan_request_ids.append(self.db.post(LoanRequest._type, loan_request))
                 self.db.put(User._type, user.id, user)
 
+                # Compile the candidates list
+                candidates = []
+                print "LETS REQUEST THAT LOAN BABY"
+                print "WE GOT THESE BITCHES ONLINE"
+                print self.user_candidate
                 # Add the loan request to the banks' pending loan request list
                 banks = []
                 for bank_id in payload['banks']:
                     bank = self.db.get(User._type, bank_id)
-                    if bank.candidate:
-                        print "Bank connected to dispersy"
+                    if bank.id in self.user_candidate:
+                        print "Adding bank candidate for send"
+                        candidates.append(self.user_candidate[bank_id])
 
                     assert isinstance(bank, User)
                     bank.loan_request_ids.append(loan_request.id)

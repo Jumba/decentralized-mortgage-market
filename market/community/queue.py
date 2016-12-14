@@ -1,3 +1,5 @@
+import community
+
 class MessageQueue():
     def __init__(self):
         self._queue = []
@@ -6,6 +8,13 @@ class MessageQueue():
         message = [message_name, fields, models, receivers]
         self._queue.append(message)
 
-    # TODO Figure out how to tell when a message is sent
-    def send_message(self, message):
-        pass
+    def send_message(self, message, message_name):
+        [message_name, fields, models, receivers] = message
+
+        # TODO Check for candidate
+        if True:
+            self._queue.remove(message)
+            message_name(fields, models, receivers, True, True, True)
+        # no candidate
+        else:
+            pass

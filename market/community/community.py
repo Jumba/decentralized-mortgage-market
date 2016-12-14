@@ -50,7 +50,7 @@ class MortgageMarketCommunity(Community):
         # Ignore if we aren't ready.
         for message in messages:
             print "Introducing myself to ", message.candidate, " as ", self.user
-            self.send_introduce_user(['User',], {'user': self.user}, message.candidate)
+            self.send_introduce_user(['user',], {'user': self.user}, message.candidate)
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
@@ -58,7 +58,7 @@ class MortgageMarketCommunity(Community):
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CandidateDestination(),
+                    CommunityDestination(node_count=50),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_loan_request),
@@ -196,10 +196,9 @@ class MortgageMarketCommunity(Community):
         meta = self.get_meta_message(u"loan_request")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
+                            payload=(fields, models,),)
+                            #destination=candidates)
         self.dispersy.store_update_forward([message], store, update, forward)
-
         #TODO: Actually send documents too
 
 
@@ -315,6 +314,8 @@ class MortgageMarketCommunity(Community):
             house = message.payload.models[House._type]
             profile = message.payload.models[BorrowersProfile._type]
 
+            print "Received ", loan_request, " with House ", house
+
             self.db.post(LoanRequest._type, loan_request)
             self.db.post(House._type, house)
             self.db.post(BorrowersProfile._type, profile)
@@ -392,16 +393,13 @@ class MortgageMarketCommunity(Community):
                 self.api.db.post(obj.type, obj)
 
     def on_user_introduction(self, messages):
-        print "Intro request"
         for message in messages:
             for field in message.payload.fields:
                 obj = message.payload.models[field]
                 if isinstance(obj, User) and not obj == self.user:
-                    print "I just met user ", obj, " connected at ", message.candidate
                     self.api.user_candidate[obj.id] = message.candidate
                     # Banks need to be overwritten
                     if obj.role_id == 3:
-                        print "bank ay"
                         self.api.db.put(obj.type, obj.id, obj)
                     else:
                         self.api.db.post(obj.type, obj)
