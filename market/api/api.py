@@ -35,6 +35,8 @@ class MarketAPI(object):
         self._user_key = None
         self.crypto = ECCrypto()
         self.community = None
+        self.user_candidate = {}
+
 
     @property
     def db(self):
@@ -129,18 +131,18 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         try:
-            role = Role(user.id, payload['role'])
-            user.role_id = self.db.post(Role._type, role)
+            role = Role(payload['role'])
+            user.role_id = role.value
 
             profile = None
-            if role.role_name == 'INVESTOR':
+            if role.name == 'INVESTOR':
                 profile = Profile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'], payload['phonenumber'])
                 user.profile_id = self.db.post(Profile._type, profile)
-            elif role.role_name == 'BORROWER':
+            elif role.name == 'BORROWER':
                 profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
                                            payload['phonenumber'], payload['current_postalcode'], payload['current_housenumber'], payload['documents_list'])
                 user.profile_id = self.db.post(BorrowersProfile._type, profile)
-            elif role.role_name == 'FINANCIAL_INSTITUTION':
+            elif role.name == 'FINANCIAL_INSTITUTION':
                 self.db.put(User._type, user.id, user)
                 return True
 
@@ -161,11 +163,11 @@ class MarketAPI(object):
         """
         user = self._get_user(user)
         try:
-            role = self.db.get(Role._type, user.role_id)
+            role = Role(user.role_id)
 
-            if role.role_name == 'INVESTOR':
+            if role.name == 'INVESTOR':
                 profile = self.db.get(Profile._type, user.profile_id)
-            elif role.role_name == 'BORROWER':
+            elif role.name == 'BORROWER':
                 #profile = self.db.get(BorrowersProfile._type, user.profile_id)
                 profile = self.db.get('borrowers_profile', user.profile_id)
             else:
@@ -205,9 +207,9 @@ class MarketAPI(object):
         assert isinstance(investor, User)
         assert isinstance(payload, dict)
 
-        role = self.db.get(Role._type, investor.role_id)
+        role = Role(investor.role_id)
 
-        if role.role_name == 'INVESTOR':
+        if role.name == 'INVESTOR':
             investment = Investment(investor.id, payload['amount'], payload['duration'], payload['interest_rate'],
                                     payload['mortgage_id'], STATUS.PENDING)
 
@@ -293,7 +295,7 @@ class MarketAPI(object):
         :return: : Returns the role or None.
         :rtype: :any:`User` or `None`
         """
-        return self.db.get(Role._type, user.role_id)
+        return Role(user.role_id)
 
     def create_loan_request(self, user, payload):
         """
@@ -329,10 +331,10 @@ class MarketAPI(object):
         assert isinstance(user, User)
         assert isinstance(payload, dict)
 
-        role = self.db.get(Role._type, user.role_id)
+        role = Role(user.role_id)
 
         # Only create a loan request if the user is a borrower
-        if role.role_name == 'BORROWER':
+        if role.name == 'BORROWER':
             if not user.loan_request_ids:
                 # Create the house
                 house = House(payload['postal_code'], payload['house_number'], payload['price'])
@@ -351,9 +353,15 @@ class MarketAPI(object):
                 # Add the loan request to the banks' pending loan request list
                 for bank_id in payload['banks']:
                     bank = self.db.get(User._type, bank_id)
+                    if bank.candidate:
+                        print "Bank connected to dispersy"
+
                     assert isinstance(bank, User)
                     bank.loan_request_ids.append(loan_request.id)
                     self.db.put(User._type, bank.id, bank)
+
+
+
                 return loan_request
 
             else:
@@ -595,10 +603,9 @@ class MarketAPI(object):
         assert isinstance(user, User)
 
         user = self._get_user(user)
-        role = self.db.get(Role._type, user.role_id)
-        assert isinstance(role, Role)
+        role = self.get_role(user)
 
-        if role.role_name == 'FINANCIAL_INSTITUTION':
+        if role.name == 'FINANCIAL_INSTITUTION':
             pending_loan_requests = []
 
             # Only show loan requests that are still pending
@@ -659,7 +666,7 @@ class MarketAPI(object):
         """
         assert isinstance(bank, User)
         assert isinstance(payload, dict)
-        assert self.get_role(bank).role_name == 'FINANCIAL_INSTITUTION'
+        assert self.get_role(bank).name == 'FINANCIAL_INSTITUTION'
 
         # Accept the loan request
         loan_request = self.db.get(LoanRequest._type, payload['request_id'])
@@ -779,10 +786,9 @@ class MarketAPI(object):
         """
         assert isinstance(user, User)
         user = self._get_user(user)
-        role = self.db.get(Role._type, user.role_id)
-        assert isinstance(role, Role)
+        role = self.get_role(user)
 
-        if role.role_name == 'FINANCIAL_INSTITUTION':
+        if role.name == 'FINANCIAL_INSTITUTION':
             mortgages = []
 
             for mortgage_id in user.mortgage_ids:

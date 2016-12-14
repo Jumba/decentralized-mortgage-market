@@ -25,7 +25,7 @@ from market.dispersy.endpoint import StandaloneEndpoint
 class MarketApplication(QApplication):
 
     port = 1236
-    bank_name = ''
+    database_prefix = ''
 
     """
     This class represents the main Market application.
@@ -71,23 +71,22 @@ class MarketApplication(QApplication):
 
 
     def start_dispersy(self):
-        dispersy = Dispersy(StandaloneEndpoint(self.port, '0.0.0.0'), unicode('.'), u'dispersy-%s.db' % self.bank_name)
-        dispersy.statistics.enable_debug_statistics(True)
-        dispersy.start(autoload_discovery=True)
+        self.dispersy = Dispersy(StandaloneEndpoint(self.port, '0.0.0.0'), unicode('.'), u'dispersy-%s.db' % self.database_prefix)
+        self.dispersy.statistics.enable_debug_statistics(True)
+        self.dispersy.start(autoload_discovery=True)
 
-        my_member = dispersy.get_member(private_key=self.private_key.decode("HEX"))
-        master_member = dispersy.get_member(public_key=Global.MASTER_KEY)
-        self.community = MortgageMarketCommunity.init_community(dispersy, master_member, my_member)
+        my_member = self.dispersy.get_member(private_key=self.private_key.decode("HEX"))
+        master_member = self.dispersy.get_member(public_key=Global.MASTER_KEY)
+        self.community = MortgageMarketCommunity.init_community(self.dispersy, master_member, my_member)
         self.community.api = self.api
         self.community.user = self.user
         self.api.community = self.community
 
         # Run the scenario every 5 seconds
-        LoopingCall(lambda: self._scenario()).start(5.0)
+        LoopingCall(lambda: self._scenario()).start(3.0)
 
     def _scenario(self):
-        pass
-
+        print "scenario"
 
     @property
     def api(self):
@@ -97,15 +96,15 @@ class MarketApplication(QApplication):
 
 class MarketApplicationABN(MarketApplication):
 
-    bank_name = 'ABN'
+    database_prefix = 'ABN'
     port = 1237
 
     def initialize_api(self):
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.bank_name)))
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
 
 
     def identify(self):
-        self.private_key = Global.BANKS_PRIV[self.bank_name]
+        self.private_key = Global.BANKS_PRIV[self.database_prefix]
         try:
             print "Attempting login"
             self.user = self.api.login_user(self.private_key.encode("HEX"))
@@ -113,13 +112,13 @@ class MarketApplicationABN(MarketApplication):
                 raise IndexError
         except IndexError:
             print "Creating new user"
-            self.user = User(public_key=Global.BANKS[self.bank_name], time_added=0)
+            self.user = User(public_key=Global.BANKS[self.database_prefix], time_added=0)
             self.user.role_id = 3
             print self.user, " has been created."
             self.api.db.post(self.user.type, self.user)
 
-        if self.user and self.user.user_key == Global.BANKS[self.bank_name]:
-            print "Identified as ", self.bank_name, self.user.user_key
+        if self.user and self.user.user_key == Global.BANKS[self.database_prefix]:
+            print "Identified as ", self.database_prefix, self.user.user_key
         else:
-            print "failed to identify as ", self.bank_name
+            print "failed to identify as ", self.database_prefix
             print "User is ", self.user

@@ -222,18 +222,18 @@ class FakePayload(object):
     def profile(self, role):
         payload = {
             'role': role,
-            'first_name': self.fake.first_name(),
-            'last_name': self.fake.last_name(),
-            'email': self.fake.email(),
+            'first_name': str(self.fake.first_name()),
+            'last_name': str(self.fake.last_name()),
+            'email': str(self.fake.email()),
             'iban': self.fake.iban(),
-            'phonenumber': self.fake.phone_number(),
+            'phonenumber': str(self.fake.phone_number()),
         }
 
         # Borrower
         if role == 1:
             payload.update({
-                'current_postalcode': self.fake.postcode(),
-                'current_housenumber': self.fake.building_number(),
+                'current_postalcode': str(self.fake.postcode()),
+                'current_housenumber': str(self.fake.building_number()),
                 'documents_list': []
             })
 
@@ -243,8 +243,8 @@ class FakePayload(object):
     def create_loan_request(self):
         price = random.randrange(100000, 200000, 1000)
         payload = {
-            'postal_code': self.fake.postcode(),
-            'house_number': self.fake.building_number(),
+            'postal_code': str(self.fake.postcode()),
+            'house_number': str(self.fake.building_number()),
             'price': price,
             'mortgage_type': random.randrange(1,2,1),
             'banks': Global.BANKS.values(),

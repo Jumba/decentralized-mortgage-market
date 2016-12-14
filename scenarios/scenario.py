@@ -19,15 +19,17 @@ class Scenario(object):
 
     def create_banks(self):
         for bank_name in Global.BANKS:
-            user = User(public_key=Global.BANKS[bank_name], time_added=0)
-            user.role_id = 3
-            self.api.db.post(user.type, user)
+            user = self.api._get_user(Global.BANKS[bank_name]) or User(public_key=Global.BANKS[bank_name], time_added=0)
+            self.make_bank(user)
 
     def make_borrower(self, user):
         self.api.create_profile(user, FakePayload.profile(1))
 
     def make_investor(self, user):
         self.api.create_profile(user, FakePayload.profile(2))
+
+    def make_bank(self, user):
+        self.api.create_profile(user, {'role': 3})
 
     def create_loan_request(self, user):
         assert user.role_id == 1    # borrower
