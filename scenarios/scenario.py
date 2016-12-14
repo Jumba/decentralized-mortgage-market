@@ -16,11 +16,12 @@ class Scenario(object):
         self.api.create_profile(user, FakePayload.profile(2))
 
     def create_loan_request(self, user):
-        assert user.role_id == 1
+        assert user.role_id == 1    # borrower
         self.api.create_loan_request(user, FakePayload.loan_request())
 
-    def create_accepted_loan_request(self, user):
-        pass
+    def create_accepted_loan_request(self, user, loan_request):
+        assert user.role_id == 3    # bank
+        self.api.accept_loan_request(user, FakePayload.accept_loan_request(loan_request))
 
     def create_rejected_loan_request(self, user):
         pass

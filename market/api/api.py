@@ -767,3 +767,30 @@ class MarketAPI(object):
             bids.append(self.db.get(Investment._type, investment_bid))
 
         return bids
+
+    def load_mortgages(self, user):
+        """
+            Display all pending running mortgages for the bank
+
+            :param user: The bank :any:`User`
+            :type user: :any:`User`
+            :return: A list of the :any: 'Mortgage's if there are any, False otherwise.
+            :rtype: list or False
+        """
+        assert isinstance(user, User)
+        user = self._get_user(user)
+        role = self.db.get(Role._type, user.role_id)
+        assert isinstance(role, Role)
+
+        if role.role_name == 'FINANCIAL_INSTITUTION':
+            mortgages = []
+
+            for mortgage_id in user.mortgage_ids:
+                mortgage = self.db.get(Mortgage._type, mortgage_id)
+                assert isinstance(mortgage, Mortgage)
+                if mortgage.status == STATUS.ACCEPTED:
+                    mortgages.append(mortgage)
+
+            return mortgages
+        else:
+            return False
