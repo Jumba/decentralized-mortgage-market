@@ -11,22 +11,20 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.setVisible(False)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
 
-
-
-
     def prepare_views_for_user(self):
         # check page permissions
         self.mainwindow.navigation_pushbutton_1.setVisible(True)
         self.mainwindow.navigation_pushbutton_2.setVisible(True)
         self.mainwindow.navigation_pushbutton_3.setVisible(True)
         self.mainwindow.navigation_pushbutton_4.setVisible(True)
-        self.user_permissions()
+        self.user_screen_navigation()
         self.mainwindow.navigation_pushbutton_1.click()
         # self.mainwindow.profile_controller.setup_view()
         # self.mainwindow.next_screen()
 
-    def user_permissions(self):
+    def user_screen_navigation(self):
         # TODO make dynamic
+        print 'current user'
         # user_role = self.app.api.get_role(self.app.user)
         user_role = USER
         if user_role == 1:
@@ -55,6 +53,9 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_bplr)
         self.mainwindow.navigation_pushbutton_4.setText('Open market')
         self.mainwindow.navigation_pushbutton_4.clicked.connect(self.switch_to_openmarket)
+        self.mainwindow.profile_controller.setup_view()
+        self.mainwindow.openmarket_controller.setup_view()
+        # self.mainwindow.portfolio_controller.setup_view()
 
 
     def set_investor_navigation(self):

@@ -15,13 +15,13 @@ class LoginController:
         self.mainwindow = mainwindow
         self.app = mainwindow.app
 
-        self.setup_signals()
+        self.setup_view()
         if os.path.exists('remembered'):
             f = open('remembered', 'r')
             self.mainwindow.login_private_key_lineedit.setText(f.readline())
             self.mainwindow.login_remember_me_checkbox.setChecked(True)
 
-    def setup_signals(self):
+    def setup_view(self):
         self.mainwindow.login_generate_pushbutton.clicked.connect(self.generate)
         self.mainwindow.login_browse_pushbutton.clicked.connect(self.browse)
         self.mainwindow.login_login_pushbutton.clicked.connect(self.login)
@@ -76,6 +76,8 @@ class LoginController:
             if user:
                 self.app.user = user
                 print 'Login successful.'
+                print 'Current User: '
+                print user
                 self.mainwindow.navigation.prepare_views_for_user()
             else:
                 print 'Login failed.'

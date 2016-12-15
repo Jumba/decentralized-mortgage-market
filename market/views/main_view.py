@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindow2cg6471.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowR29197.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -102,9 +102,9 @@ class Ui_MainWindow(object):
         self.profile_documents_list.setEnabled(False)
         self.profile_documents_list.setGeometry(QtCore.QRect(60, 440, 401, 131))
         self.profile_documents_list.setObjectName("profile_documents_list")
-        self.profile_save_button = QtWidgets.QPushButton(self.profile_page)
-        self.profile_save_button.setGeometry(QtCore.QRect(340, 580, 121, 27))
-        self.profile_save_button.setObjectName("profile_save_button")
+        self.profile_save_pushbutton = QtWidgets.QPushButton(self.profile_page)
+        self.profile_save_pushbutton.setGeometry(QtCore.QRect(340, 580, 121, 27))
+        self.profile_save_pushbutton.setObjectName("profile_save_pushbutton")
         self.next_8 = QtWidgets.QToolButton(self.profile_page)
         self.next_8.setGeometry(QtCore.QRect(40, 10, 22, 25))
         self.next_8.setObjectName("next_8")
@@ -1577,7 +1577,8 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_1.setFocusPolicy(QtCore.Qt.NoFocus)
         self.navigation_pushbutton_1.setStyleSheet("")
         self.navigation_pushbutton_1.setIconSize(QtCore.QSize(16, 16))
-        self.navigation_pushbutton_1.setCheckable(True)
+        self.navigation_pushbutton_1.setCheckable(False)
+        self.navigation_pushbutton_1.setDefault(False)
         self.navigation_pushbutton_1.setFlat(True)
         self.navigation_pushbutton_1.setObjectName("navigation_pushbutton_1")
         self.navigation_pushbutton_2 = QtWidgets.QPushButton(self.navigation_bar)
@@ -1593,7 +1594,8 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_2.setFocusPolicy(QtCore.Qt.NoFocus)
         self.navigation_pushbutton_2.setStyleSheet("")
         self.navigation_pushbutton_2.setIconSize(QtCore.QSize(16, 16))
-        self.navigation_pushbutton_2.setCheckable(True)
+        self.navigation_pushbutton_2.setCheckable(False)
+        self.navigation_pushbutton_2.setDefault(False)
         self.navigation_pushbutton_2.setFlat(True)
         self.navigation_pushbutton_2.setObjectName("navigation_pushbutton_2")
         self.navigation_pushbutton_3 = QtWidgets.QPushButton(self.navigation_bar)
@@ -1609,7 +1611,8 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_3.setFocusPolicy(QtCore.Qt.NoFocus)
         self.navigation_pushbutton_3.setStyleSheet("")
         self.navigation_pushbutton_3.setIconSize(QtCore.QSize(16, 16))
-        self.navigation_pushbutton_3.setCheckable(True)
+        self.navigation_pushbutton_3.setCheckable(False)
+        self.navigation_pushbutton_3.setDefault(False)
         self.navigation_pushbutton_3.setFlat(True)
         self.navigation_pushbutton_3.setObjectName("navigation_pushbutton_3")
         self.navigation_pushbutton_4 = QtWidgets.QPushButton(self.navigation_bar)
@@ -1625,7 +1628,8 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_4.setFocusPolicy(QtCore.Qt.NoFocus)
         self.navigation_pushbutton_4.setStyleSheet("")
         self.navigation_pushbutton_4.setIconSize(QtCore.QSize(16, 16))
-        self.navigation_pushbutton_4.setCheckable(True)
+        self.navigation_pushbutton_4.setCheckable(False)
+        self.navigation_pushbutton_4.setDefault(False)
         self.navigation_pushbutton_4.setFlat(True)
         self.navigation_pushbutton_4.setObjectName("navigation_pushbutton_4")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -1634,7 +1638,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(9)
+        self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1655,7 +1659,7 @@ class Ui_MainWindow(object):
         self.profile_address_label.setText(_translate("MainWindow", "Current Address"))
         self.profile_iban_label.setText(_translate("MainWindow", "IBAN"))
         self.profile_borrower_radiobutton.setText(_translate("MainWindow", "Borrower"))
-        self.profile_save_button.setText(_translate("MainWindow", "Save Changes"))
+        self.profile_save_pushbutton.setText(_translate("MainWindow", "Save Changes"))
         self.next_8.setText(_translate("MainWindow", ">"))
         self.profile_email_label.setText(_translate("MainWindow", "Email Address"))
         self.profile_housenumber_label.setText(_translate("MainWindow", "Current House Number"))

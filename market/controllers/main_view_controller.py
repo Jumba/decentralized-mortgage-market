@@ -9,10 +9,11 @@ from market.database.database import MockDatabase
 from market.views import main_view
 from marketGUI.market_app import MarketApplication
 from market.api.api import MarketAPI
-import login_controller
-import profile_controller
-import navigation
-
+from navigation import NavigateUser
+from login_controller import LoginController
+from profile_controller import ProfileController
+from borrowers_portfolio_controller import BorrowersPortfolioController
+from openmarket_controller import OpenMarketController
 
 class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
     def __init__(self, parent=None, app=None):
@@ -22,21 +23,22 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.mainwindow = self #to make moving to another class easier
         self.app = app
         self.setupUi(self)
-        self.navigation = navigation.NavigateUser(self)
+        self.navigation = NavigateUser(self)
         self.bplr_payload = {}
-        self.set_navigation()
-        self.bplr_submit_button.clicked.connect(self.bplr_submit_loan_request)
-        self.fiplr1_loan_requests_table.doubleClicked.connect(self.fiplr2_view_loan_request)
-        self.openmarket_open_market_table.doubleClicked.connect(self.openmarket_view_campaign)
-        self.fiplr1_view_loan_request_pushbutton.clicked.connect(self.fiplr2_view_loan_request)
-        self.fiplr2_accept_pushbutton.clicked.connect(self.fiplr2_accept_loan_request)
-        self.fiplr2_reject_pushbutton.clicked.connect(self.fiplr2_reject_loan_request)
-        self.icb_place_bid_pushbutton.clicked.connect(self.icb_place_bid)
+        # self.set_navigation()
+        # self.bplr_submit_button.clicked.connect(self.bplr_submit_loan_request)
+        # self.fiplr1_loan_requests_table.doubleClicked.connect(self.fiplr2_view_loan_request)
+        # self.openmarket_open_market_table.doubleClicked.connect(self.openmarket_view_campaign)
+        # self.fiplr1_view_loan_request_pushbutton.clicked.connect(self.fiplr2_view_loan_request)
+        # self.fiplr2_accept_pushbutton.clicked.connect(self.fiplr2_accept_loan_request)
+        # self.fiplr2_reject_pushbutton.clicked.connect(self.fiplr2_reject_loan_request)
+        # self.icb_place_bid_pushbutton.clicked.connect(self.icb_place_bid)
         self.setupObjects()
-        self.login_controller = login_controller.LoginController(self)
-        self.profile_controller = profile_controller.ProfileController(self)
-
         self.stackedWidget.setCurrentIndex(0)
+        self.login_controller = LoginController(self)
+        self.profile_controller = ProfileController(self)
+        self.bp_controller = BorrowersPortfolioController(self)
+        self.openmarket_controller = OpenMarketController(self)
 
     def bplr_submit_loan_request(self):
         fields = {'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
@@ -172,9 +174,9 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
 
     def setupObjects(self):
         #create user
-        self.user_borrower,pub_key1,priv_key1 = self.api.create_user()
-        self.user_investor,pub_key2,priv_key2 = self.api.create_user()
-        self.user_bank,pub_key3,priv_key3 = self.api.create_user()
+        # self.user_borrower,pub_key1,priv_key1 = self.api.create_user()
+        # self.user_investor,pub_key2,priv_key2 = self.api.create_user()
+        # self.user_bank,pub_key3,priv_key3 = self.api.create_user()
 
 
         #create profile for users
@@ -184,13 +186,9 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         investor_payload = {'role': 2, 'first_name': 'Ruby', 'last_name': 'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30394', 'phonenumber': '+3170253719290'}
         bank_payload = {'role': 3}
 
-        print self.api.create_profile(self.user_borrower, self.borrower_profile_payload)
-        print self.api.create_profile(self.user_investor, investor_payload)
-        print self.api.create_profile(self.user_bank, bank_payload)
-
-
-    def screen_role_distribution(self):
-        pass
+        # print self.api.create_profile(self.user_borrower, self.borrower_profile_payload)
+        # print self.api.create_profile(self.user_investor, investor_payload)
+        # print self.api.create_profile(self.user_bank, bank_payload)
 
     def set_navigation(self):
         self.next_1.clicked.connect(self.next_screen)

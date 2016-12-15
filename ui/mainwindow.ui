@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -323,7 +323,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="profile_save_button">
+     <widget class="QPushButton" name="profile_save_pushbutton">
       <property name="geometry">
        <rect>
         <x>340</x>
@@ -4294,7 +4294,7 @@
       </size>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="default">
       <bool>false</bool>
@@ -4349,7 +4349,7 @@
       </size>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="default">
       <bool>false</bool>
@@ -4404,7 +4404,7 @@
       </size>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="default">
       <bool>false</bool>
@@ -4459,7 +4459,7 @@
       </size>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="default">
       <bool>false</bool>
