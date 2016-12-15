@@ -1,4 +1,4 @@
-from Tribler.Core.Utilities.encoding import encode, decode
+from market.community.encoding import encode, decode
 from market.dispersy.conversion import BinaryConversion
 from market.dispersy.message import DropPacket
 from market.models import DatabaseModel

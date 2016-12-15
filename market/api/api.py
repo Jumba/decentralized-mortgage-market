@@ -339,7 +339,6 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         role = Role(user.role_id)
-        print "CREAting loan req for ", role.name
 
         # Only create a loan request if the user is a borrower
         if role.name == 'BORROWER':
@@ -360,15 +359,11 @@ class MarketAPI(object):
 
                 # Compile the candidates list
                 candidates = []
-                print "LETS REQUEST THAT LOAN BABY"
-                print "WE GOT THESE BITCHES ONLINE"
-                print self.user_candidate
                 # Add the loan request to the banks' pending loan request list
                 banks = []
                 for bank_id in payload['banks']:
                     bank = self.db.get(User._type, bank_id)
                     if bank.id in self.user_candidate:
-                        print "Adding bank candidate for send"
                         candidates.append(self.user_candidate[bank_id])
 
                     assert isinstance(bank, User)
