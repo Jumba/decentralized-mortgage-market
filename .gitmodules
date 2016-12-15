@@ -1,6 +1,3 @@
-#[submodule "market/dispersy"]
-#	path = market/dispersy
-#	url = git@github.com:Jumba/dispersy.git
-[submodule "market/market/dispersy"]
-	path = market/market/dispersy
+[submodule "market/dispersy"]
+	path = market/dispersy
 	url = https://github.com/Jumba/mockchain-market.git
