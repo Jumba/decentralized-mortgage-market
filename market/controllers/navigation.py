@@ -55,6 +55,7 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_4.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.profile_controller.setup_view()
         self.mainwindow.openmarket_controller.setup_view()
+        self.mainwindow.bplr_controller.setup_view()
         # self.mainwindow.portfolio_controller.setup_view()
 
 
@@ -95,5 +96,8 @@ class NavigateUser:
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.profile_page)
 
     def switch_to_fiplr(self):
+        self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
+
+    def switch_to_view_campaign(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
 

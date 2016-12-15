@@ -12,6 +12,7 @@ class ProfileController:
         # self.mainwindow = Ui_MainWindow  # Comment before running
         self.mainwindow = mainwindow  # Uncomment before running
         self.current_profile = None
+        self.payload = {}
         # check if the profile already exists
         # self.user = self.mainwindow.app.user
 
@@ -20,15 +21,14 @@ class ProfileController:
         self.current_profile = self.mainwindow.api.load_profile(self.mainwindow.app.user)
         print 'Current profile: '
         print self.current_profile
+        # TODO fill the fields in the view with current profile data
         self.mainwindow.profile_save_pushbutton.clicked.connect(self.save_form)
 
-    def save_form(self):
-        # role = 0
-        # if self.mainwindow.profile_borrower_radiobutton.isChecked():
-        #     role = 1
-        # else:
-        #     role = 2
+    def show_current_profile(self):
+        # if self.current_profile:
+        pass
 
+    def save_form(self):
         self.payload = {'role': 2, 'first_name': str(self.mainwindow.profile_firstname_lineedit.text()),
                              'last_name': str(self.mainwindow.profile_lastname_lineedit.text()),
                              'email': str(self.mainwindow.profile_email_lineedit.text()),
@@ -44,8 +44,10 @@ class ProfileController:
             self.payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text()) # missing 'documents_list': self.documentsTable
             self.payload['documents_list'] = []
         # print self.payload
-        # print 'creating profile:'
+        print 'creating profile:'
+        print self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload)
+        # TODO prompt: profile is created
         if self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload):
-            QMessageBox.about(self.mainwindow, "My message box", 'mitnaka')
+            QMessageBox.about(self.mainwindow, "My message box", 'Profile saved.')
         # print 'check if the profile has been added:'
         # print self.mainwindow.api.load_profile(self.mainwindow.app.user)

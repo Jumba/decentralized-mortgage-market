@@ -10,7 +10,6 @@ USER = 1
 
 class LoginController:
     def __init__(self, mainwindow):
-        # assert(mainwindow, Ui_MainWindow)
         # self.mainwindow = Ui_MainWindow
         self.mainwindow = mainwindow
         self.app = mainwindow.app

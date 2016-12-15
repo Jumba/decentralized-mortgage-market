@@ -14,6 +14,7 @@ from login_controller import LoginController
 from profile_controller import ProfileController
 from borrowers_portfolio_controller import BorrowersPortfolioController
 from openmarket_controller import OpenMarketController
+from place_loan_request_controller import PlaceLoanRequestController
 
 class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
     def __init__(self, parent=None, app=None):
@@ -39,49 +40,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.profile_controller = ProfileController(self)
         self.bp_controller = BorrowersPortfolioController(self)
         self.openmarket_controller = OpenMarketController(self)
-
-    def bplr_submit_loan_request(self):
-        fields = {'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
-                  'house_number': str(self.mainwindow.bplr_housenumber_lineedit.text()),
-                  'price': int(self.mainwindow.bplr_house_price_lineedit.text()),
-                  'amount_wanted': int(self.mainwindow.bplr_amount_wanted_lineedit.text())}
-        banks = [self.mainwindow.bplr_bank1_checkbox, self.mainwindow.bplr_bank2_checkbox,
-                 self.mainwindow.bplr_bank3_checkbox,
-                 self.mainwindow.bplr_bank4_checkbox]
-        banks_ids = ['1', '2', '3', '4']
-        checked_banks = []
-
-        # Get all the inputs
-        for key in fields:
-            self.bplr_payload[key] = fields[key]
-
-        #what banks were chosen
-        pointer = 0
-        for obj in banks:
-            if obj.checkState():
-                checked_banks += banks_ids[pointer]
-            pointer += 1
-        # self.bplr_payload['banks'] = checked_banks
-        # print ' use this '
-        # print self.user_bank.user_key
-        self.bplr_payload['banks'] = [self.user_bank.user_key]
-
-        #check the chosen mortgage type
-        if self.mainwindow.bplr_linear_radiobutton.isChecked():
-            self.bplr_payload['mortgage_type'] = 0
-        else:
-            self.bplr_payload['mortgage_type'] = 1
-
-        self.bplr_payload['description'] = unicode(self.mainwindow.bplr_description_textedit.toPlainText())
-
-        # remove during refactor
-        # self.setCurrentIndex(4)
-        print self.bplr_payload
-        print 'creating loan request'
-        print self.api.create_loan_request(self.user_borrower, self.bplr_payload)
-        # self.bplr_payload = [self.bplr_payload]
-        # self.fiplr1_populate_table(self.bplr_payload)
-        self.fiplr1_load_all_pending_loan_requests()
+        self.bplr_controller = PlaceLoanRequestController(self)
 
     def fiplr1_load_all_pending_loan_requests(self):
         print 'Loading second screen!'
@@ -141,36 +100,34 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.previous_screen()
         # TODO do an actual reject with the api
 
-    def openmarket_view_open_market(self, fi_payload):
-        # print self.openmarket_open_market_table.selectedIndexes()
-        # TODO add new items in, instead of editing ones that exist.
-        self.openmarket_open_market_table.setRowCount(len(fi_payload))
-        for i in range(0, 1):
-            # row = fi_payload[i]
-            self.openmarket_open_market_table.item(i, 0).setText('Bouwerslaan ' + self.bplr_payload['house_number'] + ' , ' + self.bplr_payload['postal_code'])
-            self.openmarket_open_market_table.item(i, 1).setText(str(self.bplr_payload['amount_wanted']))
-            self.openmarket_open_market_table.item(i, 2).setText(str(fi_payload['interest_rate']))
-            self.openmarket_open_market_table.item(i, 3).setText(str(fi_payload['duration']))
-
-        self.next_screen()
-
-    def openmarket_view_campaign(self):
-        address = 'Bouwerslaan ' + self.bplr_payload['house_number'] + ' , ' + self.bplr_payload['postal_code']
-        self.icb_property_address_lineedit.setText(address)
-        # self.icb_current_bids_table.setRowCount(0)
-        self.next_screen()
-
-    def icb_place_bid(self):
-        # row_count = self.icb_current_bids_table.rowCount()
-        # self.icb_current_bids_table.insertRow(row_count)
-        # print row_count
-        self.icb_current_bids_table.item(0, 0).setText(self.icb_amount_lineedit.text())
-        self.icb_current_bids_table.item(0, 1).setText(self.icb_duration_lineedit.text())
-        self.icb_current_bids_table.item(0, 2).setText(self.icb_interest_lineedit.text())
-
 
 
 #################################################bs#####################################################################
+
+    # def set_navigation(self):
+    #     self.next_1.clicked.connect(self.next_screen)
+    #     self.next_2.clicked.connect(self.next_screen)
+    #     self.next_3.clicked.connect(self.next_screen)
+    #     self.next_4.clicked.connect(self.next_screen)
+    #     self.next_5.clicked.connect(self.next_screen)
+    #     self.next_6.clicked.connect(self.next_screen)
+    #     self.next_7.clicked.connect(self.next_screen)
+    #     self.next_8.clicked.connect(self.next_screen)
+    #     self.prev_1.clicked.connect(self.previous_screen)
+    #     self.prev_2.clicked.connect(self.previous_screen)
+    #     self.prev_3.clicked.connect(self.previous_screen)
+    #     self.prev_4.clicked.connect(self.previous_screen)
+    #     self.prev_5.clicked.connect(self.previous_screen)
+    #     self.prev_6.clicked.connect(self.previous_screen)
+    #     self.prev_7.clicked.connect(self.previous_screen)
+    #     self.prev_8.clicked.connect(self.previous_screen)
+    #
+    # def next_screen(self):
+    #     self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() + 1) % self.stackedWidget.count())
+    #
+    # def previous_screen(self):
+    #     self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() - 1) % self.stackedWidget.count())
+
 
     def setupObjects(self):
         #create user
@@ -186,41 +143,8 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         investor_payload = {'role': 2, 'first_name': 'Ruby', 'last_name': 'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30394', 'phonenumber': '+3170253719290'}
         bank_payload = {'role': 3}
 
+
+
         # print self.api.create_profile(self.user_borrower, self.borrower_profile_payload)
         # print self.api.create_profile(self.user_investor, investor_payload)
         # print self.api.create_profile(self.user_bank, bank_payload)
-
-    def set_navigation(self):
-        self.next_1.clicked.connect(self.next_screen)
-        self.next_2.clicked.connect(self.next_screen)
-        self.next_3.clicked.connect(self.next_screen)
-        self.next_4.clicked.connect(self.next_screen)
-        self.next_5.clicked.connect(self.next_screen)
-        self.next_6.clicked.connect(self.next_screen)
-        self.next_7.clicked.connect(self.next_screen)
-        self.next_8.clicked.connect(self.next_screen)
-        self.prev_1.clicked.connect(self.previous_screen)
-        self.prev_2.clicked.connect(self.previous_screen)
-        self.prev_3.clicked.connect(self.previous_screen)
-        self.prev_4.clicked.connect(self.previous_screen)
-        self.prev_5.clicked.connect(self.previous_screen)
-        self.prev_6.clicked.connect(self.previous_screen)
-        self.prev_7.clicked.connect(self.previous_screen)
-        self.prev_8.clicked.connect(self.previous_screen)
-
-    def next_screen(self):
-        self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() + 1) % self.stackedWidget.count())
-
-    def previous_screen(self):
-        self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() - 1) % self.stackedWidget.count())
-
-
-def main():
-    app = MarketApplication(sys.argv)
-    mainwindow = MainWindowController(app=app)
-    mainwindow.show()
-    app.exec_()
-
-
-if __name__ == '__main__':
-    main()
