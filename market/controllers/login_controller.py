@@ -45,6 +45,7 @@ class LoginController:
     def generate(self):
         user, public, private = self.app.api.create_user()
 
+        # TODO put the if statements back when using a persistent database
         # if not os.path.isfile('market_public.key') and not os.path.isfile('market_private.key'):
         with open('market_public.key', 'w+') as f:
             f.write(public)
