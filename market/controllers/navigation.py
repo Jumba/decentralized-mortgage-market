@@ -1,5 +1,6 @@
 from market.views.main_view import Ui_MainWindow
 
+# The user you want to be. Only used for testing.
 USER = 1
 
 class NavigateUser:

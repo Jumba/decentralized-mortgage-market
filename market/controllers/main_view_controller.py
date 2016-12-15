@@ -4,11 +4,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from market.database.backends import MemoryBackend
-from market.database.database import MockDatabase
 from market.views import main_view
-from marketGUI.market_app import MarketApplication
-from market.api.api import MarketAPI
 from navigation import NavigateUser
 from login_controller import LoginController
 from profile_controller import ProfileController
@@ -16,12 +12,10 @@ from borrowers_portfolio_controller import BorrowersPortfolioController
 from openmarket_controller import OpenMarketController
 from place_loan_request_controller import PlaceLoanRequestController
 
+
 class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
     def __init__(self, parent=None, app=None):
         super(MainWindowController, self).__init__(parent)
-        # self.database = MockDatabase(MemoryBackend())
-        # self.api = MarketAPI(self.database)
-        self.mainwindow = self #to make moving to another class easier
         self.app = app
         self.api = app.api
         self.setupUi(self)
