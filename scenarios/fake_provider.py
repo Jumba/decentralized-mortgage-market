@@ -224,27 +224,27 @@ class FakePayload(object):
             'role': role,
             'first_name': self.fake.first_name(),
             'last_name': self.fake.last_name(),
-            'email': self.fake.email(),
+            'email': str(self.fake.safe_email()),
             'iban': self.fake.iban(),
-            'phonenumber': self.fake.phone_number(),
+            'phonenumber': str(self.fake.phone_number()),
         }
 
         # Borrower
         if role == 1:
             payload.update({
-                'current_postalcode': self.fake.postcode(),
-                'current_housenumber': self.fake.building_number(),
+                'current_postalcode': str(self.fake.postcode()),
+                'current_housenumber': str(self.fake.building_number()),
                 'documents_list': []
             })
 
         return payload
 
     @classmethod
-    def loan_request(self):
+    def create_loan_request(self):
         price = random.randrange(100000, 200000, 1000)
         payload = {
-            'postal_code': self.fake.postcode(),
-            'house_number': self.fake.building_number(),
+            'postal_code': str(self.fake.postcode()),
+            'house_number': str(self.fake.building_number()),
             'price': price,
             'mortgage_type': random.randrange(1,2,1),
             'banks': Global.BANKS.values(),
@@ -257,4 +257,84 @@ class FakePayload(object):
 
     @classmethod
     def accept_loan_request(self, loan_request):
-        pass
+        price = random.randrange(100000, 200000, 1000)
+        payload = {
+            'request_id': loan_request.id,
+            'amount': random.randrange(1000, price, 1000),
+            'mortgage_type': random.randrange(1,2,1),
+            'interest_rate': random.uniform(0, 20),
+            'default_rate': random.uniform(0, 20),
+            'max_invest_rate': random.uniform(0, 10),
+            'duration': random.randint(6, 120),
+            'investors': []
+        }
+
+        return payload
+
+    @classmethod
+    def reject_loan_request(self, loan_request):
+        payload = {
+            'request_id': loan_request.id
+        }
+
+        return payload
+
+    @classmethod
+    def accept_mortgage_offer(self, mortgage):
+        payload = {
+            'mortgage_id': mortgage.id
+        }
+
+        return payload
+
+    @classmethod
+    def reject_mortgage_offer(self, mortgage):
+        payload = {
+            'mortgage_id': mortgage.id
+        }
+
+        return payload
+
+    @classmethod
+    def place_investment_offer(self, mortgage):
+        amount_wanted = random.randrange(40000, 200000, 1000)
+        payload = {
+            'amount': random.randint(1, 200000),
+            'duration':random.randint(6, 120),
+            'interest_rate': random.uniform(0, 20),
+            'mortgage_id': mortgage.id
+        }
+
+        return payload
+
+    @classmethod
+    def accept_investment_offer(self, investment_offer):
+        payload = {
+            'investment_id': investment_offer.id
+        }
+
+        return payload
+
+    @classmethod
+    def reject_investment_offer(self, investment_offer):
+        payload = {
+            'investment_id': investment_offer.id
+        }
+
+        return payload
+
+    @classmethod
+    def load_single_loan_request(self, loan_request):
+        payload = {
+            'loan_request_id': loan_request.id
+        }
+
+        return payload
+
+    @classmethod
+    def load_bids(self, mortgage):
+        payload = {
+            'mortgage_id': mortgage.id
+        }
+
+        return payload

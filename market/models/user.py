@@ -14,6 +14,7 @@ class User(DatabaseModel):
         self._campaign_ids = campaign_ids or []
         self._mortgage_ids = mortgage_ids or []
         self._investment_ids = investment_ids or []
+        self._candidate = None
 
     @property
     def user_key(self):
@@ -47,7 +48,10 @@ class User(DatabaseModel):
     def campaign_ids(self):
         return self._campaign_ids
 
-    def generate_id(self):
+    def generate_id(self, force=False):
+        if force:
+            raise IndexError("User key is immutable")
+
         return self.user_key
 
     @profile_id.setter
@@ -57,6 +61,14 @@ class User(DatabaseModel):
     @role_id.setter
     def role_id(self, value):
         self._role_id = value
+
+    @property
+    def candidate(self):
+        return self._candidate
+
+    @candidate.setter
+    def candidate(self,value):
+        self._candidate = value
 
 # @loan_request_id.setter
 #    def loan_request_id(self, value):

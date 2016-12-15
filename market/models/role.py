@@ -1,31 +1,8 @@
-from market.models import DatabaseModel
-
-ROLES = (
-    'NONE',
-    'BORROWER',
-    'INVESTOR',
-    'FINANCIAL_INSTITUTION'
-)
+from enum import Enum
 
 
-class Role(DatabaseModel):
-    _type = 'role'
-
-    def __init__(self, user_key, role):
-        super(Role, self).__init__()
-        assert 0 <= role < len(ROLES)
-
-        self._user_key = user_key
-        self._role = role
-
-    @property
-    def role(self):
-        return self._role
-
-    @property
-    def role_name(self):
-        return ROLES[self.role]
-
-    @property
-    def user_key(self):
-        return self._user_key
+class Role(Enum):
+    NONE = 0
+    BORROWER = 1
+    INVESTOR = 2
+    FINANCIAL_INSTITUTION = 3

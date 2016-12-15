@@ -73,7 +73,7 @@ class MemoryBackend(Backend):
         return False
 
     def clear(self):
-        self._data = {}
+        self._data = {'__option': {}}
         self._id = {}
 
     def get_all(self, type):
@@ -112,8 +112,8 @@ class PersistentBackend(Database, Backend):
     INSERT INTO option(key, value) VALUES('database_version', '""" + str(LATEST_DB_VERSION) + u"""');
     """
 
-    def __init__(self, working_directory):
-        super(PersistentBackend, self).__init__(path.join(working_directory, self.DATABASE_PATH))
+    def __init__(self, working_directory, database_name=DATABASE_PATH):
+        super(PersistentBackend, self).__init__(path.join(working_directory, database_name))
         self.open()
 
     def open(self, initial_statements=True, prepare_visioning=True):
