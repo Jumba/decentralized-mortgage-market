@@ -9,16 +9,23 @@ from market.api.api import MarketAPI
 
 class OpenMarketController:
     def __init__(self, mainwindow):
-        self.mainwindow = Ui_MainWindow  # Comment before running
-        # self.mainwindow = mainwindow  # Uncomment before running
+        # self.mainwindow = Ui_MainWindow  # Comment before running
+        self.mainwindow = mainwindow  # Uncomment before running
         self.selected_campaign = None
+        # self.mainwindow.openmarket_open_market_table.clicked.connect()
+        self.mainwindow.openmarket_open_market_table.doubleClicked.connect(self.switch_to_view_campaign)
 
     def setup_view(self):
+        self.selected_campaign = None
+        # content = [self.bplr_payload]
+        # chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row()
+        # chosen_request = content[chosen_index]     # index of the row
         pass
 
     def switch_to_view_campaign(self):
-        # data = self.mainwindow.openmarket_open_market_table
-        pass
+        if self.selected_campaign:
+            self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
+
 
     def openmarket_view_open_market(self, fi_payload):
         # print self.openmarket_open_market_table.selectedIndexes()

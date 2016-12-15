@@ -1,4 +1,5 @@
 import os
+import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
@@ -44,18 +45,18 @@ class LoginController:
     def generate(self):
         user, public, private = self.app.api.create_user()
 
-        if not os.path.isfile('market_public.key') and not os.path.isfile('market_private.key'):
-            with open('market_public.key', 'w+') as f:
-                f.write(public)
+        # if not os.path.isfile('market_public.key') and not os.path.isfile('market_private.key'):
+        with open('market_public.key', 'w+') as f:
+            f.write(public)
 
-            with open('market_private.key', 'w+') as f:
-                f.write(private)
+        with open('market_private.key', 'w+') as f:
+            f.write(private)
 
-            path = os.path.dirname(os.path.abspath(__file__))
-            key_path = os.path.join(path, 'market_private.key')
-            self.mainwindow.login_private_key_lineedit.setText(key_path)
-        else:
-            print "Keyfile found. Not overwriting."
+        path = os.path.dirname(sys.modules['__main__'].__file__)
+        key_path = os.path.join(path, 'market_private.key')
+        self.mainwindow.login_private_key_lineedit.setText(key_path)
+        # else:
+        #     print "Keyfile found. Not overwriting."
 
     def login(self):
         if self.mainwindow.login_private_key_lineedit.text():

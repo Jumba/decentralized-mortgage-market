@@ -2,7 +2,7 @@
 from PyQt5.QtWidgets import QApplication
 
 from market.api.api import MarketAPI
-from market.database.backends import PersistentBackend
+from market.database.backends import PersistentBackend, MemoryBackend
 from market.database.database import MockDatabase
 
 
@@ -12,7 +12,8 @@ class MarketApplication(QApplication):
     """
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.')))
+        # self._api = MarketAPI(MockDatabase(PersistentBackend('.')))
+        self._api = MarketAPI(MockDatabase(MemoryBackend()))
 
     @property
     def api(self):

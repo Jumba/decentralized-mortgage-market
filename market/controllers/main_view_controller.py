@@ -19,10 +19,11 @@ from place_loan_request_controller import PlaceLoanRequestController
 class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
     def __init__(self, parent=None, app=None):
         super(MainWindowController, self).__init__(parent)
-        self.database = MockDatabase(MemoryBackend())
-        self.api = MarketAPI(self.database)
+        # self.database = MockDatabase(MemoryBackend())
+        # self.api = MarketAPI(self.database)
         self.mainwindow = self #to make moving to another class easier
         self.app = app
+        self.api = app.api
         self.setupUi(self)
         self.navigation = NavigateUser(self)
         self.bplr_payload = {}

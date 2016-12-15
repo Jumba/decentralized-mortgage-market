@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+from market.models.profiles import BorrowersProfile
 from market.views.main_view import Ui_MainWindow
 from marketGUI.market_app import MarketApplication
 from market.api.api import MarketAPI
@@ -23,22 +24,24 @@ class ProfileController:
         # print 'Profile: Current profile: ',
         # print self.current_profile
         if self.current_profile:
-            self.mainwindow.profile_firstname_lineedit.setText(self.current_profile['first_name'])
-            self.mainwindow.profile_lastname_lineedit.setText(self.current_profile['last_name'])
-            self.mainwindow.profile_email_lineedit.setText(self.current_profile['email'])
-            self.mainwindow.profile_iban_lineedit.setText(self.current_profile['iban'])
-            self.mainwindow.profile_phonenumber_lineedit.setText(self.current_profile['phonenumber'])
+            assert isinstance(self.current_profile, BorrowersProfile)
+            self.mainwindow.profile_firstname_lineedit.setText(self.current_profile.first_name)
+            self.mainwindow.profile_lastname_lineedit.setText(self.current_profile.last_name)
+            self.mainwindow.profile_email_lineedit.setText(self.current_profile.email)
+            self.mainwindow.profile_iban_lineedit.setText(self.current_profile.iban)
+            self.mainwindow.profile_phonenumber_lineedit.setText(self.current_profile.phone_number)
 
-            if self.current_profile['role'] == 1:
+            role = self.mainwindow.app.user.role_id
+            if role == 1:
                 self.mainwindow.profile_borrower_radiobutton.setChecked(True)
-                self.payload['role'] = 1
-                self.mainwindow.profile_postcode_lineedit.setText(self.current_profile['current_postalcode'])
-                self.mainwindow.profile_housenumber_lineedit.setText(self.current_profile['current_housenumber'])
+                self.mainwindow.profile_postcode_lineedit.setText(self.current_profile.current_postal_code)
+                self.mainwindow.profile_housenumber_lineedit.setText(self.current_profile.current_house_number)
                 # missing 'documents_list': self.documentsTable
             else:
                 self.mainwindow.profile_investor_radiobutton.setChecked(True)
         else:
             print 'Profile: Current profile is empty'
+            print self.current_profile
 
 
 
@@ -69,3 +72,4 @@ class ProfileController:
             QMessageBox.about(self.mainwindow, "My message box", 'Profile saved.')
             # print 'check if the profile has been added:'
             # print self.mainwindow.api.load_profile(self.mainwindow.app.user)
+        self.mainwindow.app.user = self.mainwindow.app.user.update(self.mainwindow.api.db)
