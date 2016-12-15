@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -109,32 +109,6 @@
       </property>
       <property name="text">
        <string>Login</string>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="next_7">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="prev_7">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
       </property>
      </widget>
      <widget class="QToolButton" name="login_browse_pushbutton">
@@ -336,19 +310,6 @@
        <string>Save Changes</string>
       </property>
      </widget>
-     <widget class="QToolButton" name="next_8">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="profile_email_label">
       <property name="geometry">
        <rect>
@@ -455,19 +416,6 @@
         <width>191</width>
         <height>27</height>
        </rect>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="prev_8">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="profile_phonenumber_label">
@@ -820,47 +768,8 @@
        </item>
       </layout>
      </widget>
-     <widget class="QToolButton" name="prev_1">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="next_1">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="fiplr1_page">
-     <widget class="QToolButton" name="next_2">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="fiplr1_pending_loan_requests_label">
       <property name="geometry">
        <rect>
@@ -968,19 +877,6 @@
        <string>View loan request</string>
       </property>
      </widget>
-     <widget class="QToolButton" name="prev_2">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="fiplr2_page">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -1047,19 +943,6 @@
           </item>
           <item>
            <widget class="QWidget" name="widget" native="true">
-            <widget class="QToolButton" name="next_3">
-             <property name="geometry">
-              <rect>
-               <x>30</x>
-               <y>0</y>
-               <width>22</width>
-               <height>25</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>&gt;</string>
-             </property>
-            </widget>
             <widget class="QLineEdit" name="fiplr2_lastname_lineedit">
              <property name="enabled">
               <bool>false</bool>
@@ -1097,19 +980,6 @@
                <width>51</width>
                <height>27</height>
               </rect>
-             </property>
-            </widget>
-            <widget class="QToolButton" name="prev_3">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>0</y>
-               <width>22</width>
-               <height>25</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>&lt;</string>
              </property>
             </widget>
             <widget class="QLabel" name="fiplr2_property_address_label">
@@ -1737,19 +1607,6 @@
        <string>Duration (month)</string>
       </property>
      </widget>
-     <widget class="QToolButton" name="next_4">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
      <widget class="QLineEdit" name="openmarket_min_amount_lineedit">
       <property name="geometry">
        <rect>
@@ -1897,19 +1754,6 @@
       </property>
       <property name="text">
        <string>Search</string>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="prev_4">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="openmarket_rating_label">
@@ -2385,47 +2229,8 @@
        <string>Property Address</string>
       </property>
      </widget>
-     <widget class="QToolButton" name="prev_5">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="next_5">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="ip_page">
-     <widget class="QToolButton" name="next_6">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&gt;</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="ip_reject_pushbutton">
       <property name="enabled">
        <bool>false</bool>
@@ -2496,19 +2301,6 @@
       </property>
       <property name="text">
        <string>Investor's Portfolio</string>
-      </property>
-     </widget>
-     <widget class="QToolButton" name="prev_6">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>22</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;</string>
       </property>
      </widget>
      <widget class="QTableWidget" name="ip_investments_table">
@@ -3652,7 +3444,7 @@
     <widget class="QPushButton" name="navigation_pushbutton_1">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>20</x>
        <y>10</y>
        <width>150</width>
        <height>26</height>
@@ -3707,7 +3499,7 @@
     <widget class="QPushButton" name="navigation_pushbutton_2">
      <property name="geometry">
       <rect>
-       <x>270</x>
+       <x>170</x>
        <y>10</y>
        <width>150</width>
        <height>26</height>
@@ -3762,7 +3554,7 @@
     <widget class="QPushButton" name="navigation_pushbutton_3">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>320</x>
        <y>10</y>
        <width>150</width>
        <height>26</height>
@@ -3817,7 +3609,7 @@
     <widget class="QPushButton" name="navigation_pushbutton_4">
      <property name="geometry">
       <rect>
-       <x>570</x>
+       <x>470</x>
        <y>10</y>
        <width>150</width>
        <height>26</height>

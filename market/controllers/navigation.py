@@ -46,13 +46,13 @@ class NavigateUser:
 
 
     def set_borrower_navigation(self):
-        self.mainwindow.navigation_pushbutton_1.setText('Portfolio')
-        self.mainwindow.navigation_pushbutton_1.clicked.connect(self.switch_to_borrowers_portfolio)
-        self.mainwindow.navigation_pushbutton_2.setText('Profile')
-        self.mainwindow.navigation_pushbutton_2.clicked.connect(self.switch_to_profile)
-        self.mainwindow.navigation_pushbutton_3.setText('Loan request')
+        self.mainwindow.navigation_pushbutton_1.setText('Profile')
+        self.mainwindow.navigation_pushbutton_1.clicked.connect(self.switch_to_profile)
+        self.mainwindow.navigation_pushbutton_2.setText('Portfolio')
+        self.mainwindow.navigation_pushbutton_2.clicked.connect(self.switch_to_borrowers_portfolio)
+        self.mainwindow.navigation_pushbutton_3.setText('Place Loan Request')
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_bplr)
-        self.mainwindow.navigation_pushbutton_4.setText('Open market')
+        self.mainwindow.navigation_pushbutton_4.setText('Open Market')
         self.mainwindow.navigation_pushbutton_4.clicked.connect(self.switch_to_openmarket)
         # self.mainwindow.profile_controller.setup_view()
         self.mainwindow.openmarket_controller.setup_view()
@@ -61,10 +61,10 @@ class NavigateUser:
 
 
     def set_investor_navigation(self):
-        self.mainwindow.navigation_pushbutton_1.setText('Portfolio')
-        self.mainwindow.navigation_pushbutton_1.clicked.connect(self.switch_to_investors_portfolio)
-        self.mainwindow.navigation_pushbutton_2.setText('Profile')
-        self.mainwindow.navigation_pushbutton_2.clicked.connect(self.switch_to_profile)
+        self.mainwindow.navigation_pushbutton_1.setText('Profile')
+        self.mainwindow.navigation_pushbutton_1.clicked.connect(self.switch_to_profile)
+        self.mainwindow.navigation_pushbutton_2.setText('Portfolio')
+        self.mainwindow.navigation_pushbutton_2.clicked.connect(self.switch_to_investors_portfolio)
         self.mainwindow.navigation_pushbutton_3.setText('Open market')
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
