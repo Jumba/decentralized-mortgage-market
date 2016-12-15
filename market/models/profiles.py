@@ -16,7 +16,7 @@ class Profile(DatabaseModel):
         self._last_name = last_name
         self._email = email
         self._iban = iban
-        self._phonenumber = phone_number
+        self._phone_number = phone_number
 
     @property
     def first_name(self):
