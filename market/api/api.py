@@ -171,8 +171,7 @@ class MarketAPI(object):
             if role.name == 'INVESTOR':
                 profile = self.db.get(Profile._type, user.profile_id)
             elif role.name == 'BORROWER':
-                #profile = self.db.get(BorrowersProfile._type, user.profile_id)
-                profile = self.db.get('borrowers_profile', user.profile_id)
+                profile = self.db.get(BorrowersProfile._type, user.profile_id)
             else:
                 profile = None
         except AttributeError:
