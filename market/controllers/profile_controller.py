@@ -31,9 +31,7 @@ class ProfileController:
             self.mainwindow.profile_iban_lineedit.setText(self.current_profile.iban)
             self.mainwindow.profile_phonenumber_lineedit.setText(self.current_profile.phone_number)
 
-            role = self.mainwindow.api.get_role(self.mainwindow.app.user)
-            if self.mainwindow.app.user.ro == 1:
-            # if role.role == 1:
+            if self.mainwindow.app.user.role_id == 1:
                 self.mainwindow.profile_borrower_radiobutton.setChecked(True)
                 self.mainwindow.profile_postcode_lineedit.setText(self.current_profile.current_postal_code)
                 self.mainwindow.profile_housenumber_lineedit.setText(self.current_profile.current_house_number)
