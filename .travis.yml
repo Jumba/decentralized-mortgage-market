@@ -10,4 +10,4 @@ install:
   - pip install decorator
   - pip install cryptography
 # command to run tests
-script: python test/market/test_api.py
+script: nosetests -v --with-coverage test/market/test_api.py test/market/test_backend.py test/market/test_database.py
