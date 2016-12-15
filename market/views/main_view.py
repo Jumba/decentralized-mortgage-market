@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindowh15336.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowd17430.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -115,7 +115,7 @@ class Ui_MainWindow(object):
         self.profile_housenumber_lineedit.setGeometry(QtCore.QRect(270, 200, 191, 27))
         self.profile_housenumber_lineedit.setObjectName("profile_housenumber_lineedit")
         self.profile_address_lineedit = QtWidgets.QLineEdit(self.profile_page)
-        self.profile_address_lineedit.setEnabled(False)
+        self.profile_address_lineedit.setEnabled(True)
         self.profile_address_lineedit.setGeometry(QtCore.QRect(60, 260, 401, 31))
         self.profile_address_lineedit.setObjectName("profile_address_lineedit")
         self.profile_housenumber_label = QtWidgets.QLabel(self.profile_page)
@@ -155,7 +155,7 @@ class Ui_MainWindow(object):
         self.bplr_page = QtWidgets.QWidget()
         self.bplr_page.setObjectName("bplr_page")
         self.gridLayoutWidget = QtWidgets.QWidget(self.bplr_page)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(60, 60, 611, 589))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(60, 60, 611, 571))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -1501,7 +1501,7 @@ class Ui_MainWindow(object):
         self.navigation_bar.setGeometry(QtCore.QRect(0, 0, 855, 40))
         self.navigation_bar.setObjectName("navigation_bar")
         self.navigation_pushbutton_1 = QtWidgets.QPushButton(self.navigation_bar)
-        self.navigation_pushbutton_1.setGeometry(QtCore.QRect(230, 10, 150, 26))
+        self.navigation_pushbutton_1.setGeometry(QtCore.QRect(120, 10, 150, 26))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1518,7 +1518,7 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_1.setFlat(True)
         self.navigation_pushbutton_1.setObjectName("navigation_pushbutton_1")
         self.navigation_pushbutton_2 = QtWidgets.QPushButton(self.navigation_bar)
-        self.navigation_pushbutton_2.setGeometry(QtCore.QRect(380, 10, 150, 26))
+        self.navigation_pushbutton_2.setGeometry(QtCore.QRect(270, 10, 150, 26))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1535,7 +1535,7 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_2.setFlat(True)
         self.navigation_pushbutton_2.setObjectName("navigation_pushbutton_2")
         self.navigation_pushbutton_3 = QtWidgets.QPushButton(self.navigation_bar)
-        self.navigation_pushbutton_3.setGeometry(QtCore.QRect(530, 10, 150, 26))
+        self.navigation_pushbutton_3.setGeometry(QtCore.QRect(420, 10, 150, 26))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1552,7 +1552,7 @@ class Ui_MainWindow(object):
         self.navigation_pushbutton_3.setFlat(True)
         self.navigation_pushbutton_3.setObjectName("navigation_pushbutton_3")
         self.navigation_pushbutton_4 = QtWidgets.QPushButton(self.navigation_bar)
-        self.navigation_pushbutton_4.setGeometry(QtCore.QRect(680, 10, 150, 26))
+        self.navigation_pushbutton_4.setGeometry(QtCore.QRect(570, 10, 150, 26))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1574,7 +1574,12 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(1)
+        self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_postcode_lineedit.setDisabled)
+        self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_housenumber_lineedit.setDisabled)
+        self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_phonenumber_lineedit.setDisabled)
+        self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_address_lineedit.setDisabled)
+        self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_documents_list.setDisabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

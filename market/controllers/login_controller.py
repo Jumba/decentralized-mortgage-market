@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 import main_view_controller
 from market.views.main_view import Ui_MainWindow
 
+# The user you want to be. Only used for testing.
 USER = 1
 
 
@@ -14,6 +15,9 @@ class LoginController:
         # self.mainwindow = Ui_MainWindow
         self.mainwindow = mainwindow
         self.app = mainwindow.app
+        self.mainwindow.login_generate_pushbutton.clicked.connect(self.generate)
+        self.mainwindow.login_browse_pushbutton.clicked.connect(self.browse)
+        self.mainwindow.login_login_pushbutton.clicked.connect(self.login)
 
         self.setup_view()
         if os.path.exists('remembered'):
@@ -22,9 +26,7 @@ class LoginController:
             self.mainwindow.login_remember_me_checkbox.setChecked(True)
 
     def setup_view(self):
-        self.mainwindow.login_generate_pushbutton.clicked.connect(self.generate)
-        self.mainwindow.login_browse_pushbutton.clicked.connect(self.browse)
-        self.mainwindow.login_login_pushbutton.clicked.connect(self.login)
+        pass
 
     def browse(self):
         filename, _ = QFileDialog.getOpenFileName(self.mainwindow, 'Open File', os.getenv('HOME'))
