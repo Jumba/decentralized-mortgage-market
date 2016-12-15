@@ -47,26 +47,16 @@ class MortgageMarketCommunity(Community):
 
     def on_introduction_response(self, messages):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
-        # Ignore if we aren't ready.
         for message in messages:
-            print "Introducing myself to ", message.candidate, " as ", self.user
             self.send_introduce_user(['user',], {'user': self.user}, message.candidate)
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
-            Message(self, u"loan_request",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_loan_request),
             Message(self, u"document",
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
-                    CandidateDestination(),
+                    CommunityDestination(node_count=50),
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_document),
@@ -151,14 +141,22 @@ class MortgageMarketCommunity(Community):
                     DatabaseModelPayload(),
                     self.check_message,
                     self.on_model_request_response),
-             Message(self, u"introduce_user",
+            Message(self, u"introduce_user",
+                MemberAuthentication(),
+                PublicResolution(),
+                DirectDistribution(),
+                CandidateDestination(),
+                DatabaseModelPayload(),
+                self.check_message,
+                self.on_user_introduction),
+            Message(self, u"loan_request",
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
                     CandidateDestination(),
                     DatabaseModelPayload(),
                     self.check_message,
-                    self.on_user_introduction),
+                    self.on_loan_request_receive),
         ]
 
     def initiate_conversions(self):
@@ -197,27 +195,34 @@ class MortgageMarketCommunity(Community):
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
                             payload=(fields, models,),
-                            destination=(candidates, ))
+                            destination=candidates)
         self.dispersy.store_update_forward([message], store, update, forward)
-        #TODO: Actually send documents too
-
-
 
     def send_document(self, fields, models, candidates, store=True, update=True, forward=True):
         for field in fields:
             assert isinstance(models[field], Document)
-
+        print "Document being sent"
         meta = self.get_meta_message(u"document")
+        message = meta.impl(authentication=(self.my_member,),
+                            distribution=(self.claim_global_time(),),
+                            payload=(fields, models,),)
+                            #destination=candidates)
+        self.dispersy.store_update_forward([message], store, update, forward)
+        print "Stored for sending"
+
+    def send_loan_request_reject(self, fields, models, candidates, store=True, update=True, forward=True):
+        assert LoanRequest._type in fields and LoanRequest._type in models
+
+        meta = self.get_meta_message(u"loan_request_reject")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
                             payload=(fields, models,),
                             destination=candidates)
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_loan_request_reject(self, fields, models, candidates, store=True, update=True, forward=True):
-        assert LoanRequest._type in fields and LoanRequest._type in models
-
-        meta = self.get_meta_message(u"loan_request_reject")
+    def send_document_message(self, fields, models, candidates, store=True, update=True, forward=True):
+        print "Sending document"
+        meta = self.get_meta_message(u"send_document")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
                             payload=(fields, models,),
@@ -308,22 +313,24 @@ class MortgageMarketCommunity(Community):
                             destination=(candidate, ))
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def on_loan_request(self, messages):
+    def on_loan_request_receive(self, messages):
         for message in messages:
-            loan_request = message.payload.models[LoanRequest._type]
-            house = message.payload.models[House._type]
-            profile = message.payload.models[BorrowersProfile._type]
+            for field in message.payload.fields:
+                obj = message.payload.models[field]
+                self.api.db.post(obj.type, obj), obj
 
-            print "Received ", loan_request, " with House ", house
-
-            self.db.post(LoanRequest._type, loan_request)
-            self.db.post(House._type, house)
-            self.db.post(BorrowersProfile._type, profile)
+                # Save the loan request to the bank
+                if isinstance(obj, LoanRequest):
+                    if self.user.id in obj.banks:
+                        self.user.update(self.api.db)
+                        self.user.loan_request_ids.append(obj.id)
+                        self.api.db.put(self.user.type, self.user.id, self.user)
+                        print "Loan request saved to me (bank)"
 
     def on_document(self, messages):
         for message in messages:
             document = message.payload.models[Document._type]
-
+            print "Received document ", document
             self.db.post(Document._type, document)
 
     def on_loan_request_reject(self, messages):
@@ -395,30 +402,18 @@ class MortgageMarketCommunity(Community):
     def on_user_introduction(self, messages):
         for message in messages:
             for field in message.payload.fields:
-                print "As introduce ", message.payload.fields
                 obj = message.payload.models[field]
                 if isinstance(obj, User) and not obj == self.user:
-                    self.api.user_candidate[obj.id] = message.candidate
                     # Banks need to be overwritten
                     if obj.role_id == 3:
                         self.api.db.put(obj.type, obj.id, obj)
                     else:
                         self.api.db.post(obj.type, obj)
 
+                    # Add the candidate at the end to prevent a race condition where a message containing the user may be sent
+                    # before the model is saved.
+                    self.api.user_candidate[obj.id] = message.candidate
 
-    # def on_model_request(self, messages):
-    #     for message in messages:
-    #         for data in  message.payload.models:
-    #             type, id = data
-    #             obj = self.api._database.get(type, id)
-    #             if obj:
-    #                 self.send_model_request_response([obj.id], {obj.id: obj})
-    #
-    # def on_model_request_response(self, messages):
-    #     for message in messages:
-    #         for field in message.payload.fields:
-    #             print "got it"
-    #             print message.payload.models[field]
 
 
     def allow_signature_request(self):

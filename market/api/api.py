@@ -1,9 +1,8 @@
 import time
 from datetime import timedelta, datetime
 from enum import Enum
-from twisted.internet.task import LoopingCall
 
-from market.api.crypto import generate_key, get_public_key
+from market.api.crypto import get_public_key
 from market.community.community import MortgageMarketCommunity
 from market.community.queue import MessageQueue
 from market.database.database import Database
@@ -32,6 +31,7 @@ class MarketAPI(object):
 
     The constructor requires one variable, the `Database` used for storage.
     """
+
     def __init__(self, database):
         assert isinstance(database, Database)
         self._database = database
@@ -39,8 +39,7 @@ class MarketAPI(object):
         self.crypto = ECCrypto()
         self.community = MortgageMarketCommunity
         self.user_candidate = {}
-        self.queue = MessageQueue()
-
+        self.queue = MessageQueue(self)
 
     @property
     def db(self):
@@ -171,7 +170,7 @@ class MarketAPI(object):
             if role.name == 'INVESTOR':
                 profile = self.db.get(Profile._type, user.profile_id)
             elif role.name == 'BORROWER':
-                #profile = self.db.get(BorrowersProfile._type, user.profile_id)
+                # profile = self.db.get(BorrowersProfile._type, user.profile_id)
                 profile = self.db.get('borrowers_profile', user.profile_id)
             else:
                 profile = None
@@ -236,7 +235,7 @@ class MarketAPI(object):
 
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.queue.add_message(self.community.send_investment_offer, [Investment._type], {Investment._type : investment}, [borrower])
+            self.queue.add_message(self.community.send_investment_offer, [Investment._type], {Investment._type: investment}, [borrower])
 
             return investment
         else:
@@ -357,37 +356,20 @@ class MarketAPI(object):
                 user.loan_request_ids.append(self.db.post(LoanRequest._type, loan_request))
                 self.db.put(User._type, user.id, user)
 
-                # Compile the candidates list
-                candidates = []
-                print self.user_candidate
                 # Add the loan request to the banks' pending loan request list
                 banks = []
                 for bank_id in payload['banks']:
                     bank = self.db.get(User._type, bank_id)
-                    if bank.id in self.user_candidate:
-                        candidates.append(self.user_candidate[bank_id])
-
                     assert isinstance(bank, User)
                     bank.loan_request_ids.append(loan_request.id)
                     self.db.put(User._type, bank.id, bank)
                     banks.append(bank)
 
-                # Create the message payload
-                def send():
-                    print "Spam sending"
-                    fields = [LoanRequest._type, House._type, BorrowersProfile._type]
-                    models = { LoanRequest._type: loan_request,
-                               House._type: house,
-                              BorrowersProfile._type: self.load_profile(user)
-                    }
-                    self.community.send_loan_request(fields, models, candidates[0])
-                    self.community.send_introduce_user(fields, models, candidates[0])
-
-
-                LoopingCall(send).start(5)
                 # Add message to queue
-                profile = self.db.get(Profile._type, user.profile_id)
-                self.queue.add_message(self.community.send_loan_request, [LoanRequest._type, House._type, BorrowersProfile._type], {LoanRequest._type : loan_request, House._type : house, BorrowersProfile._type : profile}, banks)
+                profile = self.load_profile(user)
+                # self.community.send_loan_request(fields, models, tuple(candidates))
+                self.queue.add_message(self.community.send_loan_request, [LoanRequest._type, House._type, BorrowersProfile._type],
+                                       {LoanRequest._type: loan_request, House._type: house, BorrowersProfile._type: profile}, banks)
 
                 return loan_request
 
@@ -476,8 +458,8 @@ class MarketAPI(object):
             self.db.put(User._type, bank.id, bank)
 
             # Add message to queue
-            self.queue.add_message(self.community.send_mortgage_accept_signed, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [bank])
-            self.queue.add_message(self.community.send_mortgage_accept_unsigned, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [])
+            self.queue.add_message(self.community.send_mortgage_accept_signed, [Mortgage._type, Campaign._type], {Mortgage._type: mortgage, Campaign._type: campaign}, [bank])
+            self.queue.add_message(self.community.send_mortgage_accept_unsigned, [Mortgage._type, Campaign._type], {Mortgage._type: mortgage, Campaign._type: campaign}, [])
 
             return self.db.put(User._type, user.id, user)
         return False
@@ -568,7 +550,7 @@ class MarketAPI(object):
 
             # Add message to queue
             investor = self.db.get(User._type, investment.investor_key)
-            self.queue.add_message(self.community.send_investment_accept, [Investment._type], {Investment._type : investment}, [investor])
+            self.queue.add_message(self.community.send_investment_accept, [Investment._type], {Investment._type: investment}, [investor])
 
             return self.db.put(Campaign._type, campaign.id, campaign)
         return False
@@ -604,7 +586,7 @@ class MarketAPI(object):
 
         # Add message to queue
         bank = self.db.get(User._type, mortgage.bank)
-        self.queue.add_message(self.community.send_mortgage_reject, [Mortgage._type], {Mortgage._type : mortgage}, [bank])
+        self.queue.add_message(self.community.send_mortgage_reject, [Mortgage._type], {Mortgage._type: mortgage}, [bank])
 
         return self.db.put(LoanRequest._type, loan_request.id, loan_request) and self.db.put(User._type, user.id, user)
 
@@ -634,7 +616,7 @@ class MarketAPI(object):
 
         # Add message to queue
         investor = self.db.get(User._type, investment.investor_key)
-        self.queue.add_message(self.community.send_investment_reject, [Investment._type], {Investment._type : investment}, [investor])
+        self.queue.add_message(self.community.send_investment_reject, [Investment._type], {Investment._type: investment}, [investor])
 
         return investment
 
@@ -703,7 +685,8 @@ class MarketAPI(object):
         +-------------------+---------------------------------------------------------------+
         | investors         | List of initial investors, can be empty.                      |
         +-------------------+---------------------------------------------------------------+
-
+        | risk              | The risk associated with the loan                             |
+        +-------------------+---------------------------------------------------------------+
         :param bank: The bank accepting the loan request.
         :type bank: :any:`User`
         :param payload: The payload containing the data for the :any:`Mortgage`, as described above.
@@ -723,7 +706,7 @@ class MarketAPI(object):
         # Create a mortgage
         mortgage = Mortgage(loan_request.id, loan_request.house_id, bank.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'],
                             payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS.PENDING)
-        borrower = self.db.get(User._type, payload['user_key'])
+        borrower = self.db.get(User._type, loan_request.user_key)
         assert isinstance(borrower, User)
 
         # Add mortgage to borrower
@@ -739,7 +722,7 @@ class MarketAPI(object):
         if self.db.put(LoanRequest._type, loan_request.id, loan_request):
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.queue.add_message(self.community.send_mortgage_offer, [LoanRequest._type, Mortgage._type], {LoanRequest._type : loan_request, Mortgage._type : mortgage}, [borrower])
+            self.queue.add_message(self.community.send_mortgage_offer, [LoanRequest._type, Mortgage._type], {LoanRequest._type: loan_request, Mortgage._type: mortgage}, [borrower])
 
             return loan_request, mortgage
         else:
@@ -796,7 +779,7 @@ class MarketAPI(object):
         if self.db.put(LoanRequest._type, loan_request_id, rejected_loan_request):
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.queue.add_message(self.community.send_loan_request_reject, [LoanRequest._type], {LoanRequest._type : rejected_loan_request}, [borrower])
+            self.queue.add_message(self.community.send_loan_request_reject, [LoanRequest._type], {LoanRequest._type: rejected_loan_request}, [borrower])
 
             return rejected_loan_request
         else:

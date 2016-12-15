@@ -7,8 +7,7 @@ from market.models import DatabaseModel
 class MortgageMarketConversion(BinaryConversion):
 
     def __init__(self, community):
-        super(MortgageMarketConversion, self).__init__(community, "\x01")
-        self.define_meta_message(chr(1), community.get_meta_message(u"loan_request"), self._encode_model, self._decode_model)
+        super(MortgageMarketConversion, self).__init__(community, "\x02")
         self.define_meta_message(chr(2), community.get_meta_message(u"document"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(3), community.get_meta_message(u"loan_request_reject"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(4), community.get_meta_message(u"mortgage_offer"), self._encode_model, self._decode_model)
@@ -21,6 +20,8 @@ class MortgageMarketConversion(BinaryConversion):
         self.define_meta_message(chr(11), community.get_meta_message(u"model_request"), self._encode_model_request, self._decode_model_request)
         self.define_meta_message(chr(12), community.get_meta_message(u"model_request_response"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(13), community.get_meta_message(u"introduce_user"), self._encode_model, self._decode_model)
+        self.define_meta_message(chr(14), community.get_meta_message(u"loan_request"), self._encode_model, self._decode_model)
+
 
 
 
