@@ -12,10 +12,9 @@ install:
   - ./travis-libsodium13.sh
   - pip install decorator
   - pip install cryptography
-  - pip install coverage
   - pip install faker
   - pip install twisted
   - pip install m2crypto
 # command to run tests
 script:
-  - nosetests -v --with-coverage test/market
+  - nosetests -v test/market
