@@ -10,4 +10,4 @@ install:
   - pip install decorator
   - pip install cryptography
 # command to run tests
-script: python -m unittest test/market/test_api
+script: python test/market/test_api.py
