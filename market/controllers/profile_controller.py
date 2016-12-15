@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from market.models.profiles import BorrowersProfile
+from market.models.profiles import BorrowersProfile, Profile
 from market.views.main_view import Ui_MainWindow
 from marketGUI.market_app import MarketApplication
 from market.api.api import MarketAPI
@@ -24,7 +24,7 @@ class ProfileController:
         # print 'Profile: Current profile: ',
         # print self.current_profile
         if self.current_profile:
-            assert isinstance(self.current_profile, BorrowersProfile)
+            assert isinstance(self.current_profile, Profile)
             self.mainwindow.profile_firstname_lineedit.setText(self.current_profile.first_name)
             self.mainwindow.profile_lastname_lineedit.setText(self.current_profile.last_name)
             self.mainwindow.profile_email_lineedit.setText(self.current_profile.email)
