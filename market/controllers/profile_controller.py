@@ -72,4 +72,4 @@ class ProfileController:
             QMessageBox.about(self.mainwindow, "My message box", 'Profile saved.')
             # print 'check if the profile has been added:'
             # print self.mainwindow.api.load_profile(self.mainwindow.app.user)
-        self.mainwindow.app.user = self.mainwindow.app.user.update(self.mainwindow.api.db)
+        self.mainwindow.app.user.update(self.mainwindow.api.db)
