@@ -4,6 +4,10 @@ python:
   - "2.7"
 virtualenv:
   system_site_packages: true
+addons:
+  apt:
+    packages:
+      - libsodium13
 before install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libav-tools libjs-excanvas libjs-mootools libsodium13 libx11-6 python-apsw python-cherrypy3 python-crypto python-cryptography python-feedparser python-leveldb python-libtorrent python-m2crypto python-netifaces python-pil python-pyasn1 python-requests python-twisted python-wxgtk2.8 python2.7 vlc python-pip
