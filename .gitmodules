@@ -1,0 +1,3 @@
+[submodule "market/dispersy"]
+	path = market/dispersy
+	url = https://github.com/Jumba/dispersy.git
