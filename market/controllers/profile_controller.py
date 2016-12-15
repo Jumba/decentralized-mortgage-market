@@ -47,8 +47,8 @@ class ProfileController:
         pass
 
     def save_form(self):
-        self.payload = {'role': 2, 'first_name': str(self.mainwindow.profile_firstname_lineedit.text()),
-                        'last_name': str(self.mainwindow.profile_lastname_lineedit.text()),
+        self.payload = {'role': 2, 'first_name': unicode(self.mainwindow.profile_firstname_lineedit.text()),
+                        'last_name': unicode(self.mainwindow.profile_lastname_lineedit.text()),
                         'email': str(self.mainwindow.profile_email_lineedit.text()),
                         'iban': str(self.mainwindow.profile_iban_lineedit.text()),
                         'phonenumber': str(self.mainwindow.profile_phonenumber_lineedit.text())}
@@ -64,7 +64,7 @@ class ProfileController:
         # print self.payload
         print 'creating profile:'
         print self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload)
-        # TODO prompt: profile is created
+
         if self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload):
             QMessageBox.about(self.mainwindow, "My message box", 'Profile saved.')
             # print 'check if the profile has been added:'
