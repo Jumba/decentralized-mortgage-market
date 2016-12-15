@@ -6,7 +6,7 @@ virtualenv:
   system_site_packages: true
 before install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libav-tools libjs-excanvas libjs-mootools libsodium13 libx11-6 python-apsw python-cherrypy3 python-crypto python-cryptography python-feedparser python-leveldb python-libtorrent python-m2crypto python-netifaces python-pil python-pyasn1 python-requests python-twisted python-wxgtk2.8 python2.7 vlc python-pip python-nose-exclude
+  - sudo apt-get install -qq libav-tools libjs-excanvas libjs-mootools libsodium13 libx11-6 python-apsw python-cherrypy3 python-crypto python-cryptography python-feedparser python-leveldb python-libtorrent python-m2crypto python-netifaces python-pil python-pyasn1 python-requests python-twisted python-wxgtk2.8 python2.7 vlc python-pip
 # command to install dependencies
 install:
   - ./travis-libsodium13.sh
@@ -18,7 +18,4 @@ install:
   - pip install m2crypto
 # command to run tests
 script:
-#  - nosetests -v --with-coverage test/market/test_api.py
-#  - nosetests -v --with-coverage test/market/test_backend.py
-#  - nosetests -v --with-coverage test/market/test_database.py
-  - nosetests -v --with-coverage --exclude-dir=market/dispersy/tests
+  - nosetests -v --with-coverage test/market
