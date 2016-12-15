@@ -1,8 +1,10 @@
+import os
+
 from market import Global
 from market.api.api import MarketAPI
 from market.database.backends import PersistentBackend, MemoryBackend
 from market.database.database import MockDatabase
-from marketGUI.market_app import MarketApplication, MarketApplicationABN
+from marketGUI.market_app import MarketApplication, MarketApplicationABN, MarketApplicationING
 from scenarios.scenario import Scenario
 from scenarios.tasks import Tasks
 
@@ -31,7 +33,7 @@ class MarketAppSceneBorrower(MarketApplication):
         if not self.profile and not self.loan_request and not self.mortgage_accept and not self.investor_accept:
             for bank_id in Global.BANKS:
                 user = self.api._get_user(Global.BANKS[bank_id])
-                if user.id in self.api.user_candidate:
+                if user.id in self.api.user_candidate and self.bank_status[bank_id] == False:
                     print bank_id, " is ONLINE"
                     self.bank_status[bank_id] = True
                     self.profile = True
@@ -73,7 +75,20 @@ class MarketAppSceneBank(MarketApplicationABN):
     def _scenario(self):
         self.scenario = Scenario(self.api)
         self.tasks = Tasks(self.api)
-
         self.tasks.handle_incoming_loan_request(self.user)
 
+
+class MarketAppSceneBankING(MarketApplicationING):
+    def __init__(self, *argv):
+        self.profile = True
+        self.loan_request = False
+        self.mortgage_accept = False
+        self.investor_accept = False
+
+        MarketApplicationING.__init__(self, *argv)
+
+    def _scenario(self):
+        self.scenario = Scenario(self.api)
+        self.tasks = Tasks(self.api)
+        self.tasks.handle_incoming_loan_request(self.user)
 

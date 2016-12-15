@@ -266,6 +266,7 @@ class FakePayload(object):
             'default_rate': random.uniform(0, 20),
             'max_invest_rate': random.uniform(0, 10),
             'duration': random.randint(6, 120),
+            'risk': 'A',
             'investors': []
         }
 
