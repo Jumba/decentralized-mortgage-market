@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -535,14 +535,14 @@
        <item row="3" column="1">
         <widget class="QLineEdit" name="bplr_housenumber_lineedit">
          <property name="text">
-          <string>123</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLineEdit" name="bplr_house_price_lineedit">
          <property name="text">
-          <string>120000</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -561,14 +561,14 @@
        <item row="3" column="0">
         <widget class="QLineEdit" name="bplr_postcode_lineedit">
          <property name="text">
-          <string>2625 BN</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item row="8" column="0">
         <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit">
          <property name="text">
-          <string>0612345678</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -599,7 +599,7 @@
        <item row="11" column="0">
         <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
          <property name="text">
-          <string>80000</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -675,12 +675,18 @@
            <property name="checked">
             <bool>true</bool>
            </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="0" column="1">
           <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
            <property name="text">
             <string>Fixed-Rate</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -751,7 +757,7 @@
             <string>Bank 2</string>
            </property>
            <property name="checked">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -768,7 +774,7 @@
             <string>Bank 3</string>
            </property>
            <property name="checked">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -808,7 +814,7 @@
        <item row="8" column="1">
         <widget class="QLineEdit" name="bplr_seller_email_lineedit">
          <property name="text">
-          <string>nigerian_prince_419@gmail.com</string>
+          <string/>
          </property>
         </widget>
        </item>

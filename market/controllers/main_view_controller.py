@@ -27,14 +27,6 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.setupUi(self)
         self.navigation = NavigateUser(self)
         self.bplr_payload = {}
-        # self.set_navigation()
-        # self.bplr_submit_button.clicked.connect(self.bplr_submit_loan_request)
-        # self.fiplr1_loan_requests_table.doubleClicked.connect(self.fiplr2_view_loan_request)
-        # self.openmarket_open_market_table.doubleClicked.connect(self.openmarket_view_campaign)
-        # self.fiplr1_view_loan_request_pushbutton.clicked.connect(self.fiplr2_view_loan_request)
-        # self.fiplr2_accept_pushbutton.clicked.connect(self.fiplr2_accept_loan_request)
-        # self.fiplr2_reject_pushbutton.clicked.connect(self.fiplr2_reject_loan_request)
-        # self.icb_place_bid_pushbutton.clicked.connect(self.icb_place_bid)
         self.setupObjects()
         self.stackedWidget.setCurrentIndex(0)
         self.login_controller = LoginController(self)
@@ -102,34 +94,6 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         # TODO do an actual reject with the api
 
 
-
-#################################################bs#####################################################################
-
-    # def set_navigation(self):
-    #     self.next_1.clicked.connect(self.next_screen)
-    #     self.next_2.clicked.connect(self.next_screen)
-    #     self.next_3.clicked.connect(self.next_screen)
-    #     self.next_4.clicked.connect(self.next_screen)
-    #     self.next_5.clicked.connect(self.next_screen)
-    #     self.next_6.clicked.connect(self.next_screen)
-    #     self.next_7.clicked.connect(self.next_screen)
-    #     self.next_8.clicked.connect(self.next_screen)
-    #     self.prev_1.clicked.connect(self.previous_screen)
-    #     self.prev_2.clicked.connect(self.previous_screen)
-    #     self.prev_3.clicked.connect(self.previous_screen)
-    #     self.prev_4.clicked.connect(self.previous_screen)
-    #     self.prev_5.clicked.connect(self.previous_screen)
-    #     self.prev_6.clicked.connect(self.previous_screen)
-    #     self.prev_7.clicked.connect(self.previous_screen)
-    #     self.prev_8.clicked.connect(self.previous_screen)
-    #
-    # def next_screen(self):
-    #     self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() + 1) % self.stackedWidget.count())
-    #
-    # def previous_screen(self):
-    #     self.stackedWidget.setCurrentIndex((self.stackedWidget.currentIndex() - 1) % self.stackedWidget.count())
-
-
     def setupObjects(self):
         #create user
         # self.user_borrower,pub_key1,priv_key1 = self.api.create_user()
@@ -144,8 +108,3 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         investor_payload = {'role': 2, 'first_name': 'Ruby', 'last_name': 'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30394', 'phonenumber': '+3170253719290'}
         bank_payload = {'role': 3}
 
-
-
-        # print self.api.create_profile(self.user_borrower, self.borrower_profile_payload)
-        # print self.api.create_profile(self.user_investor, investor_payload)
-        # print self.api.create_profile(self.user_bank, bank_payload)
