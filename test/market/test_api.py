@@ -6,6 +6,7 @@ from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.dispersy.crypto import ECCrypto
+from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign
 from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
@@ -291,9 +292,8 @@ class APITestSuite(unittest.TestCase):
 
     def test_load_investments(self):
         """
-        This test checks the functionality of loading a user's (borrower or investor) current and pending investments
-        Current investments should be appended to the CurrentInvestments and pending investments should be appended to PendingInvestments
-        The function should return a tuple(CurrentInvestments, PendingInvestments)
+        This test checks the functionality of loading a user's current and pending investments
+        The function should return a tuple(Investments, House, Campaign)
         """
 
         # Create an user
@@ -337,21 +337,20 @@ class APITestSuite(unittest.TestCase):
         self.api.accept_investment_offer(borrower, {'investment_id': loan_offer2.id})
 
         # Get the investments
-        current_investment, pending_investment = self.api.load_investments(investor)
+        investments = self.api.load_investments(investor)
 
         # Check if the returned objects are Lists
-        self.assertIsInstance(current_investment, list)
-        self.assertIsInstance(pending_investment, list)
+        self.assertIsInstance(investments, list)
         # Check if the elements of the lists are Investment-objects
-        for investment in current_investment:
+        for [investment, house, campaign] in investments:
             self.assertIsInstance(investment, Investment)
-        for investment in pending_investment:
-            self.assertIsInstance(investment, Investment)
+            self.assertIsInstance(house, House)
+            self.assertIsInstance(campaign, Campaign)
 
-        # Check if the Investment-objects are saved in the correct list
-        self.assertIn(loan_offer1, pending_investment)
-        self.assertIn(loan_offer2, current_investment)
-        self.assertIn(loan_offer3, pending_investment)
+        # Check if the Investment-objects are saved in the list
+        self.assertIn(loan_offer1, investments[0])
+        self.assertIn(loan_offer2, investments[1])
+        self.assertIn(loan_offer3, investments[2])
 
     def test_load_borrowers_offers_mortgage_pending(self):
         """
@@ -950,12 +949,12 @@ class APITestSuite(unittest.TestCase):
         borrower_investments = self.api.load_investments(borrower)
 
         # Check if the investment  isn't in neither accepted or pending of the borrower
-        self.assertNotIn(investment, borrower_investments[0])
-        self.assertNotIn(investment, borrower_investments[1])
+        for borrower_investment in borrower_investments:
+            self.assertNotIn(investment, borrower_investment)
 
         # Or of the investor.
-        self.assertNotIn(investment, investor_investments[0])
-        self.assertNotIn(investment, investor_investments[1])
+        for investor_investment in investor_investments:
+            self.assertNotIn(investment, investor_investment)
 
         # But it is in the investors full list
         self.assertIn(investment.id, investor.investment_ids)
@@ -1057,7 +1056,7 @@ class APITestSuite(unittest.TestCase):
         self.api.accept_mortgage_offer(borrower, self.payload_mortgage)
 
         # Check if bids are empty
-        bids = self.api.load_bids(self.payload_mortgage)
+        bids, house, campaign = self.api.load_bids(self.payload_mortgage)
         self.assertFalse(bids)
 
         # Place investment bid on the mortgage
@@ -1066,6 +1065,8 @@ class APITestSuite(unittest.TestCase):
         # Check if bid is in the list
         bids = self.api.load_bids(self.payload_mortgage)
         self.assertTrue(bids)
+        self.assertIsInstance(house, House)
+        self.assertIsInstance(campaign, Campaign)
 
     def test_load_mortgages(self):
         """

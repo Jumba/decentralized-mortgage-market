@@ -253,33 +253,32 @@ class MarketAPI(object):
 
     def load_investments(self, user):
         """
-        Get the current investments list and the pending investments list from the database.
+        Get the pending and current investments list from the database.
 
         :param user: The user whose investments need to be retrieved.
         :type user: :any:`User`
-        :return: A tuple containing the list of current and pending investments
-        :rtype: tuple(CurrentInvestments, PendingInvestments)
+        :return: A list containing lists with the list investments, the house, and the campaign
+        :rtype: list
         """
         user = self._get_user(user)
 
-        current_investments = []
-        pending_investments = []
+        investments = []
+
         for investment_id in user.investment_ids:
             investment = self.db.get(Investment._type, investment_id)
             assert isinstance(investment, Investment)
-            if investment.status == STATUS.ACCEPTED:
-                current_investments.append(investment)
-            elif investment.status == STATUS.PENDING:
-                pending_investments.append(investment)
-            else:
-                pass
-        return current_investments, pending_investments
+            if investment.status == STATUS.ACCEPTED or investment.status == STATUS.PENDING:
+                mortgage = self.db.get(Mortgage._type, investment.mortgage_id)
+                house = self.db.get(House._type, mortgage.house_id)
+                campaign = self.db.get(Campaign._type, mortgage.campaign_id)
+                investments.append([investment, house, campaign])
+        return investments
 
     def load_open_market(self):
         """
-        Returns a list of all mortgages who have an active campaign going on.
+        Returns a list of all mortgages that have an active campaign going on.
 
-        :return: A list of :any:`Mortgage` objects.
+        :return: A list lists with :any:`Mortgage` objects, :any: 'House' objects, and :any: 'Campaign' objects.
         :rtype: list
         """
         campaigns = self.db.get_all(Campaign._type)
@@ -289,7 +288,9 @@ class MarketAPI(object):
             # If campaign is not completed or end time has not passed yet, get mortgage info
             for campaign in campaigns:
                 if campaign.end_date > datetime.now() and not campaign.completed:
-                    mortgages.append(self.db.get(Mortgage._type, campaign.mortgage_id))
+                    mortgage = self.db.get(Mortgage._type, campaign.mortgage_id)
+                    house = self.db.get(House._type, mortgage.house_id)
+                    mortgages.append([mortgage, campaign, house])
 
         return mortgages
 
@@ -459,6 +460,8 @@ class MarketAPI(object):
             user.campaign_ids.append(campaign.id)
             bank.campaign_ids.append(campaign.id)
             self.db.put(User._type, bank.id, bank)
+            mortgage.campaign_id = campaign.id
+            self.db.put(Mortgage._type, mortgage.id, mortgage)
 
             # Add message to queue
             self.queue.add_message(self.community.send_mortgage_accept_signed, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [bank])
@@ -800,7 +803,7 @@ class MarketAPI(object):
 
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: A list of :any: 'Investment' objects.
+        :return: A list of lists with :any: 'Investment' objects, a :any: 'House' object, a :any: 'Campaign' object.
         :rtype: list
         """
 
@@ -813,7 +816,10 @@ class MarketAPI(object):
         for investment_bid in borrower.investment_ids:
             bids.append(self.db.get(Investment._type, investment_bid))
 
-        return bids
+        house = self.db.get(House._type, loan_request.house_id)
+        campaign = self.db.get(Campaign._type, borrower.campaign_ids[0])
+
+        return bids, house, campaign
 
     def load_mortgages(self, user):
         """
