@@ -52,79 +52,6 @@ class MortgageMarketCommunity(Community):
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
-            Message(self, u"document",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CommunityDestination(node_count=50),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_document),
-            Message(self, u"loan_request_reject",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_loan_request_reject),
-            Message(self, u"mortgage_offer",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_mortgage_offer),
-            Message(self, u"mortgage_accept_signed",
-                    DoubleMemberAuthentication(
-                        allow_signature_func=self.allow_signature_request, split_payload_func=self.split_function),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_mortgage_accept_signed),
-            Message(self, u"mortgage_accept_unsigned",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CommunityDestination(node_count=50),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_mortgage_accept_signed),
-            Message(self, u"mortgage_reject",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_mortgage_reject),
-            Message(self, u"investment_offer",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_investment_offer),
-            Message(self, u"investment_accept",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_investment_accept),
-               Message(self, u"investment_reject",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CommunityDestination(node_count=50),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_investment_reject),
             Message(self, u"model_request",
                     MemberAuthentication(),
                     PublicResolution(),
@@ -142,21 +69,29 @@ class MortgageMarketCommunity(Community):
                     self.check_message,
                     self.on_model_request_response),
             Message(self, u"introduce_user",
-                MemberAuthentication(),
-                PublicResolution(),
-                DirectDistribution(),
-                CandidateDestination(),
-                DatabaseModelPayload(),
-                self.check_message,
-                self.on_user_introduction),
-            Message(self, u"loan_request",
                     MemberAuthentication(),
                     PublicResolution(),
                     DirectDistribution(),
                     CandidateDestination(),
                     DatabaseModelPayload(),
                     self.check_message,
-                    self.on_loan_request_receive),
+                    self.on_user_introduction),
+            Message(self, u"api_message_community",
+                    MemberAuthentication(),
+                    PublicResolution(),
+                    DirectDistribution(),
+                    CommunityDestination(node_count=50),
+                    DatabaseModelPayload(),
+                    self.check_message,
+                    self.on_api_message),
+            Message(self, u"api_message_candidate",
+                    MemberAuthentication(),
+                    PublicResolution(),
+                    DirectDistribution(),
+                    CandidateDestination(),
+                    DatabaseModelPayload(),
+                    self.check_message,
+                    self.on_api_message),
         ]
 
     def initiate_conversions(self):
@@ -186,100 +121,35 @@ class MortgageMarketCommunity(Community):
     def user(self, user):
         self._user = user
 
-    def send_loan_request(self, fields, models, candidates, store=True, update=True, forward=True):
-        assert LoanRequest._type in fields and LoanRequest._type in models
-        assert House._type in fields and House._type in models
-        assert BorrowersProfile._type in fields and BorrowersProfile._type in models
+    def send_api_message_candidate(self, request, fields, models, candidates, store=True, update=True, forward=True):
+        assert isinstance(request, unicode)
+        assert isinstance(fields, list)
+        assert isinstance(models, dict)
 
-        meta = self.get_meta_message(u"loan_request")
+        meta = self.get_meta_message(u"api_message_candidate")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
+                            destination=candidates,
+                            payload=(request, fields, models),
+                            )
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_document(self, fields, models, candidates, store=True, update=True, forward=True):
-        for field in fields:
-            assert isinstance(models[field], Document)
-        print "Document being sent"
-        meta = self.get_meta_message(u"document")
+    def send_api_message_community(self, request, fields, models, store=True, update=True, forward=True):
+        assert isinstance(request, unicode)
+        assert isinstance(fields, list)
+        assert isinstance(models, dict)
+
+        meta = self.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.my_member,),
                             distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),)
-                            #destination=candidates)
-        self.dispersy.store_update_forward([message], store, update, forward)
-        print "Stored for sending"
-
-    def send_loan_request_reject(self, fields, models, candidates, store=True, update=True, forward=True):
-        assert LoanRequest._type in fields and LoanRequest._type in models
-
-        meta = self.get_meta_message(u"loan_request_reject")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
+                            payload=(request, fields, models),
+                            )
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def send_document_message(self, fields, models, candidates, store=True, update=True, forward=True):
-        print "Sending document"
-        meta = self.get_meta_message(u"send_document")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
-        self.dispersy.store_update_forward([message], store, update, forward)
-
-
-    def send_mortgage_offer(self, fields, models, candidates, store=True, update=True, forward=True):
-        assert LoanRequest._type in fields and LoanRequest._type in models
-        assert Mortgage._type in fields and Mortgage._type in models
-
-        meta = self.get_meta_message(u"mortgage_offer")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
-        self.dispersy.store_update_forward([message], store, update, forward)
-
-
-    def send_mortgage_accept_signed(self, fields, models, store=True, update=True, forward=True):
-        pass
-
-    def send_mortgage_accept_unsigned(self, fields, models, store=True, update=True, forward=True):
-        assert Campaign._type in fields and Campaign._type in models
-        assert Mortgage._type in fields and Mortgage._type in models
-
-        meta = self.get_meta_message(u"mortgage_accept_unsigned")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),)
-        self.dispersy.store_update_forward([message], store, update, forward)
-
-    def send_mortgage_reject(self, fields, models, candidates, store=True, update=True, forward=True):
-        assert Mortgage.type in fields and Mortgage._type in models
-
-        meta = self.get_meta_message(u"mortgage_reject")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
-        self.dispersy.store_update_forward([message], store, update, forward)
-
-
-    def send_investment_offer(self, fields, models, store=True, update=True, forward=True):
-        pass # TODO: Ignore signed for now
-
-    def send_investment_accept(self, fields, models, store=True, update=True, forward=True):
-        pass # TODO: Ignore singned for now
-
-    def send_investment_reject(self, fields, models, store=True, update=True, forward=True):
-        assert Investment._type in fields and Investment._type in models
-
-        meta = self.get_meta_message(u"investment_reject")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),)
-        self.dispersy.store_update_forward([message], store, update, forward)
+    def on_api_message(self, messages):
+        print "API Message bless"
+        for message in messages:
+            self.api.incoming_queue.push(message)
 
 
     def send_model_request(self, models, store=True, update=True, forward=True):
@@ -313,78 +183,121 @@ class MortgageMarketCommunity(Community):
                             destination=(candidate, ))
         self.dispersy.store_update_forward([message], store, update, forward)
 
-    def on_loan_request_receive(self, messages):
-        for message in messages:
-            for field in message.payload.fields:
-                obj = message.payload.models[field]
-                self.api.db.post(obj.type, obj), obj
 
-                # Save the loan request to the bank
-                if isinstance(obj, LoanRequest):
-                    if self.user.id in obj.banks:
-                        self.user.update(self.api.db)
-                        self.user.loan_request_ids.append(obj.id)
-                        self.api.db.put(self.user.type, self.user.id, self.user)
-                        print "Loan request saved to me (bank)"
 
-    def on_document(self, messages):
-        for message in messages:
-            document = message.payload.models[Document._type]
-            print "Received document ", document
-            self.db.post(Document._type, document)
+    #######################################
+    ########### API MESSAGES
 
-    def on_loan_request_reject(self, messages):
-        for message in messages:
-            loan_request = message.payload.models[LoanRequest._type]
+    def on_loan_request_receive(self, payload):
+        user = payload.models[User._type]
+        loan_request = payload.models[LoanRequest._type]
+        house = payload.models[House._type]
+        profile = payload.models[BorrowersProfile._type]
 
-            self.db.post(LoanRequest._type, loan_request)
+        assert isinstance(user, User)
+        assert isinstance(loan_request, LoanRequest)
+        assert isinstance(house, House)
+        assert isinstance(profile, BorrowersProfile)
 
-    def on_mortgage_offer(self, messages):
-        for message in messages:
-            loan_request = message.payload.models[LoanRequest._type]
-            mortgage = message.payload.models[Mortgage._type]
+        user.post_or_put(self.api.db)
+        loan_request.post_or_put(self.api.db)
+        house.post_or_put(self.api.db)
+        profile.post_or_put(self.api.db)
 
-            self.db.post(Mortgage._type, mortgage)
+        # Save the loan request to the bank
+        if self.user.id in loan_request.banks:
+            self.user.update(self.api.db)
+            self.user.loan_request_ids.append(loan_request.id)
+            self.user.post_or_put(self.api.db)
 
-    def on_mortgage_accept_signed(self, messages):
-        for message in messages:
-            mortgage = message.payload.models[Mortgage._type]
-            campaign = message.payload.models[Campaign._type]
+    def on_loan_request_reject(self, payload):
+        user = payload.models[User._type]
+        loan_request = payload.models[LoanRequest._type]
 
-            self.db.post(Mortgage._type, mortgage)
-            self.db.post(Campaign._type, campaign)
+        assert isinstance(user, User)
+        assert isinstance(loan_request, LoanRequest)
 
-    def on_mortgage_accept_unsigned(self, messages):
-        for message in messages:
-            mortgage = message.payload.models[Mortgage._type]
-            campaign = message.payload.models[Campaign._type]
+        user.post_or_put(self.api.db)
+        loan_request.post_or_put(self.api.db)
 
-            self.api.db.post(Mortgage._type, mortgage)
-            self.api.db.post(Campaign._type, campaign)
 
-    def on_mortgage_reject(self, messages):
-        for message in messages:
-            mortgage = message.payload.models[Mortgage._type]
+    def on_mortgage_offer(self, payload):
+        loan_request = payload.models[LoanRequest._type]
+        mortgage = payload.models[Mortgage._type]
 
-            self.api.db.post(Mortgage._type, mortgage)
+        assert isinstance(loan_request, LoanRequest)
+        assert isinstance(mortgage, Mortgage)
 
-    def on_investment_offer(self, messages):
-        for message in messages:
-            investment = message.payload.models[Investment._type]
+        loan_request.post_or_put(self.api.db)
+        mortgage.post_or_put(self.api.db)
 
-            self.api.db.post(Investment._type, investment)
+    def on_mortgage_accept_signed(self, payload):
+        user = payload.models[User._type]
+        mortgage = payload.models[Mortgage._type]
+        campaign = payload.models[Campaign._type]
 
-    def on_investment_accept(self, messages):
-        for message in messages:
-            investment = message.payload.models[Investment._type]
+        assert isinstance(user, User)
+        assert isinstance(campaign, LoanRequest)
+        assert isinstance(mortgage, Mortgage)
 
-            self.api.db.post(Investment._type, investment)
+        user.post_or_put(self.api.db)
+        mortgage.post_or_put(self.api.db)
+        campaign.post_or_put(self.api.db)
 
-    def on_investment_reject(self, messages):
-        for message in messages:
-            investment = message.payload.models[Investment._type]
+    def on_mortgage_accept_unsigned(self, payload):
+        user = payload.models[User._type]
+        mortgage = payload.models[Mortgage._type]
+        campaign = payload.models[Campaign._type]
 
-            self.api.db.post(Investment._type, investment)
+        assert isinstance(user, User)
+        assert isinstance(campaign, LoanRequest)
+        assert isinstance(mortgage, Mortgage)
+
+        user.post_or_put(self.api.db)
+        mortgage.post_or_put(self.api.db)
+        campaign.post_or_put(self.api.db)
+
+    def on_mortgage_reject(self, payload):
+        user = payload.models[User._type]
+        mortgage = payload.models[Mortgage._type]
+
+        assert isinstance(user, User)
+        assert isinstance(mortgage, Mortgage)
+
+        user.post_or_put(self.api.db)
+        mortgage.post_or_put(self.api.db)
+
+    def on_investment_offer(self, payload):
+        user = payload.models[User._type]
+        investment = payload.models[Investment._type]
+
+        assert isinstance(user, User)
+        assert isinstance(investment, Investment)
+
+        user.post_or_put(self.api.db)
+        investment.post_or_put(self.api.db)
+
+    def on_investment_accept(self, payload):
+        user = payload.models[User._type]
+        investment = payload.models[Investment._type]
+
+        assert isinstance(user, User)
+        assert isinstance(investment, Investment)
+
+        user.post_or_put(self.api.db)
+        investment.post_or_put(self.api.db)
+
+    def on_investment_reject(self, payload):
+        user = payload.models[User._type]
+        investment = payload.models[Investment._type]
+
+        assert isinstance(user, User)
+        assert isinstance(investment, Investment)
+
+        user.post_or_put(self.api.db)
+        investment.post_or_put(self.api.db)
+            
+    ########## END API MESSAGES
 
     def on_model_request(self, messages):
         for message in messages:

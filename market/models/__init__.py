@@ -51,6 +51,13 @@ class DatabaseModel(object):
         for attr in vars(self):
             setattr(self, attr, getattr(updated_self, attr))
 
+    def post_or_put(self, database):
+        me = database.get(self.type, self.id)
+        if me:
+            database.put(self.type, self.id, self)
+        else:
+            database.post(self.type, self)
+
     def serialize(self):
         output = {'class': type(self).__name__ }
         for attr in vars(self):

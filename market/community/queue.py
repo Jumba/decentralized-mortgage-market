@@ -1,23 +1,46 @@
-import community
+from market.api.api import MarketAPI
+from market.dispersy.message import Message
 
-class MessageQueue():
+
+class MessageQueue(object):
+    """
+    Message queues for handling incoming and outgoing `api_message_*` messages.
+    """
     def __init__(self, api):
+        assert isinstance(api, MarketAPI)
+
         self._api = api
         self._queue = []
 
-    def add_message(self, message_name, fields, models, receivers):
-        message = [message_name, fields, models, receivers]
+    def push(self, message):
+        raise NotImplementedError
+
+    def pop(self, message):
+        self._queue.remove(message)
+
+    def process(self):
+        raise NotImplementedError
+
+
+class OutgoingMessageQueue(MessageQueue):
+
+    def push(self, message):
+        assert isinstance(message[0], unicode)
+        assert isinstance(message[1], list)
+        assert isinstance(message[2], dict)
+        assert isinstance(message[3], list)
+
         self._queue.append(message)
 
-    def send_messages(self):
+    def process(self):
 
         for message in self._queue:
-            message_name, fields, models, receivers = message
+            request, fields, models, receivers = message
 
             # if receivers is an empty list it's a community message
             if len(receivers) == 0:
-                message_name(fields, models, ())
-                self._queue.remove(message)
+                self._api.community.send_api_message_community(request, fields, models)
+                self.pop(message)
             else:
                 candidates = []
                 for user in receivers:
@@ -27,10 +50,48 @@ class MessageQueue():
 
                 # Remove the message if all receivers were found
                 if len(message[3]) == 0:
-                    self._queue.remove(message)
+                    self.pop(message)
 
-                message_name(fields, models, tuple(candidates))
-
-
+                self._api.community.send_api_message_candidate(request, fields, models, tuple(candidates))
 
 
+class IncomingMessageQueue(MessageQueue):
+
+    def push(self, message):
+        assert isinstance(message, Message)
+        
+        self._queue.append(message)
+
+    def process(self):
+        community = self._api.community
+
+        for message in self._queue:
+            payload = message.payload
+
+            request = payload.request
+            remove_message = False
+            # Handle each message.
+            if request == u"investment_offer":
+                remove_message = community.on_investment_offer(payload);
+            elif request == u"loan_request":
+                remove_message = community.on_loan_request_receive(payload)
+            elif request == u"mortgage_accept_signed":
+                remove_message = community.on_mortgage_accept_signed(payload)
+            elif request == u"mortgage_accept_unsigned":
+                remove_message = community.on_mortgage_accept_unsigned(payload)
+            elif request == u"investment_accept":
+                remove_message = community.on_investment_accept(payload)
+            elif request == u"mortgage_reject":
+                remove_message = community.on_mortgage_reject(payload)
+            elif request == u"investment_reject":
+                remove_message = community.on_investment_reject(payload)
+            elif request == u"mortgage_offer":
+                remove_message = community.on_mortgage_offer(payload)
+            elif request == u"loan_request_reject":
+                remove_message = community.on_loan_request_reject(payload)
+            else:
+                # Unknow message request, throw it away
+                remove_message = True
+
+            if remove_message:
+                self.pop(message)

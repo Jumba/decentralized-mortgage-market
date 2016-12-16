@@ -80,7 +80,7 @@ class MarketApplication(QApplication):
         LoopingCall(self._scenario).start(3.0)
 
         # Send messages from the queue every 3 seconds
-        LoopingCall(self.api.queue.send_messages).start(3.0)
+        LoopingCall(self.api.outgoing_queue.process).start(3.0)
 
     def _scenario(self):
         pass
