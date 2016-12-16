@@ -27,7 +27,6 @@ class MessageQueue(object):
 class OutgoingMessageQueue(MessageQueue):
 
     def push(self, message):
-        print "Message pushed: ", message
         assert isinstance(message[0], unicode)
         assert isinstance(message[1], list)
         assert isinstance(message[2], dict)
@@ -49,7 +48,6 @@ class OutgoingMessageQueue(MessageQueue):
                 candidates = []
                 for user in receivers:
                     if user.id in self._api.user_candidate:
-                        print "Found a candidate!"
                         candidates.append(self._api.user_candidate[user.id])
                         message[3].remove(user)
 
