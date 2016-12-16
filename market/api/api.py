@@ -253,27 +253,26 @@ class MarketAPI(object):
 
     def load_investments(self, user):
         """
-        Get the current investments list and the pending investments list from the database.
+        Get the pending and current investments list from the database.
 
         :param user: The user whose investments need to be retrieved.
         :type user: :any:`User`
-        :return: A tuple containing the list of current and pending investments
-        :rtype: tuple(CurrentInvestments, PendingInvestments)
+        :return: A tuple containing the list investments, the house, and the campaign
+        :rtype: tuple(Investments, House, Campaign)
         """
         user = self._get_user(user)
 
-        current_investments = []
-        pending_investments = []
+        investments = []
+
         for investment_id in user.investment_ids:
             investment = self.db.get(Investment._type, investment_id)
             assert isinstance(investment, Investment)
-            if investment.status == STATUS.ACCEPTED:
-                current_investments.append(investment)
-            elif investment.status == STATUS.PENDING:
-                pending_investments.append(investment)
-            else:
-                pass
-        return current_investments, pending_investments
+            if investment.status == STATUS.ACCEPTED or investment.status == STATUS.PENDING:
+                mortgage = self.db.get(Mortgage._type, investment.mortgage_id)
+                house = self.db.get(House._type, mortgage.house_id)
+                campaign = self.db.get(Campaign._type, mortgage.campaign_id)
+                investments.append([investment, house, campaign])
+        return investments
 
     def load_open_market(self):
         """
@@ -460,7 +459,7 @@ class MarketAPI(object):
             bank.campaign_ids.append(campaign.id)
             self.db.put(User._type, bank.id, bank)
             mortgage.campaign_id = campaign.id
-            self.db.put(Mortgage.mortgage_type, mortgage.id, mortgage)
+            self.db.put(Mortgage._type, mortgage.id, mortgage)
 
             # Add message to queue
             self.queue.add_message(self.community.send_mortgage_accept_signed, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [bank])
