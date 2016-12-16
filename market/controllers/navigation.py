@@ -10,6 +10,8 @@ class NavigateUser:
     def prepare_views_for_user(self):
         self.user_screen_navigation()
         self.mainwindow.navigation_pushbutton_1.click()
+        self.mainwindow.openmarket_controller.setup_view()
+        self.mainwindow.cb_controller.setup_view()
 
     def user_screen_navigation(self):
         user_role = self.mainwindow.app.user.role_id
@@ -37,8 +39,8 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_bplr)
         self.mainwindow.navigation_pushbutton_4.setText('Open Market')
         self.mainwindow.navigation_pushbutton_4.clicked.connect(self.switch_to_openmarket)
-        self.mainwindow.openmarket_controller.setup_view()
         self.mainwindow.bplr_controller.setup_view()
+        self.mainwindow.bp_controller.setup_view()
         self.set_navigation_visible(True, 1)
 
     def set_investor_navigation(self):
@@ -50,7 +52,7 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
         self.set_navigation_visible(True, 2)
-        # TODO Add controllers
+        self.mainwindow.ip_controller.setup_view()
 
     def set_bank_navigation(self):
         self.mainwindow.navigation_pushbutton_1.setText('Portfolio')
@@ -61,7 +63,9 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
         self.set_navigation_visible(True, 3)
-        # TODO Add controllers
+        self.mainwindow.fip_controller.setup_view()
+        self.mainwindow.fiplr1_controller.setup_view()
+        self.mainwindow.fiplr2_controller.setup_view()
 
     def switch_to_bplr(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.bplr_page)

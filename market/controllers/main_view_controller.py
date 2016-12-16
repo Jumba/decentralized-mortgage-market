@@ -1,9 +1,10 @@
-import os
-import sys
-
-from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+from market.controllers.banks_portfolio_controller import BanksPortfolioController
+from market.controllers.campaign_bids_controller import CampaignBidsController
+from market.controllers.investors_portfolio_controller import InvestorsPortfolioController
+from market.controllers.pending_loan_requests_1_controller import PendingLoanRequests1Controller
+from market.controllers.pending_loan_requests_2_controller import PendingLoanRequests2Controller
 from market.models.role import Role
 from market.models.user import User
 from market.views import main_view
@@ -25,11 +26,16 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.bank_ids = []
         self.setupObjects()
         self.stackedWidget.setCurrentIndex(0)
-        self.login_controller = LoginController(self)
-        self.profile_controller = ProfileController(self)
+        self.fip_controller = BanksPortfolioController(self)
         self.bp_controller = BorrowersPortfolioController(self)
+        self.cb_controller = CampaignBidsController(self)
+        self.ip_controller = InvestorsPortfolioController(self)
+        self.login_controller = LoginController(self)
         self.openmarket_controller = OpenMarketController(self)
+        self.fiplr1_controller = PendingLoanRequests1Controller(self)
+        self.fiplr2_controller = PendingLoanRequests2Controller(self)
         self.bplr_controller = PlaceLoanRequestController(self)
+        self.profile_controller = ProfileController(self)
 
     def fiplr1_load_all_pending_loan_requests(self):
         print 'Loading second screen!'
