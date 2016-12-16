@@ -339,6 +339,7 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         role = Role(user.role_id)
+        print "Creating"
 
         # Only create a loan request if the user is a borrower
         if role.name == 'BORROWER':
@@ -347,7 +348,7 @@ class MarketAPI(object):
                 house = House(payload['postal_code'], payload['house_number'], payload['price'])
                 house_id = self.db.post(House._type, house)
                 payload['house_id'] = house_id
-
+                print "Up in here"
                 # Set status of the loan request (which is a dictionary of the banks) to pending
                 payload['status'] = dict().fromkeys(payload['banks'], STATUS.PENDING)
 

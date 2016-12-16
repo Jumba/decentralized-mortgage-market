@@ -49,6 +49,7 @@ class OutgoingMessageQueue(MessageQueue):
                 candidates = []
                 for user in receivers:
                     if user.id in self._api.user_candidate:
+                        print "Found a candidate!"
                         candidates.append(self._api.user_candidate[user.id])
                         message[3].remove(user)
 

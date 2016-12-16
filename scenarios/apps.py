@@ -25,10 +25,13 @@ class MarketAppSceneBorrower(MarketApplication):
 
     def initialize_api(self):
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        # Start fresh
+        self._api.db.backend.clear()
         #self._api = MarketAPI(MockDatabase(MemoryBackend()))
 
     def _scenario(self):
         self.scenario = Scenario(self.api)
+        self.tasks = Tasks(self.api)
 
         if not self.profile and not self.loan_request and not self.mortgage_accept and not self.investor_accept:
             for bank_id in Global.BANKS:
@@ -56,21 +59,25 @@ class MarketAppSceneBorrower(MarketApplication):
             self.user.update(self.api.db)
             self.scenario.create_loan_request(self.user)
             self.loan_request = False
-            self.mortgage_accept = False
+            self.mortgage_accept = True
 
         # Try an accept an offer
         if self.mortgage_accept:
-            pass
+            print "Trying desperately to accept a mortgage request"
+            accepted = self.tasks.accept_mortgages(self.user)
+
+            if accepted:
+                print "BLESS NOW TO WAIT FOR INVESTORS"
+                self.mortgage_accept = False
 
 
 class MarketAppSceneBank(MarketApplicationABN):
     def __init__(self, *argv):
-        self.profile = True
-        self.loan_request = False
-        self.mortgage_accept = False
-        self.investor_accept = False
-
         MarketApplicationABN.__init__(self, *argv)
+
+    def initialize_api(self):
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api.db.backend.clear()
 
     def _scenario(self):
         self.scenario = Scenario(self.api)
@@ -80,12 +87,11 @@ class MarketAppSceneBank(MarketApplicationABN):
 
 class MarketAppSceneBankING(MarketApplicationING):
     def __init__(self, *argv):
-        self.profile = True
-        self.loan_request = False
-        self.mortgage_accept = False
-        self.investor_accept = False
-
         MarketApplicationING.__init__(self, *argv)
+
+    def initialize_api(self):
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api.db.backend.clear()
 
     def _scenario(self):
         self.scenario = Scenario(self.api)

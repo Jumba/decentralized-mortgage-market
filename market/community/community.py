@@ -230,13 +230,18 @@ class MortgageMarketCommunity(Community):
         loan_request.post_or_put(self.api.db)
         mortgage.post_or_put(self.api.db)
 
+        self.user.update(self.api.db)
+        if mortgage.id not in self.user.mortgage_ids:
+            self.user.mortgage_ids.append(mortgage.id)
+        self.user.post_or_put(self.api.db)
+
     def on_mortgage_accept_signed(self, payload):
         user = payload.models[User._type]
         mortgage = payload.models[Mortgage._type]
         campaign = payload.models[Campaign._type]
 
         assert isinstance(user, User)
-        assert isinstance(campaign, LoanRequest)
+        assert isinstance(campaign, Campaign)
         assert isinstance(mortgage, Mortgage)
 
         user.post_or_put(self.api.db)
@@ -249,7 +254,7 @@ class MortgageMarketCommunity(Community):
         campaign = payload.models[Campaign._type]
 
         assert isinstance(user, User)
-        assert isinstance(campaign, LoanRequest)
+        assert isinstance(campaign, Campaign)
         assert isinstance(mortgage, Mortgage)
 
         user.post_or_put(self.api.db)
