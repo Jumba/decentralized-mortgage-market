@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -96,6 +96,9 @@
         <width>481</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="placeholderText">
+       <string/>
       </property>
      </widget>
      <widget class="QPushButton" name="login_login_pushbutton">
@@ -462,7 +465,7 @@
         <x>60</x>
         <y>60</y>
         <width>611</width>
-        <height>571</height>
+        <height>573</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -834,6 +837,9 @@
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
        <number>138</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
       </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
        <number>30</number>
@@ -1604,7 +1610,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Duration (month)</string>
+       <string>Duration (months)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="openmarket_min_amount_lineedit">
@@ -1617,6 +1623,9 @@
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>Min</string>
       </property>
      </widget>
@@ -1658,10 +1667,13 @@
         <x>60</x>
         <y>150</y>
         <width>121</width>
-        <height>20</height>
+        <height>23</height>
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>Type to search...</string>
       </property>
      </widget>
@@ -1675,6 +1687,9 @@
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>Max</string>
       </property>
      </widget>
@@ -1683,12 +1698,15 @@
        <rect>
         <x>420</x>
         <y>150</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>0</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>0.0</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="openmarket_duration2_lineedit">
@@ -1696,25 +1714,15 @@
        <rect>
         <x>480</x>
         <y>190</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>36</string>
+       <string/>
       </property>
-     </widget>
-     <widget class="QLabel" name="openmarket_interest_dash_label">
-      <property name="geometry">
-       <rect>
-        <x>680</x>
-        <y>270</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>-</string>
+      <property name="placeholderText">
+       <string>Max</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="openmarket_rating_checkbox_c">
@@ -1730,26 +1738,13 @@
        <string>C</string>
       </property>
      </widget>
-     <widget class="QLabel" name="openmarket_duration_dash_label">
-      <property name="geometry">
-       <rect>
-        <x>680</x>
-        <y>320</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>-</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="openmarket_search_pushbutton">
       <property name="geometry">
        <rect>
-        <x>180</x>
+        <x>190</x>
         <y>150</y>
         <width>75</width>
-        <height>20</height>
+        <height>23</height>
        </rect>
       </property>
       <property name="text">
@@ -1852,12 +1847,15 @@
        <rect>
         <x>420</x>
         <y>190</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>12</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Min</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="openmarket_interest2_lineedit">
@@ -1865,12 +1863,15 @@
        <rect>
         <x>480</x>
         <y>150</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>100</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>100.0</string>
       </property>
      </widget>
      <widget class="QTableWidget" name="openmarket_open_market_table">
@@ -1953,7 +1954,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Duration (month)</string>
+        <string>Duration (months)</string>
        </property>
        <property name="font">
         <font>
@@ -1974,13 +1975,39 @@
        </property>
       </column>
      </widget>
+     <widget class="QLabel" name="openmarket_duration_dash_label">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>190</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="openmarket_interest_dash_label">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>150</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="icb_page">
      <widget class="QLineEdit" name="icb_amount_lineedit">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>510</y>
+        <y>550</y>
         <width>113</width>
         <height>27</height>
        </rect>
@@ -2003,7 +2030,7 @@
       <property name="geometry">
        <rect>
         <x>330</x>
-        <y>510</y>
+        <y>550</y>
         <width>113</width>
         <height>27</height>
        </rect>
@@ -2013,7 +2040,7 @@
       <property name="geometry">
        <rect>
         <x>330</x>
-        <y>490</y>
+        <y>530</y>
         <width>121</width>
         <height>17</height>
        </rect>
@@ -2026,7 +2053,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>200</y>
+        <y>250</y>
         <width>631</width>
         <height>231</height>
        </rect>
@@ -2065,7 +2092,7 @@
        <number>0</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>110</number>
+       <number>150</number>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
@@ -2106,12 +2133,17 @@
         </font>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Bid Status</string>
+       </property>
+      </column>
      </widget>
      <widget class="QLabel" name="icb_place_bid_label">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>460</y>
+        <y>500</y>
         <width>81</width>
         <height>17</height>
        </rect>
@@ -2131,7 +2163,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>490</y>
+        <y>530</y>
         <width>121</width>
         <height>17</height>
        </rect>
@@ -2144,7 +2176,7 @@
       <property name="geometry">
        <rect>
         <x>580</x>
-        <y>580</y>
+        <y>590</y>
         <width>111</width>
         <height>27</height>
        </rect>
@@ -2157,7 +2189,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>180</y>
+        <y>230</y>
         <width>161</width>
         <height>17</height>
        </rect>
@@ -2177,7 +2209,7 @@
       <property name="geometry">
        <rect>
         <x>580</x>
-        <y>490</y>
+        <y>530</y>
         <width>191</width>
         <height>17</height>
        </rect>
@@ -2190,7 +2222,7 @@
       <property name="geometry">
        <rect>
         <x>580</x>
-        <y>510</y>
+        <y>550</y>
         <width>113</width>
         <height>27</height>
        </rect>
@@ -2229,6 +2261,66 @@
        <string>Property Address</string>
       </property>
      </widget>
+     <widget class="QLabel" name="icb_remaining_amount_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>170</y>
+        <width>181</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remaining Amount:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="icb_euro_sign_label">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>190</y>
+        <width>16</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>€ </string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="icb_remaining_amount_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>190</y>
+        <width>341</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="frame">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="ip_page">
      <widget class="QPushButton" name="ip_reject_pushbutton">
@@ -2252,7 +2344,7 @@
        <rect>
         <x>320</x>
         <y>150</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
@@ -2260,6 +2352,9 @@
        <set>Qt::ImhNone</set>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>0</string>
       </property>
      </widget>
@@ -2267,7 +2362,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>200</y>
+        <y>210</y>
         <width>291</width>
         <height>31</height>
        </rect>
@@ -2311,8 +2406,8 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>230</y>
-        <width>721</width>
+        <y>240</y>
+        <width>750</width>
         <height>321</height>
        </rect>
       </property>
@@ -2362,7 +2457,7 @@
        <number>0</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>121</number>
+       <number>126</number>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
@@ -2376,6 +2471,8 @@
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
+         <bold>true</bold>
          <kerning>true</kerning>
         </font>
        </property>
@@ -2384,165 +2481,39 @@
        <property name="text">
         <string>Campaign Status</string>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
       </column>
       <column>
        <property name="text">
         <string>Investment Status</string>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
       </column>
       <column>
        <property name="text">
         <string>Amount Invested (€)</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
       </column>
       <column>
        <property name="text">
         <string>Interest (%)</string>
        </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Duration (month)</string>
-       </property>
-      </column>
-     </widget>
-     <widget class="QTableWidget" name="ip_investing_opportunities_table">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>860</y>
-        <width>491</width>
-        <height>161</height>
-       </rect>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>641</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="alternatingRowColors">
-       <bool>false</bool>
-      </property>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>110</number>
-      </attribute>
-      <attribute name="horizontalHeaderStretchLastSection">
-       <bool>true</bool>
-      </attribute>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <row>
-       <property name="text">
-        <string/>
-       </property>
-      </row>
-      <column>
-       <property name="text">
-        <string>Property Address</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Amount Invested (€)</string>
-       </property>
        <property name="font">
         <font>
          <weight>75</weight>
@@ -2552,18 +2523,7 @@
       </column>
       <column>
        <property name="text">
-        <string> (%)</string>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Duration (month)</string>
+        <string>Duration (months)</string>
        </property>
        <property name="font">
         <font>
@@ -2583,6 +2543,9 @@
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>Max</string>
       </property>
      </widget>
@@ -2642,12 +2605,15 @@
        <rect>
         <x>320</x>
         <y>190</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>12</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Min</string>
       </property>
      </widget>
      <widget class="QLabel" name="ip_duration_dash_label">
@@ -2679,7 +2645,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Duration (month)</string>
+       <string>Duration (months)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="ip_duration2_lineedit">
@@ -2687,12 +2653,15 @@
        <rect>
         <x>380</x>
         <y>190</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>36</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Max</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="ip_search_lineedit">
@@ -2705,6 +2674,9 @@
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>Type to search...</string>
       </property>
      </widget>
@@ -2734,30 +2706,10 @@
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>Min</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="ip_investing_opportunities_label">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>830</y>
-        <width>221</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Investing opportunities&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="ip_search_pushbutton">
@@ -2798,11 +2750,14 @@
        <rect>
         <x>380</x>
         <y>150</y>
-        <width>41</width>
+        <width>45</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
        <string>100</string>
       </property>
      </widget>
@@ -2870,7 +2825,7 @@
        <number>0</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>110</number>
+       <number>120</number>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
@@ -2910,7 +2865,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Duration (month)</string>
+        <string>Duration (months)</string>
        </property>
        <property name="font">
         <font>
@@ -2955,13 +2910,13 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>10</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Open offers&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open offers&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="bp_ongoing_loans_label">
@@ -2975,9 +2930,9 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="text">
@@ -3053,7 +3008,7 @@
        <number>0</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>110</number>
+       <number>120</number>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
@@ -3093,7 +3048,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Duration (month)</string>
+        <string>Duration (months)</string>
        </property>
        <property name="font">
         <font>
@@ -3116,97 +3071,13 @@
      </widget>
     </widget>
     <widget class="QWidget" name="fip_page">
-     <widget class="QLineEdit" name="fip_sorting_minimum_amount_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>230</y>
-        <width>113</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Min</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="fip_view_campaign_pushbutton">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>500</y>
-        <width>171</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>View Campaign</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="fip_duration1_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>330</y>
-        <width>41</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>12</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="fip_interest_dash_label">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>280</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>-</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="fip_sorting_duration_label">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>310</y>
-        <width>141</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Duration (month)</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="fip_duration2_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>600</x>
-        <y>330</y>
-        <width>41</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>36</string>
-      </property>
-     </widget>
      <widget class="QTableWidget" name="fip_campaigns_table">
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>110</y>
-        <width>471</width>
-        <height>411</height>
+        <y>230</y>
+        <width>750</width>
+        <height>331</height>
        </rect>
       </property>
       <property name="editTriggers">
@@ -3228,7 +3099,7 @@
        <number>0</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>110</number>
+       <number>150</number>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
@@ -3236,6 +3107,17 @@
       <column>
        <property name="text">
         <string>Property Address</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Campaign Status</string>
        </property>
        <property name="font">
         <font>
@@ -3268,7 +3150,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Duration (month)</string>
+        <string>Duration (months)</string>
        </property>
        <property name="font">
         <font>
@@ -3277,19 +3159,6 @@
         </font>
        </property>
       </column>
-     </widget>
-     <widget class="QLineEdit" name="fip_sorting_interest1_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>280</y>
-        <width>41</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0</string>
-      </property>
      </widget>
      <widget class="QLabel" name="fip_title_label">
       <property name="geometry">
@@ -3311,96 +3180,6 @@
        <string>Portfolio</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="fip_sorting_interest2_line">
-      <property name="geometry">
-       <rect>
-        <x>600</x>
-        <y>280</y>
-        <width>41</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>100</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="fip_search_pushbutton">
-      <property name="geometry">
-       <rect>
-        <x>640</x>
-        <y>110</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Search</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="fip_sorting_maximum_amount_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>200</y>
-        <width>113</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Max</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="fip_sorting_interest_label">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>260</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Interest (%)</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="fip_search_lineedit">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>110</y>
-        <width>91</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Type to search...</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="fip_sorting_amount_invested_label">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>180</y>
-        <width>161</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Amount invested (€)</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="fip_duration_dash_label">
       <property name="geometry">
        <rect>
@@ -3417,10 +3196,10 @@
      <widget class="QLabel" name="fip_sorting_options_label">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>140</y>
-        <width>151</width>
-        <height>31</height>
+        <x>60</x>
+        <y>120</y>
+        <width>161</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="font">
@@ -3432,6 +3211,217 @@
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sorting Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fip_duration_dash_label_2">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>190</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="fip_search_pushbutton">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>150</y>
+        <width>75</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Search</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fip_amount_invested_label">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>130</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Amount invested (€)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_search_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>150</y>
+        <width>141</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Type to search...</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fip_interest_label">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>130</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Interest (%)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fip_duration_label">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>170</y>
+        <width>151</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Duration (months)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_duration2_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>190</y>
+        <width>45</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Max</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_duration1_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>190</y>
+        <width>45</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Min</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_min_amount_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>190</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Min</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fip_interest_dash_label">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>150</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_interest1_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>150</y>
+        <width>45</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="inputMethodHints">
+       <set>Qt::ImhNone</set>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_max_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>150</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Max</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fip_interest2_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>150</y>
+        <width>45</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>100</string>
       </property>
      </widget>
     </widget>
@@ -3670,16 +3660,7 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
-  <tabstop>fip_search_lineedit</tabstop>
-  <tabstop>fip_search_pushbutton</tabstop>
-  <tabstop>fip_sorting_maximum_amount_lineedit</tabstop>
-  <tabstop>fip_sorting_minimum_amount_lineedit</tabstop>
-  <tabstop>fip_sorting_interest1_lineedit</tabstop>
-  <tabstop>fip_sorting_interest2_line</tabstop>
-  <tabstop>fip_duration1_lineedit</tabstop>
-  <tabstop>fip_duration2_lineedit</tabstop>
   <tabstop>fip_campaigns_table</tabstop>
-  <tabstop>fip_view_campaign_pushbutton</tabstop>
   <tabstop>bp_open_offers_table</tabstop>
   <tabstop>bp_reject_pushbutton</tabstop>
   <tabstop>bp_accept_pushbutton</tabstop>
@@ -3745,7 +3726,6 @@
   <tabstop>ip_reject_pushbutton</tabstop>
   <tabstop>login_login_pushbutton</tabstop>
   <tabstop>profile_email_lineedit</tabstop>
-  <tabstop>ip_investing_opportunities_table</tabstop>
   <tabstop>profile_lastname_lineedit</tabstop>
   <tabstop>login_remember_me_checkbox</tabstop>
   <tabstop>profile_phonenumber_lineedit</tabstop>
