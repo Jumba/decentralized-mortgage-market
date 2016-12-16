@@ -1584,7 +1584,7 @@
      <widget class="QPushButton" name="openmarket_view_loan_bids_pushbutton">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>700</x>
         <y>540</y>
         <width>111</width>
         <height>22</height>
@@ -1879,13 +1879,13 @@
        <rect>
         <x>60</x>
         <y>230</y>
-        <width>641</width>
+        <width>750</width>
         <height>301</height>
        </rect>
       </property>
       <property name="maximumSize">
        <size>
-        <width>641</width>
+        <width>1000</width>
         <height>16777215</height>
        </size>
       </property>
@@ -1932,7 +1932,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Amount (€)</string>
+        <string>Amount Needed (€)</string>
        </property>
        <property name="font">
         <font>
@@ -1961,6 +1961,11 @@
          <weight>75</weight>
          <bold>true</bold>
         </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Time Remaining (days)</string>
        </property>
       </column>
       <column>

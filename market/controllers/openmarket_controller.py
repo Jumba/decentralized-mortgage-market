@@ -12,12 +12,12 @@ class OpenMarketController:
         # self.mainwindow = Ui_MainWindow  # Comment before running
         self.mainwindow = mainwindow  # Uncomment before running
         self.selected_campaign = None
-        # self.mainwindow.openmarket_open_market_table.clicked.connect()
         self.mainwindow.openmarket_open_market_table.doubleClicked.connect(self.switch_to_view_campaign)
+        self.mainwindow.openmarket_open_market_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     def setup_view(self):
         self.selected_campaign = None
-        # content = [self.bplr_payload]
+        content = self.mainwindow.api
         # chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row()
         # chosen_request = content[chosen_index]     # index of the row
         pass
@@ -52,4 +52,3 @@ class OpenMarketController:
         self.icb_current_bids_table.item(0, 0).setText(self.icb_amount_lineedit.text())
         self.icb_current_bids_table.item(0, 1).setText(self.icb_duration_lineedit.text())
         self.icb_current_bids_table.item(0, 2).setText(self.icb_interest_lineedit.text())
-
