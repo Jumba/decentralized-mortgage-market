@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindowyJ3875.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowXT3875.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -598,7 +598,7 @@ class Ui_MainWindow(object):
         self.openmarket_page = QtWidgets.QWidget()
         self.openmarket_page.setObjectName("openmarket_page")
         self.openmarket_view_loan_bids_pushbutton = QtWidgets.QPushButton(self.openmarket_page)
-        self.openmarket_view_loan_bids_pushbutton.setGeometry(QtCore.QRect(590, 540, 111, 22))
+        self.openmarket_view_loan_bids_pushbutton.setGeometry(QtCore.QRect(700, 540, 111, 22))
         self.openmarket_view_loan_bids_pushbutton.setObjectName("openmarket_view_loan_bids_pushbutton")
         self.openmarket_duration_label = QtWidgets.QLabel(self.openmarket_page)
         self.openmarket_duration_label.setGeometry(QtCore.QRect(420, 170, 141, 16))
@@ -685,8 +685,8 @@ class Ui_MainWindow(object):
         self.openmarket_interest2_lineedit.setText("")
         self.openmarket_interest2_lineedit.setObjectName("openmarket_interest2_lineedit")
         self.openmarket_open_market_table = QtWidgets.QTableWidget(self.openmarket_page)
-        self.openmarket_open_market_table.setGeometry(QtCore.QRect(60, 230, 641, 301))
-        self.openmarket_open_market_table.setMaximumSize(QtCore.QSize(641, 16777215))
+        self.openmarket_open_market_table.setGeometry(QtCore.QRect(60, 230, 750, 301))
+        self.openmarket_open_market_table.setMaximumSize(QtCore.QSize(1000, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -699,7 +699,7 @@ class Ui_MainWindow(object):
         self.openmarket_open_market_table.setGridStyle(QtCore.Qt.DotLine)
         self.openmarket_open_market_table.setRowCount(0)
         self.openmarket_open_market_table.setObjectName("openmarket_open_market_table")
-        self.openmarket_open_market_table.setColumnCount(5)
+        self.openmarket_open_market_table.setColumnCount(6)
         item = QtWidgets.QTableWidgetItem()
         self.openmarket_open_market_table.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -721,11 +721,13 @@ class Ui_MainWindow(object):
         item.setFont(font)
         self.openmarket_open_market_table.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
+        self.openmarket_open_market_table.setHorizontalHeaderItem(4, item)
+        item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         item.setFont(font)
-        self.openmarket_open_market_table.setHorizontalHeaderItem(4, item)
+        self.openmarket_open_market_table.setHorizontalHeaderItem(5, item)
         self.openmarket_open_market_table.horizontalHeader().setDefaultSectionSize(130)
         self.openmarket_open_market_table.horizontalHeader().setStretchLastSection(True)
         self.openmarket_open_market_table.verticalHeader().setStretchLastSection(False)
@@ -1536,12 +1538,14 @@ class Ui_MainWindow(object):
         item = self.openmarket_open_market_table.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Property Address"))
         item = self.openmarket_open_market_table.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Amount (€)"))
+        item.setText(_translate("MainWindow", "Amount Needed (€)"))
         item = self.openmarket_open_market_table.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Interest (%)"))
         item = self.openmarket_open_market_table.horizontalHeaderItem(3)
         item.setText(_translate("MainWindow", "Duration (months)"))
         item = self.openmarket_open_market_table.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "Time Remaining (days)"))
+        item = self.openmarket_open_market_table.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Risk Rating"))
         self.openmarket_duration_dash_label.setText(_translate("MainWindow", "-"))
         self.openmarket_interest_dash_label.setText(_translate("MainWindow", "-"))
