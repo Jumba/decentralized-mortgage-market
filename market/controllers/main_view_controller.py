@@ -4,6 +4,8 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+from market.models.role import Role
+from market.models.user import User
 from market.views import main_view
 from navigation import NavigateUser
 from login_controller import LoginController
@@ -20,7 +22,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.api = app.api
         self.setupUi(self)
         self.navigation = NavigateUser(self)
-        self.bplr_payload = {}
+        self.bank_ids = []
         self.setupObjects()
         self.stackedWidget.setCurrentIndex(0)
         self.login_controller = LoginController(self)
@@ -92,7 +94,10 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         #create user
         # self.user_borrower,pub_key1,priv_key1 = self.api.create_user()
         # self.user_investor,pub_key2,priv_key2 = self.api.create_user()
-        # self.user_bank,pub_key3,priv_key3 = self.api.create_user()
+        user_bank1, _, _ = self.api.create_user()
+        user_bank2, _, _ = self.api.create_user()
+        user_bank3, _, _ = self.api.create_user()
+        user_bank4, _, _ = self.api.create_user()
 
 
         #create profile for users
@@ -101,4 +106,18 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
                     'current_postalcode': '1234 CD', 'current_housenumber': '24', 'documents_list': []}
         investor_payload = {'role': 2, 'first_name': 'Ruby', 'last_name': 'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30394', 'phonenumber': '+3170253719290'}
         bank_payload = {'role': 3}
+
+        # Create four banks
+        role = Role(3).value
+        user_bank1.role_id = role
+        self.api.db.put(User._type, user_bank1.id, user_bank1)
+        user_bank2.role_id = role
+        self.api.db.put(User._type, user_bank2.id, user_bank2)
+        user_bank3.role_id = role
+        self.api.db.put(User._type, user_bank3.id, user_bank3)
+        user_bank4.role_id = role
+        self.api.db.put(User._type, user_bank4.id, user_bank4)
+        self.bank_ids = [user_bank1.id, user_bank2.id, user_bank3.id, user_bank4.id]
+
+
 
