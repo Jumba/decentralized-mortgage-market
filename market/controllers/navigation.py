@@ -1,31 +1,19 @@
-from market.views.main_view import Ui_MainWindow
-
 # The user you want to be. Only used for testing.
 USER = 1
 
+
 class NavigateUser:
     def __init__(self, mainwindow):
-        # self.mainwindow = Ui_MainWindow
         self.mainwindow = mainwindow
-        self.mainwindow.navigation_pushbutton_1.setVisible(False)
-        self.mainwindow.navigation_pushbutton_2.setVisible(False)
-        self.mainwindow.navigation_pushbutton_3.setVisible(False)
-        self.mainwindow.navigation_pushbutton_4.setVisible(False)
+        self.set_navigation_visible(False, 0)
 
     def prepare_views_for_user(self):
-        # check page permissions
-        self.mainwindow.navigation_pushbutton_1.setVisible(True)
-        self.mainwindow.navigation_pushbutton_2.setVisible(True)
-        self.mainwindow.navigation_pushbutton_3.setVisible(True)
-        self.mainwindow.navigation_pushbutton_4.setVisible(True)
         self.user_screen_navigation()
         self.mainwindow.navigation_pushbutton_1.click()
-        # self.mainwindow.profile_controller.setup_view()
-        # self.mainwindow.next_screen()
 
     def user_screen_navigation(self):
         user_role = self.mainwindow.app.user.role_id
-        #user_role = USER
+        # user_role = USER
         if user_role:
             if user_role == 1:
                 print 'User logged in as: borrower'
@@ -38,10 +26,6 @@ class NavigateUser:
                 self.set_bank_navigation()
         else:
             print 'User has no recognized role.'
-            self.mainwindow.navigation_pushbutton_1.setVisible(False)
-            self.mainwindow.navigation_pushbutton_2.setVisible(False)
-            self.mainwindow.navigation_pushbutton_3.setVisible(False)
-            self.mainwindow.navigation_pushbutton_4.setVisible(False)
             self.switch_to_profile()
 
     def set_borrower_navigation(self):
@@ -53,11 +37,9 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_bplr)
         self.mainwindow.navigation_pushbutton_4.setText('Open Market')
         self.mainwindow.navigation_pushbutton_4.clicked.connect(self.switch_to_openmarket)
-        # self.mainwindow.profile_controller.setup_view()
         self.mainwindow.openmarket_controller.setup_view()
         self.mainwindow.bplr_controller.setup_view()
-        # self.mainwindow.portfolio_controller.setup_view()
-
+        self.set_navigation_visible(True, 1)
 
     def set_investor_navigation(self):
         self.mainwindow.navigation_pushbutton_1.setText('Profile')
@@ -67,6 +49,8 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.setText('Open market')
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
+        self.set_navigation_visible(True, 2)
+        # TODO Add controllers
 
     def set_bank_navigation(self):
         self.mainwindow.navigation_pushbutton_1.setText('Portfolio')
@@ -76,6 +60,8 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_3.setText('Open Market')
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
+        self.set_navigation_visible(True, 3)
+        # TODO Add controllers
 
     def switch_to_bplr(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.bplr_page)
@@ -102,3 +88,11 @@ class NavigateUser:
     def switch_to_view_campaign(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
 
+    def set_navigation_visible(self, boolean, role):
+        self.mainwindow.navigation_pushbutton_1.setVisible(boolean)
+        self.mainwindow.navigation_pushbutton_2.setVisible(boolean)
+        self.mainwindow.navigation_pushbutton_3.setVisible(boolean)
+        if role == 1:
+            self.mainwindow.navigation_pushbutton_4.setVisible(True)
+        else:
+            self.mainwindow.navigation_pushbutton_4.setVisible(False)
