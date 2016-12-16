@@ -12,6 +12,8 @@ class MortgageMarketConversion(BinaryConversion):
         self.define_meta_message(chr(13), community.get_meta_message(u"introduce_user"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(14), community.get_meta_message(u"api_message_community"), self._encode_api_message, self._decode_api_message)
         self.define_meta_message(chr(15), community.get_meta_message(u"api_message_candidate"), self._encode_api_message, self._decode_api_message)
+        self.define_meta_message(chr(16), community.get_meta_message(u"signed_confirm"), self._encode_signed_confirm, self._decode_signed_confirm)
+
 
     def _encode_api_message(self, message):
         encoded_models = dict()
@@ -44,6 +46,34 @@ class MortgageMarketConversion(BinaryConversion):
             decoded_models[field] = DatabaseModel.decode(encoded_models[field])
 
         return offset, placeholder.meta.payload.implement(request, fields, decoded_models)
+
+    def _encode_signed_confirm(self, message):
+        packet = encode((message.payload.benefactor, message.payload.beneficiary, message.payload.agreement.encode(), message.payload.time))
+        return packet,
+
+    def _decode_signed_confirm(self, placeholder, offset, data):
+        try:
+            offset, payload = decode(data, offset)
+        except ValueError:
+            raise DropPacket("Unable to decode the SignedConfirm-payload")
+
+        if not isinstance(payload, tuple):
+            raise DropPacket("Invalid payload type")
+
+        benefactor, beneficiary, agreement_encoded, time = payload
+        if not isinstance(benefactor, str):
+            raise DropPacket("Invalid 'benefactor' type")
+        if not isinstance(beneficiary, str):
+            raise DropPacket("Invalid 'beneficiary' type")
+        if not isinstance(time, int):
+            raise DropPacket("Invalid 'int' type")
+
+        agreement = DatabaseModel.decode(agreement_encoded)
+        if not isinstance(agreement, DatabaseModel):
+            raise DropPacket("Invalid 'agreement' type")
+
+        return offset, placeholder.meta.payload.implement(benefactor, beneficiary, agreement, time)
+
 
     def _encode_model(self, message):
         encoded_models = dict()

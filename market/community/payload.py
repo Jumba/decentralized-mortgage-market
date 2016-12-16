@@ -77,6 +77,37 @@ class APIMessagePayload(Payload):
                 return self._models[field]
 
 
+class SignedConfirmPayload(Payload):
+    class Implementation(Payload.Implementation):
+        def __init__(self, meta, benefactor, beneficiary, agreement, time):
+            assert isinstance(benefactor, str)
+            assert isinstance(beneficiary, str)
+            assert isinstance(agreement, DatabaseModel)
+            assert isinstance(time, int)
+
+            super(SignedConfirmPayload.Implementation, self).__init__(meta)
+
+            self._benefactor = benefactor
+            self._beneficiary = beneficiary
+            self._agreement = agreement
+            self._time = time
+            
+        @property
+        def benefactor(self):
+            return self._benefactor
+
+        @property
+        def beneficiary(self):
+            return self._beneficiary
+
+        @property
+        def agreement(self):
+            return self._agreement
+
+        @property
+        def time(self):
+            return self._time
+
 class ModelRequestPayload(Payload):
     class Implementation(Payload.Implementation):
         def __init__(self, meta, models):

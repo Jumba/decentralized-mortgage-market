@@ -38,8 +38,11 @@ class DatabaseModel(object):
 
     @staticmethod
     def decode(data, encoding='base64'):
-        pickled = data.decode(encoding)
-        return pickle.loads(pickled)
+        try:
+            pickled = data.decode(encoding)
+            return pickle.loads(pickled)
+        except:
+            return None
 
     def __eq__(self, other):
         return self.id == other.id
