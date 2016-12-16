@@ -10,6 +10,8 @@ before install:
 # command to install dependencies
 install:
   - ./travis-libsodium13.sh
+  - ./travis-sip.sh
+  - ./travis-pyqt5.sh
   - pip install decorator
   - pip install cryptography
   - pip install faker
