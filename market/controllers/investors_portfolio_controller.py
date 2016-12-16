@@ -1,4 +1,3 @@
-import uuid
 from PyQt5 import QtWidgets
 
 from market.api.api import STATUS
@@ -9,9 +8,8 @@ class InvestorsPortfolioController:
         self.mainwindow = mainwindow
 
     def setup_view(self):
-        # Clear table
+        # TODO Figure out how to clear table while preserving headers
         investments_table = self.mainwindow.ip_investments_table
-        investments_table.clear()
 
         # Getting the investments from the investor
         investments = self.mainwindow.api.load_investments(self.mainwindow.app.user)
