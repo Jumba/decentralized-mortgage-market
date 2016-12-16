@@ -35,6 +35,8 @@ class PlaceLoanRequestController:
                     checked_banks.append(banks_ids[pointer])
                 pointer += 1
 
+            if not checked_banks:
+                raise ValueError
             self.payload['banks'] = checked_banks
 
             # Check the chosen mortgage type
