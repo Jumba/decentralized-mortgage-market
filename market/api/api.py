@@ -257,8 +257,8 @@ class MarketAPI(object):
 
         :param user: The user whose investments need to be retrieved.
         :type user: :any:`User`
-        :return: A tuple containing the list investments, the house, and the campaign
-        :rtype: tuple(Investments, House, Campaign)
+        :return: A list containing lists with the list investments, the house, and the campaign
+        :rtype: list
         """
         user = self._get_user(user)
 
@@ -276,9 +276,9 @@ class MarketAPI(object):
 
     def load_open_market(self):
         """
-        Returns a list of all mortgages who have an active campaign going on.
+        Returns a list of all mortgages that have an active campaign going on.
 
-        :return: A list of :any:`Mortgage` objects.
+        :return: A list lists with :any:`Mortgage` objects, :any: 'House' objects, and :any: 'Campaign' objects.
         :rtype: list
         """
         campaigns = self.db.get_all(Campaign._type)
@@ -288,7 +288,9 @@ class MarketAPI(object):
             # If campaign is not completed or end time has not passed yet, get mortgage info
             for campaign in campaigns:
                 if campaign.end_date > datetime.now() and not campaign.completed:
-                    mortgages.append(self.db.get(Mortgage._type, campaign.mortgage_id))
+                    mortgage = self.db.get(Mortgage._type, campaign.mortgage_id)
+                    house = self.db.get(House._type, mortgage.house_id)
+                    mortgages.append([mortgage, campaign, house])
 
         return mortgages
 
@@ -801,7 +803,7 @@ class MarketAPI(object):
 
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: A list of :any: 'Investment' objects, a :any: 'House' object, a :any: 'Campaign' object.
+        :return: A list of lists with :any: 'Investment' objects, a :any: 'House' object, a :any: 'Campaign' object.
         :rtype: list
         """
 
