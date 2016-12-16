@@ -1,4 +1,3 @@
-from market.api.api import MarketAPI
 from market.dispersy.message import Message
 
 
@@ -7,8 +6,6 @@ class MessageQueue(object):
     Message queues for handling incoming and outgoing `api_message_*` messages.
     """
     def __init__(self, api):
-        assert isinstance(api, MarketAPI)
-
         self._api = api
         self._queue = []
 
