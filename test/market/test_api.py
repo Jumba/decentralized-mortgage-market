@@ -1057,7 +1057,7 @@ class APITestSuite(unittest.TestCase):
         self.api.accept_mortgage_offer(borrower, self.payload_mortgage)
 
         # Check if bids are empty
-        bids = self.api.load_bids(self.payload_mortgage)
+        bids, house, campaign = self.api.load_bids(self.payload_mortgage)
         self.assertFalse(bids)
 
         # Place investment bid on the mortgage

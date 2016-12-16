@@ -459,6 +459,8 @@ class MarketAPI(object):
             user.campaign_ids.append(campaign.id)
             bank.campaign_ids.append(campaign.id)
             self.db.put(User._type, bank.id, bank)
+            mortgage.campaign_id = campaign.id
+            self.db.put(Mortgage.mortgage_type, mortgage.id, mortgage)
 
             # Add message to queue
             self.queue.add_message(self.community.send_mortgage_accept_signed, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [bank])
@@ -800,7 +802,7 @@ class MarketAPI(object):
 
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: A list of :any: 'Investment' objects.
+        :return: A list of :any: 'Investment' objects, a :any: 'House' object, a :any: 'Campaign' object.
         :rtype: list
         """
 
@@ -813,7 +815,10 @@ class MarketAPI(object):
         for investment_bid in borrower.investment_ids:
             bids.append(self.db.get(Investment._type, investment_bid))
 
-        return bids
+        house = self.db.get(House._type, loan_request.house_id)
+        campaign = self.db.get(Campaign._type, borrower.campaign_ids[0])
+
+        return bids, house, campaign
 
     def load_mortgages(self, user):
         """
