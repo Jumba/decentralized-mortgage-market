@@ -43,11 +43,13 @@ class APITestSuite(unittest.TestCase):
         self.payload_investment2 = {'user_key': '67903dwiejf3', 'amount': 3000, 'duration': 60, 'interest_rate': 4.5, 'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': STATUS.PENDING}
         self.payload_investment3 = {'user_key': 'kfee-f9874uwe', 'amount': 1000, 'duration': 72, 'interest_rate': 7.5, 'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'status': STATUS.PENDING}
         self.payload_loan_request1 = {'postal_code': '1210 BV', 'house_number': '89', 'price': 150000, 'role': 1, 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'mortgage_type': 1, 'banks' : [], 'description': unicode('La la la'),
-                                      'amount_wanted': 200000}
+                                      'amount_wanted': 200000, 'house_link': 'http://www.myhouseee.com/', 'seller_phone_number': '0612345678', 'seller_email': 'seller1@gmail.com'}
         self.payload_loan_request2 = {'postal_code': '1011 TV', 'house_number': '55', 'price': 160000, 'role': 1, 'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'mortgage_type': 1, 'banks': [], 'description': unicode('Ho ho ho merry christmas'),
-                                      'amount_wanted': 250000}
+                                      'amount_wanted': 250000, 'house_link': 'http://www.myhouseee.com/', 'seller_phone_number': '0612345678', 'seller_email': 'seller1@gmail.com'}
         self.payload_loan_request = {'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c') , 'mortgage_type': 1, 'banks': [],
-                                     'description': unicode('I want to buy a house'), 'amount_wanted': 123456, 'postal_code' : '1111AA', 'house_number' : '11', 'price' : 123456}
+                                     'description': unicode('I want to buy a house'), 'amount_wanted': 123456, 'postal_code' : '1111AA', 'house_number' : '11', 'price' : 123456,
+                                     'house_link': 'http://www.myhouseee.com/', 'seller_phone_number': '0612345678',
+                                     'seller_email': 'seller1@gmail.com'}
         self.payload_mortgage = {'house_id' : UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'mortgage_type': 1, 'amount' : 123000, 'interest_rate' : 5.5, 'max_invest_rate' : 7.0, 'default_rate' : 9.0, 'duration' : 30, 'risk' : 'hi', 'investors' : []}
 
     def test_create_user(self):

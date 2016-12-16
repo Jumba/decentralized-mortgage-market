@@ -351,7 +351,8 @@ class MarketAPI(object):
                 # Set status of the loan request (which is a dictionary of the banks) to pending
                 payload['status'] = dict().fromkeys(payload['banks'], STATUS.PENDING)
 
-                loan_request = LoanRequest(user.id, house_id, payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
+                loan_request = LoanRequest(user.id, house_id, payload['house_link'], payload['seller_phone_number'], payload['seller_email'],
+                                           payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
 
                 # Add the loan request to the borrower
                 user.loan_request_ids.append(self.db.post(LoanRequest._type, loan_request))

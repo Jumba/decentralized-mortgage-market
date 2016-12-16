@@ -8,10 +8,13 @@ from market.models import DatabaseModel
 class LoanRequest(DatabaseModel):
     _type = 'loan_request'
 
-    def __init__(self, user_key, house_id, mortgage_type, banks, description, amount_wanted, status):
+    def __init__(self, user_key, house_id, house_link, seller_phone_number, seller_email, mortgage_type, banks, description, amount_wanted, status):
         super(LoanRequest, self).__init__()
         assert isinstance(user_key, str)
         assert isinstance(house_id, UUID)
+        assert isinstance(house_link, str)
+        assert isinstance(seller_phone_number, str)
+        assert isinstance(seller_email, str)
         assert isinstance(mortgage_type, int)
         assert isinstance(banks, list)
         assert isinstance(description, unicode)
@@ -20,6 +23,9 @@ class LoanRequest(DatabaseModel):
 
         self._user_key = user_key
         self._house_id = house_id
+        self._house_link = house_link
+        self._seller_phone_number = seller_phone_number
+        self._seller_email = seller_email
         self._mortgage_type = mortgage_type
         self._banks = banks
         self._description = description
@@ -33,6 +39,18 @@ class LoanRequest(DatabaseModel):
     @property
     def house_id(self):
         return self._house_id
+
+    @property
+    def house_link(self):
+        return self._house_link
+
+    @property
+    def seller_phone_number(self):
+        return self._seller_phone_number
+
+    @property
+    def seller_email(self):
+        return self._seller_email
 
     @property
     def mortgage_type(self):
