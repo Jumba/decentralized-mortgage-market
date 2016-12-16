@@ -1,7 +1,6 @@
 import logging
 
 from market.models.user import User
-from scenarios.scenario import Scenario
 
 logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
@@ -32,8 +31,11 @@ class MarketApplication(QApplication):
         self.initialize_api()
 
         # Load banks
-        scenario = Scenario(self.api)
-        scenario.create_banks()
+        for bank_name in Global.BANKS:
+            bank = self.api._get_user(Global.BANKS[bank_name]) or User(public_key=Global.BANKS[bank_name], time_added=0)
+            bank.post_or_put(self.api.db)
+            self.api.create_profile(bank, {'role': 3})
+
 
         self.private_key = None
         self.user = None
@@ -58,7 +60,7 @@ class MarketApplication(QApplication):
             self.private_key = self.api.db.backend.get_option('user_key_priv')
             self.user = self.api.login_user(self.private_key.encode("HEX"))
             print "Using an existing user"
-        except KeyError:
+        except (KeyError, IndexError):
             user, _, priv = self.api.create_user()
             self.user = user
             self.private_key = priv
@@ -81,6 +83,7 @@ class MarketApplication(QApplication):
 
         # Send messages from the queue every 3 seconds
         LoopingCall(self.api.outgoing_queue.process).start(3.0)
+        LoopingCall(self.api.incoming_queue.process).start(3.0)
 
     def _scenario(self):
         pass

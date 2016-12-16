@@ -1,3 +1,5 @@
+from threading import Lock
+
 from market.dispersy.message import Message
 
 
@@ -8,12 +10,15 @@ class MessageQueue(object):
     def __init__(self, api):
         self._api = api
         self._queue = []
+        self._lock = Lock()
 
     def push(self, message):
         raise NotImplementedError
 
     def pop(self, message):
+        self._lock.acquire()
         self._queue.remove(message)
+        self._lock.release()
 
     def process(self):
         raise NotImplementedError
@@ -22,15 +27,17 @@ class MessageQueue(object):
 class OutgoingMessageQueue(MessageQueue):
 
     def push(self, message):
+        print "Message pushed: ", message
         assert isinstance(message[0], unicode)
         assert isinstance(message[1], list)
         assert isinstance(message[2], dict)
         assert isinstance(message[3], list)
 
+        self._lock.acquire()
         self._queue.append(message)
+        self._lock.release()
 
     def process(self):
-
         for message in self._queue:
             request, fields, models, receivers = message
 
@@ -55,9 +62,10 @@ class OutgoingMessageQueue(MessageQueue):
 class IncomingMessageQueue(MessageQueue):
 
     def push(self, message):
-        assert isinstance(message, Message)
-        
+        self._lock.acquire()
+        assert isinstance(message, Message.Implementation)
         self._queue.append(message)
+        self._lock.release()
 
     def process(self):
         community = self._api.community

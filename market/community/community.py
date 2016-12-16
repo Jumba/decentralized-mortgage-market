@@ -11,7 +11,7 @@ from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
 from market.models.user import User
-from payload import DatabaseModelPayload, ModelRequestPayload
+from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.house import House
 from market.models.profiles import BorrowersProfile
@@ -81,7 +81,7 @@ class MortgageMarketCommunity(Community):
                     PublicResolution(),
                     DirectDistribution(),
                     CommunityDestination(node_count=50),
-                    DatabaseModelPayload(),
+                    APIMessagePayload(),
                     self.check_message,
                     self.on_api_message),
             Message(self, u"api_message_candidate",
@@ -89,7 +89,7 @@ class MortgageMarketCommunity(Community):
                     PublicResolution(),
                     DirectDistribution(),
                     CandidateDestination(),
-                    DatabaseModelPayload(),
+                    APIMessagePayload(),
                     self.check_message,
                     self.on_api_message),
         ]
@@ -147,7 +147,6 @@ class MortgageMarketCommunity(Community):
         self.dispersy.store_update_forward([message], store, update, forward)
 
     def on_api_message(self, messages):
-        print "API Message bless"
         for message in messages:
             self.api.incoming_queue.push(message)
 

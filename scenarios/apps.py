@@ -24,8 +24,8 @@ class MarketAppSceneBorrower(MarketApplication):
         MarketApplication.__init__(self, *argv)
 
     def initialize_api(self):
-        #self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
-        self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        #self._api = MarketAPI(MockDatabase(MemoryBackend()))
 
     def _scenario(self):
         self.scenario = Scenario(self.api)
