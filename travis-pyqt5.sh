@@ -2,5 +2,5 @@ wget http://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-5.7/PyQt5_gpl-5.7.
 tar xvfz PyQt5_gpl-5.7.tar.gz
 cd PyQt5_gpl-5.7
 sudo ./configure
-make
-make install
+sudo make
+sudo make install
