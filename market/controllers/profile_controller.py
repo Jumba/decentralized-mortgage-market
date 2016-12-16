@@ -70,3 +70,12 @@ class ProfileController:
             # print 'check if the profile has been added:'
             # print self.mainwindow.api.load_profile(self.mainwindow.app.user)
         self.mainwindow.app.user.update(self.mainwindow.api.db)
+        # TODO switch navigation bar
+        self.update_navigation_bar()
+
+    def update_navigation_bar(self):
+        user_role = self.mainwindow.app.user.role_id
+        if user_role == 1:
+            self.mainwindow.navigation.set_borrower_navigation()
+        elif user_role == 2:
+            self.mainwindow.navigation.set_investor_navigation()
