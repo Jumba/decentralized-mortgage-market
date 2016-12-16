@@ -45,11 +45,16 @@ class ProfileController:
             # TODO Add missing 'documents_list': self.documentsTable
             self.payload['documents_list'] = []
 
-        # Show a popup window when the profile has been saved
-        if self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload):
-            QMessageBox.about(self.mainwindow, "Profile saved", 'Your profile has been saved.')
-        self.mainwindow.app.user.update(self.mainwindow.api.db)
-        self.update_navigation_bar()
+        # Check if the user can switch roles
+        if self.check_role_switch():
+            # Show a popup window when the profile has been saved
+            if self.mainwindow.api.create_profile(self.mainwindow.app.user, self.payload):
+                QMessageBox.about(self.mainwindow, "Profile saved", 'Your profile has been saved.')
+            self.mainwindow.app.user.update(self.mainwindow.api.db)
+            self.update_navigation_bar()
+        else:
+            QMessageBox.about(self.mainwindow, "Role switch failed",
+                              'It is not possible to change your role at this time')
 
     def update_navigation_bar(self):
         # Check which role the user currently has, and adjust the navigation bar accordingly
@@ -58,3 +63,11 @@ class ProfileController:
             self.mainwindow.navigation.set_borrower_navigation()
         elif user_role == 2:
             self.mainwindow.navigation.set_investor_navigation()
+
+    def check_role_switch(self):
+        # Check if the user still has an open loan request or investments
+        # If not, they can switch roles
+        user = self.mainwindow.app.user
+        if user.loan_request_ids or user.investment_ids:
+            return False
+        return True
