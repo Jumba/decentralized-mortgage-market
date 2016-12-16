@@ -3,4 +3,4 @@ tar xvfz sip-4.18.1.tar.gz
 cd sip-4.18.1
 ./configure
 make
-make install
+sudo make install

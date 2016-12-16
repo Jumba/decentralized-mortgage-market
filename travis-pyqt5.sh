@@ -3,4 +3,4 @@ tar xvfz PyQt5_gpl-5.7.tar.gz
 cd PyQt5_gpl-5.7
 ./configure
 make
-make install
+sudo make install
