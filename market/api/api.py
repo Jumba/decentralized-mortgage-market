@@ -837,19 +837,15 @@ class MarketAPI(object):
         """
         assert isinstance(user, User)
         user = self._get_user(user)
-        role = self.get_role(user)
 
-        if role.name == 'FINANCIAL_INSTITUTION':
-            mortgages = []
+        mortgages = []
 
-            for mortgage_id in user.mortgage_ids:
-                mortgage = self.db.get(Mortgage._type, mortgage_id)
-                assert isinstance(mortgage, Mortgage)
-                if mortgage.status == STATUS.ACCEPTED:
-                    house = self.db.get(House._type, mortgage.house_id)
-                    campaign = self.db.get(Campaign._type, mortgage.campaign_id)
-                    mortgages.append([mortgage, house, campaign])
+        for mortgage_id in user.mortgage_ids:
+            mortgage = self.db.get(Mortgage._type, mortgage_id)
+            assert isinstance(mortgage, Mortgage)
+            if mortgage.status == STATUS.ACCEPTED:
+                house = self.db.get(House._type, mortgage.house_id)
+                campaign = self.db.get(Campaign._type, mortgage.campaign_id)
+                mortgages.append([mortgage, house, campaign])
 
-            return mortgages
-        else:
-            return False
+        return mortgages
