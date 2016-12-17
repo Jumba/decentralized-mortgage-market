@@ -633,7 +633,8 @@ class MarketAPI(object):
 
         :param user: The bank :any:`User`
         :type user: :any:`User`
-        :return: A list of the :any: 'LoanRequest's if there are any, False otherwise.
+        :return: A list of lists containing the :any: 'LoanRequest's and the :any: 'House's if there are any,
+        False otherwise.
         :rtype: list or False
         """
         assert isinstance(user, User)
@@ -647,7 +648,9 @@ class MarketAPI(object):
             # Only show loan requests that are still pending
             for pending_loan_request_id in user.loan_request_ids:
                 if self.db.get(LoanRequest._type, pending_loan_request_id).status[user.id] == STATUS.PENDING:
-                    pending_loan_requests.append(self.db.get(LoanRequest._type, pending_loan_request_id))
+                    pending_loan_request = self.db.get(LoanRequest._type, pending_loan_request_id)
+                    house = self.db.get(House._type, pending_loan_request.house_id)
+                    pending_loan_requests.append([pending_loan_request, house])
 
             return pending_loan_requests
         else:

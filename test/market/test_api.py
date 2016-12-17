@@ -745,23 +745,23 @@ class APITestSuite(unittest.TestCase):
         and not the loan requests with STATUS.ACCEPTED or STATUS.REJECTED
         """
         # Create borrowers
-        borrower1, pub, priv = self.api.create_user()
+        borrower1, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
         self.api.db.put(User._type, borrower1.id, borrower1)
 
-        borrower2, pub, priv = self.api.create_user()
+        borrower2, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower2.role_id = role_id
         self.api.db.put(User._type, borrower2.id, borrower2)
 
-        borrower3, pub, priv = self.api.create_user()
+        borrower3, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower3.role_id = role_id
         self.api.db.put(User._type, borrower3.id, borrower3)
 
         # Create a bank
-        bank, pub, priv = self.api.create_user()
+        bank, _, _ = self.api.create_user()
         role_id = Role(3).value
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
@@ -781,9 +781,9 @@ class APITestSuite(unittest.TestCase):
         updated_bank = self.api.db.get(User._type, bank.id)
         pending_loan_requests = self.api.load_all_loan_requests(updated_bank)
         self.assertIsInstance(pending_loan_requests, list)
-        self.assertNotIn(loan_request_1, pending_loan_requests)
-        self.assertIn(loan_request_2, pending_loan_requests)
-        self.assertIn(loan_request_3, pending_loan_requests)
+        self.assertNotIn(loan_request_1, pending_loan_requests[0])
+        self.assertIn(loan_request_2, pending_loan_requests[0])
+        self.assertIn(loan_request_3, pending_loan_requests[1])
 
     def test_load_single_loan_request(self):
         """
