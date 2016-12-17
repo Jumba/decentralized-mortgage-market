@@ -831,7 +831,8 @@ class MarketAPI(object):
 
             :param user: The bank :any:`User`
             :type user: :any:`User`
-            :return: A list of the :any: 'Mortgage's if there are any, False otherwise.
+            :return: A list of lists containing the :any: 'Mortgage', the :any: 'House', and the :any: 'Campaign' if
+            there are any, False otherwise.
             :rtype: list or False
         """
         assert isinstance(user, User)
@@ -845,7 +846,9 @@ class MarketAPI(object):
                 mortgage = self.db.get(Mortgage._type, mortgage_id)
                 assert isinstance(mortgage, Mortgage)
                 if mortgage.status == STATUS.ACCEPTED:
-                    mortgages.append(mortgage)
+                    house = self.db.get(House._type, mortgage.house_id)
+                    campaign = self.db.get(Campaign._type, mortgage.campaign_id)
+                    mortgages.append([mortgage, house, campaign])
 
             return mortgages
         else:

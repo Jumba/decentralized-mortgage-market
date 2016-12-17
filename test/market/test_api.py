@@ -1124,5 +1124,5 @@ class APITestSuite(unittest.TestCase):
         mortgages = self.api.load_mortgages(bank)
 
         # Check if only the accepted mortgage is in the bank's list
-        self.assertIn(mortgage1, mortgages)
-        self.assertNotIn(mortgage2, mortgages)
+        self.assertIn(mortgage1, mortgages[0])
+        self.assertNotIn(mortgage2, mortgages[0])
