@@ -633,28 +633,23 @@ class MarketAPI(object):
 
         :param user: The bank :any:`User`
         :type user: :any:`User`
-        :return: A list of lists containing the :any: 'LoanRequest's and the :any: 'House's if there are any,
-        False otherwise.
-        :rtype: list or False
+        :return: A list of lists containing the :any: 'LoanRequest's and the :any: 'House's
+        :rtype: list
         """
         assert isinstance(user, User)
 
         user = self._get_user(user)
-        role = self.get_role(user)
 
-        if role.name == 'FINANCIAL_INSTITUTION':
-            pending_loan_requests = []
+        pending_loan_requests = []
 
-            # Only show loan requests that are still pending
-            for pending_loan_request_id in user.loan_request_ids:
-                if self.db.get(LoanRequest._type, pending_loan_request_id).status[user.id] == STATUS.PENDING:
-                    pending_loan_request = self.db.get(LoanRequest._type, pending_loan_request_id)
-                    house = self.db.get(House._type, pending_loan_request.house_id)
-                    pending_loan_requests.append([pending_loan_request, house])
+        # Only show loan requests that are still pending
+        for pending_loan_request_id in user.loan_request_ids:
+            if self.db.get(LoanRequest._type, pending_loan_request_id).status[user.id] == STATUS.PENDING:
+                pending_loan_request = self.db.get(LoanRequest._type, pending_loan_request_id)
+                house = self.db.get(House._type, pending_loan_request.house_id)
+                pending_loan_requests.append([pending_loan_request, house])
 
-            return pending_loan_requests
-        else:
-            return False
+        return pending_loan_requests
 
     def load_single_loan_request(self, payload):
         """
@@ -831,9 +826,8 @@ class MarketAPI(object):
 
             :param user: The bank :any:`User`
             :type user: :any:`User`
-            :return: A list of lists containing the :any: 'Mortgage', the :any: 'House', and the :any: 'Campaign' if
-            there are any, False otherwise.
-            :rtype: list or False
+            :return: A list of lists containing the :any: 'Mortgage', the :any: 'House', and the :any: 'Campaign'
+            :rtype: list
         """
         assert isinstance(user, User)
         user = self._get_user(user)
