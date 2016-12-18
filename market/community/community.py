@@ -8,7 +8,7 @@ from market.dispersy.authentication import MemberAuthentication, DoubleMemberAut
 from market.dispersy.community import Community
 from market.dispersy.conversion import DefaultConversion
 from market.dispersy.destination import CommunityDestination, CandidateDestination
-from market.dispersy.distribution import DirectDistribution
+from market.dispersy.distribution import DirectDistribution, SyncDistribution, FullSyncDistribution
 from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
@@ -76,7 +76,7 @@ class MortgageMarketCommunity(Community):
             Message(self, u"api_message_community",
                     MemberAuthentication(),
                     PublicResolution(),
-                    DirectDistribution(),
+                    FullSyncDistribution(synchronization_direction=u"RANDOM", priority=127, enable_sequence_number=True),
                     CommunityDestination(node_count=50),
                     APIMessagePayload(),
                     self.check_message,

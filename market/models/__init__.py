@@ -1,13 +1,22 @@
 import json
 import pickle
 import uuid
+import hashlib
+
+import time
+
+from market.dispersy.crypto import ECCrypto
 
 
 class DatabaseModel(object):
     _type = 'database_model'
+    _hash_exclude = ['_signature', '_time_signed', '_signer']
 
     def __init__(self, id=None):
         self._id = id
+        self._time_signed = None
+        self._signature = None
+        self._signer = None
 
     def save(self, id):
         self._id = id
@@ -19,6 +28,18 @@ class DatabaseModel(object):
     @property
     def type(self):
         return self._type
+
+    @property
+    def signature(self):
+        return self._signature
+
+    @property
+    def signer(self):
+        return self._signer
+
+    @property
+    def time_signed(self):
+        return self._time_signed
 
     def generate_id(self, force=False):
         if not self._id or force:
@@ -67,5 +88,62 @@ class DatabaseModel(object):
             output[attr] = getattr(self, attr)
 
         return json.dumps(output)
+
+    def __hash__(self):
+        output = []
+        for attr in vars(self):
+            if attr not in self._hash_exclude:
+                output.append(getattr(self, attr))
+
+        return hash(tuple(output))
+
+    def _generate_sha1_hash(self):
+        output = []
+        for attr in vars(self):
+            if attr not in self._hash_exclude:
+                output.append(str(getattr(self, attr)))
+
+        sha1_hash = hashlib.sha1(json.dumps(output)).hexdigest()
+        return sha1_hash
+
+    def sign(self, api):
+        if not self.id:
+            raise RuntimeError("Can't sign an unsaved model")
+
+        ec = ECCrypto()
+        hash = self._generate_sha1_hash()
+
+        private_key = api.db.backend.get_option('user_key_priv')
+        public_key = api.db.backend.get_option('user_key_pub')
+        signing_key = ec.key_from_private_bin(private_key.decode('HEX'))
+        decode_key = ec.key_from_public_bin(public_key.decode("HEX"))
+
+        self._signature = ec.create_signature(signing_key, hash)
+        self._signer = public_key
+        self._time_signed = time.time()
+
+        self.post_or_put(api.db)
+
+    def _is_valid_signer(self):
+        if self.signature and self.signer:
+            return True
+        else:
+            return False
+
+    def signature_valid(self):
+        if self._is_valid_signer():
+            ec = ECCrypto()
+            signing_key = ec.key_from_public_bin(self._signer.decode("HEX"))
+            signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(),self.signature)
+            return signature_valid
+        return False
+
+
+
+
+
+
+
+
 
 
