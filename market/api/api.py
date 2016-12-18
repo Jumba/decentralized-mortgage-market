@@ -120,6 +120,8 @@ class MarketAPI(object):
         +----------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------+
         | current_housenumber  | The user's current house number                                                                    | No                                             |
         +----------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------+
+        | current_address      | The user's current address                                                                         | No                                             |
+        +----------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------+
         | documents_list       | A list of documents                                                                                | No                                             |
         +----------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------+
 
@@ -143,7 +145,9 @@ class MarketAPI(object):
                 user.profile_id = self.db.post(Profile._type, profile)
             elif role.name == 'BORROWER':
                 profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
-                                           payload['phonenumber'], payload['current_postalcode'], payload['current_housenumber'], payload['documents_list'])
+                                           payload['phonenumber'], payload['current_postalcode'],
+                                           payload['current_housenumber'], payload['current_address'],
+                                           payload['documents_list'])
                 user.profile_id = self.db.post(BorrowersProfile._type, profile)
             elif role.name == 'FINANCIAL_INSTITUTION':
                 self.db.put(User._type, user.id, user)
@@ -316,6 +320,8 @@ class MarketAPI(object):
         | postal_code    | The postal code of the house that is the target of the mortgage  |
         +----------------+------------------------------------------------------------------+
         | house_number   | The house number of the house that is the target of the mortgage |
+        +----------------+------------------------------------------------------------------+
+        | address        | The address of the house that is the target of the mortgage      |
         +----------------+------------------------------------------------------------------+
         | price          | The total price of the house                                     |
         +----------------+------------------------------------------------------------------+
