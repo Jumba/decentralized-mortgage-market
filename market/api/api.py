@@ -655,17 +655,18 @@ class MarketAPI(object):
         """
         Display the selected pending loan request
 
-        :return: A containing the :any: 'LoanRequest', the :any: 'User' that wants a mortgage, and the :any: 'House'
-        that the borrower wants
+        :return: A containing the :any: 'LoanRequest', the :any: 'Profile' of the borrower that wants a mortgage,
+        and the :any: 'House' that the borrower wants
         :rtype: list
         """
         assert isinstance(payload, dict)
 
         loan_request = self.db.get(LoanRequest._type, payload['loan_request_id'])
         borrower = self.db.get(User._type, loan_request.user_key)
+        borrower_profile = self.db.get(BorrowersProfile._type, borrower.profile_id)
         house = self.db.get(House._type, loan_request.house_id)
 
-        return [loan_request, borrower, house]
+        return [loan_request, borrower_profile, house]
 
     def accept_loan_request(self, bank, payload):
         """

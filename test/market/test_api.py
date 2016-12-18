@@ -796,6 +796,10 @@ class APITestSuite(unittest.TestCase):
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
+        # Create a borrowers profile
+        self.payload['role'] = 1  # borrower
+        profile = self.api.create_profile(borrower, self.payload)
+
         # Create loan request
         self.payload['user_key'] = borrower.id  # set user_key to the borrower's public key
         loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
@@ -803,11 +807,12 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request['loan_request_id'] = loan_request.id
 
         # Check if the correct loan request has been returned
+        borrower.update(self.api.db)
         loaded_loan_request = self.api.load_single_loan_request(self.payload_loan_request)
         self.assertIsInstance(loaded_loan_request[0], LoanRequest)
         self.assertEqual(loan_request.id, loaded_loan_request[0].id)
-        self.assertIsInstance(loaded_loan_request[1], User)
-        self.assertEqual(borrower.id, loaded_loan_request[1].id)
+        self.assertIsInstance(loaded_loan_request[1], BorrowersProfile)
+        self.assertEqual(borrower.profile_id, loaded_loan_request[1].id)
         self.assertIsInstance(loaded_loan_request[2], House)
 
     def test_accept_loan_request(self):
