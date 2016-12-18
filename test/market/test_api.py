@@ -804,8 +804,11 @@ class APITestSuite(unittest.TestCase):
 
         # Check if the correct loan request has been returned
         loaded_loan_request = self.api.load_single_loan_request(self.payload_loan_request)
-        self.assertIsInstance(loaded_loan_request, LoanRequest)
-        self.assertEqual(loan_request.id, loaded_loan_request.id)
+        self.assertIsInstance(loaded_loan_request[0], LoanRequest)
+        self.assertEqual(loan_request.id, loaded_loan_request[0].id)
+        self.assertIsInstance(loaded_loan_request[1], User)
+        self.assertEqual(borrower.id, loaded_loan_request[1].id)
+        self.assertIsInstance(loaded_loan_request[2], House)
 
     def test_accept_loan_request(self):
         """
