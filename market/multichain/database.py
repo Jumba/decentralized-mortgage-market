@@ -16,18 +16,14 @@ schema = u"""
 CREATE TABLE IF NOT EXISTS multi_chain(
  public_key_requester		TEXT NOT NULL,
  public_key_responder		TEXT NOT NULL,
- up                         INTEGER NOT NULL,
- down                       INTEGER NOT NULL,
 
- total_up_requester         UNSIGNED BIG INT NOT NULL,
- total_down_requester       UNSIGNED BIG INT NOT NULL,
+ model_requester            TEXT NOT NULL,
  sequence_number_requester  INTEGER NOT NULL,
  previous_hash_requester	TEXT NOT NULL,
  signature_requester		TEXT NOT NULL,
  hash_requester		        TEXT PRIMARY KEY,
 
- total_up_responder         UNSIGNED BIG INT NOT NULL,
- total_down_responder       UNSIGNED BIG INT NOT NULL,
+ model_responder            TEXT NOT NULL,
  sequence_number_responder  INTEGER NOT NULL,
  previous_hash_responder	TEXT NOT NULL,
  signature_responder		TEXT NOT NULL,
@@ -65,21 +61,21 @@ class MultiChainDB(Database):
         Persist a block
         :param block: The data that will be saved.
         """
-        data = (buffer(block.public_key_requester), buffer(block.public_key_responder), block.up, block.down,
-                block.total_up_requester, block.total_down_requester,
+        data = (buffer(block.public_key_requester), buffer(block.public_key_responder),
+                buffer(block.model_requester),
                 block.sequence_number_requester, buffer(block.previous_hash_requester),
                 buffer(block.signature_requester), buffer(block.hash_requester),
-                block.total_up_responder, block.total_down_responder,
+                buffer(block.model_responder),
                 block.sequence_number_responder, buffer(block.previous_hash_responder),
                 buffer(block.signature_responder), buffer(block.hash_responder))
 
         self.execute(
-            u"INSERT INTO multi_chain (public_key_requester, public_key_responder, up, down, "
-            u"total_up_requester, total_down_requester, sequence_number_requester, previous_hash_requester, "
+            u"INSERT INTO multi_chain (public_key_requester, public_key_responder, "
+            u"model_requester, sequence_number_requester, previous_hash_requester, "
             u"signature_requester, hash_requester, "
-            u"total_up_responder, total_down_responder, sequence_number_responder, previous_hash_responder, "
+            u"model_responder, sequence_number_responder, previous_hash_responder, "
             u"signature_responder, hash_responder) "
-            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             data)
         self.commit()
 
@@ -89,13 +85,13 @@ class MultiChainDB(Database):
         :param block: The data that will be saved.
         """
         data = (
-            block.total_up_responder, block.total_down_responder,
+            buffer(block.model_responder),
             block.sequence_number_responder, buffer(block.previous_hash_responder),
             buffer(block.signature_responder), buffer(block.hash_responder), buffer(block.hash_requester))
 
         self.execute(
             u"UPDATE multi_chain "
-            u"SET total_up_responder = ?, total_down_responder = ?, "
+            u"SET model_responder = ?, "
             u"sequence_number_responder = ?, previous_hash_responder = ?, "
             u"signature_responder = ?, hash_responder = ? "
             u"WHERE hash_requester = ?",
@@ -131,10 +127,10 @@ class MultiChainDB(Database):
         :param hash_requester: The hash_requester of the block that needs to be retrieved.
         :return: The block that was requested or None
         """
-        db_query = u"SELECT public_key_requester, public_key_responder, up, down, " \
-                   u"total_up_requester, total_down_requester, sequence_number_requester, previous_hash_requester, " \
+        db_query = u"SELECT public_key_requester, public_key_responder, " \
+                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
                    u"signature_requester, hash_requester, " \
-                   u"total_up_responder, total_down_responder, sequence_number_responder, previous_hash_responder, " \
+                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
                    u"signature_responder, hash_responder, insert_time " \
                    u"FROM `multi_chain` WHERE hash_requester = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash_requester),)).fetchone()
@@ -147,10 +143,10 @@ class MultiChainDB(Database):
         :param hash: The hash of the block that needs to be retrieved.
         :return: The block that was requested or None
         """
-        db_query = u"SELECT public_key_requester, public_key_responder, up, down, " \
-                   u"total_up_requester, total_down_requester, sequence_number_requester, previous_hash_requester, " \
+        db_query = u"SELECT public_key_requester, public_key_responder, " \
+                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
                    u"signature_requester, hash_requester, " \
-                   u"total_up_responder, total_down_responder, sequence_number_responder, previous_hash_responder, " \
+                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
                    u"signature_responder, hash_responder, insert_time " \
                    u"FROM `multi_chain` WHERE hash_requester = ? OR hash_responder = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash), buffer(hash))).fetchone()
@@ -163,10 +159,10 @@ class MultiChainDB(Database):
         :param public_key: The public key corresponding to the block
         :param sequence_number: The sequence number corresponding to the block.
         :return: The block that was requested or None"""
-        db_query = u"SELECT public_key_requester, public_key_responder, up, down, " \
-                   u"total_up_requester, total_down_requester, sequence_number_requester, previous_hash_requester, " \
+        db_query = u"SELECT public_key_requester, public_key_responder, " \
+                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
                    u"signature_requester, hash_requester, " \
-                   u"total_up_responder, total_down_responder, sequence_number_responder, previous_hash_responder, " \
+                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
                    u"signature_responder, hash_responder, insert_time " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_requester AS sequence_number, " \
@@ -249,6 +245,7 @@ class MultiChainDB(Database):
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
         return db_result if db_result is not None else -1
 
+    # This function is probably not needed as we do not need to know the up and down, right?
     def get_total(self, public_key):
         """
         Return the latest (total_up, total_down) known for this node.
@@ -300,36 +297,32 @@ class DatabaseBlock:
         # Common part
         self.public_key_requester = str(data[0])
         self.public_key_responder = str(data[1])
-        self.up = data[2]
-        self.down = data[3]
         # Requester part
-        self.total_up_requester = data[4]
-        self.total_down_requester = data[5]
-        self.sequence_number_requester = data[6]
-        self.previous_hash_requester = str(data[7])
-        self.signature_requester = str(data[8])
-        self.hash_requester = str(data[9])
+        self.model_requester = str(data[2])
+        self.sequence_number_requester = data[3]
+        self.previous_hash_requester = str(data[4])
+        self.signature_requester = str(data[5])
+        self.hash_requester = str(data[6])
         # Responder part
-        self.total_up_responder = data[10]
-        self.total_down_responder = data[11]
-        self.sequence_number_responder = data[12]
-        self.previous_hash_responder = str(data[13])
-        self.signature_responder = str(data[14])
-        self.hash_responder = str(data[15])
+        self.model_responder = str(data[7])
+        self.sequence_number_responder = data[8]
+        self.previous_hash_responder = str(data[9])
+        self.signature_responder = str(data[10])
+        self.hash_responder = str(data[11])
 
-        self.insert_time = data[16]
+        self.insert_time = data[12]
 
     @classmethod
     def from_signature_response_message(cls, message):
         payload = message.payload
         requester = message.authentication.signed_members[0]
         responder = message.authentication.signed_members[1]
-        return cls((requester[1].public_key, responder[1].public_key, payload.up, payload.down,
-                    payload.total_up_requester, payload.total_down_requester,
+        return cls((requester[1].public_key, responder[1].public_key,
+                    payload.model_requester,
                     payload.sequence_number_requester, payload.previous_hash_requester,
                     requester[0], sha256(encode_block_requester_half(payload, requester[1].public_key,
                                                                      responder[1].public_key, requester[0])).digest(),
-                    payload.total_up_responder, payload.total_down_responder,
+                    payload.model_responder,
                     payload.sequence_number_responder, payload.previous_hash_responder,
                     responder[0], sha256(encode_block(payload, requester, responder)).digest(),
                     None))
@@ -339,8 +332,8 @@ class DatabaseBlock:
         payload = message.payload
         requester = message.authentication.signed_members[0]
         responder = message.authentication.signed_members[1]
-        return cls((requester[1].public_key, responder[1].public_key, payload.up, payload.down,
-                    payload.total_up_requester, payload.total_down_requester,
+        return cls((requester[1].public_key, responder[1].public_key,
+                    payload.model_requester,
                     payload.sequence_number_requester, payload.previous_hash_requester,
                     requester[0], sha256(encode_block_requester_half(payload, requester[1].public_key,
                                                                      responder[1].public_key, requester[0])).digest(),
@@ -352,14 +345,14 @@ class DatabaseBlock:
     @classmethod
     def from_block_response_message(cls, message, requester, responder):
         payload = message.payload
-        return cls((requester.public_key, responder.public_key, payload.up, payload.down,
-                    payload.total_up_requester, payload.total_down_requester,
+        return cls((requester.public_key, responder.public_key,
+                    payload.model,
                     payload.sequence_number_requester, payload.previous_hash_requester,
                     payload.signature_requester,
                     sha256(encode_block_requester_half(payload, payload.public_key_requester,
                                                        payload.public_key_responder,
                                                        payload.signature_requester)).digest(),
-                    payload.total_up_responder, payload.total_down_responder,
+                    payload.model,
                     payload.sequence_number_responder, payload.previous_hash_responder,
                     payload.signature_responder, sha256(encode_block_crawl(payload)).digest(),
                     None))
@@ -368,10 +361,9 @@ class DatabaseBlock:
         """
         :return: (tuple) corresponding to the payload data in a Signature message.
         """
-        return (self.up, self.down,
-                self.total_up_requester, self.total_down_requester,
+        return (self.model_requester,
                 self.sequence_number_requester, self.previous_hash_requester,
-                self.total_up_responder, self.total_down_responder,
+                self.model_responder,
                 self.sequence_number_responder, self.previous_hash_responder,
                 self.public_key_requester, self.signature_requester,
                 self.public_key_responder, self.signature_responder)
