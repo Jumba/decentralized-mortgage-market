@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>6</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -2010,7 +2010,7 @@
     <widget class="QWidget" name="icb_page">
      <widget class="QLineEdit" name="icb_amount_lineedit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2036,7 +2036,7 @@
      </widget>
      <widget class="QLineEdit" name="icb_duration_lineedit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2049,7 +2049,7 @@
      </widget>
      <widget class="QLabel" name="icb_duration_label">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2155,7 +2155,7 @@
      </widget>
      <widget class="QLabel" name="icb_place_bid_label">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2178,7 +2178,7 @@
      </widget>
      <widget class="QLabel" name="icb_amount_label">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2194,7 +2194,7 @@
      </widget>
      <widget class="QPushButton" name="icb_place_bid_pushbutton">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2230,7 +2230,7 @@
      </widget>
      <widget class="QLabel" name="icb_interest_label">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -2246,7 +2246,7 @@
      </widget>
      <widget class="QLineEdit" name="icb_interest_lineedit">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
