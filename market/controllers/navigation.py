@@ -6,8 +6,6 @@ class NavigateUser:
     def prepare_views_for_user(self):
         self.user_screen_navigation()
         self.mainwindow.navigation_pushbutton_1.click()
-        self.mainwindow.openmarket_controller.setup_view()
-        self.mainwindow.cb_controller.setup_view()
 
     def user_screen_navigation(self):
         user_role = self.mainwindow.app.user.role_id
@@ -76,6 +74,7 @@ class NavigateUser:
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fip_page)
 
     def switch_to_openmarket(self):
+        self.mainwindow.openmarket_controller.setup_view()
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.openmarket_page)
 
     def switch_to_profile(self):
@@ -88,8 +87,9 @@ class NavigateUser:
     def switch_to_fiplr2(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr2_page)
 
-    def switch_to_view_campaign(self):
-        self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
+    def switch_to_campaign_bids(self, mortgage_id):
+        self.mainwindow.cb_controller.setup_view(mortgage_id)
+        self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.icb_page)
 
     def set_navigation_visible(self, boolean, role):
         self.mainwindow.navigation_pushbutton_1.setVisible(boolean)

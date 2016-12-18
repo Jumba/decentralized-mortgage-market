@@ -32,6 +32,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.ip_controller = InvestorsPortfolioController(self)
         self.login_controller = LoginController(self)
         self.openmarket_controller = OpenMarketController(self)
+        self.icb_controller = CampaignBidsController(self)
         self.fiplr1_controller = PendingLoanRequests1Controller(self)
         self.fiplr2_controller = PendingLoanRequests2Controller(self)
         self.bplr_controller = PlaceLoanRequestController(self)
