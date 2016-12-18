@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindowle3875.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowpm3875.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -322,6 +322,7 @@ class Ui_MainWindow(object):
         self.fiplr1_loan_requests_table.setEnabled(True)
         self.fiplr1_loan_requests_table.setGeometry(QtCore.QRect(60, 120, 571, 221))
         self.fiplr1_loan_requests_table.setMaximumSize(QtCore.QSize(800, 16777215))
+        self.fiplr1_loan_requests_table.setToolTip("")
         self.fiplr1_loan_requests_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.fiplr1_loan_requests_table.setDragEnabled(False)
         self.fiplr1_loan_requests_table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
@@ -741,6 +742,7 @@ class Ui_MainWindow(object):
         self.icb_page = QtWidgets.QWidget()
         self.icb_page.setObjectName("icb_page")
         self.icb_amount_lineedit = QtWidgets.QLineEdit(self.icb_page)
+        self.icb_amount_lineedit.setEnabled(False)
         self.icb_amount_lineedit.setGeometry(QtCore.QRect(60, 550, 113, 27))
         self.icb_amount_lineedit.setObjectName("icb_amount_lineedit")
         self.icb_property_address_lineedit = QtWidgets.QLineEdit(self.icb_page)
@@ -748,9 +750,11 @@ class Ui_MainWindow(object):
         self.icb_property_address_lineedit.setGeometry(QtCore.QRect(60, 130, 421, 27))
         self.icb_property_address_lineedit.setObjectName("icb_property_address_lineedit")
         self.icb_duration_lineedit = QtWidgets.QLineEdit(self.icb_page)
+        self.icb_duration_lineedit.setEnabled(False)
         self.icb_duration_lineedit.setGeometry(QtCore.QRect(330, 550, 113, 27))
         self.icb_duration_lineedit.setObjectName("icb_duration_lineedit")
         self.icb_duration_label = QtWidgets.QLabel(self.icb_page)
+        self.icb_duration_label.setEnabled(False)
         self.icb_duration_label.setGeometry(QtCore.QRect(330, 530, 121, 17))
         self.icb_duration_label.setObjectName("icb_duration_label")
         self.icb_current_bids_table = QtWidgets.QTableWidget(self.icb_page)
@@ -793,6 +797,7 @@ class Ui_MainWindow(object):
         self.icb_current_bids_table.horizontalHeader().setStretchLastSection(True)
         self.icb_current_bids_table.verticalHeader().setStretchLastSection(False)
         self.icb_place_bid_label = QtWidgets.QLabel(self.icb_page)
+        self.icb_place_bid_label.setEnabled(False)
         self.icb_place_bid_label.setGeometry(QtCore.QRect(60, 500, 81, 17))
         font = QtGui.QFont()
         font.setPointSize(10)
@@ -801,9 +806,11 @@ class Ui_MainWindow(object):
         self.icb_place_bid_label.setFont(font)
         self.icb_place_bid_label.setObjectName("icb_place_bid_label")
         self.icb_amount_label = QtWidgets.QLabel(self.icb_page)
+        self.icb_amount_label.setEnabled(False)
         self.icb_amount_label.setGeometry(QtCore.QRect(60, 530, 121, 17))
         self.icb_amount_label.setObjectName("icb_amount_label")
         self.icb_place_bid_pushbutton = QtWidgets.QPushButton(self.icb_page)
+        self.icb_place_bid_pushbutton.setEnabled(False)
         self.icb_place_bid_pushbutton.setGeometry(QtCore.QRect(580, 590, 111, 27))
         self.icb_place_bid_pushbutton.setObjectName("icb_place_bid_pushbutton")
         self.icb_current_bids_label = QtWidgets.QLabel(self.icb_page)
@@ -815,9 +822,11 @@ class Ui_MainWindow(object):
         self.icb_current_bids_label.setFont(font)
         self.icb_current_bids_label.setObjectName("icb_current_bids_label")
         self.icb_interest_label = QtWidgets.QLabel(self.icb_page)
+        self.icb_interest_label.setEnabled(False)
         self.icb_interest_label.setGeometry(QtCore.QRect(580, 530, 191, 17))
         self.icb_interest_label.setObjectName("icb_interest_label")
         self.icb_interest_lineedit = QtWidgets.QLineEdit(self.icb_page)
+        self.icb_interest_lineedit.setEnabled(False)
         self.icb_interest_lineedit.setGeometry(QtCore.QRect(580, 550, 113, 27))
         self.icb_interest_lineedit.setObjectName("icb_interest_lineedit")
         self.icb_title_label = QtWidgets.QLabel(self.icb_page)
@@ -1348,7 +1357,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(7)
+        self.stackedWidget.setCurrentIndex(3)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_postcode_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_housenumber_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_phonenumber_lineedit.setDisabled)
@@ -1490,7 +1499,6 @@ class Ui_MainWindow(object):
         self.bplr_property_seller_information_label.setText(_translate("MainWindow", "Property Seller Information"))
         self.bplr_seller_email_label.setText(_translate("MainWindow", "Email address [optional]"))
         self.fiplr1_pending_loan_requests_label.setText(_translate("MainWindow", "Pending Loan Requests"))
-        self.fiplr1_loan_requests_table.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
         item = self.fiplr1_loan_requests_table.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Property Address"))
         item = self.fiplr1_loan_requests_table.horizontalHeaderItem(1)

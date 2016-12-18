@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>7</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -812,7 +812,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string/>
       </property>
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
@@ -2009,6 +2009,9 @@
     </widget>
     <widget class="QWidget" name="icb_page">
      <widget class="QLineEdit" name="icb_amount_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -2032,6 +2035,9 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="icb_duration_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>330</x>
@@ -2042,6 +2048,9 @@
       </property>
      </widget>
      <widget class="QLabel" name="icb_duration_label">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>330</x>
@@ -2145,6 +2154,9 @@
       </column>
      </widget>
      <widget class="QLabel" name="icb_place_bid_label">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -2165,6 +2177,9 @@
       </property>
      </widget>
      <widget class="QLabel" name="icb_amount_label">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -2178,6 +2193,9 @@
       </property>
      </widget>
      <widget class="QPushButton" name="icb_place_bid_pushbutton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>580</x>
@@ -2211,6 +2229,9 @@
       </property>
      </widget>
      <widget class="QLabel" name="icb_interest_label">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>580</x>
@@ -2224,6 +2245,9 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="icb_interest_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>580</x>
