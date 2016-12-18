@@ -16,7 +16,7 @@ class BanksPortfolioController:
             # Fill the mortgage table
             for [mortgage, house, campaign] in mortgages:
                 # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
-                address = house.postal_code + ', ' + house.house_number
+                address = house.address + ' ' + house.house_number + ', ' + house.postal_code
 
                 campaign_status = ''
                 if campaign.completed:

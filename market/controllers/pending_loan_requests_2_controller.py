@@ -17,11 +17,12 @@ class PendingLoanRequests2Controller:
         # Insert personal information
         self.mainwindow.fiplr2_firstname_lineedit.setText(str(borrower_profile.first_name))
         self.mainwindow.fiplr2_lastname_lineedit.setText(str(borrower_profile.last_name))
-        self.mainwindow.fiplr2_address_lineedit.setText(str(borrower_profile.current_postal_code) + ', '
-                                                    + str(borrower_profile.current_house_number))
+        self.mainwindow.fiplr2_address_lineedit.setText(str(borrower_profile.current_address) + ' '
+                                                    + str(borrower_profile.current_house_number) + ', '
+                                                    + str(borrower_profile.current_postal_code))
         self.mainwindow.fiplr2_phonenumber_lineedit.setText(str(borrower_profile.phone_number))
         self.mainwindow.fiplr2_email_lineedit.setText(str(borrower_profile.email))
-        # TODO Add risk rating
+        # TODO Add risk rating when it has been implemented
 
         # Insert mortgage request information
         self.mainwindow.fiplr2_property_address_lineedit.setText(str(house.postal_code) + ', '

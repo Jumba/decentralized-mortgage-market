@@ -23,7 +23,7 @@ class PendingLoanRequests1Controller:
             # Fill the mortgage table
             for [loan_request, house] in self.loan_requests:
                 # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
-                address = house.postal_code + ', ' + house.house_number
+                address = house.address + ' ' + house.house_number + ', ' + house.postal_code
 
                 mortgage_type = ''
                 if loan_request.mortgage_type == 1:
