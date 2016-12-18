@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindowOO3875.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowqr3875.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -1209,9 +1209,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.fip_title_label.setFont(font)
         self.fip_title_label.setObjectName("fip_title_label")
-        self.fip_duration_dash_label = QtWidgets.QLabel(self.fip_page)
-        self.fip_duration_dash_label.setGeometry(QtCore.QRect(590, 330, 16, 16))
-        self.fip_duration_dash_label.setObjectName("fip_duration_dash_label")
         self.fip_sorting_options_label = QtWidgets.QLabel(self.fip_page)
         self.fip_sorting_options_label.setGeometry(QtCore.QRect(60, 120, 161, 21))
         font = QtGui.QFont()
@@ -1220,9 +1217,9 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.fip_sorting_options_label.setFont(font)
         self.fip_sorting_options_label.setObjectName("fip_sorting_options_label")
-        self.fip_duration_dash_label_2 = QtWidgets.QLabel(self.fip_page)
-        self.fip_duration_dash_label_2.setGeometry(QtCore.QRect(370, 190, 16, 16))
-        self.fip_duration_dash_label_2.setObjectName("fip_duration_dash_label_2")
+        self.fip_duration_dash_label = QtWidgets.QLabel(self.fip_page)
+        self.fip_duration_dash_label.setGeometry(QtCore.QRect(370, 190, 16, 16))
+        self.fip_duration_dash_label.setObjectName("fip_duration_dash_label")
         self.fip_search_pushbutton = QtWidgets.QPushButton(self.fip_page)
         self.fip_search_pushbutton.setGeometry(QtCore.QRect(210, 150, 75, 20))
         self.fip_search_pushbutton.setObjectName("fip_search_pushbutton")
@@ -1357,7 +1354,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(6)
+        self.stackedWidget.setCurrentIndex(9)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_postcode_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_housenumber_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_phonenumber_lineedit.setDisabled)
@@ -1652,9 +1649,8 @@ class Ui_MainWindow(object):
         item = self.fip_campaigns_table.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Duration (months)"))
         self.fip_title_label.setText(_translate("MainWindow", "Portfolio"))
-        self.fip_duration_dash_label.setText(_translate("MainWindow", "-"))
         self.fip_sorting_options_label.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Sorting Options</span></p></body></html>"))
-        self.fip_duration_dash_label_2.setText(_translate("MainWindow", "-"))
+        self.fip_duration_dash_label.setText(_translate("MainWindow", "-"))
         self.fip_search_pushbutton.setText(_translate("MainWindow", "Search"))
         self.fip_amount_invested_label.setText(_translate("MainWindow", "Amount invested (€)"))
         self.fip_search_lineedit.setPlaceholderText(_translate("MainWindow", "Type to search..."))
