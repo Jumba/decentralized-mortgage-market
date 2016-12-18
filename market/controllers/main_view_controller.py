@@ -38,6 +38,13 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.bplr_controller = PlaceLoanRequestController(self)
         self.profile_controller = ProfileController(self)
 
+    def insert_row(self, table, row):
+        rowcount = table.rowCount()  # necessary even when there are no rows in the table
+        table.insertRow(rowcount)
+        for i in range(0, len(row)):
+            table.setItem(rowcount, i, QTableWidgetItem(str(row[i])))
+
+
     def fiplr1_load_all_pending_loan_requests(self):
         print 'Loading second screen!'
         # TODO request the contents with the uuid that is being returned from the following:

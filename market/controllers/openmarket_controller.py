@@ -32,20 +32,15 @@ class OpenMarketController:
         # chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row()
         # chosen_request = content[chosen_index]     # index of the row
 
-    def insert_row(self, table, row):
-        rowcount = table.rowCount()  # necessary even when there are no rows in the table
-        table.insertRow(rowcount)
-        for i in range(0, len(row)):
-            table.setItem(rowcount, i, QTableWidgetItem(str(row[i])))
-
-
+    def reset_table(self):
+        self.table.setRowCount(0)
 
     def setup_view(self):
+        self.reset_table()
         # content = [[][][]]
         self.content = self.mainwindow.api.load_open_market()
         for tpl in self.content:
             mortgage = tpl[0]
-            mortgage.campaign_id
             campaign = tpl[1]
             house = tpl[2]
             row = []
@@ -55,13 +50,13 @@ class OpenMarketController:
             row.append(mortgage.duration)
             row.append((campaign.end_date - datetime.now()).days)
             row.append(mortgage.risk)
-            self.insert_row(self.table, row)
+            self.mainwindow.insert_row(self.table, row)
 
     def view_campaign(self):
         if self.table.selectedIndexes():
             # selected_data = map((lambda item: item.data()), self.table.selectedIndexes())
             selected_row = self.table.selectedIndexes()[0].row()
-            self.mainwindow.navigation.switch_to_campaign_bids(self.content[selected_row][0].campaign_id)
+            self.mainwindow.navigation.switch_to_campaign_bids(self.content[selected_row][0].id)
 
 
     def testdata(self):
@@ -111,8 +106,6 @@ class OpenMarketController:
 
         # Accept the loan request
         accepted_loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage)
-        print 'accepted'
-        print mortgage.id
 
         # Accept mortgage offer
         self.payload_mortgage['mortgage_id'] = mortgage.id
@@ -125,13 +118,3 @@ class OpenMarketController:
 
         # Set the status of the campaign to completed
         campaigns = self.api.db.get_all(Campaign._type)
-
-    ################ icb ################################################################
-
-    def icb_place_bid(self):
-        # row_count = self.icb_current_bids_table.rowCount()
-        # self.icb_current_bids_table.insertRow(row_count)
-        # print row_count
-        self.icb_current_bids_table.item(0, 0).setText(self.icb_amount_lineedit.text())
-        self.icb_current_bids_table.item(0, 1).setText(self.icb_duration_lineedit.text())
-        self.icb_current_bids_table.item(0, 2).setText(self.icb_interest_lineedit.text())
