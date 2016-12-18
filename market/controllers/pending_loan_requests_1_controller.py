@@ -34,9 +34,9 @@ class PendingLoanRequests1Controller:
                 row_count = self.loan_request_table.rowCount()
                 self.loan_request_table.insertRow(row_count)
                 self.loan_request_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
-                self.loan_request_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(mortgage_type))
-                self.loan_request_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(str(loan_request.amount_wanted)))
-                self.loan_request_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(str(house.price)))
+                self.loan_request_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(mortgage_type))
+                self.loan_request_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(loan_request.amount_wanted)))
+                self.loan_request_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(house.price)))
 
     def show_request(self):
         try:
