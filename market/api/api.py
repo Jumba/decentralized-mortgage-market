@@ -344,7 +344,7 @@ class MarketAPI(object):
         if role.name == 'BORROWER':
             if not user.loan_request_ids:
                 # Create the house
-                house = House(payload['postal_code'], payload['house_number'], payload['price'])
+                house = House(payload['postal_code'], payload['house_number'], payload['address'], payload['price'])
                 house_id = self.db.post(House._type, house)
                 payload['house_id'] = house_id
 
