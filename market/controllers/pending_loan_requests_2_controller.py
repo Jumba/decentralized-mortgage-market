@@ -55,5 +55,7 @@ class PendingLoanRequests2Controller:
 
         # Accept the loan request
         self.mainwindow.api.accept_loan_request(self.mainwindow.app.user, payload)
+        QMessageBox.about(self.mainwindow, "Request accepted", 'This loan request has been accepted.')
+
         # Switch back to the pending loan requests 1 screen
         self.mainwindow.navigation.switch_to_fiplr()
