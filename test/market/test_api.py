@@ -22,7 +22,8 @@ class APITestSuite(unittest.TestCase):
         self.ec = ECCrypto()
 
         self.payload = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget', 'email': 'example@example.com', 'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
-                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'documents_list': []}
+                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'current_address' : 'straat',
+                        'documents_list': []}
         self.payload_investor = {'role': 2, 'first_name': u'Ruby', 'last_name': u'Cue', 'email': 'example1@example.com', 'iban': 'NL53 INGB 04097 30393', 'phonenumber': '+3170253719290'}
         self.payload_bank = {'role': 3}
         self.payload_loan_offer1 = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24, 'interest_rate': 2.5,

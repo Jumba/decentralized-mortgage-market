@@ -41,15 +41,17 @@ class Profile(DatabaseModel):
 class BorrowersProfile(Profile):
     _type = 'borrowers_profile'
 
-    def __init__(self, first_name, last_name, email, iban, phone_number, current_postal_code, current_house_number, document_list):
+    def __init__(self, first_name, last_name, email, iban, phone_number, current_postal_code, current_house_number, current_address, document_list):
         super(BorrowersProfile, self).__init__(first_name, last_name, email, iban, phone_number)
 
         assert isinstance(current_postal_code, str)
         assert isinstance(current_house_number, str)
+        assert isinstance(current_address, str)
         assert isinstance(document_list, list)
 
         self._current_postal_code = current_postal_code
         self._current_house_number = current_house_number
+        self._current_address = current_address
         self._document_list = document_list
 
     @property
@@ -59,6 +61,10 @@ class BorrowersProfile(Profile):
     @property
     def current_house_number(self):
         return self._current_house_number
+
+    @property
+    def current_address(self):
+        return self._current_address
 
     @property
     def document_list(self):
