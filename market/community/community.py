@@ -3,6 +3,7 @@ import logging
 import time
 
 from conversion import MortgageMarketConversion
+from market.api.api import STATUS
 from market.dispersy.authentication import MemberAuthentication, DoubleMemberAuthentication
 from market.dispersy.community import Community
 from market.dispersy.conversion import DefaultConversion
@@ -223,8 +224,17 @@ class MortgageMarketCommunity(Community):
         user.post_or_put(self.api.db)
         loan_request.post_or_put(self.api.db)
 
-        return True
+        # If not all banks have rejected the loan request, do nothing
+        for _, status in loan_request.banks:
+            if status == STATUS.ACCEPTED or status == STATUS.PENDING:
+                return True
 
+        # If all banks have rejected the loan request, remove the request from the borrower
+        self.user.update(self.api.db)
+        self.user.loan_request_ids = []
+        self.user.post_or_put(self.api.db)
+
+        return True
 
     def on_mortgage_offer(self, payload):
         loan_request = payload.models[LoanRequest._type]
@@ -236,13 +246,13 @@ class MortgageMarketCommunity(Community):
         loan_request.post_or_put(self.api.db)
         mortgage.post_or_put(self.api.db)
 
+        # Add mortgage to the borrower
         self.user.update(self.api.db)
         if mortgage.id not in self.user.mortgage_ids:
             self.user.mortgage_ids.append(mortgage.id)
         self.user.post_or_put(self.api.db)
 
         return True
-
 
     def on_mortgage_accept_signed(self, payload):
         """
@@ -267,8 +277,12 @@ class MortgageMarketCommunity(Community):
             print "Signing the agreement"
             self.publish_signed_confirm_message(user.id, mortgage)
 
-        return True
+        # Save the started campaign to the bank
+        self.user.update(self.api.db)
+        self.user.campaign_ids.append(campaign.id)
+        self.user.post_or_put(self.api.db)
 
+        return True
 
     def on_mortgage_accept_unsigned(self, payload):
         user = payload.models[User._type]
@@ -285,7 +299,6 @@ class MortgageMarketCommunity(Community):
 
         return True
 
-
     def on_mortgage_reject(self, payload):
         user = payload.models[User._type]
         mortgage = payload.models[Mortgage._type]
@@ -296,8 +309,12 @@ class MortgageMarketCommunity(Community):
         user.post_or_put(self.api.db)
         mortgage.post_or_put(self.api.db)
 
-        return True
+        # Remove the mortgage from the bank
+        self.user.update(self.api.db)
+        self.user.mortgage_ids.remove(mortgage.id)
+        self.user.post_or_put(self.api.db)
 
+        return True
 
     def on_investment_offer(self, payload):
         user = payload.models[User._type]
@@ -309,8 +326,12 @@ class MortgageMarketCommunity(Community):
         user.post_or_put(self.api.db)
         investment.post_or_put(self.api.db)
 
-        return True
+        # Save the investment to the borrower
+        self.user.update(self.api.db)
+        self.user.investment_ids.append(investment.id)
+        self.user.post_or_put(self.api.db)
 
+        return True
 
     def on_investment_accept(self, payload):
         user = payload.models[User._type]
@@ -324,7 +345,6 @@ class MortgageMarketCommunity(Community):
 
         return True
 
-
     def on_investment_reject(self, payload):
         user = payload.models[User._type]
         investment = payload.models[Investment._type]
@@ -334,6 +354,11 @@ class MortgageMarketCommunity(Community):
 
         user.post_or_put(self.api.db)
         investment.post_or_put(self.api.db)
+
+        # Remove the investment from the investor
+        self.user.update(self.api.db)
+        self.user.investment_ids.remove(investment.id)
+        self.user.post_or_put(self.api.db)
 
         return True
 
