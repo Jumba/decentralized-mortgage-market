@@ -68,9 +68,11 @@ class NavigateUser:
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.bp_page)
 
     def switch_to_investors_portfolio(self):
+        self.mainwindow.ip_controller.setup_view()
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.ip_page)
 
     def switch_to_banks_portfolio(self):
+        self.mainwindow.fip_controller.setup_view()
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fip_page)
 
     def switch_to_openmarket(self):
@@ -82,6 +84,7 @@ class NavigateUser:
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.profile_page)
 
     def switch_to_fiplr(self):
+        self.mainwindow.fiplr1_controller.setup_view()
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
 
     def switch_to_fiplr2(self):

@@ -6,10 +6,11 @@ from market.api.api import STATUS
 class InvestorsPortfolioController:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
+        self.investments_table = self.mainwindow.ip_investments_table
 
     def setup_view(self):
-        # TODO Figure out how to clear table while preserving headers
-        investments_table = self.mainwindow.ip_investments_table
+        # Clear table
+        self.investments_table.setRowCount(0)
 
         # Getting the investments from the investor
         investments = self.mainwindow.api.load_investments(self.mainwindow.app.user)
@@ -33,11 +34,11 @@ class InvestorsPortfolioController:
                 else:
                     investment_status = 'Pending'
 
-                row_count = investments_table.rowCount()
-                investments_table.insertRow(row_count)
-                investments_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
-                investments_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
-                investments_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(investment_status))
-                investments_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(investment.amount)))
-                investments_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(investment.interest_rate)))
-                investments_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(investment.duration)))
+                row_count = self.investments_table.rowCount()
+                self.investments_table.insertRow(row_count)
+                self.investments_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
+                self.investments_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
+                self.investments_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(investment_status))
+                self.investments_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(investment.amount)))
+                self.investments_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(investment.interest_rate)))
+                self.investments_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(investment.duration)))
