@@ -681,8 +681,6 @@ class MarketAPI(object):
         +-------------------+---------------------------------------------------------------+
         | amount            | The amount the bank is willing to finance                     |
         +-------------------+---------------------------------------------------------------+
-        | mortgage_type     | The mortgage type: 1 = linear, 2 = fixed-rate                 |
-        +-------------------+---------------------------------------------------------------+
         | interest_rate     | The interest rate to be paid over the financed amount (float) |
         +-------------------+---------------------------------------------------------------+
         | default_rate      | The default rate (float)                                      |
@@ -690,8 +688,6 @@ class MarketAPI(object):
         | max_invest_rate   | The maximum investment interest rate (float)                  |
         +-------------------+---------------------------------------------------------------+
         | duration          | The duration of the mortgage                                  |
-        +-------------------+---------------------------------------------------------------+
-        | investors         | List of initial investors, can be empty.                      |
         +-------------------+---------------------------------------------------------------+
 
         :param bank: The bank accepting the loan request.
@@ -711,9 +707,10 @@ class MarketAPI(object):
         loan_request.status[bank.id] = STATUS.ACCEPTED
 
         # Create a mortgage
-        mortgage = Mortgage(loan_request.id, loan_request.house_id, bank.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'],
-                            payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS.PENDING)
-        borrower = self.db.get(User._type, payload['user_key'])
+        mortgage = Mortgage(loan_request.id, loan_request.house_id, bank.id, payload['amount'],
+                            loan_request.mortgage_type, payload['interest_rate'], payload['max_invest_rate'],
+                            payload['default_rate'], payload['duration'], payload['risk'], [], STATUS.PENDING)
+        borrower = self.db.get(User._type, loan_request.user_key)
         assert isinstance(borrower, User)
 
         # Add mortgage to borrower
