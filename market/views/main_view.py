@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindowXT3875.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowle3875.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -1153,7 +1153,7 @@ class Ui_MainWindow(object):
         self.fip_campaigns_table.setGridStyle(QtCore.Qt.NoPen)
         self.fip_campaigns_table.setRowCount(0)
         self.fip_campaigns_table.setObjectName("fip_campaigns_table")
-        self.fip_campaigns_table.setColumnCount(5)
+        self.fip_campaigns_table.setColumnCount(6)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
         font.setBold(True)
@@ -1184,6 +1184,12 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         item.setFont(font)
         self.fip_campaigns_table.setHorizontalHeaderItem(4, item)
+        item = QtWidgets.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.fip_campaigns_table.setHorizontalHeaderItem(5, item)
         self.fip_campaigns_table.horizontalHeader().setDefaultSectionSize(150)
         self.fip_campaigns_table.horizontalHeader().setStretchLastSection(True)
         self.fip_title_label = QtWidgets.QLabel(self.fip_page)
@@ -1342,7 +1348,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(5)
+        self.stackedWidget.setCurrentIndex(7)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_postcode_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_housenumber_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_phonenumber_lineedit.setDisabled)
@@ -1634,6 +1640,8 @@ class Ui_MainWindow(object):
         item = self.fip_campaigns_table.horizontalHeaderItem(3)
         item.setText(_translate("MainWindow", "Interest (%)"))
         item = self.fip_campaigns_table.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "Default (%)"))
+        item = self.fip_campaigns_table.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Duration (months)"))
         self.fip_title_label.setText(_translate("MainWindow", "Portfolio"))
         self.fip_duration_dash_label.setText(_translate("MainWindow", "-"))
