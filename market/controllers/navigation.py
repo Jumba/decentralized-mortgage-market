@@ -1,7 +1,3 @@
-# The user you want to be. Only used for testing.
-USER = 1
-
-
 class NavigateUser:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
@@ -15,7 +11,7 @@ class NavigateUser:
 
     def user_screen_navigation(self):
         user_role = self.mainwindow.app.user.role_id
-        # user_role = USER
+        # user_role = 3    # The user you want to be. Only used for testing.
         if user_role:
             if user_role == 1:
                 print 'User logged in as: borrower'
@@ -65,7 +61,7 @@ class NavigateUser:
         self.set_navigation_visible(True, 3)
         self.mainwindow.fip_controller.setup_view()
         self.mainwindow.fiplr1_controller.setup_view()
-        self.mainwindow.fiplr2_controller.setup_view()
+        # self.mainwindow.fiplr2_controller.setup_view()
 
     def switch_to_bplr(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.bplr_page)
@@ -88,6 +84,9 @@ class NavigateUser:
 
     def switch_to_fiplr(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
+
+    def switch_to_fiplr2(self):
+        self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr2_page)
 
     def switch_to_view_campaign(self):
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.fiplr1_page)
