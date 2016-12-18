@@ -5,14 +5,15 @@ class PlaceLoanRequestController:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.payload = {}
-        self.mainwindow.bplr_submit_button.clicked.connect(self.submit_loan_request)
+        self.mainwindow.bplr_submit_pushbutton.clicked.connect(self.submit_loan_request)
 
     def setup_view(self):
         pass
 
     def submit_loan_request(self):
         try:
-            self.payload = {'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
+            self.payload = {'address': str(self.mainwindow.bplr_address_lineedit.text()),
+                            'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
                             'house_number': str(self.mainwindow.bplr_housenumber_lineedit.text()),
                             'price': int(self.mainwindow.bplr_house_price_lineedit.text()),
                             'amount_wanted': int(self.mainwindow.bplr_amount_wanted_lineedit.text()),

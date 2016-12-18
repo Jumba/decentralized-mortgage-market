@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -459,317 +459,484 @@
      </widget>
     </widget>
     <widget class="QWidget" name="bplr_page">
-     <widget class="QWidget" name="gridLayoutWidget">
+     <widget class="QLabel" name="bplr_property_information_label">
       <property name="geometry">
        <rect>
-        <x>60</x>
+        <x>71</x>
         <y>60</y>
-        <width>611</width>
-        <height>573</height>
+        <width>140</width>
+        <height>18</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Property Information</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="bplr_submit_pushbutton">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>590</y>
+        <width>138</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Submit Loan Request</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_house_price_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>210</y>
+        <width>85</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>House Price (€)</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="bplr_description_textedit">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>500</y>
+        <width>465</width>
+        <height>81</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>390</y>
+        <width>159</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QLabel" name="bplr_title_label">
-         <property name="font">
-          <font>
-           <pointsize>20</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
+        <widget class="QRadioButton" name="bplr_linear_radiobutton">
          <property name="text">
-          <string>Place Loan Request</string>
+          <string>Linear</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="bplr_housenumber_lineedit">
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
          <property name="text">
-          <string/>
+          <string>Fixed-Rate</string>
          </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLineEdit" name="bplr_house_price_lineedit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="bplr_postcode_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Post Code</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLineEdit" name="bplr_postcode_lineedit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="bplr_house_link_lineedit"/>
-       </item>
-       <item row="18" column="1">
-        <widget class="QPushButton" name="bplr_submit_button">
-         <property name="text">
-          <string>Submit Loan Request</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="bplr_mortgage_information_label">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Mortgage Information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="bplr_housenumber_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>House Number</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLabel" name="bplr_mortgage_type_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Mortgage Type</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="bplr_house_price_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>House Price (€)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="bplr_preferred_banks_label">
-         <property name="text">
-          <string>Preferred Banks</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="bplr_seller_phone_number_label">
-         <property name="text">
-          <string>Phone Number</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="bplr_amount_wanted_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Amount Wanted (€)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <widget class="QRadioButton" name="bplr_linear_radiobutton">
-           <property name="text">
-            <string>Linear</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
-           <property name="text">
-            <string>Fixed-Rate</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="bplr_house_link_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Link to House [optional]</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="bplr_property_information_label">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Property Information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="0" colspan="2">
-        <widget class="QTextEdit" name="bplr_description_textedit"/>
-       </item>
-       <item row="16" column="0" colspan="2">
-        <widget class="QLabel" name="bplr_description_label">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Describe here why you want a loan for this house [optional]</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0">
-        <widget class="QLabel" name="bplr_personal_information_label">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Personal Information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="bplr_bank2_checkbox">
-           <property name="text">
-            <string>Bank 2</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="bplr_bank1_checkbox">
-           <property name="text">
-            <string>Bank 1</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="bplr_bank3_checkbox">
-           <property name="text">
-            <string>Bank 3</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="bplr_bank4_checkbox">
-           <property name="text">
-            <string>Bank 4</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="14" column="1">
-        <layout class="QGridLayout" name="gridLayout_5"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="bplr_property_seller_information_label">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Property Seller Information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QLabel" name="bplr_seller_email_label">
-         <property name="text">
-          <string>Email address [optional]</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLineEdit" name="bplr_seller_email_lineedit">
-         <property name="text">
-          <string/>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>390</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_amount_wanted_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>367</y>
+        <width>110</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Amount Wanted (€)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_property_seller_information_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>270</y>
+        <width>180</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Property Seller Information</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_seller_email_label">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>290</y>
+        <width>136</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Email address [optional]</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_housenumber_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>170</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_preferred_banks_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>426</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Preferred Banks</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_housenumber_label">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>150</y>
+        <width>86</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>House Number</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_description_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>477</y>
+        <width>335</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Describe here why you want a loan for this house [optional]</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_address_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>110</y>
+        <width>471</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_mortgage_information_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>347</y>
+        <width>147</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Mortgage Information</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_title_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>21</y>
+        <width>261</width>
+        <height>37</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Place Loan Request</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_house_price_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>230</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_seller_phone_number_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>290</y>
+        <width>87</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Phone Number</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_postcode_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>170</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_house_link_label">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>210</y>
+        <width>135</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Link to House [optional]</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>310</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_seller_email_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>310</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_address_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>88</y>
+        <width>46</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Address</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_mortgage_type_label">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>367</y>
+        <width>86</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Mortgage Type</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="bplr_house_link_lineedit">
+      <property name="geometry">
+       <rect>
+        <x>338</x>
+        <y>230</y>
+        <width>200</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bplr_postcode_label">
+      <property name="geometry">
+       <rect>
+        <x>71</x>
+        <y>150</y>
+        <width>57</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Post Code</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="bplr_bank2_checkbox">
+      <property name="geometry">
+       <rect>
+        <x>145</x>
+        <y>450</y>
+        <width>67</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bank 2</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="bplr_bank1_checkbox">
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>450</y>
+        <width>67</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bank 1</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="bplr_bank4_checkbox">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>450</y>
+        <width>67</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bank 4</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="bplr_bank3_checkbox">
+      <property name="geometry">
+       <rect>
+        <x>217</x>
+        <y>450</y>
+        <width>67</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bank 3</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="fiplr1_page">
@@ -908,7 +1075,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>825</width>
+           <width>70</width>
            <height>1000</height>
           </rect>
          </property>
@@ -3700,7 +3867,7 @@
   <tabstop>bplr_postcode_lineedit</tabstop>
   <tabstop>bplr_seller_phone_number_lineedit</tabstop>
   <tabstop>bplr_house_link_lineedit</tabstop>
-  <tabstop>bplr_submit_button</tabstop>
+  <tabstop>bplr_submit_pushbutton</tabstop>
   <tabstop>bplr_amount_wanted_lineedit</tabstop>
   <tabstop>bplr_linear_radiobutton</tabstop>
   <tabstop>bplr_fixedrate_radiobutton</tabstop>
