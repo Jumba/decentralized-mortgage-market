@@ -1,7 +1,6 @@
 import time
 from datetime import timedelta, datetime
 from enum import Enum
-from twisted.internet.task import LoopingCall
 
 from market.api.crypto import generate_key, get_public_key
 from market.community.community import MortgageMarketCommunity
@@ -129,8 +128,9 @@ class MarketAPI(object):
         :type user: :any:`User`
         :param payload: The payload containing the data for the profile, as described above.
         :type payload: dict
-        :return The Profile or True if a bank role was set or False if the payload is malformed
-        :rtype :any:`Profile` or True or False
+        :return: The Profile if a borrower or investor role was set, True if a bank role was set, False if the
+        payload is malformed
+        :rtype: :any:`Profile` or True or False
         """
         assert isinstance(user, User)
         assert isinstance(payload, dict)
@@ -207,7 +207,7 @@ class MarketAPI(object):
         :type investor: :any:`User`
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: The loan offer if successful or False.
+        :return: The loan offer if successful, False otherwise.
         :rtype: :any:`Investment` or False
         """
         assert isinstance(investor, User)
@@ -257,11 +257,11 @@ class MarketAPI(object):
 
     def load_investments(self, user):
         """
-        Get the pending and current investments list from the database.
+        Get the pending and current investments list from the investor.
 
         :param user: The user whose investments need to be retrieved.
         :type user: :any:`User`
-        :return: A list containing lists with the list investments, the house, and the campaign
+        :return: A list containing lists with the investments, the house, and the campaign
         :rtype: list
         """
         user = self._get_user(user)
@@ -282,7 +282,8 @@ class MarketAPI(object):
         """
         Returns a list of all mortgages that have an active campaign going on.
 
-        :return: A list lists with :any:`Mortgage` objects, :any: 'House' objects, and :any: 'Campaign' objects.
+        :return: A list containing lists with :any:`Mortgage` objects, :any: 'House' objects, and :any: 'Campaign'
+        objects.
         :rtype: list
         """
         campaigns = self.db.get_all(Campaign._type)
@@ -338,7 +339,7 @@ class MarketAPI(object):
         :type user: :any:`User`
         :param payload: The payload containing the data for the :any:`House` and :any:`LoanRequest`, as described above.
         :type payload: dict
-        :return: The loan request object if succesful or False
+        :return: The loan request object if succesful, False otherwise
         :rtype: :any:`LoanRequest` or False
         """
         assert isinstance(user, User)
@@ -391,9 +392,9 @@ class MarketAPI(object):
 
     def load_borrowers_loans(self, user):
         """
-        Get the borrower's current active loans (funding goal has been reached) or the not yet active loans (funding goal has not been reached yet)
+        Get the borrower's current accepted loans
         :param user: User-object, in this case the user has the role of a borrower
-        :return: list of the loans, containing either the current active loans or the not yet active loans
+        :return: list of the loans, containing the borrower's current accepted loans
         """
         user = self._get_user(user)
         loans = []
@@ -452,8 +453,8 @@ class MarketAPI(object):
         :type: mortgage: :any:`Mortgage`
         :param loan_request: The :any:`LoanRequest` created prior to the mortgage being accepted.
         :type loan_request: :any:`LoanRequest`
-        :return: True if created, None otherwise.
-        :rtype: bool or None
+        :return: True if created, False otherwise.
+        :rtype: bool or False
         """
         bank = self._get_user(mortgage.bank)
         house = self.db.get(House._type, mortgage.house_id)
@@ -661,8 +662,8 @@ class MarketAPI(object):
         """
         Display the selected pending loan request
 
-        :return: A containing the :any: 'LoanRequest', the :any: 'Profile' of the borrower that wants a mortgage,
-        and the :any: 'House' that the borrower wants
+        :return: A list of lists containing the :any: 'LoanRequest', the :any: 'Profile' of the borrower that wants a
+        mortgage, and the :any: 'House' that the borrower wants
         :rtype: list
         """
         assert isinstance(payload, dict)
@@ -808,8 +809,8 @@ class MarketAPI(object):
 
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: A list of lists with :any: 'Investment' objects, a :any: 'House' object, a :any: 'Campaign' object.
-        :rtype: list
+        :return: A list :any: 'Investment' objects, a :any: 'House' object, and a :any: 'Campaign' object.
+        :rtype: list, House, Campaign
         """
 
         # Get the list of all the bids (pending/accepted/rejected) on the campaign
