@@ -26,12 +26,11 @@ class BanksPortfolioController:
                 else:
                     campaign_status = 'Running'
 
-                # TODO Change the columns depending on where the default rate will be in the ui
                 row_count = self.mortgages_table.rowCount()
                 self.mortgages_table.insertRow(row_count)
                 self.mortgages_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
                 self.mortgages_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
                 self.mortgages_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
                 self.mortgages_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
-                self.mortgages_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
-                self.mortgages_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
+                self.mortgages_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
+                self.mortgages_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
