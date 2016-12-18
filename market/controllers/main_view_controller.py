@@ -38,6 +38,7 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.bplr_controller = PlaceLoanRequestController(self)
         self.profile_controller = ProfileController(self)
 
+    # @staticmethod
     def insert_row(self, table, row):
         rowcount = table.rowCount()  # necessary even when there are no rows in the table
         table.insertRow(rowcount)

@@ -34,7 +34,6 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_4.setText('Open Market')
         self.mainwindow.navigation_pushbutton_4.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.bplr_controller.setup_view()
-        self.mainwindow.bp_controller.setup_view()
         self.set_navigation_visible(True, 1)
 
     def set_investor_navigation(self):
@@ -65,6 +64,7 @@ class NavigateUser:
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.bplr_page)
 
     def switch_to_borrowers_portfolio(self):
+        self.mainwindow.bp_controller.setup_view()
         self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.bp_page)
 
     def switch_to_investors_portfolio(self):

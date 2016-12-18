@@ -1,43 +1,25 @@
-import sys
-from datetime import date, datetime
+from datetime import datetime
 from uuid import UUID
 
-from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from market.models.loans import LoanRequest, Campaign
+from market.models.loans import Campaign
 from market.models.role import Role
 from market.models.user import User
-from market.views.main_view import Ui_MainWindow
-from marketGUI.market_app import MarketApplication
-from market.api.api import MarketAPI
 
 
 class OpenMarketController:
     def __init__(self, mainwindow):
-        self.mainwindow = mainwindow  # Uncomment before running
+        self.mainwindow = mainwindow
         self.content = None
         self.table = self.mainwindow.openmarket_open_market_table
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.table.doubleClicked.connect(self.view_campaign)
         self.mainwindow.openmarket_view_loan_bids_pushbutton.clicked.connect(self.view_campaign)
-        self.testdata()
-        # self.setup_view()
-        # self.mainwindow.stackedWidget.setCurrentWidget(self.mainwindow.openmarket_page)
-        # self.setup_view()
-        # self.mainwindow.stackedWidget.setCurrentWidget(self.s)
-        # QTableWidget.horizontalHeader()
-        # QTableWidget.setHorizontalHeader()
-
-        # chosen_index = self.fiplr1_loan_requests_table.selectedIndexes()[0].row()
-        # chosen_request = content[chosen_index]     # index of the row
-
-    def reset_table(self):
-        self.table.setRowCount(0)
+        # self.testdata()
 
     def setup_view(self):
-        self.reset_table()
-        # content = [[][][]]
+        self.table.setRowCount(0)
         self.content = self.mainwindow.api.load_open_market()
         for tpl in self.content:
             mortgage = tpl[0]
