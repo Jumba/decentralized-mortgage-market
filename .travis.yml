@@ -19,7 +19,6 @@ install:
   - pip install cryptography
   - pip install faker
   - pip install twisted
-  - pip install m2crypto
 # command to run tests
 script:
   - nosetests -v test/market
