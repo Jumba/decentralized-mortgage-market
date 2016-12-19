@@ -22,7 +22,6 @@ class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
         self.setupUi(self)
         self.navigation = NavigateUser(self)
         self.bank_ids = []
-        self.setupObjects()
         self.stackedWidget.setCurrentIndex(0)
         self.fip_controller = BanksPortfolioController(self)
         self.bp_controller = BorrowersPortfolioController(self)
