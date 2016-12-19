@@ -234,6 +234,7 @@ class FakePayload(object):
             payload.update({
                 'current_postalcode': str(self.fake.postcode()),
                 'current_housenumber': str(self.fake.building_number()),
+                'current_address': str(self.fake.address()),
                 'documents_list': []
             })
 
@@ -245,6 +246,10 @@ class FakePayload(object):
         payload = {
             'postal_code': str(self.fake.postcode()),
             'house_number': str(self.fake.building_number()),
+            'address': str(self.fake.address()),
+            'house_link': str(self.fake.url()),
+            'seller_phone_number': str(self.fake.phone_number()),
+            'seller_email': str(self.fake.safe_email()),
             'price': price,
             'mortgage_type': random.randrange(1,2,1),
             'banks': Global.BANKS.values(),
