@@ -1,1 +1,1 @@
-sudo apt-get install python-qt5
+sudo apt-get install python-pyqt5
