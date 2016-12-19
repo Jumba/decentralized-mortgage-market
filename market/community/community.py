@@ -1,3 +1,4 @@
+import base64
 import logging
 import time
 
@@ -15,6 +16,7 @@ from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile
 from market.models.user import User
+from market.multichain.database import DatabaseBlock, MultiChainDB
 from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
 
 logger = logging.getLogger(__name__)
@@ -36,6 +38,8 @@ class MortgageMarketCommunity(Community):
         super(MortgageMarketCommunity, self).__init__(dispersy, master, my_member)
         self._api = None
         self._user = None
+
+        self.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory)
 
     def initialize(self):
         super(MortgageMarketCommunity, self).initialize()
@@ -90,13 +94,13 @@ class MortgageMarketCommunity(Community):
                     self.on_api_message),
             Message(self, u"signed_confirm",
                     DoubleMemberAuthentication(
-                        allow_signature_func=self.allow_signed_confirm),
+                        allow_signature_func=self.allow_signed_confirm_request),
                     PublicResolution(),
                     DirectDistribution(),
                     CandidateDestination(),
                     SignedConfirmPayload(),
                     self._generic_timeline_check,
-                    self.received_signed_confirm),
+                    self.received_signed_confirm_response),
         ]
 
     def initiate_conversions(self):
@@ -275,7 +279,7 @@ class MortgageMarketCommunity(Community):
         if self.user.id == mortgage.bank:
             print "Signing the agreement"
             # resign because the status has been changed.
-            self.publish_signed_confirm_message(user.id, mortgage)
+            self.publish_signed_confirm_request_message(user.id, mortgage)
 
         # Save the started campaign to the bank
         self.user.update(self.api.db)
@@ -399,7 +403,7 @@ class MortgageMarketCommunity(Community):
     ##### SIGNED MESSAGES
     ###############
 
-    def publish_signed_confirm_message(self, user_key, agreement):
+    def publish_signed_confirm_request_message(self, user_key, agreement):
         """
         Creates and sends out a signed signature_request message
         Returns true upon success
@@ -409,6 +413,7 @@ class MortgageMarketCommunity(Community):
             message = self.create_signed_confirm_request_message(candidate, agreement)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
             # TODO: Save on blockchain
+            self.persist_signature_request(message)
             return True
         else:
             return False
@@ -430,7 +435,7 @@ class MortgageMarketCommunity(Community):
                             payload=payload)
         return message
 
-    def allow_signed_confirm(self, message):
+    def allow_signed_confirm_request(self, message):
         """
         We've received a signature request message, we must either:
             a. Create and sign the response part of the message, send it back, and persist the block.
@@ -449,6 +454,7 @@ class MortgageMarketCommunity(Community):
                                 distribution=(message.distribution.global_time,),
                                 payload=payload)
             # TODO: Save to blockchain
+            self.persist_signature_response(message)
             return message
         else:
             return None
@@ -481,11 +487,42 @@ class MortgageMarketCommunity(Community):
             else:
                 return False
 
-    def received_signed_confirm(self, messages):
+    def received_signed_confirm_response(self, messages):
         """
         We've received a valid signature response and must process this message.
         :param messages The received, and validated signature response messages
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
+            self.update_signature_response(message)
             print message.payload.agreement, " is official. Message signed = ", message.authentication.is_signed
+
+    def persist_signature_response(self, message):
+        """
+        Persist the signature response message, when this node has not yet persisted the corresponding request block.
+        A hash will be created from the message and this will be used as an unique identifier.
+        :param message:
+        """
+        block = DatabaseBlock.from_signature_response_message(message)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.persistence.add_block(block)
+
+    def update_signature_response(self, message):
+        """
+        Update the signature response message, when this node has already persisted the corresponding request block.
+        A hash will be created from the message and this will be used as an unique identifier.
+        :param message:
+        """
+        block = DatabaseBlock.from_signature_response_message(message)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.persistence.update_block_with_responder(block)
+
+    def persist_signature_request(self, message):
+        """
+        Persist the signature request message as a block.
+        The block will be updated when a response is received.
+        :param message:
+        """
+        block = DatabaseBlock.from_signature_request_message(message)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.persistence.add_block(block)
