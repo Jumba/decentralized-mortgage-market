@@ -4,7 +4,7 @@ sudo: required
 python:
   - "2.7"
 virtualenv:
-  system_site_packages: true
+  system_site_packages: false
 before install:
   - chmod +x travis-sip.sh
   - chmod +x travis-pyqt5.sh
@@ -13,6 +13,8 @@ before install:
 # command to install dependencies
 install:
   - ./travis-libsodium13.sh
+  - sudo sh travis-sip.sh
+  - sudo sh travis-pyqt5.sh
   - pip install decorator
   - pip install cryptography
   - pip install faker
