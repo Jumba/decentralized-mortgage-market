@@ -16,6 +16,7 @@ install:
   - sudo sh travis-sip.sh
   - sudo sh travis-pyqt5.sh
   - pip install pyopenssl
+  - pip install service_identity
   - pip install decorator
   - pip install cryptography
   - pip install faker
