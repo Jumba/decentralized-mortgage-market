@@ -9,7 +9,7 @@ before install:
   - chmod +x travis-sip.sh
   - chmod +x travis-pyqt5.sh
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libav-tools libjs-excanvas libjs-mootools libsodium13 libx11-6 python-apsw python-cherrypy3 python-crypto python-cryptography python-feedparser python-leveldb python-libtorrent python-netifaces python-pil python-pyasn1 python-requests python-twisted python-wxgtk2.8 python2.7 vlc python-pip swig
+  - sudo apt-get install -qq libav-tools libjs-excanvas libjs-mootools libsodium13 libx11-6 python-apsw python-cherrypy3 python-crypto python-cryptography python-feedparser python-leveldb python-libtorrent python-netifaces python-pil python-pyasn1 python-requests python-twisted python-wxgtk2.8 python2.7 vlc python-pip python-m2crypto
 # command to install dependencies
 install:
   - ./travis-libsodium13.sh
