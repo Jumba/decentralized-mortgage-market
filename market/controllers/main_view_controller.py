@@ -1,3 +1,4 @@
+from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
 from market.controllers.banks_portfolio_controller import BanksPortfolioController
@@ -5,7 +6,6 @@ from market.controllers.campaign_bids_controller import CampaignBidsController
 from market.controllers.investors_portfolio_controller import InvestorsPortfolioController
 from market.controllers.pending_loan_requests_1_controller import PendingLoanRequests1Controller
 from market.controllers.pending_loan_requests_2_controller import PendingLoanRequests2Controller
-from market.views import main_view
 from navigation import NavigateUser
 from login_controller import LoginController
 from profile_controller import ProfileController
@@ -14,14 +14,14 @@ from openmarket_controller import OpenMarketController
 from place_loan_request_controller import PlaceLoanRequestController
 
 
-class MainWindowController(QMainWindow, main_view.Ui_MainWindow):
+class MainWindowController(QMainWindow):
     def __init__(self, parent=None, app=None):
         super(MainWindowController, self).__init__(parent)
         self.app = app
         self.api = app.api
-        self.setupUi(self)
+        uic.loadUi('ui/mainwindow.ui', self)
         self.navigation = NavigateUser(self)
-        self.bank_ids = []
+        self.bank_ids = []  # List with the hardcoded bank ids
         self.stackedWidget.setCurrentIndex(0)
         self.fip_controller = BanksPortfolioController(self)
         self.bp_controller = BorrowersPortfolioController(self)
