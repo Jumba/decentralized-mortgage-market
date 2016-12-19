@@ -1,3 +1,4 @@
+import os
 import random
 
 import time
@@ -5,6 +6,7 @@ from faker import Faker
 
 from market import Global
 from market.api.api import MarketAPI, STATUS
+from market.models.document import Document
 from market.models.loans import Campaign, Mortgage, LoanRequest, Investment
 from market.models.user import User
 from scenarios.fake_provider import FakePayload
@@ -24,7 +26,8 @@ class Scenario(object):
             self.make_bank(user)
 
     def make_borrower(self, user):
-        self.api.create_profile(user, FakePayload.profile(1))
+        profile_payload = FakePayload.profile(1)
+        self.api.create_profile(user, profile_payload)
 
     def make_investor(self, user):
         self.api.create_profile(user, FakePayload.profile(2))
@@ -35,6 +38,7 @@ class Scenario(object):
     def create_loan_request(self, user):
         assert user.role_id == 1    # borrower
         self.api.create_loan_request(user, FakePayload.create_loan_request())
+
 
 
     def create_accepted_loan_request(self, user):
