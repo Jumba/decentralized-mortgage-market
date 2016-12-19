@@ -4,7 +4,7 @@ sudo: required
 python:
   - "2.7"
 virtualenv:
-  system_site_packages: false
+  system_site_packages: true
 before install:
   - chmod +x travis-sip.sh
   - chmod +x travis-pyqt5.sh
@@ -19,8 +19,9 @@ install:
   - pip install cryptography
   - pip install faker
   - pip install twisted
-  - pip install m2crypto
   - pip install service_identity
+  - pip install swig
+  - pip install m2crypto
 # command to run tests
 script:
   - nosetests -v test/market
