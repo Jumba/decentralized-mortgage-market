@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/mainwindowLh6184.ui'
+# Form implementation generated from reading ui file '/tmp/mainwindowwX6184.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -155,7 +155,7 @@ class Ui_MainWindow(object):
         self.bplr_submit_pushbutton.setGeometry(QtCore.QRect(400, 590, 138, 26))
         self.bplr_submit_pushbutton.setObjectName("bplr_submit_pushbutton")
         self.bplr_house_price_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_house_price_label.setGeometry(QtCore.QRect(71, 210, 85, 17))
+        self.bplr_house_price_label.setGeometry(QtCore.QRect(71, 210, 200, 17))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.bplr_house_price_label.setFont(font)
@@ -183,7 +183,7 @@ class Ui_MainWindow(object):
         self.bplr_amount_wanted_lineedit.setText("")
         self.bplr_amount_wanted_lineedit.setObjectName("bplr_amount_wanted_lineedit")
         self.bplr_amount_wanted_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_amount_wanted_label.setGeometry(QtCore.QRect(71, 367, 110, 17))
+        self.bplr_amount_wanted_label.setGeometry(QtCore.QRect(71, 367, 200, 17))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.bplr_amount_wanted_label.setFont(font)
@@ -197,7 +197,7 @@ class Ui_MainWindow(object):
         self.bplr_property_seller_information_label.setFont(font)
         self.bplr_property_seller_information_label.setObjectName("bplr_property_seller_information_label")
         self.bplr_seller_email_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_seller_email_label.setGeometry(QtCore.QRect(338, 290, 136, 17))
+        self.bplr_seller_email_label.setGeometry(QtCore.QRect(338, 290, 200, 17))
         self.bplr_seller_email_label.setObjectName("bplr_seller_email_label")
         self.bplr_housenumber_lineedit = QtWidgets.QLineEdit(self.bplr_page)
         self.bplr_housenumber_lineedit.setGeometry(QtCore.QRect(338, 170, 200, 27))
@@ -207,7 +207,7 @@ class Ui_MainWindow(object):
         self.bplr_preferred_banks_label.setGeometry(QtCore.QRect(71, 426, 91, 17))
         self.bplr_preferred_banks_label.setObjectName("bplr_preferred_banks_label")
         self.bplr_housenumber_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_housenumber_label.setGeometry(QtCore.QRect(338, 150, 86, 17))
+        self.bplr_housenumber_label.setGeometry(QtCore.QRect(338, 150, 200, 17))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.bplr_housenumber_label.setFont(font)
@@ -244,14 +244,14 @@ class Ui_MainWindow(object):
         self.bplr_house_price_lineedit.setText("")
         self.bplr_house_price_lineedit.setObjectName("bplr_house_price_lineedit")
         self.bplr_seller_phone_number_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_seller_phone_number_label.setGeometry(QtCore.QRect(71, 290, 87, 17))
+        self.bplr_seller_phone_number_label.setGeometry(QtCore.QRect(71, 290, 200, 17))
         self.bplr_seller_phone_number_label.setObjectName("bplr_seller_phone_number_label")
         self.bplr_postcode_lineedit = QtWidgets.QLineEdit(self.bplr_page)
         self.bplr_postcode_lineedit.setGeometry(QtCore.QRect(71, 170, 200, 27))
         self.bplr_postcode_lineedit.setText("")
         self.bplr_postcode_lineedit.setObjectName("bplr_postcode_lineedit")
         self.bplr_house_link_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_house_link_label.setGeometry(QtCore.QRect(338, 210, 135, 17))
+        self.bplr_house_link_label.setGeometry(QtCore.QRect(338, 210, 200, 17))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.bplr_house_link_label.setFont(font)
@@ -271,7 +271,7 @@ class Ui_MainWindow(object):
         self.bplr_address_label.setFont(font)
         self.bplr_address_label.setObjectName("bplr_address_label")
         self.bplr_mortgage_type_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_mortgage_type_label.setGeometry(QtCore.QRect(338, 367, 86, 17))
+        self.bplr_mortgage_type_label.setGeometry(QtCore.QRect(338, 367, 200, 17))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.bplr_mortgage_type_label.setFont(font)
@@ -280,7 +280,7 @@ class Ui_MainWindow(object):
         self.bplr_house_link_lineedit.setGeometry(QtCore.QRect(338, 230, 200, 27))
         self.bplr_house_link_lineedit.setObjectName("bplr_house_link_lineedit")
         self.bplr_postcode_label = QtWidgets.QLabel(self.bplr_page)
-        self.bplr_postcode_label.setGeometry(QtCore.QRect(71, 150, 57, 17))
+        self.bplr_postcode_label.setGeometry(QtCore.QRect(71, 150, 200, 17))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.bplr_postcode_label.setFont(font)
@@ -1346,7 +1346,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(2)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_postcode_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_housenumber_lineedit.setDisabled)
         self.profile_investor_radiobutton.toggled['bool'].connect(self.profile_address_lineedit.setDisabled)
