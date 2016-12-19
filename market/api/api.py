@@ -313,25 +313,29 @@ class MarketAPI(object):
 
         The payload dictionary has the following composition
 
-        +----------------+------------------------------------------------------------------+
-        | Key            | Description                                                      |
-        +================+==================================================================+
-        | postal_code    | The postal code of the house that is the target of the mortgage  |
-        +----------------+------------------------------------------------------------------+
-        | house_number   | The house number of the house that is the target of the mortgage |
-        +----------------+------------------------------------------------------------------+
-        | address        | The address of the house that is the target of the mortgage      |
-        +----------------+------------------------------------------------------------------+
-        | price          | The total price of the house                                     |
-        +----------------+------------------------------------------------------------------+
-        | mortgage_type  | The mortgage type: 1 = linear, 2 = fixed-rate                    |
-        +----------------+------------------------------------------------------------------+
-        | banks          | List of banks the request should be sent to                      |
-        +----------------+------------------------------------------------------------------+
-        | description    | Free text (unicode)                                              |
-        +----------------+------------------------------------------------------------------+
-        | amount_wanted  | The amount the borrower wants financed                           |
-        +----------------+------------------------------------------------------------------+
+        +---------------------+------------------------------------------------------------------+
+        | Key                 | Description                                                      |
+        +=====================+==================================================================+
+        | postal_code         | The postal code of the house that is the target of the mortgage  |
+        +---------------------+------------------------------------------------------------------+
+        | house_number        | The house number of the house that is the target of the mortgage |
+        +---------------------+------------------------------------------------------------------+
+        | address             | The address of the house that is the target of the mortgage      |
+        +---------------------+------------------------------------------------------------------+
+        | price               | The total price of the house                                     |
+        +---------------------+------------------------------------------------------------------+
+        | seller_phone_number | The phone number of the seller                                   |
+        +---------------------+------------------------------------------------------------------+
+        | seller_email        | The email of the seller                                          |
+        +---------------------+------------------------------------------------------------------+
+        | mortgage_type       | The mortgage type: 1 = linear, 2 = fixed-rate                    |
+        +---------------------+------------------------------------------------------------------+
+        | banks               | List of banks the request should be sent to                      |
+        +---------------------+------------------------------------------------------------------+
+        | description         | Free text (unicode)                                              |
+        +---------------------+------------------------------------------------------------------+
+        | amount_wanted       | The amount the borrower wants financed                           |
+        +---------------------+------------------------------------------------------------------+
 
         :param user: The user creating a loan request
         :type user: :any:`User`
