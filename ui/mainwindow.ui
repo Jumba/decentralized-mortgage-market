@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -497,7 +497,7 @@
        <rect>
         <x>71</x>
         <y>210</y>
-        <width>85</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -573,7 +573,7 @@
        <rect>
         <x>71</x>
         <y>367</y>
-        <width>110</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -611,7 +611,7 @@
        <rect>
         <x>338</x>
         <y>290</y>
-        <width>136</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -650,7 +650,7 @@
        <rect>
         <x>338</x>
         <y>150</y>
-        <width>86</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -751,7 +751,7 @@
        <rect>
         <x>71</x>
         <y>290</y>
-        <width>87</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -777,7 +777,7 @@
        <rect>
         <x>338</x>
         <y>210</y>
-        <width>135</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -839,7 +839,7 @@
        <rect>
         <x>338</x>
         <y>367</y>
-        <width>86</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>
@@ -867,7 +867,7 @@
        <rect>
         <x>71</x>
         <y>150</y>
-        <width>57</width>
+        <width>200</width>
         <height>17</height>
        </rect>
       </property>

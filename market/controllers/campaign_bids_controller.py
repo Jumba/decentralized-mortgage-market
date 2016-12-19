@@ -1,7 +1,5 @@
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QPushButton
 
-from market.views.main_view import Ui_MainWindow
 
 class CampaignBidsController:
     def __init__(self, mainwindow):
