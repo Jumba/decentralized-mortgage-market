@@ -15,7 +15,7 @@ install:
   - ./travis-libsodium13.sh
   - sudo sh travis-sip.sh
   - sudo sh travis-pyqt5.sh
-  - pip install urllib3[secure]
+  - pip install pyopenssl
   - pip install decorator
   - pip install cryptography
   - pip install faker
