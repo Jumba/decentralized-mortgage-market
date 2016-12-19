@@ -1,4 +1,4 @@
-wget http://downloads.sourceforge.net/project/pyqt/sip/sip-4.18.1/sip-4.18.1.tar.gz?r=&ts=1481884546&use_mirror=kent
+wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz/download
 tar xvfz sip-4.18.1.tar.gz
 cd sip-4.18.1
 ./configure
