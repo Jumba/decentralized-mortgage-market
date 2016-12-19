@@ -701,14 +701,8 @@ class MarketAPI(object):
         +-------------------+---------------------------------------------------------------+
         | duration          | The duration of the mortgage                                  |
         +-------------------+---------------------------------------------------------------+
-<<<<<<< HEAD
-
-=======
-        | investors         | List of initial investors, can be empty.                      |
-        +-------------------+---------------------------------------------------------------+
         | risk              | The risk associated with the loan                             |
         +-------------------+---------------------------------------------------------------+
->>>>>>> 35a67d4503cd1edb7b2a52f393ddb979b00cb4ac
         :param bank: The bank accepting the loan request.
         :type bank: :any:`User`
         :param payload: The payload containing the data for the :any:`Mortgage`, as described above.
