@@ -108,7 +108,7 @@ class PersistentBackend(Database, Backend):
      insert_time                TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
      );
 
-    CREATE TABLE option(key TEXT PRIMARY KEY, value BLOB);
+    CREATE TABLE IF NOT EXISTS option(key TEXT PRIMARY KEY, value BLOB);
     INSERT INTO option(key, value) VALUES('database_version', '""" + str(LATEST_DB_VERSION) + u"""');
     """
 
@@ -185,6 +185,8 @@ class PersistentBackend(Database, Backend):
 
     def clear(self):
         self.execute(u"DELETE FROM market")
+        self.execute(u"DELETE FROM option")
+
 
     def set_option(self, option_name, value):
         db_query = u"INSERT INTO `option` (key, value) VALUES (?, ?)"
