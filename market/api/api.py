@@ -3,7 +3,6 @@ from datetime import timedelta, datetime
 from enum import Enum
 
 from market.api.crypto import get_public_key
-from market.community.community import MortgageMarketCommunity
 from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
 from market.database.database import Database
 from market.dispersy.crypto import ECCrypto
@@ -37,7 +36,7 @@ class MarketAPI(object):
         self._database = database
         self._user_key = None
         self.crypto = ECCrypto()
-        self.community = MortgageMarketCommunity
+        self.community = None
         self.user_candidate = {}
         self.outgoing_queue = OutgoingMessageQueue(self)
         self.incoming_queue = IncomingMessageQueue(self)

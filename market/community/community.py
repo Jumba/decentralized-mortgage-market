@@ -1,5 +1,4 @@
 import logging
-
 import time
 
 from conversion import MortgageMarketConversion
@@ -8,7 +7,7 @@ from market.dispersy.authentication import MemberAuthentication, DoubleMemberAut
 from market.dispersy.community import Community
 from market.dispersy.conversion import DefaultConversion
 from market.dispersy.destination import CommunityDestination, CandidateDestination
-from market.dispersy.distribution import DirectDistribution, SyncDistribution, FullSyncDistribution
+from market.dispersy.distribution import DirectDistribution, FullSyncDistribution
 from market.dispersy.message import Message, DelayMessageByProof
 from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
@@ -392,7 +391,6 @@ class MortgageMarketCommunity(Community):
                     # before the model is saved.
                     self.api.user_candidate[obj.id] = message.candidate
 
-
     ##############
     ##### SIGNED MESSAGES
     ###############
@@ -417,7 +415,7 @@ class MortgageMarketCommunity(Community):
         """
         # Init the data being sent
         benefactor = self.user.id
-        beneficiary = '' # Target user fills it in themselves.
+        beneficiary = ''  # Target user fills it in themselves.
         timestamp = int(time.time())
 
         payload = (benefactor, beneficiary, agreement, timestamp)
@@ -474,7 +472,6 @@ class MortgageMarketCommunity(Community):
                 loan_request = self.api.db.get(LoanRequest._type, mortgage.request_id)
                 beneficiary = self.api.db.get(User._type, loan_request.user_key)
 
-
                 return (response.payload.beneficiary == beneficiary.id and response.payload.benefactor == self.user.id
                         and modified)
             else:
@@ -488,4 +485,3 @@ class MortgageMarketCommunity(Community):
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
             print message.payload.agreement, " is official. Message signed = ", message.authentication.is_signed
-
