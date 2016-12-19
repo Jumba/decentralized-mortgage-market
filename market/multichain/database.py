@@ -3,8 +3,7 @@
 from os import path
 from hashlib import sha256
 from Tribler.dispersy.database import Database
-from Tribler.community.multichain.conversion import (encode_block, encode_block_requester_half, encode_block_crawl,
-                                                     EMPTY_HASH)
+from Tribler.community.multichain.conversion import (encode_block, encode_block_requester_half, EMPTY_HASH)
 
 DATABASE_DIRECTORY = path.join(u"sqlite")
 # Path to the database location + dispersy._workingdirectory
@@ -182,10 +181,10 @@ class MultiChainDB(Database):
         :param sequence_number: The linear block number
         :return A list of DB Blocks that match the criteria
         """
-        db_query = u"SELECT public_key_requester, public_key_responder, up, down, " \
-                   u"total_up_requester, total_down_requester, sequence_number_requester, previous_hash_requester, " \
+        db_query = u"SELECT public_key_requester, public_key_responder, " \
+                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
                    u"signature_requester, hash_requester, " \
-                   u"total_up_responder, total_down_responder, sequence_number_responder, previous_hash_responder, " \
+                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
                    u"signature_responder, hash_responder, insert_time " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_requester AS sequence_number," \
@@ -244,26 +243,6 @@ class MultiChainDB(Database):
                    u"FROM multi_chain WHERE public_key_responder = ? )"
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
         return db_result if db_result is not None else -1
-
-    # This function is probably not needed as we do not need to know the up and down, right?
-    def get_total(self, public_key):
-        """
-        Return the latest (total_up, total_down) known for this node.
-        if no block for the pk is know returns (-1,-1)
-        :param public_key: public_key of the node
-        :return: (total_up (int), total_down (int)) or (-1, -1) if no block is known.
-        """
-        public_key = buffer(public_key)
-        db_query = u"SELECT total_up, total_down, MAX(sequence_number) FROM (" \
-                   u"SELECT total_up_requester AS total_up, total_down_requester AS total_down, " \
-                   u"sequence_number_requester AS sequence_number FROM multi_chain " \
-                   u"WHERE public_key_requester == ? UNION " \
-                   u"SELECT total_up_responder AS total_up, total_down_responder AS total_down, " \
-                   u"sequence_number_responder AS sequence_number FROM multi_chain WHERE public_key_responder = ? )" \
-                   u"LIMIT 1"
-        db_result = self.execute(db_query, (public_key, public_key)).fetchone()
-        return (db_result[0], db_result[1]) if db_result[0] is not None and db_result[1] is not None \
-            else (-1, -1)
 
     def open(self, initial_statements=True, prepare_visioning=True):
         return super(MultiChainDB, self).open(initial_statements, prepare_visioning)
@@ -337,33 +316,7 @@ class DatabaseBlock:
                     payload.sequence_number_requester, payload.previous_hash_requester,
                     requester[0], sha256(encode_block_requester_half(payload, requester[1].public_key,
                                                                      responder[1].public_key, requester[0])).digest(),
-                    0, 0,
+                    0,
                     -1, EMPTY_HASH,
                     "", EMPTY_HASH,
                     None))
-
-    @classmethod
-    def from_block_response_message(cls, message, requester, responder):
-        payload = message.payload
-        return cls((requester.public_key, responder.public_key,
-                    payload.model,
-                    payload.sequence_number_requester, payload.previous_hash_requester,
-                    payload.signature_requester,
-                    sha256(encode_block_requester_half(payload, payload.public_key_requester,
-                                                       payload.public_key_responder,
-                                                       payload.signature_requester)).digest(),
-                    payload.model,
-                    payload.sequence_number_responder, payload.previous_hash_responder,
-                    payload.signature_responder, sha256(encode_block_crawl(payload)).digest(),
-                    None))
-
-    def to_payload(self):
-        """
-        :return: (tuple) corresponding to the payload data in a Signature message.
-        """
-        return (self.model_requester,
-                self.sequence_number_requester, self.previous_hash_requester,
-                self.model_responder,
-                self.sequence_number_responder, self.previous_hash_responder,
-                self.public_key_requester, self.signature_requester,
-                self.public_key_responder, self.signature_responder)
