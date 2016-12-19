@@ -1,15 +1,4 @@
-import sys
-from uuid import UUID
-
-from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-
-from market.models.loans import Campaign
-from market.models.role import Role
-from market.models.user import User
-from market.views.main_view import Ui_MainWindow
-from marketGUI.market_app import MarketApplication
-from market.api.api import MarketAPI
 
 
 class BorrowersPortfolioController:

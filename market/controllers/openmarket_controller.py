@@ -1,11 +1,6 @@
 from datetime import datetime
-from uuid import UUID
 
 from PyQt5.QtWidgets import *
-
-from market.models.loans import Campaign
-from market.models.role import Role
-from market.models.user import User
 
 
 class OpenMarketController:
