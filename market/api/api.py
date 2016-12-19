@@ -463,7 +463,7 @@ class MarketAPI(object):
             # Add message to queue
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage._type, Campaign._type, User._type], {Mortgage._type: mortgage, Campaign._type: campaign, User._type: user}, [bank]))
             self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest._type, Mortgage._type, Campaign._type,User._type], {LoanRequest._type: loan_request, Mortgage._type: mortgage, Campaign._type: campaign, User._type: user},
-
+                                      []))
             return self.db.put(User._type, user.id, user)
         return False
 
