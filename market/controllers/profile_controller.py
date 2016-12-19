@@ -32,31 +32,39 @@ class ProfileController:
                 print 'Profile: Current profile is empty'
 
     def save_form(self):
-        # Get the data from the forms
-        payload = {'role': 2, 'first_name': unicode(self.mainwindow.profile_firstname_lineedit.text()),
-                        'last_name': unicode(self.mainwindow.profile_lastname_lineedit.text()),
-                        'email': str(self.mainwindow.profile_email_lineedit.text()),
-                        'iban': str(self.mainwindow.profile_iban_lineedit.text()),
-                        'phonenumber': str(self.mainwindow.profile_phonenumber_lineedit.text())}
+        try:
+            # Get the data from the forms
+            payload = {'role': 2, 'first_name': unicode(self.mainwindow.profile_firstname_lineedit.text()),
+                            'last_name': unicode(self.mainwindow.profile_lastname_lineedit.text()),
+                            'email': str(self.mainwindow.profile_email_lineedit.text()),
+                            'iban': str(self.mainwindow.profile_iban_lineedit.text()),
+                            'phonenumber': str(self.mainwindow.profile_phonenumber_lineedit.text())}
 
-        if self.mainwindow.profile_borrower_radiobutton.isChecked():
-            payload['role'] = 1
-            payload['current_postalcode'] = str(self.mainwindow.profile_postcode_lineedit.text())
-            payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text())
-            payload['current_address'] = str(self.mainwindow.profile_address_lineedit.text())
-            # TODO Add missing 'documents_list': self.documentsTable
-            payload['documents_list'] = []
+            if self.mainwindow.profile_borrower_radiobutton.isChecked():
+                payload['role'] = 1
+                payload['current_postalcode'] = str(self.mainwindow.profile_postcode_lineedit.text())
+                payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text())
+                payload['current_address'] = str(self.mainwindow.profile_address_lineedit.text())
+                # TODO Add missing 'documents_list': self.documentsTable
+                payload['documents_list'] = []
 
-        # Check if the user can switch roles
-        if self.check_role_switch():
-            # Show a popup window when the profile has been saved
-            if self.mainwindow.api.create_profile(self.mainwindow.app.user, payload):
-                QMessageBox.about(self.mainwindow, "Profile saved", 'Your profile has been saved.')
-            self.mainwindow.app.user.update(self.mainwindow.api.db)
-            self.update_navigation_bar()
-        else:
-            QMessageBox.about(self.mainwindow, "Role switch failed",
-                              'It is not possible to change your role at this time')
+            # Check if all fields are filled out
+            for _, value in payload.iteritems():
+                if value == '':
+                    raise ValueError
+
+            # Check if the user can switch roles
+            if self.check_role_switch():
+                # Show a popup window when the profile has been saved
+                if self.mainwindow.api.create_profile(self.mainwindow.app.user, payload):
+                    QMessageBox.about(self.mainwindow, "Profile saved", 'Your profile has been saved.')
+                self.mainwindow.app.user.update(self.mainwindow.api.db)
+                self.update_navigation_bar()
+            else:
+                QMessageBox.about(self.mainwindow, "Role switch failed",
+                                  'It is not possible to change your role at this time')
+        except ValueError:
+            QMessageBox.about(self.mainwindow, "Profile error", 'You didn\'t enter all of the required information.')
 
     def update_navigation_bar(self):
         # Check which role the user currently has, and adjust the navigation bar accordingly

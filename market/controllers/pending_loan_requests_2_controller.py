@@ -48,15 +48,24 @@ class PendingLoanRequests2Controller:
 
     def accept_request(self):
         # TODO Add max_invest_rate and risk to the payload when they are implemented
-        # Create payload
-        payload = {'request_id' : self.loan_request_id, 'amount' : self.mainwindow.fiplr2_offer_amount_lineedit.text(),
-                   'interest_rate' : self.mainwindow.fiplr2_offer_interest_lineedit.text(), 'max_invest_rate' : 0,
-                   'default_rate' : self.mainwindow.fiplr2_default_rate_lineedit,
-                   'duration' : self.mainwindow.fiplr2_loan_duration_lineedit, 'risk' : ''}
+        try:
+            # Create payload
+            payload = {'request_id' : self.loan_request_id, 'amount' : self.mainwindow.fiplr2_offer_amount_lineedit.text(),
+                       'interest_rate' : self.mainwindow.fiplr2_offer_interest_lineedit.text(), 'max_invest_rate' : 0,
+                       'default_rate' : self.mainwindow.fiplr2_default_rate_lineedit,
+                       'duration' : self.mainwindow.fiplr2_loan_duration_lineedit, 'risk' : ' '}
 
-        # Accept the loan request
-        self.mainwindow.api.accept_loan_request(self.mainwindow.app.user, payload)
-        QMessageBox.about(self.mainwindow, "Request accepted", 'This loan request has been accepted.')
+            # Check if all fields are filled out
+            for _, value in payload.iteritems():
+                if value == '':
+                    raise ValueError
 
-        # Switch back to the pending loan requests 1 screen
-        self.mainwindow.navigation.switch_to_fiplr()
+            # Accept the loan request
+            self.mainwindow.api.accept_loan_request(self.mainwindow.app.user, payload)
+            QMessageBox.about(self.mainwindow, "Request accepted", 'This loan request has been accepted.')
+
+            # Switch back to the pending loan requests 1 screen
+            self.mainwindow.navigation.switch_to_fiplr()
+        except ValueError:
+            QMessageBox.about(self.mainwindow, "Loan request error", 'You didn\'t enter all of the required '
+                                                                    'information.')
