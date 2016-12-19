@@ -286,14 +286,17 @@ class MortgageMarketCommunity(Community):
 
     def on_mortgage_accept_unsigned(self, payload):
         user = payload.models[User._type]
+        loan_request = payload.models[LoanRequest._type]
         mortgage = payload.models[Mortgage._type]
         campaign = payload.models[Campaign._type]
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
         assert isinstance(mortgage, Mortgage)
+        assert isinstance(loan_request, LoanRequest)
 
         user.post_or_put(self.api.db)
+        loan_request.post_or_put(self.api.db)
         mortgage.post_or_put(self.api.db)
         campaign.post_or_put(self.api.db)
 
