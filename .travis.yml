@@ -13,8 +13,6 @@ before install:
 # command to install dependencies
 install:
   - ./travis-libsodium13.sh
-  - sudo sh travis-sip.sh
-  - sudo sh travis-pyqt5.sh
   - pip install decorator
   - pip install cryptography
   - pip install faker
