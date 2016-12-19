@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -483,7 +483,7 @@
       <property name="geometry">
        <rect>
         <x>400</x>
-        <y>590</y>
+        <y>600</y>
         <width>138</width>
         <height>26</height>
        </rect>
@@ -514,7 +514,7 @@
       <property name="geometry">
        <rect>
         <x>71</x>
-        <y>500</y>
+        <y>510</y>
         <width>465</width>
         <height>81</height>
        </rect>
@@ -636,7 +636,7 @@
       <property name="geometry">
        <rect>
         <x>71</x>
-        <y>426</y>
+        <y>430</y>
         <width>91</width>
         <height>17</height>
        </rect>
@@ -667,7 +667,7 @@
       <property name="geometry">
        <rect>
         <x>71</x>
-        <y>477</y>
+        <y>487</y>
         <width>335</width>
         <height>17</height>
        </rect>
@@ -1075,7 +1075,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>70</width>
+           <width>825</width>
            <height>1000</height>
           </rect>
          </property>

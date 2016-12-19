@@ -15,11 +15,11 @@ from place_loan_request_controller import PlaceLoanRequestController
 
 
 class MainWindowController(QMainWindow):
-    def __init__(self, parent=None, app=None):
+    def __init__(self, parent=None, app=None, ui_location='ui/mainwindow.ui'):
         super(MainWindowController, self).__init__(parent)
         self.app = app
         self.api = app.api
-        uic.loadUi('ui/mainwindow.ui', self)
+        uic.loadUi(ui_location, self)
         self.navigation = NavigateUser(self)
         self.bank_ids = []  # List with the hardcoded bank ids
         self.stackedWidget.setCurrentIndex(0)

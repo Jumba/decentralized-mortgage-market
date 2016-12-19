@@ -49,7 +49,7 @@ class LoginController:
         with open('market_private.key', 'w+') as f:
             f.write(private)
 
-        path = os.path.dirname(sys.modules['__main__'].__file__)
+        path = os.getcwd()
         key_path = os.path.join(path, 'market_private.key')
         self.mainwindow.login_private_key_lineedit.setText(key_path)
         # else:
