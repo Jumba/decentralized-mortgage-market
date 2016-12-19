@@ -367,7 +367,9 @@ class MarketAPI(object):
 
                 # Add message to queue
                 profile = self.load_profile(user)
-                # self.community.send_loan_request(fields, models, tuple(candidates))
+
+                # Sign the loan request
+                loan_request.sign(self)
                 self.outgoing_queue.push((u"loan_request", [LoanRequest._type, House._type, BorrowersProfile._type, User._type],
                                           {LoanRequest._type: loan_request, House._type: house, BorrowersProfile._type: profile, User._type: user}, banks))
 
@@ -457,6 +459,7 @@ class MarketAPI(object):
             bank.campaign_ids.append(campaign.id)
             self.db.put(User._type, bank.id, bank)
 
+            # TODO: The user should broadcast a signed campaign
             # Add message to queue
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage._type, Campaign._type, User._type], {Mortgage._type: mortgage, Campaign._type: campaign, User._type: user}, [bank]))
             self.outgoing_queue.push((u"mortgage_accept_unsigned", [Mortgage._type, Campaign._type,User._type], {Mortgage._type: mortgage, Campaign._type: campaign, User._type: user}, []))
@@ -504,6 +507,9 @@ class MarketAPI(object):
         self.db.put(Mortgage._type, mortgage.id, mortgage)
         self.db.put(LoanRequest._type, loan_request.id, loan_request)
         self.db.put(User._type, user.id, user)
+
+        # Sign the mortgage
+        mortgage.sign(self)
 
         # Create the campaign
         return self.create_campaign(user, mortgage, loan_request)

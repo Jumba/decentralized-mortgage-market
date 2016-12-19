@@ -124,14 +124,17 @@ class DatabaseModel(object):
 
         self.post_or_put(api.db)
 
-    def _is_valid_signer(self):
-        if self.signature and self.signer:
+    def _has_signature(self):
+        return self.signature and self.signer
+
+    def _is_valid_signer(self, api=None):
+        if self._has_signature():
             return True
         else:
             return False
 
-    def signature_valid(self):
-        if self._is_valid_signer():
+    def signature_valid(self, api=None):
+        if self._is_valid_signer(api):
             ec = ECCrypto()
             signing_key = ec.key_from_public_bin(self._signer.decode("HEX"))
             signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(),self.signature)

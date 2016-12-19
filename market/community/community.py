@@ -146,7 +146,7 @@ class MortgageMarketCommunity(Community):
 
         meta = self.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
+                            distribution=(self.claim_global_time(), meta.distribution.claim_sequence_number()),
                             payload=(request, fields, models),
                             )
         self.dispersy.store_update_forward([message], store, update, forward)

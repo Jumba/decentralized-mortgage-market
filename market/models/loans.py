@@ -58,6 +58,12 @@ class LoanRequest(DatabaseModel):
     def status(self, value):
         self._status = value
 
+    def _is_valid_signer(self, api=None):
+        if self._has_signature():
+            return self.signer == self.user_key
+        else:
+            return False
+
 
 class Mortgage(DatabaseModel):
     _type = 'mortgage'
@@ -142,6 +148,12 @@ class Mortgage(DatabaseModel):
     def status(self, value):
         self._status = value
 
+    def _is_valid_signer(self, api=None):
+        if self._has_signature():
+            return self.signer == self.bank
+        else:
+            return False
+
 
 class Investment(DatabaseModel):
     _type = 'investment'
@@ -190,6 +202,12 @@ class Investment(DatabaseModel):
     def status(self, value):
         self._status = value
 
+    def _is_valid_signer(self, api=None):
+        if self._has_signature():
+            return self.signer == self.investor_key
+        else:
+            return False
+
 
 class Campaign(DatabaseModel):
     _type = 'campaign'
@@ -231,3 +249,14 @@ class Campaign(DatabaseModel):
     @completed.setter
     def completed(self, value):
         self._completed = value
+
+    def _is_valid_signer(self, api=None):
+        if api and self._has_signature():
+            mortgage = api.db.get(Mortgage._type, self.mortgage_id)
+            if mortgage:
+                loan_request = api.db.get(LoanRequest._type, mortgage.request_id)
+                if loan_request:
+                    return self.signer == loan_request.user_key
+
+        return False
+
