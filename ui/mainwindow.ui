@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -520,7 +520,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>338</x>
@@ -1075,7 +1075,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>70</width>
+           <width>98</width>
            <height>1000</height>
           </rect>
          </property>
@@ -3974,22 +3974,6 @@
     <hint type="destinationlabel">
      <x>351</x>
      <y>248</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>profile_investor_radiobutton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>profile_phonenumber_lineedit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>237</x>
-     <y>149</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>367</y>
     </hint>
    </hints>
   </connection>
