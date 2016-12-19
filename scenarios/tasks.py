@@ -24,7 +24,7 @@ class Tasks(object):
         accepted = False
         for mortgage in mortgages:
             if isinstance(mortgage, Mortgage):
-                print "Agreeing with the mortgage offer from ", mortgage.bank
+                print "Agreeing with the mortgage offer from ", mortgage.bank, " signed?: ", mortgage.signature_valid(self.api)
                 self.api.accept_mortgage_offer(user, FakePayload.accept_mortgage_offer(mortgage))
                 accepted = True
 

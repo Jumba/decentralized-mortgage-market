@@ -113,9 +113,12 @@ class MarketApplicationABN(MarketApplication):
             self.user.role_id = 3
             print self.user, " has been created."
             self.api.db.post(self.user.type, self.user)
+            # login via the API to save/init database fields.
 
         if self.user and self.user.user_key == Global.BANKS[self.database_prefix]:
             print "Identified as ", self.database_prefix
+            self.api.db.backend.set_option('user_key_pub', Global.BANKS[self.database_prefix])
+            self.api.db.backend.set_option('user_key_priv', Global.BANKS_PRIV[self.database_prefix])
         else:
             print "failed to identify as ", self.database_prefix
             print "User is ", self.user

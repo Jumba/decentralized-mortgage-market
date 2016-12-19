@@ -274,6 +274,7 @@ class MortgageMarketCommunity(Community):
         # The bank can now initiate a signing step.
         if self.user.id == mortgage.bank:
             print "Signing the agreement"
+            # resign because the status has been changed.
             self.publish_signed_confirm_message(user.id, mortgage)
 
         # Save the started campaign to the bank

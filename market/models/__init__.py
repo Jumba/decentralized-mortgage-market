@@ -101,7 +101,16 @@ class DatabaseModel(object):
         output = []
         for attr in vars(self):
             if attr not in self._hash_exclude:
-                output.append(str(getattr(self, attr)))
+                attribute = getattr(self, attr)
+                if isinstance(attribute, list) or isinstance(attribute, dict):
+                    new_list = []
+                    if isinstance(attribute, list):
+                        new_list = sorted(attribute)
+                    elif isinstance(attribute, dict):
+                        new_list = sorted(attribute.items())
+                    output.append(str(new_list))
+                else:
+                    output.append(str(attribute))
 
         sha1_hash = hashlib.sha1(json.dumps(output)).hexdigest()
         return sha1_hash
@@ -137,7 +146,7 @@ class DatabaseModel(object):
         if self._is_valid_signer(api):
             ec = ECCrypto()
             signing_key = ec.key_from_public_bin(self._signer.decode("HEX"))
-            signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(),self.signature)
+            signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(), self.signature)
             return signature_valid
         return False
 

@@ -60,7 +60,7 @@ class LoanRequest(DatabaseModel):
 
     def _is_valid_signer(self, api=None):
         if self._has_signature():
-            return self.signer == self.user_key
+            return self.signer == self.user_key or self.signer in self.banks
         else:
             return False
 
