@@ -3,9 +3,6 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-import main_view_controller
-from market.views.main_view import Ui_MainWindow
-
 
 class LoginController:
     def __init__(self, mainwindow):
