@@ -413,7 +413,7 @@ class MortgageMarketCommunity(Community):
             message = self.create_signed_confirm_request_message(candidate, agreement_benefactor)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
             # TODO: Save on blockchain
-            #self.persist_signature_request(message)
+            # self.persist_signature_request(message)
             return True
         else:
             return False
@@ -434,7 +434,7 @@ class MortgageMarketCommunity(Community):
         benefactor = self.user.id
 
         payload_list = []
-        for k in range(1,12):
+        for k in range(1, 12):
             payload_list.append(None)
 
         payload_list[0] = benefactor  # benefactor, 0
@@ -473,49 +473,35 @@ class MortgageMarketCommunity(Community):
             sequence_number_beneficiary = self._get_next_sequence_number(self.user.id)
             previous_hash_beneficiary = self._get_latest_hash(self.user.id)
 
-            signatures = message.authentication.signed_members
-            if not len(signatures) == 2:
-                return None
-
-            benefactor_signature = None
-            beneficiary_signature = None
-            for signature in signatures:
-                encoded_sig = signature[1].public_key.encode("HEX")
-                if encoded_sig == payload.benefactor:
-                    benefactor_signature = signature[0].encode("HEX")
-                elif encoded_sig == self.user.id:
-                    beneficiary_signature = signature[0].encode("HEX")
-
-            print "Signatures received"
-            print beneficiary_signature
-            print benefactor_signature
-
-            payload_list = []
-            for k in range(1,12):
-                payload_list.append(None)
-
-            payload_list[0] = payload.benefactor
-            payload_list[1] = self.user.id
-            payload_list[2] = agreement
-            payload_list[3] = agreement_local
-            payload_list[4] = payload.sequence_number_benefactor
-            payload_list[5] = sequence_number_beneficiary
-            payload_list[6] = payload.previous_hash_benefactor
-            payload_list[7] = previous_hash_beneficiary
-            payload_list[8] = benefactor_signature
-            payload_list[9] = beneficiary_signature
-            payload_list[10] = payload.time
-
+            new_payload = (
+                payload.benefactor,
+                self.user.id,
+                agreement,
+                agreement_local,
+                payload.sequence_number_benefactor,
+                sequence_number_beneficiary,
+                payload.previous_hash_benefactor,
+                previous_hash_beneficiary,
+                '',
+                '',
+                payload.time,
+            )
             meta = self.get_meta_message(u"signed_confirm")
-
-            print "Signatures: ", message.authentication.signatures
-            print "Creating message with payload: ", payload_list
+            print "Pre create sigs: ", message.authentication.signed_members
             message = meta.impl(authentication=(message.authentication.members, message.authentication.signatures),
                                 distribution=(message.distribution.global_time,),
-                                payload=tuple(payload_list))
+                                payload=new_payload)
+            print "Post creagte sigs:", message.authentication.signed_members
+
+            for signature in message.authentication.signed_members:
+                print signature[1].public_key.encode("HEX")
+                encoded_sig = signature[1].public_key.encode("HEX")
+                if encoded_sig == payload.benefactor:
+                    message.payload._benefactor_signature = signature[0].encode("HEX")
+                elif encoded_sig == self.user.id:
+                    message.payload._beneficiary_signature = signature[0].encode("HEX")
             # TODO: Save to blockchain
-            print "Signatures 2: ", message.payload
-            #self.persist_signature_response(message)
+
             return message
         else:
             return None
@@ -526,12 +512,14 @@ class MortgageMarketCommunity(Community):
             a. True, if we accept this message
             b. False, if not (because of inconsistencies in the payload)
         """
+        print "plz"
+
         if not response:
             print "Timeout received for signature request."
             return False
         else:
             agreement = response.payload.agreement_beneficiary
-            agreement_local = request.payload.agreement_benefacor
+            agreement_local = request.payload.agreement_benefactor
 
             # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
             if agreement_local == agreement:
@@ -555,8 +543,9 @@ class MortgageMarketCommunity(Community):
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
-            self.update_signature_response(message)
-            print message.payload.agreement, " is official. Message signed = ", message.authentication.is_signed
+            #self.update_signature_response(message)
+            print message, " is official. Message signed = ", message.authentication.is_signed
+            print message.payload.__dict__
 
     def persist_signature_response(self, message):
         """

@@ -85,7 +85,8 @@ class SignedConfirmPayload(Payload):
             assert isinstance(benefactor, str)
             assert isinstance(beneficiary, str)
             assert isinstance(agreement_benefactor, DatabaseModel)
-            assert agreement_beneficiary == None or isinstance(agreement_beneficiary, DatabaseModel)
+            if agreement_beneficiary:
+                assert isinstance(agreement_beneficiary, DatabaseModel)
             assert isinstance(sequence_number_benefactor, int)
             assert isinstance(sequence_number_beneficiary, int)
             assert isinstance(previous_hash_benefactor, str)
