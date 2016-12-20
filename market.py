@@ -7,7 +7,7 @@ from twisted.internet import reactor
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMessageBox, QApplication
 
-from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING
+from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneInvestor
 
 
 def sigint_handler(*args):
@@ -36,6 +36,8 @@ if __name__ == "__main__":
             app = MarketAppSceneBankING(sys.argv)
         elif bank == "borrower":
             app = MarketAppSceneBorrower(sys.argv)
+        elif bank == "investor":
+            app = MarketAppSceneInvestor(sys.argv)
         else:
             raise SystemExit("Unknown bank")
 
