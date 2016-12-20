@@ -5,7 +5,7 @@ class ProfileController:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.current_profile = None
-
+        self.msg = QMessageBox
         # Add listener to the save profile button
         self.mainwindow.profile_save_pushbutton.clicked.connect(self.save_form)
 
@@ -57,14 +57,17 @@ class ProfileController:
             if self.check_role_switch():
                 # Show a popup window when the profile has been saved
                 if self.mainwindow.api.create_profile(self.mainwindow.app.user, payload):
-                    QMessageBox.about(self.mainwindow, "Profile saved", 'Your profile has been saved.')
-                self.mainwindow.app.user.update(self.mainwindow.api.db)
-                self.update_navigation_bar()
+                    self.msg.about(self.mainwindow, "Profile saved", 'Your profile has been saved.')
+                    self.mainwindow.app.user.update(self.mainwindow.api.db)
+                    self.update_navigation_bar()
+                else:
+                    self.msg.about(self.mainwindow, "Profile error",
+                                      'Your profile could not be saved. Try again later.')
             else:
-                QMessageBox.about(self.mainwindow, "Role switch failed",
+                self.msg.about(self.mainwindow, "Role switch failed",
                                   'It is not possible to change your role at this time')
         except ValueError:
-            QMessageBox.about(self.mainwindow, "Profile error", 'You didn\'t enter all of the required information.')
+            self.msg.about(self.mainwindow, "Profile error", 'You didn\'t enter all of the required information.')
 
     def update_navigation_bar(self):
         # Check which role the user currently has, and adjust the navigation bar accordingly
