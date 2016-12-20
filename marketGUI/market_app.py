@@ -36,15 +36,16 @@ class MarketApplication(QApplication):
             bank.post_or_put(self.api.db)
             self.api.create_profile(bank, {'role': 3})
 
-
         self.private_key = None
         self.user = None
         self.community = None
 
         self.identify()
 
+    def run(self):
         # Ready to start dispersy
         reactor.callWhenRunning(self.start_dispersy)
+        reactor.callWhenRunning(self.exec_())
         reactor.run()
 
     def initialize_api(self):
