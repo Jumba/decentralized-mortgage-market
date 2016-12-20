@@ -13,7 +13,7 @@ class Backend(object):
     def put(self, type, id, obj):
         raise NotImplementedError
 
-    def delete(self, id):
+    def delete(self, obj):
         raise NotImplementedError
 
     def id_available(self, id):
@@ -61,8 +61,9 @@ class MemoryBackend(Backend):
             return True
         return False
 
-    def delete(self, id):
-        raise NotImplementedError
+    def delete(self, obj):
+        if self.exists(obj.type, obj.id):
+            del self._data[obj.type][obj.id]
 
     def id_available(self, id):
         return id not in self._id

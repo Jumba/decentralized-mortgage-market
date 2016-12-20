@@ -14,7 +14,7 @@ class Database(object):
     def put(self, type, id, obj):
         raise NotImplementedError
 
-    def delete(self, type, id):
+    def delete(self, obj):
         raise NotImplementedError
 
     def get_all(self, type):
