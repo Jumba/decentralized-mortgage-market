@@ -14,8 +14,6 @@ def sigint_handler(*args):
     """Handler for the SIGINT signal."""
     sys.stderr.write('\r')
     #if QMessageBox.question(None, '', "Are you sure you want to quit?",
-    #                        QMessageBox.Yes | QMessageBox.No,
-    #                        QMessageBox.No) == QMessageBox.Yes:
     reactor.stop()
     QApplication.quit()
     os._exit(0) # TODO: THIS SHOULD BE DONE PROPERLY
