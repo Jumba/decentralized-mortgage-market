@@ -42,7 +42,7 @@ class MultiChainDB(Database):
     Ensures a proper DB schema on startup.
     """
 
-    def __init__(self, dispersy, working_directory):
+    def __init__(self, dispersy, working_directory, database_name):
         """
         Sets up the persistence layer ready for use.
         :param dispersy: Dispersy stores the PK.
@@ -50,7 +50,10 @@ class MultiChainDB(Database):
         that will contain the the db at working directory/DATABASE_PATH
         :return:
         """
-        super(MultiChainDB, self).__init__(path.join(working_directory, DATABASE_PATH))
+        print path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s' % database_name)
+
+        super(MultiChainDB, self).__init__(path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s.db' % database_name))
+
         self._dispersy = dispersy
         self.open()
 
