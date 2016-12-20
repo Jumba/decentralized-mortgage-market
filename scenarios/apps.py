@@ -4,7 +4,7 @@ from market import Global
 from market.api.api import MarketAPI
 from market.database.backends import PersistentBackend, MemoryBackend
 from market.database.database import MockDatabase
-from marketGUI.market_app import MarketApplication, MarketApplicationABN, MarketApplicationING
+from marketGUI.market_app import MarketApplication, MarketApplicationABN, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU
 from scenarios.scenario import Scenario
 from scenarios.tasks import Tasks
 
@@ -70,6 +70,46 @@ class MarketAppSceneBorrower(MarketApplication):
                 print "BLESS NOW TO WAIT FOR INVESTORS"
                 self.mortgage_accept = False
 
+class MarketAppSceneInvestor(MarketApplication):
+
+    port = 1467
+    database_prefix = 'investor'
+
+    def __init__(self, *argv):
+        self.profile = True
+        self.wait_for_campaign = False
+        self.mortgage_accept = False
+        self.investor_accept = False
+
+        MarketApplication.__init__(self, *argv)
+
+    def initialize_api(self):
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        # Start fresh
+        self._api.db.backend.clear()
+        #self._api = MarketAPI(MockDatabase(MemoryBackend()))
+
+    def _scenario(self):
+        self.scenario = Scenario(self.api)
+        self.tasks = Tasks(self.api)
+
+        if self.profile:
+            print "Creating profile"
+            # Creating a borrower
+            self.scenario.make_investor(self.user)
+            self.profile = False
+            self.wait_for_campaign = True
+            print "Looking for campaigns now"
+
+
+        # Creating a loan request
+        if self.wait_for_campaign:
+            campaigns = self.scenario.load_open_market()
+            print len(campaigns), " available."
+            for campaign in campaigns:
+                print campaign.id, " found."
+
+
 
 class MarketAppSceneBank(MarketApplicationABN):
     def __init__(self, *argv):
@@ -88,6 +128,35 @@ class MarketAppSceneBank(MarketApplicationABN):
 class MarketAppSceneBankING(MarketApplicationING):
     def __init__(self, *argv):
         MarketApplicationING.__init__(self, *argv)
+
+    def initialize_api(self):
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api.db.backend.clear()
+
+    def _scenario(self):
+        self.scenario = Scenario(self.api)
+        self.tasks = Tasks(self.api)
+        self.tasks.handle_incoming_loan_request(self.user)
+
+
+class MarketAppSceneBankRABO(MarketApplicationING):
+    def __init__(self, *argv):
+        MarketApplicationRABO.__init__(self, *argv)
+
+    def initialize_api(self):
+        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api.db.backend.clear()
+
+    def _scenario(self):
+        self.scenario = Scenario(self.api)
+        self.tasks = Tasks(self.api)
+        self.tasks.handle_incoming_loan_request(self.user)
+
+
+
+class MarketAppSceneBankMONEYOU(MarketApplicationING):
+    def __init__(self, *argv):
+        MarketApplicationMONEYOU.__init__(self, *argv)
 
     def initialize_api(self):
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
