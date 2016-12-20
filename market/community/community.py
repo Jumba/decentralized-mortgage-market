@@ -16,7 +16,7 @@ from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile
 from market.models.user import User
-from market.multichain.database import DatabaseBlock, MultiChainDB
+from market.multichain.database import DatabaseBlock
 from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class MortgageMarketCommunity(Community):
         self._api = None
         self._user = None
 
-        self.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory)
+        ##self.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory)
 
     def initialize(self):
         super(MortgageMarketCommunity, self).initialize()
@@ -413,7 +413,7 @@ class MortgageMarketCommunity(Community):
             message = self.create_signed_confirm_request_message(candidate, agreement_benefactor)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
             # TODO: Save on blockchain
-            self.persist_signature_request(message)
+            #self.persist_signature_request(message)
             return True
         else:
             return False
@@ -422,21 +422,38 @@ class MortgageMarketCommunity(Community):
         """
 
         """
-        # Init the data being sent
+        # agreement_benefactor, 2
+        # agreement_beneficiary, 3
+        # sequence_number_benefactor, 4
+        # sequence_number_beneficiary, 5
+        # previous_hash_benefactor, 6
+        # previous_hash_beneficiary, 7
+        # signature_benefactor, 8
+        # signature_beneficiary, 9
+        # time 10
         benefactor = self.user.id
-        beneficiary = ''  # Target user fills it in themselves.
-        sequence_number_benefactor = self._get_next_sequence_number(benefactor)
-        previous_hash_benefactor = self._get_latest_hash(benefactor)
-        timestamp = int(time.time())
 
-        payload = (benefactor, beneficiary, agreement_benefactor, sequence_number_benefactor,
-                   previous_hash_benefactor, timestamp)
+        payload_list = []
+        for k in range(1,12):
+            payload_list.append(None)
+
+        payload_list[0] = benefactor  # benefactor, 0
+        payload_list[1] = ''  # beneficiary, 1
+        payload_list[2] = agreement_benefactor
+        payload_list[3] = None  # agreement beneficiary
+        payload_list[4] = self._get_next_sequence_number(benefactor)
+        payload_list[5] = 0  # sequence number beneficiary
+        payload_list[6] = self._get_latest_hash(benefactor)
+        payload_list[7] = ''  # previous hash beneficiary
+        payload_list[8] = ''  # Signature benefactor
+        payload_list[9] = ''  # Signature beneficiary
+        payload_list[10] = int(time.time())
 
         meta = self.get_meta_message(u"signed_confirm")
 
         message = meta.impl(authentication=([self.my_member, candidate.get_member()],),
                             distribution=(self.claim_global_time(),),
-                            payload=payload)
+                            payload=tuple(payload_list))
         return message
 
     def allow_signed_confirm_request(self, message):
@@ -447,6 +464,7 @@ class MortgageMarketCommunity(Community):
             :param message The message containing the received signature request.
         """
         payload = message.payload
+        print "payload in: ", payload
 
         agreement = payload.agreement_benefactor
         agreement_local = self.api.db.get(agreement.type, agreement.id)
@@ -455,17 +473,49 @@ class MortgageMarketCommunity(Community):
             sequence_number_beneficiary = self._get_next_sequence_number(self.user.id)
             previous_hash_beneficiary = self._get_latest_hash(self.user.id)
 
-            payload = (payload.benefactor, self.user.id, agreement, agreement, payload.sequence_number_benefactor,
-                       sequence_number_beneficiary, payload.previous_hash_benefactor, previous_hash_beneficiary,
-                       payload.time)
+            signatures = message.authentication.signed_members
+            if not len(signatures) == 2:
+                return None
+
+            benefactor_signature = None
+            beneficiary_signature = None
+            for signature in signatures:
+                encoded_sig = signature[1].public_key.encode("HEX")
+                if encoded_sig == payload.benefactor:
+                    benefactor_signature = signature[0].encode("HEX")
+                elif encoded_sig == self.user.id:
+                    beneficiary_signature = signature[0].encode("HEX")
+
+            print "Signatures received"
+            print beneficiary_signature
+            print benefactor_signature
+
+            payload_list = []
+            for k in range(1,12):
+                payload_list.append(None)
+
+            payload_list[0] = payload.benefactor
+            payload_list[1] = self.user.id
+            payload_list[2] = agreement
+            payload_list[3] = agreement_local
+            payload_list[4] = payload.sequence_number_benefactor
+            payload_list[5] = sequence_number_beneficiary
+            payload_list[6] = payload.previous_hash_benefactor
+            payload_list[7] = previous_hash_beneficiary
+            payload_list[8] = benefactor_signature
+            payload_list[9] = beneficiary_signature
+            payload_list[10] = payload.time
 
             meta = self.get_meta_message(u"signed_confirm")
 
+            print "Signatures: ", message.authentication.signatures
+            print "Creating message with payload: ", payload_list
             message = meta.impl(authentication=(message.authentication.members, message.authentication.signatures),
                                 distribution=(message.distribution.global_time,),
-                                payload=payload)
+                                payload=tuple(payload_list))
             # TODO: Save to blockchain
-            self.persist_signature_response(message)
+            print "Signatures 2: ", message.payload
+            #self.persist_signature_response(message)
             return message
         else:
             return None
@@ -480,8 +530,8 @@ class MortgageMarketCommunity(Community):
             print "Timeout received for signature request."
             return False
         else:
-            agreement = response.payload.agreement_benefactor
-            agreement_local = request.payload.agreement
+            agreement = response.payload.agreement_beneficiary
+            agreement_local = request.payload.agreement_benefacor
 
             # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
             if agreement_local == agreement:
@@ -516,7 +566,7 @@ class MortgageMarketCommunity(Community):
         """
         block = DatabaseBlock.from_signature_response_message(message)
         self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
-        self.persistence.add_block(block)
+        ##self.persistence.add_block(block)
 
     def update_signature_response(self, message):
         """
@@ -526,7 +576,7 @@ class MortgageMarketCommunity(Community):
         """
         block = DatabaseBlock.from_signature_response_message(message)
         self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
-        self.persistence.update_block_with_beneficiary(block)
+        # self.persistence.update_block_with_beneficiary(block)
 
     def persist_signature_request(self, message):
         """
@@ -536,11 +586,11 @@ class MortgageMarketCommunity(Community):
         """
         block = DatabaseBlock.from_signature_request_message(message)
         self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
-        self.persistence.add_block(block)
+        # self.persistence.add_block(block)
 
     def _get_next_sequence_number(self, user):
-        return self.persistence.get_latest_sequence_number(user) + 1
+        return 1  # self.persistence.get_latest_sequence_number(user) + 1
 
     def _get_latest_hash(self, user):
-        previous_hash = self.persistence.get_latest_hash(user)
+        previous_hash = 'wolololololo'  # self.persistence.get_latest_hash(user)
         return previous_hash

@@ -2,8 +2,7 @@
 """
 from os import path
 from hashlib import sha256
-from Tribler.dispersy.database import Database
-from Tribler.community.multichain.conversion import (encode_block, encode_block_benefactor_half, EMPTY_HASH)
+from market.dispersy.database import Database
 
 DATABASE_DIRECTORY = path.join(u"sqlite")
 # Path to the database location + dispersy._workingdirectory
@@ -291,32 +290,32 @@ class DatabaseBlock:
 
         self.insert_time = data[12]
 
-    @classmethod
-    def from_signature_response_message(cls, message):
-        payload = message.payload
-        benefactor = message.authentication.signed_members[0]
-        beneficiary = message.authentication.signed_members[1]
-        return cls((benefactor[1].public_key, beneficiary[1].public_key,
-                    payload.model_benefactor,
-                    payload.sequence_number_benefactor, payload.previous_hash_benefactor,
-                    benefactor[0], sha256(encode_block_benefactor_half(payload, benefactor[1].public_key,
-                                                                       beneficiary[1].public_key, benefactor[0])).digest(),
-                    payload.model_beneficiary,
-                    payload.sequence_number_beneficiary, payload.previous_hash_beneficiary,
-                    beneficiary[0], sha256(encode_block(payload, benefactor, beneficiary)).digest(),
-                    None))
-
-    @classmethod
-    def from_signature_request_message(cls, message):
-        payload = message.payload
-        benefactor = message.authentication.signed_members[0]
-        beneficiary = message.authentication.signed_members[1]
-        return cls((benefactor[1].public_key, beneficiary[1].public_key,
-                    payload.model_benefactor,
-                    payload.sequence_number_benefactor, payload.previous_hash_benefactor,
-                    benefactor[0], sha256(encode_block_benefactor_half(payload, benefactor[1].public_key,
-                                                                       beneficiary[1].public_key, benefactor[0])).digest(),
-                    0,
-                    -1, EMPTY_HASH,
-                    "", EMPTY_HASH,
-                    None))
+    # @classmethod
+    # def from_signature_response_message(cls, message):
+    #     payload = message.payload
+    #     benefactor = message.authentication.signed_members[0]
+    #     beneficiary = message.authentication.signed_members[1]
+    #     return cls((benefactor[1].public_key, beneficiary[1].public_key,
+    #                 payload.model_benefactor,
+    #                 payload.sequence_number_benefactor, payload.previous_hash_benefactor,
+    #                 benefactor[0], sha256(encode_block_benefactor_half(payload, benefactor[1].public_key,
+    #                                                                    beneficiary[1].public_key, benefactor[0])).digest(),
+    #                 payload.model_beneficiary,
+    #                 payload.sequence_number_beneficiary, payload.previous_hash_beneficiary,
+    #                 beneficiary[0], sha256(encode_block(payload, benefactor, beneficiary)).digest(),
+    #                 None))
+    #
+    # @classmethod
+    # def from_signature_request_message(cls, message):
+    #     payload = message.payload
+    #     benefactor = message.authentication.signed_members[0]
+    #     beneficiary = message.authentication.signed_members[1]
+    #     return cls((benefactor[1].public_key, beneficiary[1].public_key,
+    #                 payload.model_benefactor,
+    #                 payload.sequence_number_benefactor, payload.previous_hash_benefactor,
+    #                 benefactor[0], sha256(encode_block_benefactor_half(payload, benefactor[1].public_key,
+    #                                                                    beneficiary[1].public_key, benefactor[0])).digest(),
+    #                 0,
+    #                 -1, EMPTY_HASH,
+    #                 "", EMPTY_HASH,
+    #                 None))

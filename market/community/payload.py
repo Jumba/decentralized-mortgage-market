@@ -85,7 +85,7 @@ class SignedConfirmPayload(Payload):
             assert isinstance(benefactor, str)
             assert isinstance(beneficiary, str)
             assert isinstance(agreement_benefactor, DatabaseModel)
-            assert isinstance(agreement_beneficiary, DatabaseModel)
+            assert agreement_beneficiary == None or isinstance(agreement_beneficiary, DatabaseModel)
             assert isinstance(sequence_number_benefactor, int)
             assert isinstance(sequence_number_beneficiary, int)
             assert isinstance(previous_hash_benefactor, str)
@@ -105,7 +105,7 @@ class SignedConfirmPayload(Payload):
             self._previous_hash_benefactor = previous_hash_benefactor
             self._previous_hash_beneficiary = previous_hash_beneficiary
             self._signature_benefactor = signature_benefactor
-            self._signature_beneficiary - signature_beneficiary
+            self._signature_beneficiary = signature_beneficiary
             self._time = time
             
         @property
