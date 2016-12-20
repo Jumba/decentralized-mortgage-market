@@ -34,6 +34,10 @@ if __name__ == "__main__":
             app = MarketAppSceneBank(sys.argv)
         elif bank == "ing":
             app = MarketAppSceneBankING(sys.argv)
+        elif bank == "rabo":
+            app = MarketAppSceneBankRABO(sys.argv)
+        elif bank == "moneyou":
+            app = MarketAppSceneBankMONEYOU(sys.argv)
         elif bank == "borrower":
             app = MarketAppSceneBorrower(sys.argv)
         elif bank == "investor":
