@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-
+from market import Global
 
 class PlaceLoanRequestController:
     def __init__(self, mainwindow):
@@ -25,7 +25,7 @@ class PlaceLoanRequestController:
             banks = [self.mainwindow.bplr_bank1_checkbox, self.mainwindow.bplr_bank2_checkbox,
                      self.mainwindow.bplr_bank3_checkbox,
                      self.mainwindow.bplr_bank4_checkbox]
-            banks_ids = self.mainwindow.bank_ids
+            banks_ids = Global.BANKS.values()
 
             checked_banks = []
             pointer = 0

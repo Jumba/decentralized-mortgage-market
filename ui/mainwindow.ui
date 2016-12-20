@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -464,7 +464,7 @@
        <rect>
         <x>71</x>
         <y>60</y>
-        <width>140</width>
+        <width>181</width>
         <height>18</height>
        </rect>
       </property>
@@ -556,7 +556,7 @@
        <rect>
         <x>71</x>
         <y>270</y>
-        <width>180</width>
+        <width>201</width>
         <height>18</height>
        </rect>
       </property>
@@ -602,7 +602,7 @@
        <rect>
         <x>71</x>
         <y>430</y>
-        <width>91</width>
+        <width>111</width>
         <height>17</height>
        </rect>
       </property>
@@ -633,7 +633,7 @@
        <rect>
         <x>71</x>
         <y>487</y>
-        <width>335</width>
+        <width>431</width>
         <height>17</height>
        </rect>
       </property>
@@ -683,7 +683,7 @@
        <rect>
         <x>71</x>
         <y>21</y>
-        <width>261</width>
+        <width>291</width>
         <height>37</height>
        </rect>
       </property>
@@ -786,7 +786,7 @@
        <rect>
         <x>71</x>
         <y>88</y>
-        <width>46</width>
+        <width>81</width>
         <height>17</height>
        </rect>
       </property>
@@ -848,14 +848,14 @@
      <widget class="QCheckBox" name="bplr_bank2_checkbox">
       <property name="geometry">
        <rect>
-        <x>145</x>
+        <x>171</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 2</string>
+       <string>ING</string>
       </property>
       <property name="checked">
        <bool>false</bool>
@@ -864,40 +864,40 @@
      <widget class="QCheckBox" name="bplr_bank1_checkbox">
       <property name="geometry">
        <rect>
-        <x>72</x>
+        <x>71</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 1</string>
+       <string>ABN AMRO</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="bplr_bank4_checkbox">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>371</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 4</string>
+       <string>MoneYou</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="bplr_bank3_checkbox">
       <property name="geometry">
        <rect>
-        <x>217</x>
+        <x>271</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 3</string>
+       <string>Rabobank</string>
       </property>
       <property name="checked">
        <bool>false</bool>
@@ -927,7 +927,7 @@
        <rect>
         <x>409</x>
         <y>391</y>
-        <width>87</width>
+        <width>141</width>
         <height>27</height>
        </rect>
       </property>
@@ -1075,7 +1075,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>825</width>
+           <width>70</width>
            <height>1000</height>
           </rect>
          </property>

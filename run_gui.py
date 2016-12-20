@@ -5,7 +5,7 @@ from market.controllers.main_view_controller import MainWindowController
 
 
 def main():
-    app = MarketApplication(sys.argv)
+    app = TestMarketApplication(sys.argv)
     form = MainWindowController(app=app)
     form.show()
     app.run()

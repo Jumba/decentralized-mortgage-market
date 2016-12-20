@@ -21,8 +21,6 @@ class MainWindowController(QMainWindow):
         self.api = app.api
         uic.loadUi(ui_location, self)
         self.navigation = NavigateUser(self)
-        self.bank_ids = []  # List with the hardcoded bank ids
-        # self.stackedWidget.setCurrentIndex(0)
         self.fip_controller = BanksPortfolioController(self)
         self.bp_controller = BorrowersPortfolioController(self)
         self.cb_controller = CampaignBidsController(self)
