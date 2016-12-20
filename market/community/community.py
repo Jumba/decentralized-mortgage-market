@@ -443,12 +443,16 @@ class MortgageMarketCommunity(Community):
         agreement_local = self.api.db.get(agreement.type, agreement.id)
 
         if agreement == agreement_local:
+
             payload = (payload.benefactor, self.user.id, agreement, payload.time)
             meta = self.get_meta_message(u"signed_confirm")
             message = meta.impl(authentication=(message.authentication.members, message.authentication.signatures),
                                 distribution=(message.distribution.global_time,),
                                 payload=payload)
             # TODO: Save to blockchain
+            print "Signatures: ", message.authentication.signatures
+            print "Mem sig: ", message.authentication.signed_members
+
             return message
         else:
             return None
