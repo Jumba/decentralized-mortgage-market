@@ -413,7 +413,7 @@ class MortgageMarketCommunity(Community):
             message = self.create_signed_confirm_request_message(candidate, agreement)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
             # TODO: Save on blockchain
-            self.persist_signature_request(message)
+            #self.persist_signature_request(message)
             return True
         else:
             return False
@@ -454,7 +454,7 @@ class MortgageMarketCommunity(Community):
                                 distribution=(message.distribution.global_time,),
                                 payload=payload)
             # TODO: Save to blockchain
-            self.persist_signature_response(message)
+            #self.persist_signature_response(message)
             return message
         else:
             return None
@@ -494,7 +494,7 @@ class MortgageMarketCommunity(Community):
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
-            self.update_signature_response(message)
+            #self.update_signature_response(message)
             print message.payload.agreement, " is official. Message signed = ", message.authentication.is_signed
 
     def persist_signature_response(self, message):
@@ -504,7 +504,7 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signature_response_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
         self.persistence.add_block(block)
 
     def update_signature_response(self, message):
@@ -514,8 +514,8 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signature_response_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
-        self.persistence.update_block_with_responder(block)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
+        self.persistence.update_block_with_beneficiary(block)
 
     def persist_signature_request(self, message):
         """
@@ -524,5 +524,5 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signature_request_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
         self.persistence.add_block(block)

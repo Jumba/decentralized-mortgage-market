@@ -3,7 +3,7 @@
 from os import path
 from hashlib import sha256
 from Tribler.dispersy.database import Database
-from Tribler.community.multichain.conversion import (encode_block, encode_block_requester_half, EMPTY_HASH)
+from Tribler.community.multichain.conversion import (encode_block, encode_block_benefactor_half, EMPTY_HASH)
 
 DATABASE_DIRECTORY = path.join(u"sqlite")
 # Path to the database location + dispersy._workingdirectory
@@ -13,22 +13,22 @@ LATEST_DB_VERSION = 1
 # Schema for the MultiChain DB.
 schema = u"""
 CREATE TABLE IF NOT EXISTS multi_chain(
- public_key_requester		TEXT NOT NULL,
- public_key_responder		TEXT NOT NULL,
+ public_key_benefactor		  TEXT NOT NULL,
+ public_key_beneficiary		  TEXT NOT NULL,
 
- model_requester            TEXT NOT NULL,
- sequence_number_requester  INTEGER NOT NULL,
- previous_hash_requester	TEXT NOT NULL,
- signature_requester		TEXT NOT NULL,
- hash_requester		        TEXT PRIMARY KEY,
+ model_benefactor             TEXT NOT NULL,
+ sequence_number_benefactor   INTEGER NOT NULL,
+ previous_hash_benefactor	  TEXT NOT NULL,
+ signature_benefactor		  TEXT NOT NULL,
+ hash_benefactor		      TEXT PRIMARY KEY,
 
- model_responder            TEXT NOT NULL,
- sequence_number_responder  INTEGER NOT NULL,
- previous_hash_responder	TEXT NOT NULL,
- signature_responder		TEXT NOT NULL,
- hash_responder		        TEXT NOT NULL,
+ model_beneficiary            TEXT NOT NULL,
+ sequence_number_beneficiary  INTEGER NOT NULL,
+ previous_hash_beneficiary	  TEXT NOT NULL,
+ signature_beneficiary		  TEXT NOT NULL,
+ hash_beneficiary	          TEXT NOT NULL,
 
- insert_time                TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+ insert_time                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
  );
 
 CREATE TABLE option(key TEXT PRIMARY KEY, value BLOB);
@@ -60,58 +60,58 @@ class MultiChainDB(Database):
         Persist a block
         :param block: The data that will be saved.
         """
-        data = (buffer(block.public_key_requester), buffer(block.public_key_responder),
-                buffer(block.model_requester),
-                block.sequence_number_requester, buffer(block.previous_hash_requester),
-                buffer(block.signature_requester), buffer(block.hash_requester),
-                buffer(block.model_responder),
-                block.sequence_number_responder, buffer(block.previous_hash_responder),
-                buffer(block.signature_responder), buffer(block.hash_responder))
+        data = (buffer(block.public_key_benefactor), buffer(block.public_key_beneficiary),
+                buffer(block.model_benefactor),
+                block.sequence_number_benefactor, buffer(block.previous_hash_benefactor),
+                buffer(block.signature_benefactor), buffer(block.hash_benefactor),
+                buffer(block.model_beneficiary),
+                block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary),
+                buffer(block.signature_beneficiary), buffer(block.hash_beneficiary))
 
         self.execute(
-            u"INSERT INTO multi_chain (public_key_requester, public_key_responder, "
-            u"model_requester, sequence_number_requester, previous_hash_requester, "
-            u"signature_requester, hash_requester, "
-            u"model_responder, sequence_number_responder, previous_hash_responder, "
-            u"signature_responder, hash_responder) "
+            u"INSERT INTO multi_chain (public_key_benefactor, public_key_beneficiary, "
+            u"model_benefactor, sequence_number_benefactor, previous_hash_benefactor, "
+            u"signature_benefactor, hash_benefactor, "
+            u"model_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, "
+            u"signature_beneficiary, hash_beneficiary) "
             u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             data)
         self.commit()
 
-    def update_block_with_responder(self, block):
+    def update_block_with_beneficiary(self, block):
         """
         Update an existing block
         :param block: The data that will be saved.
         """
         data = (
-            buffer(block.model_responder),
-            block.sequence_number_responder, buffer(block.previous_hash_responder),
-            buffer(block.signature_responder), buffer(block.hash_responder), buffer(block.hash_requester))
+            buffer(block.model_beneficiary),
+            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary),
+            buffer(block.signature_beneficiary), buffer(block.hash_beneficiary), buffer(block.hash_benefactor))
 
         self.execute(
             u"UPDATE multi_chain "
-            u"SET model_responder = ?, "
-            u"sequence_number_responder = ?, previous_hash_responder = ?, "
-            u"signature_responder = ?, hash_responder = ? "
-            u"WHERE hash_requester = ?",
+            u"SET model_beneficiary = ?, "
+            u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, "
+            u"signature_beneficiary = ?, hash_beneficiary = ? "
+            u"WHERE hash_benefactor = ?",
             data)
         self.commit()
 
     def get_latest_hash(self, public_key):
         """
         Get the relevant hash of the latest block in the chain for a specific public key.
-        Relevant means the hash_requester if the last block was a request,
-        hash_responder if the last block was a response.
+        Relevant means the hash_benefactor if the last block was a request,
+        hash_beneficiary if the last block was a response.
         :param public_key: The public_key for which the latest hash has to be found.
         :return: the relevant hash
         """
         public_key = buffer(public_key)
         db_query = u"SELECT block_hash, MAX(sequence_number) FROM (" \
-                   u"SELECT hash_requester AS block_hash, sequence_number_requester AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_requester = ? " \
+                   u"SELECT hash_benefactor AS block_hash, sequence_number_benefactor AS sequence_number " \
+                   u"FROM multi_chain WHERE public_key_benefactor = ? " \
                    u"UNION " \
-                   u"SELECT hash_responder AS block_hash, sequence_number_responder AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_responder = ?)"
+                   u"SELECT hash_beneficiary AS block_hash, sequence_number_beneficiary AS sequence_number " \
+                   u"FROM multi_chain WHERE public_key_beneficiary = ?)"
 
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
 
@@ -120,34 +120,34 @@ class MultiChainDB(Database):
     def get_latest_block(self, public_key):
         return self.get_by_hash(self.get_latest_hash(public_key))
 
-    def get_by_hash_requester(self, hash_requester):
+    def get_by_hash_benefactor(self, hash_benefactor):
         """
         Returns a block saved in the persistence
-        :param hash_requester: The hash_requester of the block that needs to be retrieved.
+        :param hash_benefactor: The hash_benefactor of the block that needs to be retrieved.
         :return: The block that was requested or None
         """
-        db_query = u"SELECT public_key_requester, public_key_responder, " \
-                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
-                   u"signature_requester, hash_requester, " \
-                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
-                   u"signature_responder, hash_responder, insert_time " \
-                   u"FROM `multi_chain` WHERE hash_requester = ? LIMIT 1"
-        db_result = self.execute(db_query, (buffer(hash_requester),)).fetchone()
+        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, " \
+                   u"model_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
+                   u"signature_benefactor, hash_benefactor, " \
+                   u"model_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
+                   u"signature_beneficiary, hash_beneficiary, insert_time " \
+                   u"FROM `multi_chain` WHERE hash_benefactor = ? LIMIT 1"
+        db_result = self.execute(db_query, (buffer(hash_benefactor),)).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
 
     def get_by_hash(self, hash):
         """
-        Returns a block saved in the persistence, based on a hash that can be either hash_requester or hash_responder
+        Returns a block saved in the persistence, based on a hash that can be either hash_benefactor or hash_beneficiary
         :param hash: The hash of the block that needs to be retrieved.
         :return: The block that was requested or None
         """
-        db_query = u"SELECT public_key_requester, public_key_responder, " \
-                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
-                   u"signature_requester, hash_requester, " \
-                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
-                   u"signature_responder, hash_responder, insert_time " \
-                   u"FROM `multi_chain` WHERE hash_requester = ? OR hash_responder = ? LIMIT 1"
+        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, " \
+                   u"model_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
+                   u"signature_benefactor, hash_benefactor, " \
+                   u"model_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
+                   u"signature_beneficiary, hash_beneficiary, insert_time " \
+                   u"FROM `multi_chain` WHERE hash_benefactor = ? OR hash_beneficiary = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash), buffer(hash))).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
@@ -158,17 +158,17 @@ class MultiChainDB(Database):
         :param public_key: The public key corresponding to the block
         :param sequence_number: The sequence number corresponding to the block.
         :return: The block that was requested or None"""
-        db_query = u"SELECT public_key_requester, public_key_responder, " \
-                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
-                   u"signature_requester, hash_requester, " \
-                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
-                   u"signature_responder, hash_responder, insert_time " \
+        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, " \
+                   u"model_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
+                   u"signature_benefactor, hash_benefactor, " \
+                   u"model_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
+                   u"signature_beneficiary, hash_beneficiary, insert_time " \
                    u"FROM (" \
-                   u"SELECT *, sequence_number_requester AS sequence_number, " \
-                   u"public_key_requester AS pk FROM `multi_chain` " \
+                   u"SELECT *, sequence_number_benefactor AS sequence_number, " \
+                   u"public_key_benefactor AS pk FROM `multi_chain` " \
                    u"UNION " \
-                   u"SELECT *, sequence_number_responder AS sequence_number," \
-                   u"public_key_responder AS pk FROM `multi_chain`) " \
+                   u"SELECT *, sequence_number_beneficiary AS sequence_number," \
+                   u"public_key_beneficiary AS pk FROM `multi_chain`) " \
                    u"WHERE sequence_number = ? AND pk = ? LIMIT 1"
         db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchone()
         # Create a DB Block or return None
@@ -181,17 +181,17 @@ class MultiChainDB(Database):
         :param sequence_number: The linear block number
         :return A list of DB Blocks that match the criteria
         """
-        db_query = u"SELECT public_key_requester, public_key_responder, " \
-                   u"model_requester, sequence_number_requester, previous_hash_requester, " \
-                   u"signature_requester, hash_requester, " \
-                   u"model_responder, sequence_number_responder, previous_hash_responder, " \
-                   u"signature_responder, hash_responder, insert_time " \
+        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, " \
+                   u"model_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
+                   u"signature_benefactor, hash_benefactor, " \
+                   u"model_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
+                   u"signature_beneficiary, hash_beneficiary, insert_time " \
                    u"FROM (" \
-                   u"SELECT *, sequence_number_requester AS sequence_number," \
-                   u" public_key_requester AS public_key FROM `multi_chain` " \
+                   u"SELECT *, sequence_number_benefactor AS sequence_number," \
+                   u" public_key_benefactor AS public_key FROM `multi_chain` " \
                    u"UNION " \
-                   u"SELECT *, sequence_number_responder AS sequence_number," \
-                   u" public_key_responder AS public_key FROM `multi_chain`) " \
+                   u"SELECT *, sequence_number_beneficiary AS sequence_number," \
+                   u" public_key_beneficiary AS public_key FROM `multi_chain`) " \
                    u"WHERE sequence_number >= ? AND public_key = ? " \
                    u"ORDER BY sequence_number ASC " \
                    u"LIMIT 100"
@@ -209,23 +209,23 @@ class MultiChainDB(Database):
         else:
             return None
 
-    def get_all_hash_requester(self):
+    def get_all_hash_benefactor(self):
         """
-        Get all the hash_requester saved in the persistence layer.
-        :return: list of hash_requester.
+        Get all the hash_benefactor saved in the persistence layer.
+        :return: list of hash_benefactor.
         """
-        db_result = self.execute(u"SELECT hash_requester FROM multi_chain").fetchall()
+        db_result = self.execute(u"SELECT hash_benefactor FROM multi_chain").fetchall()
         # Unpack the db_result tuples and decode the results.
         return [str(x[0]) for x in db_result]
 
-    def contains(self, hash_requester):
+    def contains(self, hash_benefactor):
         """
         Check if a block is existent in the persistence layer.
-        :param hash_requester: The hash_requester that is queried
+        :param hash_benefactor: The hash_benefactor that is queried
         :return: True if the block exists, else false.
         """
-        db_query = u"SELECT hash_requester FROM multi_chain WHERE hash_requester == ? LIMIT 1"
-        db_result = self.execute(db_query, (buffer(hash_requester),)).fetchone()
+        db_query = u"SELECT hash_benefactor FROM multi_chain WHERE hash_benefactor == ? LIMIT 1"
+        db_result = self.execute(db_query, (buffer(hash_benefactor),)).fetchone()
         return db_result is not None
 
     def get_latest_sequence_number(self, public_key):
@@ -237,10 +237,10 @@ class MultiChainDB(Database):
         """
         public_key = buffer(public_key)
         db_query = u"SELECT MAX(sequence_number) FROM (" \
-                   u"SELECT sequence_number_requester AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_requester == ? UNION " \
-                   u"SELECT sequence_number_responder AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_responder = ? )"
+                   u"SELECT sequence_number_benefactor AS sequence_number " \
+                   u"FROM multi_chain WHERE public_key_benefactor == ? UNION " \
+                   u"SELECT sequence_number_beneficiary AS sequence_number " \
+                   u"FROM multi_chain WHERE public_key_beneficiary = ? )"
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
         return db_result if db_result is not None else -1
 
@@ -274,48 +274,48 @@ class DatabaseBlock:
     def __init__(self, data):
         """ Create a block from data """
         # Common part
-        self.public_key_requester = str(data[0])
-        self.public_key_responder = str(data[1])
-        # Requester part
-        self.model_requester = str(data[2])
-        self.sequence_number_requester = data[3]
-        self.previous_hash_requester = str(data[4])
-        self.signature_requester = str(data[5])
-        self.hash_requester = str(data[6])
-        # Responder part
-        self.model_responder = str(data[7])
-        self.sequence_number_responder = data[8]
-        self.previous_hash_responder = str(data[9])
-        self.signature_responder = str(data[10])
-        self.hash_responder = str(data[11])
+        self.public_key_benefactor = str(data[0])
+        self.public_key_beneficiary = str(data[1])
+        # Benefactor part
+        self.model_benefactor = str(data[2])
+        self.sequence_number_benefactor = data[3]
+        self.previous_hash_benefactor = str(data[4])
+        self.signature_benefactor = str(data[5])
+        self.hash_benefactor = str(data[6])
+        # Beneficiary part
+        self.model_beneficiary = str(data[7])
+        self.sequence_number_beneficiary = data[8]
+        self.previous_hash_beneficiary = str(data[9])
+        self.signature_beneficiary = str(data[10])
+        self.hash_beneficiary = str(data[11])
 
         self.insert_time = data[12]
 
     @classmethod
     def from_signature_response_message(cls, message):
         payload = message.payload
-        requester = message.authentication.signed_members[0]
-        responder = message.authentication.signed_members[1]
-        return cls((requester[1].public_key, responder[1].public_key,
-                    payload.model_requester,
-                    payload.sequence_number_requester, payload.previous_hash_requester,
-                    requester[0], sha256(encode_block_requester_half(payload, requester[1].public_key,
-                                                                     responder[1].public_key, requester[0])).digest(),
-                    payload.model_responder,
-                    payload.sequence_number_responder, payload.previous_hash_responder,
-                    responder[0], sha256(encode_block(payload, requester, responder)).digest(),
+        benefactor = message.authentication.signed_members[0]
+        beneficiary = message.authentication.signed_members[1]
+        return cls((benefactor[1].public_key, beneficiary[1].public_key,
+                    payload.model_benefactor,
+                    payload.sequence_number_benefactor, payload.previous_hash_benefactor,
+                    benefactor[0], sha256(encode_block_benefactor_half(payload, benefactor[1].public_key,
+                                                                       beneficiary[1].public_key, benefactor[0])).digest(),
+                    payload.model_beneficiary,
+                    payload.sequence_number_beneficiary, payload.previous_hash_beneficiary,
+                    beneficiary[0], sha256(encode_block(payload, benefactor, beneficiary)).digest(),
                     None))
 
     @classmethod
     def from_signature_request_message(cls, message):
         payload = message.payload
-        requester = message.authentication.signed_members[0]
-        responder = message.authentication.signed_members[1]
-        return cls((requester[1].public_key, responder[1].public_key,
-                    payload.model_requester,
-                    payload.sequence_number_requester, payload.previous_hash_requester,
-                    requester[0], sha256(encode_block_requester_half(payload, requester[1].public_key,
-                                                                     responder[1].public_key, requester[0])).digest(),
+        benefactor = message.authentication.signed_members[0]
+        beneficiary = message.authentication.signed_members[1]
+        return cls((benefactor[1].public_key, beneficiary[1].public_key,
+                    payload.model_benefactor,
+                    payload.sequence_number_benefactor, payload.previous_hash_benefactor,
+                    benefactor[0], sha256(encode_block_benefactor_half(payload, benefactor[1].public_key,
+                                                                       beneficiary[1].public_key, benefactor[0])).digest(),
                     0,
                     -1, EMPTY_HASH,
                     "", EMPTY_HASH,

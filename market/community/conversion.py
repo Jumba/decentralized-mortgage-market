@@ -124,29 +124,29 @@ class MortgageMarketConversion(BinaryConversion):
 
         return offset, placeholder.meta.payload.implement(models)
 
-    def encode_block(payload, requester, responder):
+    def encode_block(payload, benefactor, beneficiary:
         """
         This function encodes a block.
-        :param payload: Payload containing the data as properties, not including the requester and responder data.
+        :param payload: Payload containing the data as properties, not including the benefactor and beneficiary data.
         for example a signature request/response payload.
-        :param requester: The requester of the block as a dispersy member
-        :param responder: The responder of the block as a dispersy member
+        :param benefactor: The benefactor of the block as a dispersy member
+        :param beneficiary: The beneficiary of the block as a dispersy member
         :return: encoding
         """
         # Test code sometimes run a different curve with a different key length resulting in hard to catch bugs.
-        #assert len(requester[1].public_key) == PK_LENGTH
-        #assert len(responder[1].public_key) == PK_LENGTH
+        #assert len(benefactor[1].public_key) == PK_LENGTH
+        #assert len(beneficiary[1].public_key) == PK_LENGTH
         return pack(crawl_response_format, *(payload.up, payload.down,
-                                             payload.total_up_requester, payload.total_down_requester,
-                                             payload.sequence_number_requester, payload.previous_hash_requester,
-                                             payload.total_up_responder, payload.total_down_responder,
-                                             payload.sequence_number_responder, payload.previous_hash_responder,
-                                             requester[1].public_key, requester[0],
-                                             responder[1].public_key, responder[0]))
+                                             payload.total_up_benefactor, payload.total_down_benefactor,
+                                             payload.sequence_number_benefactor, payload.previous_hash_benefactor,
+                                             payload.total_up_beneficiary, payload.total_down_beneficiary,
+                                             payload.sequence_number_beneficiary, payload.previous_hash_beneficiary,
+                                             benefactor[1].public_key, benefactor[0],
+                                             beneficiary[1].public_key, beneficiary[0]))
 
-    def encode_block_requester_half(payload, public_key_requester, public_key_responder, signature_requester):
-        return pack(requester_half_format, *(public_key_requester, public_key_responder,
+    def encode_block_benefactor_half(payload, public_key_benefactor, public_key_beneficiary, signature_benefactor):
+        return pack(benefactor_half_format, *(public_key_benefactor, public_key_beneficiary,
                                              payload.up, payload.down,
-                                             payload.total_up_requester, payload.total_down_requester,
-                                             payload.sequence_number_requester, payload.previous_hash_requester,
-                                             signature_requester))
+                                             payload.total_up_benefactor, payload.total_down_benefactor,
+                                             payload.sequence_number_benefactor, payload.previous_hash_benefactor,
+                                             signature_benefactor))
