@@ -1,14 +1,14 @@
 import sys
 
-from marketGUI.market_app import TestMarketApplication
+from marketGUI.market_app import TestMarketApplication, MarketApplication
 from market.controllers.main_view_controller import MainWindowController
 
 
 def main():
-    app = TestMarketApplication(sys.argv)
+    app = MarketApplication(sys.argv)
     form = MainWindowController(app=app)
     form.show()
-    app.exec_()
+    app.run()
 
 
 if __name__ == '__main__':
