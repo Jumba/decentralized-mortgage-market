@@ -1,6 +1,10 @@
-wget http://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-5.7/PyQt5_gpl-5.7.tar.gz?r=https%3A%2F%2Fwww.riverbankcomputing.com%2Fsoftware%2Fpyqt%2Fdownload5&ts=1481884926&use_mirror=kent
-tar xvfz PyQt5_gpl-5.7.tar.gz
+sudo add-apt-repository ppa:beineri/opt-qt551 -y
+sudo apt-get -qq update
+sudo apt-get -qq install qtdeclarative5-dev qt5-default
+
+wget -O PyQt5_gpl-5.7.tar.gz "http://downloads.sourceforge.net/project/pyqt/PyQt5/PyQt-5.7/PyQt5_gpl-5.7.tar.gz?r=&ts=1482146895&use_mirror=vorboss"
+tar zxf PyQt5_gpl-5.7.tar.gz
 cd PyQt5_gpl-5.7
-./configure
+python configure.py --confirm-license --qmake /usr/lib/x86_64-linux-gnu/qt5/bin/qmake  --sip-incdir ../sip-4.18.1/siplib
 make
 sudo make install

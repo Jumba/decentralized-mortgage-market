@@ -2,9 +2,8 @@ import time
 from datetime import timedelta, datetime
 from enum import Enum
 
-from market.api.crypto import generate_key, get_public_key
-from market.community.community import MortgageMarketCommunity
-from market.community.queue import MessageQueue
+from market.api.crypto import get_public_key
+from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
 from market.database.database import Database
 from market.dispersy.crypto import ECCrypto
 from market.models.house import House
@@ -31,15 +30,16 @@ class MarketAPI(object):
 
     The constructor requires one variable, the `Database` used for storage.
     """
+
     def __init__(self, database):
         assert isinstance(database, Database)
         self._database = database
         self._user_key = None
         self.crypto = ECCrypto()
-        self.community = MortgageMarketCommunity
+        self.community = None
         self.user_candidate = {}
-        self.queue = MessageQueue()
-
+        self.outgoing_queue = OutgoingMessageQueue(self)
+        self.incoming_queue = IncomingMessageQueue(self)
 
     @property
     def db(self):
@@ -239,7 +239,7 @@ class MarketAPI(object):
 
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.queue.add_message(self.community.send_investment_offer, [Investment._type], {Investment._type : investment}, [borrower])
+            self.outgoing_queue.push((u"investment_offer", [Investment._type, User._type], {Investment._type: investment, User._type: investor}, [borrower]))
 
             return investment
         else:
@@ -315,25 +315,29 @@ class MarketAPI(object):
 
         The payload dictionary has the following composition
 
-        +----------------+------------------------------------------------------------------+
-        | Key            | Description                                                      |
-        +================+==================================================================+
-        | postal_code    | The postal code of the house that is the target of the mortgage  |
-        +----------------+------------------------------------------------------------------+
-        | house_number   | The house number of the house that is the target of the mortgage |
-        +----------------+------------------------------------------------------------------+
-        | address        | The address of the house that is the target of the mortgage      |
-        +----------------+------------------------------------------------------------------+
-        | price          | The total price of the house                                     |
-        +----------------+------------------------------------------------------------------+
-        | mortgage_type  | The mortgage type: 1 = linear, 2 = fixed-rate                    |
-        +----------------+------------------------------------------------------------------+
-        | banks          | List of banks the request should be sent to                      |
-        +----------------+------------------------------------------------------------------+
-        | description    | Free text (unicode)                                              |
-        +----------------+------------------------------------------------------------------+
-        | amount_wanted  | The amount the borrower wants financed                           |
-        +----------------+------------------------------------------------------------------+
+        +---------------------+------------------------------------------------------------------+
+        | Key                 | Description                                                      |
+        +=====================+==================================================================+
+        | postal_code         | The postal code of the house that is the target of the mortgage  |
+        +---------------------+------------------------------------------------------------------+
+        | house_number        | The house number of the house that is the target of the mortgage |
+        +---------------------+------------------------------------------------------------------+
+        | address             | The address of the house that is the target of the mortgage      |
+        +---------------------+------------------------------------------------------------------+
+        | price               | The total price of the house                                     |
+        +---------------------+------------------------------------------------------------------+
+        | seller_phone_number | The phone number of the seller                                   |
+        +---------------------+------------------------------------------------------------------+
+        | seller_email        | The email of the seller                                          |
+        +---------------------+------------------------------------------------------------------+
+        | mortgage_type       | The mortgage type: 1 = linear, 2 = fixed-rate                    |
+        +---------------------+------------------------------------------------------------------+
+        | banks               | List of banks the request should be sent to                      |
+        +---------------------+------------------------------------------------------------------+
+        | description         | Free text (unicode)                                              |
+        +---------------------+------------------------------------------------------------------+
+        | amount_wanted       | The amount the borrower wants financed                           |
+        +---------------------+------------------------------------------------------------------+
 
         :param user: The user creating a loan request
         :type user: :any:`User`
@@ -354,7 +358,6 @@ class MarketAPI(object):
                 house = House(payload['postal_code'], payload['house_number'], payload['address'], payload['price'])
                 house_id = self.db.post(House._type, house)
                 payload['house_id'] = house_id
-
                 # Set status of the loan request (which is a dictionary of the banks) to pending
                 payload['status'] = dict().fromkeys(payload['banks'], STATUS.PENDING)
 
@@ -363,25 +366,25 @@ class MarketAPI(object):
 
                 # Add the loan request to the borrower
                 user.loan_request_ids.append(self.db.post(LoanRequest._type, loan_request))
-                self.db.put(User._type, user.id, user)
+                user.post_or_put(self.db)
 
-                # Compile the candidates list
-                candidates = []
+                # The loan request won't be changed anymore. Sign it.
+                loan_request.sign(self)
+
                 # Add the loan request to the banks' pending loan request list
                 banks = []
                 for bank_id in payload['banks']:
                     bank = self.db.get(User._type, bank_id)
-                    if bank.id in self.user_candidate:
-                        candidates.append(self.user_candidate[bank_id])
-
                     assert isinstance(bank, User)
                     bank.loan_request_ids.append(loan_request.id)
                     self.db.put(User._type, bank.id, bank)
                     banks.append(bank)
 
                 # Add message to queue
-                profile = self.db.get(Profile._type, user.profile_id)
-                self.queue.add_message(self.community.send_loan_request, [LoanRequest._type, House._type, BorrowersProfile._type], {LoanRequest._type : loan_request, House._type : house, BorrowersProfile._type : profile}, banks)
+                profile = self.load_profile(user)
+
+                self.outgoing_queue.push((u"loan_request", [LoanRequest._type, House._type, BorrowersProfile._type, User._type],
+                                          {LoanRequest._type: loan_request, House._type: house, BorrowersProfile._type: profile, User._type: user}, banks))
 
                 return loan_request
 
@@ -471,10 +474,11 @@ class MarketAPI(object):
             mortgage.campaign_id = campaign.id
             self.db.put(Mortgage._type, mortgage.id, mortgage)
 
+            # TODO: The user should broadcast a signed campaign
             # Add message to queue
-            self.queue.add_message(self.community.send_mortgage_accept_signed, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [bank])
-            self.queue.add_message(self.community.send_mortgage_accept_unsigned, [Mortgage._type, Campaign._type], {Mortgage._type : mortgage, Campaign._type : campaign}, [])
-
+            self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage._type, Campaign._type, User._type], {Mortgage._type: mortgage, Campaign._type: campaign, User._type: user}, [bank]))
+            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest._type, Mortgage._type, Campaign._type,User._type], {LoanRequest._type: loan_request, Mortgage._type: mortgage, Campaign._type: campaign, User._type: user},
+                                      []))
             return self.db.put(User._type, user.id, user)
         return False
 
@@ -518,6 +522,7 @@ class MarketAPI(object):
         self.db.put(Mortgage._type, mortgage.id, mortgage)
         self.db.put(LoanRequest._type, loan_request.id, loan_request)
         self.db.put(User._type, user.id, user)
+
 
         # Create the campaign
         return self.create_campaign(user, mortgage, loan_request)
@@ -564,7 +569,7 @@ class MarketAPI(object):
 
             # Add message to queue
             investor = self.db.get(User._type, investment.investor_key)
-            self.queue.add_message(self.community.send_investment_accept, [Investment._type], {Investment._type : investment}, [investor])
+            self.outgoing_queue.push((u"investment_accept", [Investment._type, User._type], {Investment._type: investment, User._type: user}, [investor]))
 
             return self.db.put(Campaign._type, campaign.id, campaign)
         return False
@@ -600,7 +605,7 @@ class MarketAPI(object):
 
         # Add message to queue
         bank = self.db.get(User._type, mortgage.bank)
-        self.queue.add_message(self.community.send_mortgage_reject, [Mortgage._type], {Mortgage._type : mortgage}, [bank])
+        self.outgoing_queue.push((u"mortgage_reject", [Mortgage._type, User._type], {Mortgage._type: mortgage, User._type: user}, [bank]))
 
         return self.db.put(LoanRequest._type, loan_request.id, loan_request) and self.db.put(User._type, user.id, user)
 
@@ -630,7 +635,7 @@ class MarketAPI(object):
 
         # Add message to queue
         investor = self.db.get(User._type, investment.investor_key)
-        self.queue.add_message(self.community.send_investment_reject, [Investment._type], {Investment._type : investment}, [investor])
+        self.outgoing_queue.push((u"investment_reject", [Investment._type, User._type], {Investment._type: investment, User._type: user}, [investor]))
 
         return investment
 
@@ -696,7 +701,8 @@ class MarketAPI(object):
         +-------------------+---------------------------------------------------------------+
         | duration          | The duration of the mortgage                                  |
         +-------------------+---------------------------------------------------------------+
-
+        | risk              | The risk associated with the loan                             |
+        +-------------------+---------------------------------------------------------------+
         :param bank: The bank accepting the loan request.
         :type bank: :any:`User`
         :param payload: The payload containing the data for the :any:`Mortgage`, as described above.
@@ -731,9 +737,13 @@ class MarketAPI(object):
 
         # Save the accepted loan request
         if self.db.put(LoanRequest._type, loan_request.id, loan_request):
+            # Sign the mortage and loan request
+            mortgage.sign(self)
+            loan_request.sign(self)
+
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.queue.add_message(self.community.send_mortgage_offer, [LoanRequest._type, Mortgage._type], {LoanRequest._type : loan_request, Mortgage._type : mortgage}, [borrower])
+            self.outgoing_queue.push((u"mortgage_offer", [LoanRequest._type, Mortgage._type], {LoanRequest._type: loan_request, Mortgage._type: mortgage}, [borrower]))
 
             return loan_request, mortgage
         else:
@@ -790,7 +800,7 @@ class MarketAPI(object):
         if self.db.put(LoanRequest._type, loan_request_id, rejected_loan_request):
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.queue.add_message(self.community.send_loan_request_reject, [LoanRequest._type], {LoanRequest._type : rejected_loan_request}, [borrower])
+            self.outgoing_queue.push((u"loan_request_reject", [LoanRequest._type, User._type], {LoanRequest._type: rejected_loan_request, User._type: user}, [borrower]))
 
             return rejected_loan_request
         else:
