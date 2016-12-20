@@ -546,7 +546,10 @@ class MortgageMarketCommunity(Community):
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
-            pass
+            for signature in message.authentication.signed_members:
+                encoded_sig = signature[1].public_key.encode("HEX")
+                if encoded_sig == message.payload.beneficiary:
+                    message.payload._beneficiary_signature = signature[0].encode("HEX")
             # TODO: PERSIST THE PARTIAL PART 2 FOR BANK HERE
 
 
