@@ -22,7 +22,7 @@ class MainWindowController(QMainWindow):
         uic.loadUi(ui_location, self)
         self.navigation = NavigateUser(self)
         self.bank_ids = []  # List with the hardcoded bank ids
-        self.stackedWidget.setCurrentIndex(0)
+        # self.stackedWidget.setCurrentIndex(0)
         self.fip_controller = BanksPortfolioController(self)
         self.bp_controller = BorrowersPortfolioController(self)
         self.cb_controller = CampaignBidsController(self)
@@ -34,6 +34,22 @@ class MainWindowController(QMainWindow):
         self.fiplr2_controller = PendingLoanRequests2Controller(self)
         self.bplr_controller = PlaceLoanRequestController(self)
         self.profile_controller = ProfileController(self)
+
+        self.setup_view()
+
+    def setup_view(self):
+        # If user is a bank, show the bank's portfolio. Otherwise show profile
+        if self.app.user.role_id == 3:
+            self.navigation.switch_to_banks_portfolio()
+            self.navigation.set_bank_navigation()
+        elif self.app.user.role_id == 2:
+            self.navigation.switch_to_profile()
+            self.navigation.set_investor_navigation()
+        elif self.app.user.role_id == 1:
+            self.navigation.switch_to_profile()
+            self.navigation.set_borrower_navigation()
+        else:
+            self.navigation.switch_to_profile()
 
     # @staticmethod
     def insert_row(self, table, row):

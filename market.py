@@ -7,6 +7,7 @@ from twisted.internet import reactor
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMessageBox, QApplication
 
+from market.controllers.main_view_controller import MainWindowController
 from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING
 
 
@@ -43,5 +44,9 @@ if __name__ == "__main__":
     timer.start(500)  # You may change this if you wish.
     timer.timeout.connect(lambda: None)  # Let the interpreter run each 500 ms.
     # Your code here.
+
+    form = MainWindowController(app=app)
+    form.show()
+    app.run()
 
     sys.exit(app.exec_())
