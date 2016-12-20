@@ -450,9 +450,6 @@ class MortgageMarketCommunity(Community):
                                 distribution=(message.distribution.global_time,),
                                 payload=payload)
             # TODO: Save to blockchain
-            print "Signatures: ", message.authentication.signatures
-            print "Mem sig: ", message.authentication.signed_members
-
             return message
         else:
             return None
