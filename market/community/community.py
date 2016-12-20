@@ -403,14 +403,14 @@ class MortgageMarketCommunity(Community):
     ##### SIGNED MESSAGES
     ###############
 
-    def publish_signed_confirm_request_message(self, user_key, agreement):
+    def publish_signed_confirm_request_message(self, user_key, agreement_benefactor):
         """
         Creates and sends out a signed signature_request message
         Returns true upon success
         """
-        if user_key in self.api.user_candidate and isinstance(agreement, DatabaseModel):
+        if user_key in self.api.user_candidate and isinstance(agreement_benefactor, DatabaseModel):
             candidate = self.api.user_candidate[user_key]
-            message = self.create_signed_confirm_request_message(candidate, agreement)
+            message = self.create_signed_confirm_request_message(candidate, agreement_benefactor)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
             # TODO: Save on blockchain
             self.persist_signature_request(message)
@@ -418,16 +418,20 @@ class MortgageMarketCommunity(Community):
         else:
             return False
 
-    def create_signed_confirm_request_message(self, candidate, agreement):
+    def create_signed_confirm_request_message(self, candidate, agreement_benefactor):
         """
 
         """
         # Init the data being sent
         benefactor = self.user.id
         beneficiary = ''  # Target user fills it in themselves.
+        sequence_number_benefactor = self._get_next_sequence_number(benefactor)
+        previous_hash_benefactor = self._get_latest_hash(benefactor)
         timestamp = int(time.time())
 
-        payload = (benefactor, beneficiary, agreement, timestamp)
+        payload = (benefactor, beneficiary, agreement_benefactor, sequence_number_benefactor,
+                   previous_hash_benefactor, timestamp)
+
         meta = self.get_meta_message(u"signed_confirm")
 
         message = meta.impl(authentication=([self.my_member, candidate.get_member()],),
@@ -444,12 +448,19 @@ class MortgageMarketCommunity(Community):
         """
         payload = message.payload
 
-        agreement = payload.agreement
+        agreement = payload.agreement_benefactor
         agreement_local = self.api.db.get(agreement.type, agreement.id)
 
         if agreement == agreement_local:
-            payload = (payload.benefactor, self.user.id, agreement, payload.time)
+            sequence_number_beneficiary = self._get_next_sequence_number(self.user.id)
+            previous_hash_beneficiary = self._get_latest_hash(self.user.id)
+
+            payload = (payload.benefactor, self.user.id, agreement, agreement, payload.sequence_number_benefactor,
+                       sequence_number_beneficiary, payload.previous_hash_benefactor, previous_hash_beneficiary,
+                       payload.time)
+
             meta = self.get_meta_message(u"signed_confirm")
+
             message = meta.impl(authentication=(message.authentication.members, message.authentication.signatures),
                                 distribution=(message.distribution.global_time,),
                                 payload=payload)
@@ -469,7 +480,7 @@ class MortgageMarketCommunity(Community):
             print "Timeout received for signature request."
             return False
         else:
-            agreement = response.payload.agreement
+            agreement = response.payload.agreement_benefactor
             agreement_local = request.payload.agreement
 
             # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
@@ -504,7 +515,7 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signature_response_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
         self.persistence.add_block(block)
 
     def update_signature_response(self, message):
@@ -514,8 +525,8 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signature_response_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
-        self.persistence.update_block_with_responder(block)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
+        self.persistence.update_block_with_beneficiary(block)
 
     def persist_signature_request(self, message):
         """
@@ -524,5 +535,12 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signature_request_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_requester).strip())
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
         self.persistence.add_block(block)
+
+    def _get_next_sequence_number(self, user):
+        return self.persistence.get_latest_sequence_number(user) + 1
+
+    def _get_latest_hash(self, user):
+        previous_hash = self.persistence.get_latest_hash(user)
+        return previous_hash
