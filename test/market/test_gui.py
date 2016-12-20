@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+import os
 import sys
 import unittest
 
@@ -15,7 +17,7 @@ from marketGUI.market_app import TestMarketApplication
 class GUITestSuite(unittest.TestCase):
     def setUp(self):
         self.app = TestMarketApplication(sys.argv)
-        self.window = MainWindowController(app=self.app, ui_location='../../ui/mainwindow.ui')
+        self.window = MainWindowController(app=self.app, ui_location=os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../', 'ui/mainwindow.ui'))
         # self.app.exec_()
 
     def tearDown(self):
