@@ -116,6 +116,7 @@ class MultiChainDB(Database):
 
         return str(db_result) if db_result else None
 
+    # Could be used for testing
     def get_by_hash(self, hash):
         """
         Returns a block saved in the persistence.
@@ -132,6 +133,7 @@ class MultiChainDB(Database):
         # Create a DB Block or return None
         return self._create_database_block(db_result)
 
+    # Could be used for testing
     def get_by_public_key_and_sequence_number(self, public_key, sequence_number):
         """
         Returns a block saved in the persistence.
@@ -153,30 +155,6 @@ class MultiChainDB(Database):
         db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
-
-    def get_blocks_since(self, public_key, sequence_number):
-        """
-        Returns database blocks with sequence number higher than or equal to sequence_number, at most 100 results
-        :param public_key: The public key corresponding to the member id
-        :param sequence_number: The linear block number
-        :return A list of DB Blocks that match the criteria
-        """
-        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, hash_block, " \
-                   u"agreement_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
-                   u"signature_benefactor, " \
-                   u"agreement_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
-                   u"signature_beneficiary, insert_time " \
-                   u"FROM (" \
-                   u"SELECT *, sequence_number_benefactor AS sequence_number," \
-                   u" public_key_benefactor AS public_key FROM `multi_chain` " \
-                   u"UNION " \
-                   u"SELECT *, sequence_number_beneficiary AS sequence_number," \
-                   u" public_key_beneficiary AS public_key FROM `multi_chain`) " \
-                   u"WHERE sequence_number >= ? AND public_key = ? " \
-                   u"ORDER BY sequence_number ASC " \
-                   u"LIMIT 100"
-        db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchall()
-        return [self._create_database_block(db_item) for db_item in db_result]
 
     def _create_database_block(self, db_result):
         """
