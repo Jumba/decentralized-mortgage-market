@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import *
 
 
 class ProfileController:
@@ -70,7 +69,6 @@ class ProfileController:
             self.mainwindow.profile_postcode_lineedit.setText(profile.current_postal_code)
             self.mainwindow.profile_housenumber_lineedit.setText(profile.current_house_number)
             self.mainwindow.profile_address_lineedit.setText(profile.current_address)
-
 
     def update_navigation_bar(self):
         # Check which role the user currently has, and adjust the navigation bar accordingly
