@@ -243,7 +243,7 @@ class DatabaseBlock:
                 self.insert_time,
             )
         )
-        self.hash = packet
+        return packet
 
     @classmethod
     def from_signed_confirm_message(cls, message):
