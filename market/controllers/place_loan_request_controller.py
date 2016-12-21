@@ -6,6 +6,7 @@ class PlaceLoanRequestController:
         self.mainwindow = mainwindow
         self.payload = {}
         self.mainwindow.bplr_submit_pushbutton.clicked.connect(self.submit_loan_request)
+        self.banks_ids = Global.BANKS.values()
 
     def setup_view(self):
         pass
@@ -25,7 +26,6 @@ class PlaceLoanRequestController:
             banks = [self.mainwindow.bplr_bank1_checkbox, self.mainwindow.bplr_bank2_checkbox,
                      self.mainwindow.bplr_bank3_checkbox,
                      self.mainwindow.bplr_bank4_checkbox]
-            banks_ids = Global.BANKS.values()
 
             checked_banks = []
             pointer = 0
@@ -33,7 +33,7 @@ class PlaceLoanRequestController:
             # Check which banks were chosen
             for obj in banks:
                 if obj.checkState():
-                    checked_banks.append(banks_ids[pointer])
+                    checked_banks.append(self.banks_ids[pointer])
                 pointer += 1
 
             if not checked_banks:

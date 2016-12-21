@@ -20,12 +20,11 @@ from mock import Mock, MagicMock
 
 class GUITestSuite(unittest.TestCase):
     def setUp(self):
-        # self.app = Mock(spec=TestMarketApplication)
-        # self.window = Mock(spec=MainWindowController())
         self.app = TestMarketApplication(sys.argv)
         self.window = MainWindowController(app=self.app, ui_location=os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../', 'ui/mainwindow.ui'))
-        user, _, _ = self.app.api.create_user()
-        self.window.app.user = Mock(User)
+        self.window.bplr_controller.banks_ids = [self.window.app.bank1.id, self.window.app.bank2.id,
+                                                 self.window.app.bank3.id, self.window.app.bank4.id]
+
         # self.app.exec_()
 
     def tearDown(self):
@@ -40,3 +39,48 @@ class GUITestSuite(unittest.TestCase):
     def test_profile_switch_role(self):
         pass
 
+    def test_investors_portfolio_table_empty(self):
+        pass
+
+    def test_investors_portfolio_table_filled(self):
+        # TODO Add accepted and pending investments with running and completed campaigns
+        pass
+
+    def test_banks_portfolio_table_empty(self):
+        pass
+
+    def test_banks_portfolio_table_filled(self):
+        # TODO Add running and completed campaigns
+        pass
+
+    def test_pending_loan_requests_table_empty(self):
+        pass
+
+    def test_pending_loan_requests_table_filled(self):
+        # TODO Add loan requests for linear and fixed-rate mortgages
+        pass
+
+    def test_pending_loan_requests_table_unselected(self):
+        pass
+
+    def test_pending_loan_requests_table_selected(self):
+        pass
+
+    def test_pending_loan_request_forms_filled(self):
+        # TODO Test for linear and fixed-rate mortgages
+        pass
+
+    def test_pending_loan_request_accept_empty(self):
+        pass
+
+    def test_pending_loan_request_accept_filled_incomplete(self):
+        pass
+
+    def test_pending_loan_request_accept_filled_complete(self):
+        pass
+
+    def test_pending_loan_request_reject_empty(self):
+        pass
+
+    def test_pending_loan_request_reject_filled(self):
+        pass

@@ -146,8 +146,17 @@ class TestMarketApplication(QApplication):
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
         self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        # Create users
         user, _, _ = self._api.create_user()
+        bank1, _, _ = self._api.create_user()
+        bank2, _, _ = self._api.create_user()
+        bank3, _, _ = self._api.create_user()
+        bank4, _, _ = self._api.create_user()
         self.user = user
+        self.bank1 = bank1
+        self.bank2 = bank2
+        self.bank3 = bank3
+        self.bank4 = bank4
 
     def run(self):
         self.exec_()
