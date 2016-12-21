@@ -7,10 +7,12 @@ from uuid import UUID
 
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QTableWidget
 
 from market.api.api import STATUS
 from market.controllers.main_view_controller import MainWindowController
+from market.controllers.navigation import NavigateUser
 from market.models.loans import Mortgage
 from market.models.role import Role
 from market.models.user import User
@@ -306,14 +308,40 @@ class GUITestSuite(unittest.TestCase):
         self.window.msg.about.assert_called_with(self.window, "Select campaign", 'No campaigns have been selected.')
 
     def test_openmarket_view_campaign(self):
-        # self.app.api.create_loan_request(self.app.user, self.payload_loan_request)
-        # self.window.openmarket_open_market_table.selectRow(0)
-        #
-        # print self.window.openmarket_open_market_table.selectedIndexes()
-        # self.window.navigation.switch_to_campaign_bids = MagicMock()
-        # QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
-        # self.window.navigation.switch_to_campaign_bids.assert_called_with(self.window, "Select campaign", 'No campaigns have been selected.')
-        pass
+        # Create the investor user
+        role_id = Role.INVESTOR.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create borrowers
+        borrower1, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower1.role_id = role_id
+        self.window.api.db.put(User._type, borrower1.id, borrower1)
+
+        # Create loan requests
+        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+
+        # Accept the loan requests
+        self.payload_mortgage['user_key'] = borrower1.id
+        self.payload_mortgage['request_id'] = loan_request1.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        # Accept mortgages
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
+        self.window.openmarket_controller.setup_view()
+        self.window.openmarket_open_market_table.selectRow(0)
+
+        print self.window.openmarket_open_market_table.selectedIndexes()
+        self.window.msg.about = MagicMock()
+        self.window.navigation.switch_to_campaign_bids = MagicMock()
+        QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
+        # self.window.navigation.switch_to_campaign_bids.assert_called_with(mortgage1.id)
 
     def test_view_campaign_no_bids(self):
         # Create the investor user
@@ -354,19 +382,96 @@ class GUITestSuite(unittest.TestCase):
                                                                                 self.payload_mortgage)
 
         # Accept mortgages
-        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
-        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id': mortgage2.id})
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id' : mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id' : mortgage2.id})
 
-        # # Place loan offers
-        # self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
-        # self.payload_loan_offer['mortgage_id'] = mortgage1.id
-        # self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
-        #
-        # self.payload_loan_offer['mortgage_id'] = mortgage2.id
-        # self.payload_loan_offer['amount'] = 123456
-        # loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+        # Place loan offers
+        self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
+        self.payload_loan_offer['mortgage_id'] = mortgage1.id
+        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
+        self.payload_loan_offer['mortgage_id'] = mortgage2.id
+        self.payload_loan_offer['amount'] = 123456
+        loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
+        # Accept one of the loan offers
+        self.window.api.accept_investment_offer(borrower2, {'investment_id' : loan_offer2.id})
+
+        # Check if there's only 2 investments in the table
+        self.window.ip_controller.setup_view()
+        self.assertEqual(self.window.ip_investments_table.rowCount(), 2)
+
+    def test_navigation_initial_visibility(self):
+        navigation = NavigateUser(self.window)
+        self.assertFalse(navigation.mainwindow.navigation_pushbutton_1.isVisible())
+        self.assertFalse(navigation.mainwindow.navigation_pushbutton_2.isVisible())
+        self.assertFalse(navigation.mainwindow.navigation_pushbutton_3.isVisible())
+        self.assertFalse(navigation.mainwindow.navigation_pushbutton_4.isVisible())
+
+    def test_navigation_switching(self):
+        navigation = NavigateUser(self.window)
+        # self.window = Ui_MainWindow
+
+        navigation.switch_to_bplr()
+        self.assertEqual(self.window.bplr_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_borrowers_portfolio()
+        self.assertEqual(self.window.bp_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_investors_portfolio()
+        self.assertEqual(self.window.ip_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_banks_portfolio()
+        self.assertEqual(self.window.fip_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_openmarket()
+        self.assertEqual(self.window.openmarket_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_profile()
+        self.assertEqual(self.window.profile_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_fiplr()
+        self.assertEqual(self.window.fiplr1_page, self.window.stackedWidget.currentWidget())
+
+        navigation.switch_to_fiplr2()
+        self.assertEqual(self.window.fiplr2_page, self.window.stackedWidget.currentWidget())
+
+    def test_navigation_user(self):
+        self.app.user.role_id = 0
+        self.window.navigation.switch_to_profile = MagicMock()
+        self.window.navigation.user_screen_navigation()
+        self.window.navigation.switch_to_profile.assert_called()
+        self.app.user.role_id = 1
+        self.window.navigation.set_borrower_navigation = MagicMock()
+        self.window.navigation.user_screen_navigation()
+        self.window.navigation.set_borrower_navigation.assert_called()
+        self.app.user.role_id = 2
+        self.window.navigation.set_investor_navigation = MagicMock()
+        self.window.navigation.user_screen_navigation()
+        self.window.navigation.set_investor_navigation.assert_called()
+        self.app.user.role_id = 3
+        self.window.navigation.set_bank_navigation = MagicMock()
+        self.window.navigation.user_screen_navigation()
+        self.window.navigation.set_bank_navigation.assert_called()
+
+    def test_navigation_borrower(self):
+        self.window.navigation.set_borrower_navigation()
+        self.assertEqual('Profile', self.window.navigation_pushbutton_1.text())
+        self.assertEqual('Portfolio', self.window.navigation_pushbutton_2.text())
+        self.assertEqual('Place Loan Request', self.window.navigation_pushbutton_3.text())
+        self.assertEqual('Open Market', self.window.navigation_pushbutton_4.text())
+
+    def test_navigation_investor(self):
+        self.window.navigation.set_investor_navigation()
+        self.assertEqual('Profile', self.window.navigation_pushbutton_1.text())
+        self.assertEqual('Portfolio', self.window.navigation_pushbutton_2.text())
+        self.assertEqual('Open Market', self.window.navigation_pushbutton_3.text())
+
+    def test_navigation_bank(self):
+        self.window.navigation.set_bank_navigation()
+        self.assertEqual('Portfolio', self.window.navigation_pushbutton_1.text())
+        self.assertEqual('Loan Requests', self.window.navigation_pushbutton_2.text())
+        self.assertEqual('Open Market', self.window.navigation_pushbutton_3.text())
 
 
 

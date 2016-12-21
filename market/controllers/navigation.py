@@ -41,7 +41,7 @@ class NavigateUser:
         self.mainwindow.navigation_pushbutton_1.clicked.connect(self.switch_to_profile)
         self.mainwindow.navigation_pushbutton_2.setText('Portfolio')
         self.mainwindow.navigation_pushbutton_2.clicked.connect(self.switch_to_investors_portfolio)
-        self.mainwindow.navigation_pushbutton_3.setText('Open market')
+        self.mainwindow.navigation_pushbutton_3.setText('Open Market')
         self.mainwindow.navigation_pushbutton_3.clicked.connect(self.switch_to_openmarket)
         self.mainwindow.navigation_pushbutton_4.setVisible(False)
         self.set_navigation_visible(True, 2)
