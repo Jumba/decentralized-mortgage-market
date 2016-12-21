@@ -33,3 +33,5 @@ class OpenMarketController:
             # selected_data = map((lambda item: item.data()), self.table.selectedIndexes())
             selected_row = self.table.selectedIndexes()[0].row()
             self.mainwindow.navigation.switch_to_campaign_bids(self.content[selected_row][0].id)
+        else:
+            self.mainwindow.show_dialog("Select campaign", 'No campaigns have been selected.')

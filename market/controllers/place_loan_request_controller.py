@@ -46,8 +46,8 @@ class PlaceLoanRequestController:
                 self.payload['mortgage_type'] = 0
 
             if self.mainwindow.api.create_loan_request(self.mainwindow.app.user, self.payload):
-                QMessageBox.about(self.mainwindow, "Loan request created", 'Your loan request has been sent.')
+                self.mainwindow.show_dialog("Loan request created", 'Your loan request has been sent.')
             else:
-                QMessageBox.about(self.mainwindow, "Loan request failed", 'You can only have a single loan request.')
+                self.mainwindow.show_dialog("Loan request error", 'You can only have a single loan request.')
         except ValueError:
-            QMessageBox.about(self.mainwindow, "Loan request failed", 'You didn\'t enter the required information.')
+            self.mainwindow.show_dialog("Loan request error", 'You didn\'t enter the required information.')
