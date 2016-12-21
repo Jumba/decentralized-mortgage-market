@@ -5,8 +5,9 @@ import sys
 import unittest
 from uuid import UUID
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QTableWidget
 
 from market.api.api import STATUS
 from market.controllers.main_view_controller import MainWindowController
@@ -240,16 +241,83 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fip_campaigns_table.item(1, 5).text(), '30')
 
     def test_pending_loan_requests_table_empty(self):
-        pass
+        # Check if the loan request list is empty
+        self.window.fiplr1_controller.setup_view()
+        self.assertFalse(self.window.fiplr1_loan_requests_table.rowCount())
 
     def test_pending_loan_requests_table_filled(self):
-        pass
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create borrowers
+        borrower1, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower1.role_id = role_id
+        self.window.api.db.put(User._type, borrower1.id, borrower1)
+
+        borrower2, _, _ = self.window.api.create_user()
+        borrower2.role_id = role_id
+        self.window.api.db.put(User._type, borrower2.id, borrower2)
+
+        # Create loan requests
+        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+
+        borrower2 = self.window.api.db.get(User._type, borrower2.id)
+        self.payload_loan_request['mortgage_type'] = 2
+        self.window.api.create_loan_request(borrower2, self.payload_loan_request)
+
+        # Check if there are only 2 loan requests in the table
+        self.window.fiplr1_controller.setup_view()
+        self.assertEqual(self.window.fiplr1_loan_requests_table.rowCount(), 2)
+
+        # Check if the first loan request is in the table with the right values
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 0).text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 1).text(), 'Linear')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 2).text(), '123456')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 3).text(), '123456')
+
+        # Check if the second loan request is in the table with the right values
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 0).text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 1).text(), 'Fixed-Rate')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 2).text(), '123456')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 3).text(), '123456')
 
     def test_pending_loan_requests_table_unselected(self):
-        pass
+        # Click the 'view loan request' button without selecting an item in the table
+        self.window.fiplr1_controller.setup_view()
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.fiplr1_view_loan_request_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Select request",
+                                                 'No loan requests have been selected.')
 
     def test_pending_loan_requests_table_selected(self):
-        pass
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create a borrower
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+
+        # Select the item on the first row in the first column in the table
+        self.window.fiplr1_controller.setup_view()
+        self.window.fiplr1_loan_requests_table.selectRow(0)
+
+        # Click the 'view loan request' button
+        self.window.msg.about = MagicMock()
+        self.window.fiplr2_controller.setup_view = MagicMock()
+        QTest.mouseClick(self.window.fiplr1_view_loan_request_pushbutton, Qt.LeftButton)
+
+        # Check if the 'pending loan request' view has been called
+        self.window.fiplr2_controller.setup_view.assert_called_with(loan_request.id)
 
     def test_pending_loan_request_forms_filled(self):
         # TODO Test for linear and fixed-rate mortgages
@@ -258,16 +326,8 @@ class GUITestSuite(unittest.TestCase):
     def test_pending_loan_request_accept_empty(self):
         pass
 
-    def test_pending_loan_request_accept_filled_incomplete(self):
+    def test_pending_loan_request_accept_filled(self):
         pass
 
-    def test_pending_loan_request_accept_filled_complete(self):
+    def test_pending_loan_request_reject(self):
         pass
-
-    def test_pending_loan_request_reject_empty(self):
-        pass
-
-    def test_pending_loan_request_reject_filled(self):
-        pass
-
-
