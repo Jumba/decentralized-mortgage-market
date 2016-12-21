@@ -29,12 +29,14 @@ class GUITestSuite(unittest.TestCase):
                                                  self.window.app.bank3.id, self.window.app.bank4.id]
 
         # Define payloads
-        self.payload_borrower_profile = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget', 'email': 'example@example.com',
-                        'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
-                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'current_address': 'straat',
-                        'documents_list': []}
-        self.payload_investor_profile = {'role': 2, 'first_name': u'Ruby', 'last_name': u'Cue', 'email': 'example1@example.com',
-                                 'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719290'}
+        self.payload_borrower_profile = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget',
+                                         'email': 'example@example.com', 'iban': 'NL53 INGBB 04027 30393',
+                                         'phonenumber': '+3170253719234', 'current_postalcode': '2162CD',
+                                         'current_housenumber': '22', 'current_address': 'straat',
+                                         'documents_list': []}
+        self.payload_investor_profile = {'role': 2, 'first_name': u'Ruby', 'last_name': u'Cue',
+                                         'email': 'example1@example.com', 'iban': 'NL53 INGBB 04027 30393',
+                                         'phonenumber': '+3170253719290'}
         self.payload_loan_request = {'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'mortgage_type': 1,
                                      'banks': self.window.bplr_controller.banks_ids,
                                      'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
@@ -49,11 +51,6 @@ class GUITestSuite(unittest.TestCase):
                                    'interest_rate': 2.5,
                                    'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
                                    'status': STATUS.PENDING}
-        self.payload_profile = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget',
-                                'email': 'example@example.com',
-                                'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
-                                'current_postalcode': '2162CD', 'current_housenumber': '22',
-                                'current_address': 'straat', 'documents_list': []}
 
 
         # self.app.exec_()
@@ -391,7 +388,7 @@ class GUITestSuite(unittest.TestCase):
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
         self.window.api.db.put(User._type, borrower.id, borrower)
-        self.window.api.create_profile(borrower, self.payload_profile)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
 
         # Create a loan request
         borrower = self.window.api.db.get(User._type, borrower.id)
@@ -419,7 +416,7 @@ class GUITestSuite(unittest.TestCase):
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
         self.window.api.db.put(User._type, borrower.id, borrower)
-        self.window.api.create_profile(borrower, self.payload_profile)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
 
         # Create a loan request
         borrower = self.window.api.db.get(User._type, borrower.id)
@@ -448,7 +445,7 @@ class GUITestSuite(unittest.TestCase):
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
         self.window.api.db.put(User._type, borrower.id, borrower)
-        self.window.api.create_profile(borrower, self.payload_profile)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
 
         # Create a loan request
         borrower = self.window.api.db.get(User._type, borrower.id)
@@ -473,7 +470,7 @@ class GUITestSuite(unittest.TestCase):
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
         self.window.api.db.put(User._type, borrower.id, borrower)
-        self.window.api.create_profile(borrower, self.payload_profile)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
 
         # Create a loan request
         borrower = self.window.api.db.get(User._type, borrower.id)
@@ -504,7 +501,7 @@ class GUITestSuite(unittest.TestCase):
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
         self.window.api.db.put(User._type, borrower.id, borrower)
-        self.window.api.create_profile(borrower, self.payload_profile)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
 
         # Create a loan request
         borrower = self.window.api.db.get(User._type, borrower.id)
