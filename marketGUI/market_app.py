@@ -14,8 +14,8 @@ from market.api.api import MarketAPI
 from market.community.community import MortgageMarketCommunity
 from market.database.backends import PersistentBackend
 from market.database.database import MockDatabase
-from market.dispersy.dispersy import Dispersy
-from market.dispersy.endpoint import StandaloneEndpoint
+from dispersy.dispersy import Dispersy
+from dispersy.endpoint import StandaloneEndpoint
 
 
 class MarketApplication(QApplication):

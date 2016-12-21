@@ -15,6 +15,9 @@ install:
   - pip install faker
   - pip install twisted
   - pip install m2crypto
+  - pip install netifaces
 # command to run tests
 script:
-  - nosetests -v test/market
+  - nosetests --with-coverage --cover-package=market* --cover-xml --cover-inclusive --cover-xml-file=coverage.xml test/market
+
+
