@@ -411,8 +411,6 @@ class MortgageMarketCommunity(Community):
             candidate = self.api.user_candidate[user_key]
             message = self.create_signed_confirm_request_message(candidate, agreement_benefactor)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
-            # TODO: Save on blockchain
-            # self.persist_signature_request(message)
             return True
         else:
             return False
@@ -459,7 +457,7 @@ class MortgageMarketCommunity(Community):
             if encoded_sig == benefactor:
                 message.payload._benefactor_signature = signature[0].encode("HEX")
 
-        # TODO: PERSIST THE PARTIAL PART 1 FOR BANK HERE
+        self.persist_signature(message)
 
         return message
 
@@ -504,7 +502,7 @@ class MortgageMarketCommunity(Community):
                 elif encoded_sig == self.user.id:
                     message.payload._beneficiary_signature = signature[0].encode("HEX")
 
-            # TODO: PERSIST COMPLETE MESSAGE ON BORROWER SIDE HERE
+            self.persist_signature(message)
 
             return message
         else:
@@ -550,38 +548,29 @@ class MortgageMarketCommunity(Community):
                 encoded_sig = signature[1].public_key.encode("HEX")
                 if encoded_sig == message.payload.beneficiary:
                     message.payload._beneficiary_signature = signature[0].encode("HEX")
-            # TODO: PERSIST THE PARTIAL PART 2 FOR BANK HERE
+
+            self.update_signature(message)
 
 
-    def persist_signature_response(self, message):
+    def persist_signature(self, message):
         """
-        Persist the signature response message, when this node has not yet persisted the corresponding request block.
-        A hash will be created from the message and this will be used as an unique identifier.
+        Persist the signature message, when this node has not yet persisted the corresponding block.
+        A hash will be created from the message.
         :param message:
         """
-        block = DatabaseBlock.from_signature_response_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
+        block = DatabaseBlock.from_signed_confirm_message(message)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
         self.persistence.add_block(block)
 
-    def update_signature_response(self, message):
+    def update_signature(self, message):
         """
         Update the signature response message, when this node has already persisted the corresponding request block.
-        A hash will be created from the message and this will be used as an unique identifier.
+        A hash will be created from the message.
         :param message:
         """
-        block = DatabaseBlock.from_signature_response_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
+        block = DatabaseBlock.from_signed_confirm_message(message)
+        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
         self.persistence.update_block_with_beneficiary(block)
-
-    def persist_signature_request(self, message):
-        """
-        Persist the signature request message as a block.
-        The block will be updated when a response is received.
-        :param message:
-        """
-        block = DatabaseBlock.from_signature_request_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_benefactor).strip())
-        self.persistence.add_block(block)
 
     def _get_next_sequence_number(self, user):
         return self.persistence.get_latest_sequence_number(user) + 1
