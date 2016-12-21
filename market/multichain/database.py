@@ -5,6 +5,7 @@ from hashlib import sha256
 
 from market.community.encoding import encode
 from market.dispersy.database import Database
+from market.models import DatabaseModel
 
 DATABASE_DIRECTORY = path.join(u"sqlite")
 # Path to the database location + dispersy._workingdirectory
@@ -43,10 +44,9 @@ class MultiChainDB(Database):
     Ensures a proper DB schema on startup.
     """
 
-    def __init__(self, dispersy, working_directory, database_name):
+    def __init__(self, working_directory, database_name):
         """
         Sets up the persistence layer ready for use.
-        :param dispersy: Dispersy stores the PK.
         :param working_directory: Path to the working directory
         that will contain the the db at working directory/DATABASE_PATH
         :return:
@@ -213,8 +213,8 @@ class DatabaseBlock:
         """ Create a block from data """
         self.public_key_benefactor = str(data[0])
         self.public_key_beneficiary = str(data[1])
-        self.agreement_benefactor = str(data[2])
-        self.agreement_beneficiary = str(data[3])
+        self.agreement_benefactor = str(DatabaseModel.encode(data[2]))
+        self.agreement_beneficiary = str(DatabaseModel.encode(data[3]))
         self.sequence_number_benefactor = data[4]
         self.sequence_number_beneficiary = data[5]
         self.previous_hash_benefactor = str(data[6])
@@ -250,21 +250,3 @@ class DatabaseBlock:
         return cls((payload.benefactor, payload.beneficiary, payload.agreement_benefactor, payload.agreement_beneficiary,
                    payload.sequence_number_benefactor, payload.sequence_number_beneficiary, payload.previous_hash_benefactor,
                    payload.previous_hash_beneficiary, payload.signature_benefactor, payload.signature_beneficiary, payload.time))
-
-
-
-# class Payload(object):
-# 	benefactor = 'sadas'
-# 	beneficiary = 'assadas'
-# 	agreement_benefactor =
-# 	agreement_beneficiary =
-# 	sequence_number_benefactor
-# 	sequence_number_beneficiary
-# 	previous_hash_benefactor
-# 	previous_hash_beneficiary
-# 	signature_benefactor
-# 	signature_beneficiary
-# 	time
-#
-# class Message(object):
-# 	payload = Payload()
