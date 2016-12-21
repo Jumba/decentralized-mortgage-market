@@ -1,14 +1,15 @@
 import unittest
 from twisted.python.threadable import registerAsIOThread
 
+from dispersy.dispersy import Dispersy
+from dispersy.member import DummyMember, Member
+
+from dispersy.endpoint import ManualEnpoint
 from market.api.api import MarketAPI
 from market.community.community import MortgageMarketCommunity
 from market.community.conversion import MortgageMarketConversion
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
-from market.dispersy.dispersy import Dispersy
-from market.dispersy.endpoint import ManualEnpoint
-from market.dispersy.member import DummyMember, Member
 from market.models.house import House
 from market.models.loans import LoanRequest
 from market.models.profiles import BorrowersProfile

@@ -2,10 +2,10 @@ import time
 from datetime import timedelta, datetime
 from enum import Enum
 
+from dispersy.crypto import ECCrypto
 from market.api.crypto import get_public_key
 from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
 from market.database.database import Database
-from market.dispersy.crypto import ECCrypto
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Investment, Campaign
 from market.models.profiles import BorrowersProfile

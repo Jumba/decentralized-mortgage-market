@@ -1,6 +1,6 @@
+from dispersy.conversion import BinaryConversion
+from dispersy.conversion import DropPacket
 from market.community.encoding import encode, decode
-from market.dispersy.conversion import BinaryConversion
-from market.dispersy.message import DropPacket
 from market.models import DatabaseModel
 
 

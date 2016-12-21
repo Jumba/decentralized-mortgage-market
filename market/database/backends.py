@@ -1,6 +1,6 @@
 from os import path
 
-from market.dispersy.database import Database
+from dispersy.database import Database
 
 
 class Backend(object):

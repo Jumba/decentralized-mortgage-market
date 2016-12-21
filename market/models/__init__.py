@@ -1,11 +1,10 @@
+import hashlib
 import json
 import pickle
-import uuid
-import hashlib
-
 import time
+import uuid
 
-from market.dispersy.crypto import ECCrypto
+from dispersy.crypto import ECCrypto
 
 
 class DatabaseModel(object):

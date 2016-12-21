@@ -1,15 +1,16 @@
 import logging
 import time
 
+from dispersy.community import Community
+from dispersy.conversion import DefaultConversion
+from dispersy.destination import CommunityDestination, CandidateDestination
+from dispersy.distribution import DirectDistribution, FullSyncDistribution
+from dispersy.message import Message, DelayMessageByProof
+from dispersy.resolution import PublicResolution
+
 from conversion import MortgageMarketConversion
+from dispersy.authentication import MemberAuthentication, DoubleMemberAuthentication
 from market.api.api import STATUS
-from market.dispersy.authentication import MemberAuthentication, DoubleMemberAuthentication
-from market.dispersy.community import Community
-from market.dispersy.conversion import DefaultConversion
-from market.dispersy.destination import CommunityDestination, CandidateDestination
-from market.dispersy.distribution import DirectDistribution, FullSyncDistribution
-from market.dispersy.message import Message, DelayMessageByProof
-from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment

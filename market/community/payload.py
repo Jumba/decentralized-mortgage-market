@@ -1,4 +1,4 @@
-from market.dispersy.payload import Payload
+from dispersy.payload import Payload
 from market.models import DatabaseModel
 
 
