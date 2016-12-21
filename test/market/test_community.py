@@ -3,6 +3,7 @@ from twisted.python.threadable import registerAsIOThread
 
 from mock import Mock
 
+from dispersy.candidate import Candidate, LoopbackCandidate
 from dispersy.dispersy import Dispersy
 from dispersy.endpoint import ManualEnpoint
 from dispersy.member import DummyMember, Member
@@ -162,10 +163,6 @@ class CommunityTestSuite(unittest.TestCase):
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
         self.dispersy._database.close()
-
-
-if __name__ == '__main__':
-    unittest.main()
 
 
 class IncomingQueueTestCase(unittest.TestCase):
@@ -359,4 +356,135 @@ class OutgoingQueueTestCase(unittest.TestCase):
         self.assertNotIn((request, fields, models, receivers), self.api.outgoing_queue._queue)
 
 
+class ConversionTestCase(unittest.TestCase):
+    def setUp(self):
+         # Faking IOThread
+        registerAsIOThread()
 
+        # Object creation and preperation
+        self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
+        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api.db.backend.clear()
+
+        user, _, priv = self.api.create_user()
+        self.bank, _, _ = self.api.create_user()
+        self.user = user
+        self.private_key = priv
+
+        self.dispersy._database.open()
+        self.master_member = DummyMember(self.dispersy, 1, "a" * 20)
+        self.member = self.dispersy.get_member(private_key=self.private_key.decode("HEX"))
+        self.community = MortgageMarketCommunity.init_community(self.dispersy, self.master_member, self.member)
+
+        self.community.api = self.api
+        self.community.user = self.user
+        self.api.community = self.community
+
+        # Add our conversion to the community.
+        self.conversion = MortgageMarketConversion(self.community)
+        self.community._conversions = []
+        self.community.add_conversion(self.conversion)
+
+        self.setupModels()
+
+    def setupModels(self):
+        self.house = House('2500AA', '34', 'Aa Weg', 1000)
+        self.house.post_or_put(self.api.db)
+
+        self.loan_request = LoanRequest(user_key=self.user.id,
+                                        house_id=self.house.id,
+                                        house_link='http://www.example.com',
+                                        seller_phone_number='06000000',
+                                        seller_email='example@email.com',
+                                        mortgage_type=1,
+                                        banks=[self.bank.id],
+                                        description=u'Unicode description',
+                                        amount_wanted=10000,
+                                        status={}
+                                        )
+        self.loan_request.post_or_put(self.api.db)
+        self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas', phone_number='213131', current_postal_code='2312AA',
+                                        current_house_number='2132', current_address='Damstraat 1', document_list=[])
+        self.profile.post_or_put(self.api.db)
+
+
+    def test_encode_introduce_user(self):
+        meta = self.community.get_meta_message(u"introduce_user")
+        message = meta.impl(authentication=(self.member,),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=([self.user.type],{self.user.type: self.user}),
+                            destination=(LoopbackCandidate(),))
+
+        encoded_message = self.conversion._encode_model(message)[0]
+        decoded_payload = self.conversion._decode_model(message, 0, encoded_message)[1]
+
+        self.assertEqual(message.payload.fields, decoded_payload.fields)
+        self.assertEqual(message.payload.models, decoded_payload.models)
+
+    def test_encode_model_request(self):
+        meta = self.community.get_meta_message(u"model_request")
+        message = meta.impl(authentication=(self.member,),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=(['boo', 'baa'],),
+                            destination=(LoopbackCandidate(),))
+
+        encoded_message = self.conversion._encode_model_request(message)[0]
+        decoded_payload = self.conversion._decode_model_request(message, 0, encoded_message)[1]
+
+        self.assertEqual(message.payload.models, decoded_payload.models)
+
+    def test_encode_api_request_community(self):
+        meta = self.community.get_meta_message(u"api_message_community")
+        message = meta.impl(authentication=(self.member,),
+                            distribution=(self.community.claim_global_time(), meta.distribution.claim_sequence_number()),
+                            payload=(u"unicode_message", [self.user.type],{self.user.type: self.user},),
+                            destination=(LoopbackCandidate(),))
+
+        encoded_message = self.conversion._encode_api_message(message)[0]
+        decoded_payload = self.conversion._decode_api_message(message, 0, encoded_message)[1]
+
+        self.assertEqual(message.payload.models, decoded_payload.models)
+
+    def test_encode_api_request_candidate(self):
+        meta = self.community.get_meta_message(u"api_message_candidate")
+        message = meta.impl(authentication=(self.member,),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=(u"unicode_message", [self.user.type],{self.user.type: self.user},),
+                            destination=(LoopbackCandidate(),))
+
+        encoded_message = self.conversion._encode_api_message(message)[0]
+        decoded_payload = self.conversion._decode_api_message(message, 0, encoded_message)[1]
+
+        self.assertEqual(message.payload.models, decoded_payload.models)
+
+    def test_encode_signed_confirm(self):
+        payload_list = []
+        for k in range(1, 12):
+            payload_list.append(None)
+
+        payload_list[0] = self.user.id  # benefactor, 0
+        payload_list[1] = self.bank.id  # beneficiary, 1
+        payload_list[2] = self.loan_request
+        payload_list[3] = None  # agreement beneficiary
+        payload_list[4] = 0
+        payload_list[5] = 0  # sequence number beneficiary
+        payload_list[6] = 'hashsas'
+        payload_list[7] = 'asdasdas'  # previous hash beneficiary
+        payload_list[8] = 'sig1'  # Signature benefactor
+        payload_list[9] = 'sig2'  # Signature beneficiary
+        payload_list[10] = 324325252
+
+        meta = self.community.get_meta_message(u"signed_confirm")
+        loop = LoopbackCandidate()
+        message = meta.impl(authentication=([self.member, self.member],),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=tuple(payload_list))
+
+        encoded_message = self.conversion._encode_signed_confirm(message)[0]
+        decoded_payload = self.conversion._decode_signed_confirm(message, 0, encoded_message)[1]
+
+        self.assertEqual(message.payload.models, decoded_payload.models)
+
+
+if __name__ == '__main__':
+    unittest.main()

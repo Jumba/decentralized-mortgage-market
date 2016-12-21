@@ -1,6 +1,7 @@
 import logging
 
 from market.models.user import User
+from market.multichain.database import MultiChainDB
 
 logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
@@ -29,6 +30,7 @@ class MarketApplication(QApplication):
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
         self.initialize_api()
+
 
         # Load banks
         for bank_name in Global.BANKS:
@@ -75,6 +77,7 @@ class MarketApplication(QApplication):
         self.community = MortgageMarketCommunity.init_community(self.dispersy, master_member, my_member)
         self.community.api = self.api
         self.community.user = self.user
+        self.community.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory, self.database_prefix)
         self.api.community = self.community
 
         # Run the scenario every 3 seconds
