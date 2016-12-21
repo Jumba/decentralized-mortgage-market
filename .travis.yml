@@ -20,4 +20,5 @@ install:
   - pip install m2crypto
 # command to run tests
 script:
-  - nosetests -v test/market
+  - nosetests -v --ignore-files=^test_gui.*  test/market
+
