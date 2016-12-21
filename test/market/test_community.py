@@ -10,6 +10,7 @@ from dispersy.member import DummyMember, Member
 from market.api.api import MarketAPI, STATUS
 from market.community.community import MortgageMarketCommunity
 from market.community.conversion import MortgageMarketConversion
+from market.community.payload import SignedConfirmPayload
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.models.house import House
@@ -483,8 +484,23 @@ class ConversionTestCase(unittest.TestCase):
         encoded_message = self.conversion._encode_signed_confirm(message)[0]
         decoded_payload = self.conversion._decode_signed_confirm(message, 0, encoded_message)[1]
 
-        self.assertEqual(message.payload.models, decoded_payload.models)
+        p1 = message.payload
+        p2 = decoded_payload
 
+        assert isinstance(p1, SignedConfirmPayload.Implementation)
+        assert isinstance(p2, SignedConfirmPayload.Implementation)
+
+        self.assertEqual(p1.agreement_benefactor, p2.agreement_benefactor)
+        self.assertEqual(p1.agreement_beneficiary, p2.agreement_beneficiary)
+        self.assertEqual(p1.benefactor, p2.benefactor)
+        self.assertEqual(p1.beneficiary, p2.beneficiary)
+        self.assertEqual(p1.previous_hash_benefactor, p2.previous_hash_benefactor)
+        self.assertEqual(p1.previous_hash_beneficiary, p2.previous_hash_beneficiary)
+        self.assertEqual(p1.sequence_number_benefactor, p2.sequence_number_benefactor)
+        self.assertEqual(p1.sequence_number_beneficiary, p2.sequence_number_beneficiary)
+        self.assertEqual(p1.signature_beneficiary, p2.signature_beneficiary)
+        self.assertEqual(p1.signature_benefactor, p1.signature_benefactor)
+        self.assertEqual(p1.time, p2.time)
 
 if __name__ == '__main__':
     unittest.main()

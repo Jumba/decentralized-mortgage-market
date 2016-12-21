@@ -1,5 +1,6 @@
 import logging
 
+from market.models.role import Role
 from market.models.user import User
 from market.multichain.database import MultiChainDB
 
@@ -13,7 +14,7 @@ from PyQt5.QtWidgets import QApplication
 from market import Global
 from market.api.api import MarketAPI
 from market.community.community import MortgageMarketCommunity
-from market.database.backends import PersistentBackend
+from market.database.backends import PersistentBackend, MemoryBackend
 from market.database.database import MockDatabase
 from dispersy.dispersy import Dispersy
 from dispersy.endpoint import StandaloneEndpoint
@@ -44,8 +45,10 @@ class MarketApplication(QApplication):
 
         self.identify()
 
+    def run(self):
         # Ready to start dispersy
         reactor.callWhenRunning(self.start_dispersy)
+        reactor.callWhenRunning(self.exec_())
         reactor.run()
 
     def initialize_api(self):
@@ -137,3 +140,40 @@ class MarketApplicationRABO(MarketApplicationBank):
 class MarketApplicationMONEYOU(MarketApplicationBank):
     database_prefix = 'MONEYOU'
     port = 1241
+
+
+class TestMarketApplication(QApplication):
+    """
+    This class represents the main Tribler application.
+    """
+
+    def __init__(self, *argv):
+        QApplication.__init__(self, *argv)
+        self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        # Create users
+        user, _, _ = self._api.create_user()
+        bank_role = Role.FINANCIAL_INSTITUTION.value
+        bank1, _, _ = self._api.create_user()
+        bank2, _, _ = self._api.create_user()
+        bank3, _, _ = self._api.create_user()
+        bank4, _, _ = self._api.create_user()
+        bank1.role_id = bank_role
+        bank2.role_id = bank_role
+        bank3.role_id = bank_role
+        bank4.role_id = bank_role
+        self._api.db.put(User._type, bank1.id, bank1)
+        self._api.db.put(User._type, bank2.id, bank2)
+        self._api.db.put(User._type, bank3.id, bank3)
+        self._api.db.put(User._type, bank4.id, bank4)
+        self.user = user
+        self.bank1 = bank1
+        self.bank2 = bank2
+        self.bank3 = bank3
+        self.bank4 = bank4
+
+    def run(self):
+        self.exec_()
+
+    @property
+    def api(self):
+        return self._api

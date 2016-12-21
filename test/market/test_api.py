@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 from uuid import UUID
 
@@ -7,6 +8,7 @@ from market.api.api import STATUS
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.models.loans import Investment
+from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign
 from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
@@ -294,9 +296,8 @@ class APITestSuite(unittest.TestCase):
 
     def test_load_investments(self):
         """
-        This test checks the functionality of loading a user's (borrower or investor) current and pending investments
-        Current investments should be appended to the CurrentInvestments and pending investments should be appended to PendingInvestments
-        The function should return a tuple(CurrentInvestments, PendingInvestments)
+        This test checks the functionality of loading a user's current and pending investments
+        The function should return a tuple(Investments, House, Campaign)
         """
 
         # Create an user
@@ -340,21 +341,20 @@ class APITestSuite(unittest.TestCase):
         self.api.accept_investment_offer(borrower, {'investment_id': loan_offer2.id})
 
         # Get the investments
-        current_investment, pending_investment = self.api.load_investments(investor)
+        investments = self.api.load_investments(investor)
 
         # Check if the returned objects are Lists
-        self.assertIsInstance(current_investment, list)
-        self.assertIsInstance(pending_investment, list)
+        self.assertIsInstance(investments, list)
         # Check if the elements of the lists are Investment-objects
-        for investment in current_investment:
+        for [investment, house, campaign] in investments:
             self.assertIsInstance(investment, Investment)
-        for investment in pending_investment:
-            self.assertIsInstance(investment, Investment)
+            self.assertIsInstance(house, House)
+            self.assertIsInstance(campaign, Campaign)
 
-        # Check if the Investment-objects are saved in the correct list
-        self.assertIn(loan_offer1, pending_investment)
-        self.assertIn(loan_offer2, current_investment)
-        self.assertIn(loan_offer3, pending_investment)
+        # Check if the Investment-objects are saved in the list
+        self.assertIn(loan_offer1, investments[0])
+        self.assertIn(loan_offer2, investments[1])
+        self.assertIn(loan_offer3, investments[2])
 
     def test_load_borrowers_offers_mortgage_pending(self):
         """
@@ -747,23 +747,23 @@ class APITestSuite(unittest.TestCase):
         and not the loan requests with STATUS.ACCEPTED or STATUS.REJECTED
         """
         # Create borrowers
-        borrower1, pub, priv = self.api.create_user()
+        borrower1, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
         self.api.db.put(User._type, borrower1.id, borrower1)
 
-        borrower2, pub, priv = self.api.create_user()
+        borrower2, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower2.role_id = role_id
         self.api.db.put(User._type, borrower2.id, borrower2)
 
-        borrower3, pub, priv = self.api.create_user()
+        borrower3, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower3.role_id = role_id
         self.api.db.put(User._type, borrower3.id, borrower3)
 
         # Create a bank
-        bank, pub, priv = self.api.create_user()
+        bank, _, _ = self.api.create_user()
         role_id = Role(3).value
         bank.role_id = role_id
         self.api.db.put(User._type, bank.id, bank)
@@ -783,9 +783,9 @@ class APITestSuite(unittest.TestCase):
         updated_bank = self.api.db.get(User._type, bank.id)
         pending_loan_requests = self.api.load_all_loan_requests(updated_bank)
         self.assertIsInstance(pending_loan_requests, list)
-        self.assertNotIn(loan_request_1, pending_loan_requests)
-        self.assertIn(loan_request_2, pending_loan_requests)
-        self.assertIn(loan_request_3, pending_loan_requests)
+        self.assertNotIn(loan_request_1, pending_loan_requests[0])
+        self.assertIn(loan_request_2, pending_loan_requests[0])
+        self.assertIn(loan_request_3, pending_loan_requests[1])
 
     def test_load_single_loan_request(self):
         """
@@ -798,6 +798,10 @@ class APITestSuite(unittest.TestCase):
         borrower.role_id = role_id
         self.api.db.put(User._type, borrower.id, borrower)
 
+        # Create a borrowers profile
+        self.payload['role'] = 1  # borrower
+        profile = self.api.create_profile(borrower, self.payload)
+
         # Create loan request
         self.payload['user_key'] = borrower.id  # set user_key to the borrower's public key
         loan_request = self.api.create_loan_request(borrower, self.payload_loan_request)
@@ -805,9 +809,13 @@ class APITestSuite(unittest.TestCase):
         self.payload_loan_request['loan_request_id'] = loan_request.id
 
         # Check if the correct loan request has been returned
+        borrower.update(self.api.db)
         loaded_loan_request = self.api.load_single_loan_request(self.payload_loan_request)
-        self.assertIsInstance(loaded_loan_request, LoanRequest)
-        self.assertEqual(loan_request.id, loaded_loan_request.id)
+        self.assertIsInstance(loaded_loan_request[0], LoanRequest)
+        self.assertEqual(loan_request.id, loaded_loan_request[0].id)
+        self.assertIsInstance(loaded_loan_request[1], BorrowersProfile)
+        self.assertEqual(borrower.profile_id, loaded_loan_request[1].id)
+        self.assertIsInstance(loaded_loan_request[2], House)
 
     def test_accept_loan_request(self):
         """
@@ -953,12 +961,12 @@ class APITestSuite(unittest.TestCase):
         borrower_investments = self.api.load_investments(borrower)
 
         # Check if the investment  isn't in neither accepted or pending of the borrower
-        self.assertNotIn(investment, borrower_investments[0])
-        self.assertNotIn(investment, borrower_investments[1])
+        for borrower_investment in borrower_investments:
+            self.assertNotIn(investment, borrower_investment)
 
         # Or of the investor.
-        self.assertNotIn(investment, investor_investments[0])
-        self.assertNotIn(investment, investor_investments[1])
+        for investor_investment in investor_investments:
+            self.assertNotIn(investment, investor_investment)
 
         # But it is in the investors full list
         self.assertIn(investment.id, investor.investment_ids)
@@ -1060,7 +1068,7 @@ class APITestSuite(unittest.TestCase):
         self.api.accept_mortgage_offer(borrower, self.payload_mortgage)
 
         # Check if bids are empty
-        bids = self.api.load_bids(self.payload_mortgage)
+        bids, house, campaign = self.api.load_bids(self.payload_mortgage)
         self.assertFalse(bids)
 
         # Place investment bid on the mortgage
@@ -1069,6 +1077,8 @@ class APITestSuite(unittest.TestCase):
         # Check if bid is in the list
         bids = self.api.load_bids(self.payload_mortgage)
         self.assertTrue(bids)
+        self.assertIsInstance(house, House)
+        self.assertIsInstance(campaign, Campaign)
 
     def test_load_mortgages(self):
         """
@@ -1124,5 +1134,5 @@ class APITestSuite(unittest.TestCase):
         mortgages = self.api.load_mortgages(bank)
 
         # Check if only the accepted mortgage is in the bank's list
-        self.assertIn(mortgage1, mortgages)
-        self.assertNotIn(mortgage2, mortgages)
+        self.assertIn(mortgage1, mortgages[0])
+        self.assertNotIn(mortgage2, mortgages[0])

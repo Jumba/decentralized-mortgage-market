@@ -86,7 +86,7 @@ class LoanRequest(DatabaseModel):
 class Mortgage(DatabaseModel):
     _type = 'mortgage'
 
-    def __init__(self, request_id, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, status):
+    def __init__(self, request_id, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, status, campaign_id=None):
         super(Mortgage, self).__init__()
         assert isinstance(request_id, UUID)
         assert isinstance(house_id, UUID)
@@ -100,6 +100,7 @@ class Mortgage(DatabaseModel):
         assert isinstance(risk, str)
         assert isinstance(investors, list)
         assert isinstance(status, Enum)
+        # assert isinstance(campaign_id, UUID)
 
         self._request_id = request_id
         self._house_id = house_id
@@ -113,6 +114,7 @@ class Mortgage(DatabaseModel):
         self._risk = risk
         self._investors = investors
         self._status = status
+        self._campaign_id = None or campaign_id
 
     @property
     def request_id(self):
@@ -165,6 +167,14 @@ class Mortgage(DatabaseModel):
     @status.setter
     def status(self, value):
         self._status = value
+
+    @property
+    def campaign_id(self):
+        return self._campaign_id
+
+    @campaign_id.setter
+    def campaign_id(self, value):
+        self._campaign_id = value
 
     def _is_valid_signer(self, api=None):
         if self._has_signature():
