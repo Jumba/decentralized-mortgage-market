@@ -32,9 +32,9 @@ class GUITestSuite(unittest.TestCase):
 
     def test_profile_empty(self):
         # Test that the controller calls a QMessageBox with unique input when the form has not been filled in
-        self.window.profile_controller.msg.about = MagicMock()
+        self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
-        self.window.profile_controller.msg.about.assert_called_with(self.window, 'Profile error', 'You didn\'t enter all of the required information.')
+        self.window.msg.about.assert_called_with(self.window, 'Profile error', 'You didn\'t enter all of the required information.')
 
     def test_profile_load_current_borrower(self):
         # Testing loading of the current borrower's profile
