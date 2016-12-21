@@ -225,6 +225,153 @@ class GUITestSuite(unittest.TestCase):
         QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Loan request error', 'You can only have a single loan request.')
 
+    def test_openmarket_no_select(self):
+        self.window.openmarket_controller.setup_view()
+        # print self.window.openmarket_controller.content[0][0].__dict__
+        # self.assertFalse(self.window.openmarket_open_market_table.rowCount())
+
+    def test_openmarket_table_filled(self):
+        # Create the investor user
+        role_id = Role.INVESTOR.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create borrowers
+        borrower1, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower1.role_id = role_id
+        self.window.api.db.put(User._type, borrower1.id, borrower1)
+
+        borrower2, _, _ = self.window.api.create_user()
+        borrower2.role_id = role_id
+        self.window.api.db.put(User._type, borrower2.id, borrower2)
+
+        # Create loan requests
+        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+
+        borrower2 = self.window.api.db.get(User._type, borrower2.id)
+        loan_request2 = self.window.api.create_loan_request(borrower2, self.payload_loan_request)
+
+        # Accept the loan requests
+        self.payload_mortgage['user_key'] = borrower1.id
+        self.payload_mortgage['request_id'] = loan_request1.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        self.payload_mortgage['user_key'] = borrower2.id
+        self.payload_mortgage['request_id'] = loan_request2.id
+
+        accepted_loan_request2, mortgage2 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        # Accept mortgages
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id' : mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id' : mortgage2.id})
+
+        # Place loan offers
+        self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
+        self.payload_loan_offer['mortgage_id'] = mortgage1.id
+        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+
+        self.payload_loan_offer['mortgage_id'] = mortgage2.id
+        self.payload_loan_offer['amount'] = 123456
+        loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+
+        # Check if there's only 2 investments in the table
+        self.window.openmarket_controller.setup_view()
+        # self.assertEqual(self.window.ip_investments_table.rowCount(), 2)
+        #
+        # # Check if the first investment is in the table with the right values
+        # self.assertEqual(self.window.ip_investments_table.item(0, 0).text(), 'straat 11, 1111AA')
+        # self.assertEqual(self.window.ip_investments_table.item(0, 1).text(), 'Running')
+        # self.assertEqual(self.window.ip_investments_table.item(0, 2).text(), 'Pending')
+        # self.assertEqual(self.window.ip_investments_table.item(0, 3).text(), '1000')
+        # self.assertEqual(self.window.ip_investments_table.item(0, 4).text(), '2.5')
+        # self.assertEqual(self.window.ip_investments_table.item(0, 5).text(), '24')
+        #
+        # # Check if the second investment is in the table with the right values
+        # self.assertEqual(self.window.ip_investments_table.item(1, 0).text(), 'straat 11, 1111AA')
+        # self.assertEqual(self.window.ip_investments_table.item(1, 1).text(), 'Completed')
+        # self.assertEqual(self.window.ip_investments_table.item(1, 3).text(), '123456')
+        # self.assertEqual(self.window.ip_investments_table.item(1, 4).text(), '2.5')
+        # self.assertEqual(self.window.ip_investments_table.item(1, 5).text(), '24')
+
+    def test_openmarket_view_campaign_no_focus(self):
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, "Select campaign", 'No campaigns have been selected.')
+
+    def test_openmarket_view_campaign(self):
+        # self.app.api.create_loan_request(self.app.user, self.payload_loan_request)
+        # self.window.openmarket_open_market_table.selectRow(0)
+        #
+        # print self.window.openmarket_open_market_table.selectedIndexes()
+        # self.window.navigation.switch_to_campaign_bids = MagicMock()
+        # QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
+        # self.window.navigation.switch_to_campaign_bids.assert_called_with(self.window, "Select campaign", 'No campaigns have been selected.')
+        pass
+
+    def test_view_campaign_no_bids(self):
+        # Create the investor user
+        role_id = Role.INVESTOR.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create borrowers
+        borrower1, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower1.role_id = role_id
+        self.window.api.db.put(User._type, borrower1.id, borrower1)
+
+        borrower2, _, _ = self.window.api.create_user()
+        borrower2.role_id = role_id
+        self.window.api.db.put(User._type, borrower2.id, borrower2)
+
+        # Create loan requests
+        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+
+        borrower2 = self.window.api.db.get(User._type, borrower2.id)
+        loan_request2 = self.window.api.create_loan_request(borrower2, self.payload_loan_request)
+
+        # Accept the loan requests
+        self.payload_mortgage['user_key'] = borrower1.id
+        self.payload_mortgage['request_id'] = loan_request1.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        self.payload_mortgage['user_key'] = borrower2.id
+        self.payload_mortgage['request_id'] = loan_request2.id
+
+        accepted_loan_request2, mortgage2 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        # Accept mortgages
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id': mortgage2.id})
+
+        # # Place loan offers
+        # self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
+        # self.payload_loan_offer['mortgage_id'] = mortgage1.id
+        # self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+        #
+        # self.payload_loan_offer['mortgage_id'] = mortgage2.id
+        # self.payload_loan_offer['amount'] = 123456
+        # loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+
+
+
+
+
+###################################################################################################################
+
     def test_investors_portfolio_table_empty(self):
         # Check if the investments list is empty
         self.window.ip_controller.setup_view()
