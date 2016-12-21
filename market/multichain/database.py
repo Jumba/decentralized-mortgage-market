@@ -55,7 +55,6 @@ class MultiChainDB(Database):
 
         super(MultiChainDB, self).__init__(path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s.db' % database_name))
 
-        self._dispersy = dispersy
         self.open()
 
     def add_block(self, block):
@@ -70,7 +69,7 @@ class MultiChainDB(Database):
                 buffer(block.previous_hash_beneficiary), buffer(block.signature_beneficiary))
 
         self.execute(
-            u"INSERT INTO multi_chain (public_key_benefactor, public_key_beneficiary, hash_block"
+            u"INSERT INTO multi_chain (public_key_benefactor, public_key_beneficiary, hash_block, "
             u"agreement_benefactor, sequence_number_benefactor, previous_hash_benefactor, "
             u"signature_benefactor, "
             u"agreement_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, "
@@ -114,7 +113,7 @@ class MultiChainDB(Database):
 
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
 
-        return str(db_result) if db_result else None
+        return str(db_result) if db_result else ''
 
     # Could be used for testing
     def get_by_hash(self, hash):
@@ -225,7 +224,7 @@ class DatabaseBlock:
 
         self.insert_time = data[10]
 
-        self.block_hash = sha256(self.hash()).hexdigest()
+        self.hash_block = sha256(self.hash()).hexdigest()
 
     def hash(self):
         packet = encode(
@@ -248,6 +247,24 @@ class DatabaseBlock:
     @classmethod
     def from_signed_confirm_message(cls, message):
         payload = message.payload
-        return cls(payload.benefactor, payload.beneficiary, payload.agreement_benefactor, payload.agreement_beneficiary,
+        return cls((payload.benefactor, payload.beneficiary, payload.agreement_benefactor, payload.agreement_beneficiary,
                    payload.sequence_number_benefactor, payload.sequence_number_beneficiary, payload.previous_hash_benefactor,
-                   payload.previous_hash_beneficiary, payload.signature_benefactor, payload.signature_beneficiary, payload.time)
+                   payload.previous_hash_beneficiary, payload.signature_benefactor, payload.signature_beneficiary, payload.time))
+
+
+
+# class Payload(object):
+# 	benefactor = 'sadas'
+# 	beneficiary = 'assadas'
+# 	agreement_benefactor =
+# 	agreement_beneficiary =
+# 	sequence_number_benefactor
+# 	sequence_number_beneficiary
+# 	previous_hash_benefactor
+# 	previous_hash_beneficiary
+# 	signature_benefactor
+# 	signature_beneficiary
+# 	time
+#
+# class Message(object):
+# 	payload = Payload()

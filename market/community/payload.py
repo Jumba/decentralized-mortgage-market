@@ -89,7 +89,7 @@ class SignedConfirmPayload(Payload):
                 assert isinstance(agreement_beneficiary, DatabaseModel)
             assert isinstance(sequence_number_benefactor, int)
             assert isinstance(sequence_number_beneficiary, int)
-            assert isinstance(previous_hash_benefactor, str)
+            assert isinstance(previous_hash_benefactor, str), "Previous has not a string, rather %s with type %s" % (previous_hash_benefactor, type(previous_hash_benefactor))
             assert isinstance(previous_hash_beneficiary, str)
             assert isinstance(signature_benefactor, str)
             assert isinstance(signature_beneficiary, str)

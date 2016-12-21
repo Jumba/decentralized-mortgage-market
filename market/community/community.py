@@ -559,7 +559,7 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signed_confirm_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
+        logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
         self.persistence.add_block(block)
 
     def update_signature(self, message):
@@ -569,7 +569,7 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signed_confirm_message(message)
-        self.logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
+        logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
         self.persistence.update_block_with_beneficiary(block)
 
     def _get_next_sequence_number(self, user):
