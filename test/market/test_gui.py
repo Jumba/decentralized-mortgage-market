@@ -48,11 +48,7 @@ class GUITestSuite(unittest.TestCase):
                                    'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
                                    'status': STATUS.PENDING}
 
-
-        # self.app.exec_()
-
     def tearDown(self):
-        # sys.exit()
         pass
 
     def test_profile_empty(self):
@@ -138,6 +134,92 @@ class GUITestSuite(unittest.TestCase):
         QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Role switch failed',
                                                  'It is not possible to change your role at this time')
+
+    def test_place_loan_request_empty(self):
+        self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
+
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, 'Loan request error',
+                                                 "You didn't enter the required information.")
+
+    def test_place_loan_request_filled_in_linear(self):
+        # Ui_MainWindow.bplr_bank1_checkbox.
+        self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
+        self.window.bplr_address_lineedit.setText('straat')
+        self.window.bplr_postcode_lineedit.setText('1111aa')
+        self.window.bplr_housenumber_lineedit.setText('123')
+        self.window.bplr_house_price_lineedit.setText('90')
+        self.window.bplr_amount_wanted_lineedit.setText('100')
+        self.window.bplr_description_textedit.setText('description')
+        self.window.bplr_seller_phone_number_lineedit.setText('0614575412')
+        self.window.bplr_seller_email_lineedit.setText('example@example.com')
+        self.window.bplr_house_link_lineedit.setText('link.com/link')
+        self.window.bplr_bank1_checkbox.setChecked(True)
+
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, "Loan request created",
+                                                 'Your loan request has been sent.')
+
+    def test_place_loan_request_filled_in_fixed(self):
+        # Ui_MainWindow.bplr_fixedrate_radiobutton
+        self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
+        self.window.bplr_address_lineedit.setText('straat')
+        self.window.bplr_postcode_lineedit.setText('1111aa')
+        self.window.bplr_housenumber_lineedit.setText('123')
+        self.window.bplr_house_price_lineedit.setText('90')
+        self.window.bplr_amount_wanted_lineedit.setText('100')
+        self.window.bplr_description_textedit.setText('description')
+        self.window.bplr_seller_phone_number_lineedit.setText('0614575412')
+        self.window.bplr_seller_email_lineedit.setText('example@example.com')
+        self.window.bplr_house_link_lineedit.setText('link.com/link')
+        self.window.bplr_bank1_checkbox.setChecked(True)
+        self.window.bplr_fixedrate_radiobutton.setChecked(True)
+
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, "Loan request created",
+                                                 'Your loan request has been sent.')
+
+    def test_place_loan_request_no_banks(self):
+        # Ui_MainWindow.bplr_description_textedit.se
+        self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
+        self.window.bplr_address_lineedit.setText('straat')
+        self.window.bplr_postcode_lineedit.setText('1111aa')
+        self.window.bplr_housenumber_lineedit.setText('123')
+        self.window.bplr_house_price_lineedit.setText('90')
+        self.window.bplr_amount_wanted_lineedit.setText('100')
+        self.window.bplr_description_textedit.setText('description')
+        self.window.bplr_seller_phone_number_lineedit.setText('0614575412')
+        self.window.bplr_seller_email_lineedit.setText('example@example.com')
+        self.window.bplr_house_link_lineedit.setText('link.com/link')
+
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, 'Loan request error',
+                                                 "You didn't enter the required information.")
+
+    def test_place_loan_request_filled_in_twice(self):
+        # Ui_MainWindow.bplr_bank1_checkbox.
+        self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
+        self.window.bplr_address_lineedit.setText('straat')
+        self.window.bplr_postcode_lineedit.setText('1111aa')
+        self.window.bplr_housenumber_lineedit.setText('123')
+        self.window.bplr_house_price_lineedit.setText('90')
+        self.window.bplr_amount_wanted_lineedit.setText('100')
+        self.window.bplr_description_textedit.setText('description')
+        self.window.bplr_seller_phone_number_lineedit.setText('0614575412')
+        self.window.bplr_seller_email_lineedit.setText('example@example.com')
+        self.window.bplr_house_link_lineedit.setText('link.com/link')
+        self.window.bplr_bank1_checkbox.setChecked(True)
+
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, "Loan request created",
+                                                 'Your loan request has been sent.')
+        QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, 'Loan request error', 'You can only have a single loan request.')
 
     def test_investors_portfolio_table_empty(self):
         # Create a new investor
