@@ -4,7 +4,7 @@ from os import path
 from hashlib import sha256
 
 from market.community.encoding import encode
-from market.dispersy.database import Database
+from dispersy.database import Database
 
 DATABASE_DIRECTORY = path.join(u"sqlite")
 # Path to the database location + dispersy._workingdirectory
