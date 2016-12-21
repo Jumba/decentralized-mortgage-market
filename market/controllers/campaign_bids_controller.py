@@ -8,7 +8,6 @@ class CampaignBidsController:
         self.table = self.mainwindow.icb_current_bids_table
         self.mainwindow.icb_place_bid_pushbutton.clicked.connect(self.place_bid)
         self.set_place_bid_visible(False)
-        self.msg = QMessageBox
 
     def setup_view(self, mortgage_id):
         self.table.setRowCount(0)
@@ -30,11 +29,11 @@ class CampaignBidsController:
                        'interest_rate': float(self.mainwindow.icb_interest_lineedit.text()),
                        'mortgage_id': self.mortgage_id}
             if self.mainwindow.api.place_loan_offer(self.mainwindow.app.user, payload):
-                self.msg.about(self.mainwindow, "Offer placed",
+                self.mainwindow.show_dialog("Offer placed",
                                   'Your bid has been placed.')
                 self.setup_view(self.mortgage_id)
         except ValueError:
-            self.msg.about(self.mainwindow, "Bid error",
+            self.mainwindow.show_dialog("Bid error",
                               'You didn\'t enter all of the required information.')
 
     def set_place_bid_visible(self, boolean):

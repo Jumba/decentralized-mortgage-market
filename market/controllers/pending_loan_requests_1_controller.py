@@ -7,7 +7,6 @@ class PendingLoanRequests1Controller:
         self.mainwindow = mainwindow
         self.loan_request_table = self.mainwindow.fiplr1_loan_requests_table
         self.loan_requests = []
-        self.msg = QMessageBox
 
         # Add listener to the 'view loan request' button
         self.mainwindow.fiplr1_view_loan_request_pushbutton.clicked.connect(self.show_request)
@@ -49,4 +48,4 @@ class PendingLoanRequests1Controller:
             self.mainwindow.fiplr2_controller.setup_view(loan_request.id)
             self.mainwindow.navigation.switch_to_fiplr2()
         except IndexError:
-            self.msg.about(self.mainwindow, "Select request", 'No loan requests have been selected.')
+            self.mainwindow.show_dialog("Select request", 'No loan requests have been selected.')

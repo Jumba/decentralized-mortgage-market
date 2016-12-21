@@ -7,7 +7,6 @@ class PlaceLoanRequestController:
         self.payload = {}
         self.mainwindow.bplr_submit_pushbutton.clicked.connect(self.submit_loan_request)
         self.banks_ids = Global.BANKS.values()
-        self.msg = QMessageBox
 
     def setup_view(self):
         pass
@@ -47,8 +46,8 @@ class PlaceLoanRequestController:
                 self.payload['mortgage_type'] = 0
 
             if self.mainwindow.api.create_loan_request(self.mainwindow.app.user, self.payload):
-                self.msg.about(self.mainwindow, "Loan request created", 'Your loan request has been sent.')
+                self.mainwindow.show_dialog("Loan request created", 'Your loan request has been sent.')
             else:
-                self.msg.about(self.mainwindow, "Loan request error", 'You can only have a single loan request.')
+                self.mainwindow.show_dialog("Loan request error", 'You can only have a single loan request.')
         except ValueError:
-            self.msg.about(self.mainwindow, "Loan request error", 'You didn\'t enter the required information.')
+            self.mainwindow.show_dialog("Loan request error", 'You didn\'t enter the required information.')

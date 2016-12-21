@@ -32,6 +32,7 @@ class MainWindowController(QMainWindow):
         self.fiplr2_controller = PendingLoanRequests2Controller(self)
         self.bplr_controller = PlaceLoanRequestController(self)
         self.profile_controller = ProfileController(self)
+        self.msg = QMessageBox
 
         self.setup_view()
 
@@ -56,3 +57,5 @@ class MainWindowController(QMainWindow):
         for i in range(0, len(row)):
             table.setItem(rowcount, i, QTableWidgetItem(str(row[i])))
 
+    def show_dialog(self, title, message):
+        self.msg.about(self, title, message)
