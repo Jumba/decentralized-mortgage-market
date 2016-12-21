@@ -8,6 +8,7 @@ class CampaignBidsController:
         self.table = self.mainwindow.icb_current_bids_table
         self.mainwindow.icb_place_bid_pushbutton.clicked.connect(self.place_bid)
         self.set_place_bid_visible(False)
+        self.msg = QMessageBox
 
     def setup_view(self, mortgage_id):
         self.table.setRowCount(0)
@@ -29,12 +30,12 @@ class CampaignBidsController:
                        'interest_rate': float(self.mainwindow.icb_interest_lineedit.text()),
                        'mortgage_id': self.mortgage_id}
             if self.mainwindow.api.place_loan_offer(self.mainwindow.app.user, payload):
-                QMessageBox.about(self.mainwindow, "Bid accepted",
-                                  'Bid accepted. You can view all your bids and investments by pressing the \"Portfolio\" tab.')
+                self.msg.about(self.mainwindow, "Offer placed",
+                                  'Your bid has been placed.')
                 self.setup_view(self.mortgage_id)
         except ValueError:
-            QMessageBox.about(self.mainwindow, "Invalid input",
-                              'The fields cannot be empty.')
+            self.msg.about(self.mainwindow, "Bid error",
+                              'You didn\'t enter all of the required information.')
 
     def set_place_bid_visible(self, boolean):
         self.mainwindow.icb_place_bid_label.setVisible(boolean)

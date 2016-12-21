@@ -10,6 +10,7 @@ class BorrowersPortfolioController:
         self.pending_table = self.mainwindow.bp_open_offers_table
         self.mainwindow.bp_accept_pushbutton.clicked.connect(self.accept_loan)
         self.mainwindow.bp_reject_pushbutton.clicked.connect(self.reject_loan)
+        self.msg = QMessageBox
 
     def setup_view(self):
         self.accepted_table.setRowCount(0)
@@ -38,8 +39,8 @@ class BorrowersPortfolioController:
             self.mainwindow.api.accept_investment_offer(loan.id)
         else:
             self.mainwindow.api.accept_mortgage_offer(loan.id)
-        QMessageBox.about(self.mainwindow, 'Loan accepted',
-                          'You have accepted the chosen loan')
+        self.msg.about(self.mainwindow, 'Offer accepted',
+                          'You have accepted the chosen offer')
         self.setup_view()
 
     def reject_offer(self, loan):
@@ -47,6 +48,6 @@ class BorrowersPortfolioController:
             self.mainwindow.api.reject_investment_offer(loan.id)
         else:
             self.mainwindow.api.reject_mortgage_offer(loan.id)
-        QMessageBox.about(self.mainwindow, 'Loan rejected',
-                          'You have rejected the chosen loan')
+        self.msg.about(self.mainwindow, 'Offer rejected',
+                          'You have rejected the chosen offer')
         self.setup_view()

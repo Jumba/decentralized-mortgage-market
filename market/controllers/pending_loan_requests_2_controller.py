@@ -5,6 +5,7 @@ class PendingLoanRequests2Controller:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.loan_request_id = None
+        self.msg = QMessageBox
 
         # Add listener to the 'accept' and 'reject' buttons
         self.mainwindow.fiplr2_accept_pushbutton.clicked.connect(self.accept_request)
@@ -42,7 +43,7 @@ class PendingLoanRequests2Controller:
     def reject_request(self):
         # Reject the loan request
         self.mainwindow.api.reject_loan_request(self.mainwindow.app.user, {'request_id' : self.loan_request_id})
-        QMessageBox.about(self.mainwindow, "Request rejected", 'This loan request has been rejected.')
+        self.msg.about(self.mainwindow, "Request rejected", 'This loan request has been rejected.')
         # Switch back to the pending loan requests 1 screen
         self.mainwindow.navigation.switch_to_fiplr()
 
@@ -62,10 +63,10 @@ class PendingLoanRequests2Controller:
 
             # Accept the loan request
             self.mainwindow.api.accept_loan_request(self.mainwindow.app.user, payload)
-            QMessageBox.about(self.mainwindow, "Request accepted", 'This loan request has been accepted.')
+            self.msg.about(self.mainwindow, "Request accepted", 'This loan request has been accepted.')
 
             # Switch back to the pending loan requests 1 screen
             self.mainwindow.navigation.switch_to_fiplr()
         except ValueError:
-            QMessageBox.about(self.mainwindow, "Loan request error", 'You didn\'t enter all of the required '
+            self.msg.about(self.mainwindow, "Loan request error", 'You didn\'t enter all of the required '
                                                                     'information.')
