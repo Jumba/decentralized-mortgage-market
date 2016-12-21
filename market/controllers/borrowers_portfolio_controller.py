@@ -26,12 +26,16 @@ class BorrowersPortfolioController:
             # selected_data = map((lambda item: item.data()), self.table.selectedIndexes())
             selected_row = self.pending_table.selectedIndexes()[0].row()
             self.accept_offer(self.accepted_loans[selected_row].id)
+        else:
+            self.mainwindow.show_dialog("Select offer", 'No offers have been selected.')
 
     def reject_loan(self):
         if self.pending_table.selectedIndexes():
             # selected_data = map((lambda item: item.data()), self.table.selectedIndexes())
             selected_row = self.pending_table.selectedIndexes()[0].row()
             self.reject_offer(self.accepted_loans[selected_row].id)
+        else:
+            self.mainwindow.show_dialog("Select offer", 'No offers have been selected.')
 
     def accept_offer(self, loan):
         if loan._type == 'investment':
