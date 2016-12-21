@@ -13,20 +13,7 @@ class ProfileController:
         if self.mainwindow.app.user.role_id:
             self.current_profile = self.mainwindow.api.load_profile(self.mainwindow.app.user)
             if self.current_profile:
-                self.mainwindow.profile_firstname_lineedit.setText(self.current_profile.first_name)
-                self.mainwindow.profile_lastname_lineedit.setText(self.current_profile.last_name)
-                self.mainwindow.profile_email_lineedit.setText(self.current_profile.email)
-                self.mainwindow.profile_iban_lineedit.setText(self.current_profile.iban)
-                self.mainwindow.profile_phonenumber_lineedit.setText(self.current_profile.phone_number)
-
-                if self.mainwindow.app.user.role_id == 1:
-                    self.mainwindow.profile_borrower_radiobutton.setChecked(True)
-                    self.mainwindow.profile_postcode_lineedit.setText(self.current_profile.current_postal_code)
-                    self.mainwindow.profile_housenumber_lineedit.setText(self.current_profile.current_house_number)
-                    self.mainwindow.profile_address_lineedit.setText(self.current_profile.current_address)
-
-                else:
-                    self.mainwindow.profile_investor_radiobutton.setChecked(True)
+                self.update_form(self.current_profile)
             else:
                 print 'Profile: Current profile is empty'
 
@@ -67,6 +54,23 @@ class ProfileController:
                                   'It is not possible to change your role at this time')
         except ValueError:
             self.mainwindow.show_dialog("Profile error", 'You didn\'t enter all of the required information.')
+
+    def update_form(self, profile):
+        # if self.current_profile:
+        self.mainwindow.profile_firstname_lineedit.setText(profile.first_name)
+        self.mainwindow.profile_lastname_lineedit.setText(profile.last_name)
+        self.mainwindow.profile_email_lineedit.setText(profile.email)
+        self.mainwindow.profile_iban_lineedit.setText(profile.iban)
+        self.mainwindow.profile_phonenumber_lineedit.setText(profile.phone_number)
+        self.mainwindow.profile_investor_radiobutton.setChecked(True)
+
+        # Add additional info if the user is a borrower
+        if self.mainwindow.app.user.role_id == 1:
+            self.mainwindow.profile_borrower_radiobutton.setChecked(True)
+            self.mainwindow.profile_postcode_lineedit.setText(profile.current_postal_code)
+            self.mainwindow.profile_housenumber_lineedit.setText(profile.current_house_number)
+            self.mainwindow.profile_address_lineedit.setText(profile.current_address)
+
 
     def update_navigation_bar(self):
         # Check which role the user currently has, and adjust the navigation bar accordingly
