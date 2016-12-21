@@ -88,13 +88,17 @@ class DatabaseModel(object):
 
         return json.dumps(output)
 
-    def __hash__(self):
-        output = []
-        for attr in vars(self):
-            if attr not in self._hash_exclude:
-                output.append(getattr(self, attr))
-
-        return hash(tuple(output))
+    # def __hash__(self):
+    #     output = []
+    #     for attr in vars(self):
+    #         if attr not in self._hash_exclude:
+    #             val = getattr(self, attr)
+    #             if isinstance(val, list):
+    #                 output.append(set(list))
+    #             else:
+    #                 output.append()
+    #
+    #     return hash(tuple(output))
 
     def _generate_sha1_hash(self):
         output = []

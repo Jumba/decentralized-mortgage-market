@@ -1,11 +1,12 @@
 import unittest
 from twisted.python.threadable import registerAsIOThread
 
-from dispersy.dispersy import Dispersy
-from dispersy.member import DummyMember, Member
+from mock import Mock
 
+from dispersy.dispersy import Dispersy
 from dispersy.endpoint import ManualEnpoint
-from market.api.api import MarketAPI
+from dispersy.member import DummyMember, Member
+from market.api.api import MarketAPI, STATUS
 from market.community.community import MortgageMarketCommunity
 from market.community.conversion import MortgageMarketConversion
 from market.database.backends import MemoryBackend
@@ -16,9 +17,16 @@ from market.models.profiles import BorrowersProfile
 from market.models.user import User
 
 
+class FakeMessage(object):
+    def __init__(self, payload):
+        self.payload = payload
+
+
 class FakePayload(object):
+    request = ''
     fields = []
     models = {}
+
 
 class CommunityTestSuite(unittest.TestCase):
     """Conversion test cases."""
@@ -33,6 +41,7 @@ class CommunityTestSuite(unittest.TestCase):
         self.api.db.backend.clear()
 
         user, _, priv = self.api.create_user()
+        self.bank, _, _ = self.api.create_user()
         self.user = user
         self.private_key = priv
 
@@ -62,7 +71,7 @@ class CommunityTestSuite(unittest.TestCase):
                                         seller_phone_number='06000000',
                                         seller_email='example@email.com',
                                         mortgage_type=1,
-                                        banks=[],
+                                        banks=[self.bank.id],
                                         description=u'Unicode description',
                                         amount_wanted=10000,
                                         status={}
@@ -82,7 +91,6 @@ class CommunityTestSuite(unittest.TestCase):
         for key in payload.models:
             self.remove_from_db(payload.models[key])
 
-
     def test_init(self):
         self.assertIsInstance(self.conversion, MortgageMarketConversion)
         self.assertIsInstance(self.community, MortgageMarketCommunity)
@@ -92,8 +100,10 @@ class CommunityTestSuite(unittest.TestCase):
 
     def test_on_loan_request_receive(self):
         payload = FakePayload()
+        payload.request = u"loan_request"
         payload.models = {self.house.type: self.house, self.loan_request.type: self.loan_request,
                           self.user.type: self.user, self.profile.type: self.profile}
+
 
         # Remove the models to act as a remote peer with none of the models saved.
         self.remove_payload_models_from_db(payload)
@@ -103,19 +113,250 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertFalse(self.isModelInDB(self.house))
 
         self.community.on_loan_request_receive(payload)
-        
+
         self.assertTrue(self.isModelInDB(self.loan_request))
         self.assertTrue(self.isModelInDB(self.profile))
         self.assertTrue(self.isModelInDB(self.house))
 
-        
-        
+    def test_on_loan_request_receive_bank(self):
+        payload = FakePayload()
+        payload.request = u"loan_request"
+        payload.models = {self.house.type: self.house, self.loan_request.type: self.loan_request,
+                          self.user.type: self.user, self.profile.type: self.profile}
+
+        self.remove_payload_models_from_db(payload)
+
+        self.assertFalse(self.isModelInDB(self.loan_request))
+        self.assertFalse(self.isModelInDB(self.profile))
+        self.assertFalse(self.isModelInDB(self.house))
+
+        # Be the bank
+        self.community._user = self.bank
+
+        self.community.on_loan_request_receive(payload)
+
+        self.assertTrue(self.isModelInDB(self.loan_request))
+        self.assertTrue(self.isModelInDB(self.profile))
+        self.assertTrue(self.isModelInDB(self.house))
+        self.assertIn(self.loan_request.id, self.bank.loan_request_ids)
+
+    def test_on_loan_request_reject(self):
+        payload = FakePayload()
+        payload.request = u"loan_request_reject"
+        payload.models = {self.loan_request.type: self.loan_request,
+                          self.user.type: self.user}
+
+        self.loan_request.status[self.bank.id] = STATUS.REJECTED
+        self.user.loan_request_ids.append(self.loan_request.id)
+        self.user.post_or_put(self.api.db)
+
+        self.community.on_loan_request_reject(payload)
+
+        self.assertTrue(self.isModelInDB(self.loan_request))
+        self.assertTrue(self.isModelInDB(self.user))
+        self.assertEqual(self.loan_request.status[self.bank.id], STATUS.REJECTED)
+        self.assertNotIn(self.loan_request.id, self.user.loan_request_ids)
+
+
 
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
         self.dispersy._database.close()
 
 
-
 if __name__ == '__main__':
     unittest.main()
+
+
+class IncomingQueueTestCase(unittest.TestCase):
+    def setUp(self):
+        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        mock = Mock()
+        self.api.community = mock
+
+        mock.on_loan_request_receive.return_value = True
+        mock.on_loan_request_reject.return_value = True
+        mock.on_mortgage_accept_signed.return_value = True
+        mock.on_mortgage_accept_unsigned.return_value = True
+        mock.on_investment_accept.return_value = True
+        mock.on_mortgage_reject.return_value = True
+        mock.on_investment_reject.return_value = True
+        mock.on_mortgage_offer.return_value = True
+        mock.on_investment_offer.return_value = True
+
+    def test_incoming_loan_request(self):
+        payload = FakePayload()
+        payload.request = u"loan_request"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_loan_request_receive.called)
+
+    def test_incoming_loan_request_reject(self):
+        payload = FakePayload()
+        payload.request = u"loan_request_reject"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_loan_request_reject.called)
+
+    def test_incoming_mortgage_accept_signed(self):
+        payload = FakePayload()
+        payload.request = u"mortgage_accept_signed"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_mortgage_accept_signed.called)
+
+    def test_incoming_mortgage_accept_unsigned(self):
+        payload = FakePayload()
+        payload.request = u"mortgage_accept_unsigned"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_mortgage_accept_unsigned.called)
+
+    def test_incoming_investment_accept(self):
+        payload = FakePayload()
+        payload.request = u"investment_accept"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_investment_accept.called)
+
+    def test_incoming_investment_offer(self):
+        payload = FakePayload()
+        payload.request = u"investment_offer"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_investment_offer.called)
+
+    def test_incoming_investment_reject(self):
+        payload = FakePayload()
+        payload.request = u"investment_reject"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_investment_reject.called)
+
+    def test_incoming_mortgage_reject(self):
+        payload = FakePayload()
+        payload.request = u"mortgage_reject"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_mortgage_reject.called)
+
+    def test_incoming_mortgage_offer(self):
+        payload = FakePayload()
+        payload.request = u"mortgage_offer"
+        payload.models = {}
+
+        message = FakeMessage(payload)
+
+        self.api.incoming_queue._queue.append(message)
+        self.api.incoming_queue.process()
+
+        self.assertTrue(self.api.community.on_mortgage_offer.called)
+
+
+class OutgoingQueueTestCase(unittest.TestCase):
+    def setUp(self):
+        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        mock = Mock()
+        self.api.community = mock
+
+        mock.send_api_message_candidate.return_value = True
+        mock.send_api_message_community.return_value = True
+
+    def test_send_community_message(self):
+        request = u'mortgage_offer'
+        fields = ['int']
+        models = {'int': 4}
+        receivers = []
+
+        self.api.outgoing_queue.push((request, fields, models, receivers))
+
+        # Not called yet
+        self.assertFalse(self.api.community.send_api_message_community.called)
+
+        self.api.outgoing_queue.process()
+
+        self.assertTrue(self.api.community.send_api_message_community.called)
+        self.api.community.send_api_message_community.assert_called_with(request, fields, models)
+
+    def test_send_candidate_message(self):
+        fake_user = User('ss', 1)
+        fake_user2 = User('ss2', 2)
+        fake_candidate = 'bob_candidate'
+
+        self.api.user_candidate[fake_user.id] = fake_candidate
+
+        request = u'mortgage_offer'
+        fields = ['int']
+        models = {'int': 4}
+        receivers = [fake_user, fake_user2]
+
+        self.api.outgoing_queue.push((request, fields, models, receivers))
+
+        # Not called yet
+        self.assertFalse(self.api.community.send_api_message_candidate.called)
+
+        self.api.outgoing_queue.process()
+
+        self.assertTrue(self.api.community.send_api_message_candidate.called)
+        self.api.community.send_api_message_candidate.assert_called_with(request, fields, models, tuple([fake_candidate]))
+
+        # Confirm that the message is still in the queue since fake_user2 has no candidate.
+        self.assertIn((request, fields, models, receivers), self.api.outgoing_queue._queue)
+
+        # Reset for the next part
+        self.api.community.reset_mock()
+        self.assertFalse(self.api.community.send_api_message_candidate.called)
+
+        # Add a candidate for fake_user2 and process messages
+        fake_candidate2 = 'bob_candidate2'
+        self.api.user_candidate[fake_user2.id] = fake_candidate2
+        self.api.outgoing_queue.process()
+
+        self.assertTrue(self.api.community.send_api_message_candidate.called)
+        self.api.community.send_api_message_candidate.assert_called_with(request, fields, models, tuple([fake_candidate2]))
+
+        # Confirm that the message is gone
+        self.assertNotIn((request, fields, models, receivers), self.api.outgoing_queue._queue)
+
+
+

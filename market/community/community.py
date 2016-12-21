@@ -225,13 +225,14 @@ class MortgageMarketCommunity(Community):
         loan_request.post_or_put(self.api.db)
 
         # If not all banks have rejected the loan request, do nothing
-        for _, status in loan_request.banks:
+        for items in loan_request.status.items():
+            status = items[1]
             if status == STATUS.ACCEPTED or status == STATUS.PENDING:
                 return True
 
         # If all banks have rejected the loan request, remove the request from the borrower
         self.user.update(self.api.db)
-        self.user.loan_request_ids = []
+        self.user.loan_request_ids.remove(loan_request.id)
         self.user.post_or_put(self.api.db)
 
         return True

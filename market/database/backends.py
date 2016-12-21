@@ -62,9 +62,10 @@ class MemoryBackend(Backend):
         return False
 
     def delete(self, obj):
-        if self.exists(obj.type, obj.id):
-            del self._data[obj.type][obj.id]
-            return True
+        if obj:
+            if self.exists(obj.type, obj.id):
+                del self._data[obj.type][obj.id]
+                return True
         return False
 
     def id_available(self, id):
