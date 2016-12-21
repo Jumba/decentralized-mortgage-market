@@ -82,10 +82,8 @@ class GUITestSuite(unittest.TestCase):
         pass
 
     def test_investors_portfolio_table_empty(self):
-        # Create a new investor
-        investor, _, _ = self.window.api.create_user()
-
-        # Check if their investments list is empty
+        # Check if the investments list is empty
+        self.window.ip_controller.setup_view()
         self.assertFalse(self.window.ip_investments_table.rowCount())
 
     def test_investors_portfolio_table_filled(self):
@@ -133,7 +131,7 @@ class GUITestSuite(unittest.TestCase):
         # Place loan offers
         self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
         self.payload_loan_offer['mortgage_id'] = mortgage1.id
-        loan_offer1 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
         self.payload_loan_offer['mortgage_id'] = mortgage2.id
         self.payload_loan_offer['amount'] = 123456
@@ -156,7 +154,6 @@ class GUITestSuite(unittest.TestCase):
         # Check second investment
         self.assertEqual(self.window.ip_investments_table.item(1, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.ip_investments_table.item(1, 1).text(), 'Completed')
-        self.assertEqual(self.window.ip_investments_table.item(1, 2).text(), 'Accepted')
         self.assertEqual(self.window.ip_investments_table.item(1, 3).text(), '123456')
         self.assertEqual(self.window.ip_investments_table.item(1, 4).text(), '2.5')
         self.assertEqual(self.window.ip_investments_table.item(1, 5).text(), '24')
