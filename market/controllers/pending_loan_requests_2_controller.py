@@ -25,8 +25,8 @@ class PendingLoanRequests2Controller:
         # TODO Add risk rating when it has been implemented
 
         # Insert mortgage request information
-        self.mainwindow.fiplr2_property_address_lineedit.setText(str(house.postal_code) + ', '
-                                                                 + str(house.house_number))
+        self.mainwindow.fiplr2_property_address_lineedit.setText(str(house.address) + ' ' + str(house.house_number) + ', '
+                                                                 + str(house.postal_code))
         self.mainwindow.fiplr2_loan_amount_lineedit.setText(str(loan_request.amount_wanted))
 
         mortgage_type = ''
@@ -50,10 +50,13 @@ class PendingLoanRequests2Controller:
         # TODO Add max_invest_rate and risk to the payload when they are implemented
         try:
             # Create payload
-            payload = {'request_id' : self.loan_request_id, 'amount' : self.mainwindow.fiplr2_offer_amount_lineedit.text(),
-                       'interest_rate' : self.mainwindow.fiplr2_offer_interest_lineedit.text(), 'max_invest_rate' : 0,
-                       'default_rate' : self.mainwindow.fiplr2_default_rate_lineedit,
-                       'duration' : self.mainwindow.fiplr2_loan_duration_lineedit, 'risk' : ' '}
+            payload = {'request_id' : self.loan_request_id,
+                       'amount' : int(self.mainwindow.fiplr2_offer_amount_lineedit.text()),
+                       'interest_rate' : float(self.mainwindow.fiplr2_offer_interest_lineedit.text()),
+                       'max_invest_rate' : 0.0,
+                       'default_rate' : float(self.mainwindow.fiplr2_default_rate_lineedit.text()),
+                       'duration' : int(self.mainwindow.fiplr2_loan_duration_lineedit.text()),
+                       'risk' : ' '}
 
             # Check if all fields are filled out
             for _, value in payload.iteritems():

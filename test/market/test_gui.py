@@ -5,11 +5,13 @@ import sys
 import unittest
 from uuid import UUID
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QTableWidget
 
 from market.api.api import STATUS
 from market.controllers.main_view_controller import MainWindowController
+from market.models.loans import Mortgage
 from market.models.role import Role
 from market.models.user import User
 from market.views.main_view import Ui_MainWindow
@@ -27,12 +29,14 @@ class GUITestSuite(unittest.TestCase):
                                                  self.window.app.bank3.id, self.window.app.bank4.id]
 
         # Define payloads
-        self.payload_borrower_profile = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget', 'email': 'example@example.com',
-                        'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719234',
-                        'current_postalcode': '2162CD', 'current_housenumber': '22', 'current_address': 'straat',
-                        'documents_list': []}
-        self.payload_investor_profile = {'role': 2, 'first_name': u'Ruby', 'last_name': u'Cue', 'email': 'example1@example.com',
-                                 'iban': 'NL53 INGBB 04027 30393', 'phonenumber': '+3170253719290'}
+        self.payload_borrower_profile = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget',
+                                         'email': 'example@example.com', 'iban': 'NL53 INGBB 04027 30393',
+                                         'phonenumber': '+3170253719234', 'current_postalcode': '2162CD',
+                                         'current_housenumber': '22', 'current_address': 'straat',
+                                         'documents_list': []}
+        self.payload_investor_profile = {'role': 2, 'first_name': u'Ruby', 'last_name': u'Cue',
+                                         'email': 'example1@example.com', 'iban': 'NL53 INGBB 04027 30393',
+                                         'phonenumber': '+3170253719290'}
         self.payload_loan_request = {'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'mortgage_type': 1,
                                      'banks': self.window.bplr_controller.banks_ids,
                                      'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
@@ -222,10 +226,8 @@ class GUITestSuite(unittest.TestCase):
         self.window.msg.about.assert_called_with(self.window, 'Loan request error', 'You can only have a single loan request.')
 
     def test_investors_portfolio_table_empty(self):
-        # Create a new investor
-        investor, _, _ = self.window.api.create_user()
-
-        # Check if their investments list is empty
+        # Check if the investments list is empty
+        self.window.ip_controller.setup_view()
         self.assertFalse(self.window.ip_investments_table.rowCount())
 
     def test_investors_portfolio_table_filled(self):
@@ -273,7 +275,7 @@ class GUITestSuite(unittest.TestCase):
         # Place loan offers
         self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
         self.payload_loan_offer['mortgage_id'] = mortgage1.id
-        loan_offer1 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
         self.payload_loan_offer['mortgage_id'] = mortgage2.id
         self.payload_loan_offer['amount'] = 123456
@@ -282,10 +284,11 @@ class GUITestSuite(unittest.TestCase):
         # Accept one of the loan offers
         self.window.api.accept_investment_offer(borrower2, {'investment_id' : loan_offer2.id})
 
-        # Check if the investments are in the table with the right values
+        # Check if there's only 2 investments in the table
         self.window.ip_controller.setup_view()
+        self.assertEqual(self.window.ip_investments_table.rowCount(), 2)
 
-        # Check first investment
+        # Check if the first investment is in the table with the right values
         self.assertEqual(self.window.ip_investments_table.item(0, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.ip_investments_table.item(0, 1).text(), 'Running')
         self.assertEqual(self.window.ip_investments_table.item(0, 2).text(), 'Pending')
@@ -293,51 +296,306 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.ip_investments_table.item(0, 4).text(), '2.5')
         self.assertEqual(self.window.ip_investments_table.item(0, 5).text(), '24')
 
-        # Check second investment
+        # Check if the second investment is in the table with the right values
         self.assertEqual(self.window.ip_investments_table.item(1, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.ip_investments_table.item(1, 1).text(), 'Completed')
-        self.assertEqual(self.window.ip_investments_table.item(1, 2).text(), 'Accepted')
         self.assertEqual(self.window.ip_investments_table.item(1, 3).text(), '123456')
         self.assertEqual(self.window.ip_investments_table.item(1, 4).text(), '2.5')
         self.assertEqual(self.window.ip_investments_table.item(1, 5).text(), '24')
 
     def test_banks_portfolio_table_empty(self):
-        pass
+        # Check if the mortgage list is empty
+        self.window.fip_controller.setup_view()
+        self.assertFalse(self.window.fip_campaigns_table.rowCount())
 
     def test_banks_portfolio_table_filled(self):
-        # TODO Add running and completed campaigns
-        pass
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create borrowers
+        borrower1, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower1.role_id = role_id
+        self.window.api.db.put(User._type, borrower1.id, borrower1)
+
+        borrower2, _, _ = self.window.api.create_user()
+        borrower2.role_id = role_id
+        self.window.api.db.put(User._type, borrower2.id, borrower2)
+
+        # Create loan requests
+        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+
+        borrower2 = self.window.api.db.get(User._type, borrower2.id)
+        loan_request2 = self.window.api.create_loan_request(borrower2, self.payload_loan_request)
+
+        # Accept the loan requests
+        self.payload_mortgage['user_key'] = borrower1.id
+        self.payload_mortgage['request_id'] = loan_request1.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        self.payload_mortgage['user_key'] = borrower2.id
+        self.payload_mortgage['request_id'] = loan_request2.id
+
+        accepted_loan_request2, mortgage2 = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                                                self.payload_mortgage)
+
+        # Accept mortgages
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id': mortgage2.id})
+
+        # Create an investor
+        investor, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        investor.role_id = role_id
+        self.window.api.db.put(User._type, investor.id, investor)
+
+        # Place loan offer
+        self.payload_loan_offer['user_key'] = investor.id  # set user_key to the investor's public key
+        self.payload_loan_offer['mortgage_id'] = mortgage1.id
+        loan_offer = self.window.api.place_loan_offer(investor, self.payload_loan_offer)
+
+        # Accept the loan offer
+        self.window.api.accept_investment_offer(borrower1, {'investment_id': loan_offer.id})
+
+        # Check if there's only 2 mortgages in the table
+        self.window.fip_controller.setup_view()
+        self.assertEqual(self.window.fip_campaigns_table.rowCount(), 2)
+
+        # Check if the first mortgage is in the table with the right values
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 0).text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 1).text(), 'Completed')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 2).text(), '123000')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 3).text(), '5.5')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 4).text(), '9.0')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 5).text(), '30')
+
+        # Check if the second mortgage is in the table with the right values
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 0).text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 1).text(), 'Running')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 2).text(), '123000')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 3).text(), '5.5')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 4).text(), '9.0')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 5).text(), '30')
 
     def test_pending_loan_requests_table_empty(self):
-        pass
+        # Check if the loan request list is empty
+        self.window.fiplr1_controller.setup_view()
+        self.assertFalse(self.window.fiplr1_loan_requests_table.rowCount())
 
     def test_pending_loan_requests_table_filled(self):
-        # TODO Add loan requests for linear and fixed-rate mortgages
-        pass
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create borrowers
+        borrower1, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower1.role_id = role_id
+        self.window.api.db.put(User._type, borrower1.id, borrower1)
+
+        borrower2, _, _ = self.window.api.create_user()
+        borrower2.role_id = role_id
+        self.window.api.db.put(User._type, borrower2.id, borrower2)
+
+        # Create loan requests
+        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+
+        borrower2 = self.window.api.db.get(User._type, borrower2.id)
+        self.payload_loan_request['mortgage_type'] = 2
+        self.window.api.create_loan_request(borrower2, self.payload_loan_request)
+
+        # Check if there are only 2 loan requests in the table
+        self.window.fiplr1_controller.setup_view()
+        self.assertEqual(self.window.fiplr1_loan_requests_table.rowCount(), 2)
+
+        # Check if the first loan request is in the table with the right values
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 0).text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 1).text(), 'Linear')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 2).text(), '123456')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(0, 3).text(), '123456')
+
+        # Check if the second loan request is in the table with the right values
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 0).text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 1).text(), 'Fixed-Rate')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 2).text(), '123456')
+        self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 3).text(), '123456')
 
     def test_pending_loan_requests_table_unselected(self):
-        pass
+        # Click the 'view loan request' button without selecting an item in the table
+        self.window.fiplr1_controller.setup_view()
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.fiplr1_view_loan_request_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Select request",
+                                                 'No loan requests have been selected.')
 
     def test_pending_loan_requests_table_selected(self):
-        pass
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
 
-    def test_pending_loan_request_forms_filled(self):
-        # TODO Test for linear and fixed-rate mortgages
-        pass
+        # Create a borrower
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+
+        # Select the item on the first row in the first column in the table
+        self.window.fiplr1_controller.setup_view()
+        self.window.fiplr1_loan_requests_table.selectRow(0)
+
+        # Click the 'view loan request' button
+        self.window.msg.about = MagicMock()
+        self.window.fiplr2_controller.setup_view = MagicMock()
+        QTest.mouseClick(self.window.fiplr1_view_loan_request_pushbutton, Qt.LeftButton)
+
+        # Check if the 'pending loan request' view has been called
+        self.window.fiplr2_controller.setup_view.assert_called_with(loan_request.id)
+
+    def test_pending_loan_request_forms_filled_linear(self):
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create a borrower with profile
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
+
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+
+        # Check if all the fields are filled in with the right information
+        self.window.fiplr2_controller.setup_view(loan_request.id)
+        self.assertEqual(self.window.fiplr2_firstname_lineedit.text(), u'Bob')
+        self.assertEqual(self.window.fiplr2_lastname_lineedit.text(), u'Saget')
+        self.assertEqual(self.window.fiplr2_address_lineedit.text(), 'straat 22, 2162CD')
+        self.assertEqual(self.window.fiplr2_phonenumber_lineedit.text(), '+3170253719234')
+        self.assertEqual(self.window.fiplr2_email_lineedit.text(), 'example@example.com')
+        self.assertEqual(self.window.fiplr2_property_address_lineedit.text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fiplr2_loan_amount_lineedit.text(), '123456')
+        self.assertEqual(self.window.fiplr2_mortgage_type_lineedit.text(), 'Linear')
+        self.assertEqual(self.window.fiplr2_property_value_lineedit.text(), '123456')
+        self.assertEqual(self.window.fiplr2_description_textedit.toPlainText(), u'I want to buy a house')
+
+    def test_pending_loan_request_forms_filled_fixedrate(self):
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create a borrower with profile
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
+
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        self.payload_loan_request['mortgage_type'] = 2
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+
+        # Check if all the fields are filled in with the right information
+        self.window.fiplr2_controller.setup_view(loan_request.id)
+        self.assertEqual(self.window.fiplr2_firstname_lineedit.text(), u'Bob')
+        self.assertEqual(self.window.fiplr2_lastname_lineedit.text(), u'Saget')
+        self.assertEqual(self.window.fiplr2_address_lineedit.text(), 'straat 22, 2162CD')
+        self.assertEqual(self.window.fiplr2_phonenumber_lineedit.text(), '+3170253719234')
+        self.assertEqual(self.window.fiplr2_email_lineedit.text(), 'example@example.com')
+        self.assertEqual(self.window.fiplr2_property_address_lineedit.text(), 'straat 11, 1111AA')
+        self.assertEqual(self.window.fiplr2_loan_amount_lineedit.text(), '123456')
+        self.assertEqual(self.window.fiplr2_mortgage_type_lineedit.text(), 'Fixed-Rate')
+        self.assertEqual(self.window.fiplr2_property_value_lineedit.text(), '123456')
+        self.assertEqual(self.window.fiplr2_description_textedit.toPlainText(), u'I want to buy a house')
 
     def test_pending_loan_request_accept_empty(self):
-        pass
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
 
-    def test_pending_loan_request_accept_filled_incomplete(self):
-        pass
+        # Create a borrower with profile
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
 
-    def test_pending_loan_request_accept_filled_complete(self):
-        pass
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        self.payload_loan_request['mortgage_type'] = 2
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
 
-    def test_pending_loan_request_reject_empty(self):
-        pass
+        # Click the 'accept' button without filling in any mortgage info
+        self.window.fiplr2_controller.setup_view(loan_request.id)
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.fiplr2_accept_pushbutton, Qt.LeftButton)
 
-    def test_pending_loan_request_reject_filled(self):
-        pass
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Loan request error",
+                                                 'You didn\'t enter all of the required information.')
 
+    def test_pending_loan_request_accept_filled(self):
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
 
+        # Create a borrower with profile
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
+
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        self.payload_loan_request['mortgage_type'] = 2
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+
+        # Fill in mortgage info
+        self.window.fiplr2_offer_amount_lineedit.setText('123000')
+        self.window.fiplr2_offer_interest_lineedit.setText('2.1')
+        self.window.fiplr2_default_rate_lineedit.setText('3.9')
+        self.window.fiplr2_loan_duration_lineedit.setText('300')
+
+        # Click the 'accept' button
+        self.window.fiplr2_controller.setup_view(loan_request.id)
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.fiplr2_accept_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Request accepted",
+                                                 'This loan request has been accepted.')
+
+    def test_pending_loan_request_reject(self):
+        # Create the bank user
+        self.window.app.user = self.window.app.bank1
+
+        # Create a borrower with profile
+        borrower, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
+
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        self.payload_loan_request['mortgage_type'] = 2
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+        self.window.app.user = self.window.api.db.get(User._type, self.window.app.user.id)
+
+        # Click the 'reject' button
+        self.window.fiplr2_controller.setup_view(loan_request.id)
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.fiplr2_reject_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Request rejected",
+                                                 'This loan request has been rejected.')
