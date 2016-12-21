@@ -59,7 +59,7 @@ class MockDatabase(Database):
 
     def delete(self, obj):
         assert isinstance(obj, DatabaseModel)
-        raise NotImplementedError
+        return self.backend.delete(obj)
 
     def get_all(self, type):
         try:

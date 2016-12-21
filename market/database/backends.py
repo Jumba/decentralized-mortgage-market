@@ -64,6 +64,8 @@ class MemoryBackend(Backend):
     def delete(self, obj):
         if self.exists(obj.type, obj.id):
             del self._data[obj.type][obj.id]
+            return True
+        return False
 
     def id_available(self, id):
         return id not in self._id
@@ -169,10 +171,11 @@ class PersistentBackend(Database, Backend):
         else:
             return False
 
-    def delete(self, id):
+    def delete(self, obj):
         db_query = u"DELETE FROM `market` WHERE id = ?"
-        self.execute(db_query, (unicode(id),))
+        cur = self.execute(db_query, (unicode(obj.id),))
         self.commit()
+        return cur.rowcount > 0
 
     def id_available(self, id):
         db_query = u"SELECT COUNT(*) FROM `market` WHERE id = ?"

@@ -101,8 +101,11 @@ class DatabaseTestSuite(unittest.TestCase):
             self.database.delete(None)
 
     def test_delete(self):
-        with self.assertRaises(NotImplementedError):
-            self.database.delete(self.model1)
+        self.database.post(self.model1.type, self.model1)
+        self.assertTrue(self.database.delete(self.model1))
+        self.assertIsNone(self.database.get(self.model1.type, self.model1.id))
+
+
 
     def test_get_all(self):
         self.database.post(self.model1.type, self.model1)
