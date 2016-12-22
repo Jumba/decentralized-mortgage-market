@@ -10,6 +10,7 @@ class CustomAssertions(object):
     """
     This function checks whether two blocks: block1 and block2, are the same block.
     """
+
     def assertEqualBlocks(self, block1, block2):
         self.assertEqual(block1.benefactor, block2.benefactor)
         self.assertEqual(block1.beneficiary, block2.beneficiary)
@@ -32,6 +33,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         """
         This test checks the functionality of making a block with the payload from a message.
         """
+
         message = MessageBeneficiary()
         block = DatabaseBlock.from_signed_confirm_message(message)
 
@@ -49,6 +51,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         """
         This test checks the functionality of adding a block to the blockchain.
         """
+
         message = MessageBeneficiary()
         block = DatabaseBlock.from_signed_confirm_message(message)
 
@@ -64,6 +67,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         """
         This test checks the functionality of updating a block in the blockchain.
         """
+
         message_request = MessageBenefactor()
         message_response = MessageBeneficiary()
 
@@ -77,15 +81,77 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         # Get the updated block by the hash of the block
         result = self.db.get_by_hash(block_beneficiary.hash_block)
         # Get the updated block by the public key and the sequence number
-        result_benefactor = self.db.get_by_public_key_and_sequence_number(block_benefactor.benefactor,
+        result_benefactor = self.db.get_by_public_key_and_sequence_number(message_request.payload.benefactor,
                                                                            block_benefactor.sequence_number_benefactor)
-        result_beneficiary = self.db.get_by_public_key_and_sequence_number(block_beneficiary.beneficiary,
+        result_beneficiary = self.db.get_by_public_key_and_sequence_number(message_request.payload.beneficiary,
                                                                            block_beneficiary.sequence_number_beneficiary)
 
         #Check whether the block was updated correctly
         self.assertEqualBlocks(result_benefactor, result_beneficiary)
         self.assertEqualBlocks(result_benefactor, result)
         self.assertEqualBlocks(result_beneficiary, result)
+
+    def test_get_latest_hash(self):
+        """
+        This test checks the functionality of getting the latest hash of a user.
+        """
+
+        message_request = MessageBenefactor()
+        message_response = MessageBeneficiary()
+
+        # Add the block with only the information from benefactor to the blockchain
+        block_benefactor = DatabaseBlock.from_signed_confirm_message(message_request)
+        self.db.add_block(block_benefactor)
+        # Update the block with the information from the beneficiary
+        block_beneficiary = DatabaseBlock.from_signed_confirm_message(message_response)
+        self.db.update_block_with_beneficiary(block_beneficiary)
+
+        # Get the latest block added
+        latest_block_benefactor = self.db.get_by_public_key_and_sequence_number(message_request.payload.benefactor,
+                                                                                block_benefactor.sequence_number_benefactor)
+        latest_block_beneficiary = self.db.get_by_public_key_and_sequence_number(message_request.payload.beneficiary,
+                                                                                 block_beneficiary.sequence_number_beneficiary)
+
+        # Get the latest hash
+        latest_hash_benefactor = self.db.get_latest_hash(message_request.payload.benefactor)
+        latest_hash_beneficiary = self.db.get_latest_hash(message_request.payload.beneficiary)
+
+        # Check whether the hash is the right one
+        self.assertEqual(latest_hash_benefactor, latest_block_benefactor.hash_block)
+        self.assertEqual(latest_hash_beneficiary, latest_block_beneficiary.hash_block)
+        self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
+
+    def test_get_latest_sequence_number(self):
+        """
+        This test checks he functionality of getting the latest sequence number
+        """
+
+        message_request = MessageBenefactor()
+        message_response = MessageBeneficiary()
+
+        # Add the block with only the information from benefactor to the blockchain
+        block_benefactor = DatabaseBlock.from_signed_confirm_message(message_request)
+        self.db.add_block(block_benefactor)
+        # Update the block with the information from the beneficiary
+        block_beneficiary = DatabaseBlock.from_signed_confirm_message(message_response)
+        self.db.update_block_with_beneficiary(block_beneficiary)
+
+        # Get the latest block added
+        latest_block_benefactor = self.db.get_by_public_key_and_sequence_number(message_request.payload.benefactor,
+                                                                                block_benefactor.sequence_number_benefactor)
+        latest_block_beneficiary = self.db.get_by_public_key_and_sequence_number(message_request.payload.beneficiary,
+                                                                                 block_beneficiary.sequence_number_beneficiary)
+
+        # get the latest sequence number
+        latest_sequence_number_benefactor = self.db.get_latest_sequence_number(message_request.payload.benefactor)
+        latest_sequence_number_beneficiary = self.db.get_latest_sequence_number(message_request.payload.beneficiary)
+
+        # Check whether the sequence numbers are the right ones
+        self.assertEqual(latest_sequence_number_benefactor, latest_block_benefactor.sequence_number_benefactor)
+        self.assertEqual(latest_sequence_number_beneficiary, latest_block_beneficiary.sequence_number_beneficiary)
+
+    def tearDown(self):
+        self.db.close()
 
 
 class PayloadBeneficiary(object):
