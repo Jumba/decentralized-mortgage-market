@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from market.api.api import STATUS
-from market.controllers.main_view_controller import MainWindowController
+from market.controllers.main_window_controller import MainWindowController
 from market.controllers.navigation import NavigateUser
 from market.models.role import Role
 from market.models.user import User
