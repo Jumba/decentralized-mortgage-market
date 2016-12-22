@@ -17,19 +17,18 @@ schema = u"""
 CREATE TABLE IF NOT EXISTS multi_chain(
  public_key_benefactor		  TEXT NOT NULL,
  public_key_beneficiary		  TEXT NOT NULL,
- hash_block                   TEXT NOT NULL,
 
  agreement_benefactor         TEXT NOT NULL,
- sequence_number_benefactor   INTEGER NOT NULL,
- previous_hash_benefactor	  TEXT NOT NULL,
- signature_benefactor		  TEXT NOT NULL,
-
  agreement_beneficiary        TEXT NOT NULL,
+ sequence_number_benefactor   INTEGER NOT NULL,
  sequence_number_beneficiary  INTEGER NOT NULL,
+ previous_hash_benefactor	  TEXT NOT NULL,
  previous_hash_beneficiary	  TEXT NOT NULL,
+ signature_benefactor		  TEXT NOT NULL,
  signature_beneficiary		  TEXT NOT NULL,
 
- insert_time                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+ insert_time                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+ hash_block                   TEXT NOT NULL
  );
 
 CREATE TABLE option(key TEXT PRIMARY KEY, value BLOB);
@@ -62,19 +61,19 @@ class MultiChainDB(Database):
         Persist a block
         :param block: The data that will be saved.
         """
-        data = (buffer(block.public_key_benefactor), buffer(block.public_key_beneficiary), buffer(block.hash_block),
-                buffer(block.agreement_benefactor), block.sequence_number_benefactor,
-                buffer(block.previous_hash_benefactor), buffer(block.signature_benefactor),
-                buffer(block.agreement_beneficiary), block.sequence_number_beneficiary,
-                buffer(block.previous_hash_beneficiary), buffer(block.signature_beneficiary))
+        data = (buffer(block.public_key_benefactor), buffer(block.public_key_beneficiary),
+                buffer(block.agreement_benefactor), buffer(block.agreement_beneficiary),
+                block.sequence_number_benefactor, block.sequence_number_beneficiary,
+                buffer(block.previous_hash_benefactor), buffer(block.previous_hash_beneficiary),
+                buffer(block.signature_benefactor), buffer(block.signature_beneficiary),
+                block.insert_time, buffer(block.hash_block))
 
         self.execute(
-            u"INSERT INTO multi_chain (public_key_benefactor, public_key_beneficiary, hash_block, "
-            u"agreement_benefactor, sequence_number_benefactor, previous_hash_benefactor, "
-            u"signature_benefactor, "
-            u"agreement_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, "
-            u"signature_beneficiary) "
-            u"VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            u"INSERT INTO multi_chain (public_key_benefactor, public_key_beneficiary, "
+            u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, "
+            u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, "
+            u"insert_time, hash_block) "
+            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             data)
         self.commit()
 
@@ -122,13 +121,12 @@ class MultiChainDB(Database):
         :param hash: The hash of the block that needs to be retrieved.
         :return: The block that was requested or None
         """
-        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, hash_block, " \
-                   u"agreement_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
-                   u"signature_benefactor, " \
-                   u"agreement_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
-                   u"signature_beneficiary, insert_time " \
+        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, " \
+                   u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, " \
+                   u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
+                   u"insert_time, hash_block " \
                    u"FROM `multi_chain` WHERE hash_block = ? LIMIT 1"
-        db_result = self.execute(db_query, buffer(hash)).fetchone()
+        db_result = self.execute(db_query, (buffer(hash),)).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
 
@@ -213,8 +211,8 @@ class DatabaseBlock:
         """ Create a block from data """
         self.public_key_benefactor = str(data[0])
         self.public_key_beneficiary = str(data[1])
-        self.agreement_benefactor = str(DatabaseModel.encode(data[2]))
-        self.agreement_beneficiary = str(DatabaseModel.encode(data[3]))
+        self.agreement_benefactor = str(data[2])
+        self.agreement_beneficiary = str(data[3])
         self.sequence_number_benefactor = data[4]
         self.sequence_number_beneficiary = data[5]
         self.previous_hash_benefactor = str(data[6])
@@ -247,6 +245,7 @@ class DatabaseBlock:
     @classmethod
     def from_signed_confirm_message(cls, message):
         payload = message.payload
-        return cls((payload.benefactor, payload.beneficiary, payload.agreement_benefactor, payload.agreement_beneficiary,
-                   payload.sequence_number_benefactor, payload.sequence_number_beneficiary, payload.previous_hash_benefactor,
-                   payload.previous_hash_beneficiary, payload.signature_benefactor, payload.signature_beneficiary, payload.time))
+        return cls((payload.benefactor, payload.beneficiary, payload.agreement_benefactor and payload.agreement_benefactor.encode() or '',
+                    payload.agreement_beneficiary and payload.agreement_beneficiary.encode() or '',
+                    payload.sequence_number_benefactor, payload.sequence_number_beneficiary, payload.previous_hash_benefactor,
+                    payload.previous_hash_beneficiary, payload.signature_benefactor, payload.signature_beneficiary, payload.time))

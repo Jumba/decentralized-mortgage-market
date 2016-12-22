@@ -12,9 +12,11 @@ class MultichainDatabaseTest(unittest.TestCase):
         self.db = MultiChainDB('.', 'test-db')
 
     def test_from_signed_confirm_message(self):
+        """
+        This test checks the functionality of making a block with the payload from a message.
+        """
         message = Message()
         block = DatabaseBlock.from_signed_confirm_message(message)
-
 
         self.assertEqual(block.public_key_benefactor, message.payload.benefactor)
         self.assertEqual(block.public_key_beneficiary, message.payload.beneficiary)
@@ -26,8 +28,20 @@ class MultichainDatabaseTest(unittest.TestCase):
         self.assertEqual(block.previous_hash_beneficiary, message.payload.previous_hash_beneficiary)
         self.assertEqual(block.insert_time, message.payload.time)
 
-    def tearDown(self):
-        pass
+    # def test_add_block(self):
+    #     """
+    #     This test checks the functionality of adding a block to the blockchain.
+    #     """
+    #     message = Message()
+    #     block = DatabaseBlock.from_signed_confirm_message(message)
+    #
+    #     # Add the block to the blockchain
+    #     self.db.add_block(block)
+    #     # Get the block by the hash of the block
+    #     result = self.db.get_by_hash(block.hash_block)
+    #
+    #     # Check whether the block was added correctly
+    #     self.assertEqual(block, result)
 
 class Payload(object):
     mortgage = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'), UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
