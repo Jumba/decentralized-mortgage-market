@@ -63,6 +63,27 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         # Check whether the block was added correctly
         self.assertEqualBlocks(block, result)
 
+    def test_add_multiple_blocks(self):
+        """
+        This test checks the functionality of adding a block to the blockchain.
+        """
+
+        message = MessageBeneficiary()
+        block1 = DatabaseBlock.from_signed_confirm_message(message)
+        block2 = DatabaseBlock.from_signed_confirm_message(message)
+
+
+        # Add the block to the blockchain
+        self.db.add_block(block1)
+        self.db.add_block(block2)
+        # Get the block by the hash of the block
+        result1 = self.db.get_by_hash(block1.hash_block)
+        result2 = self.db.get_by_hash(block2.hash_block)
+        # Check whether the block was added correctly
+        self.assertEqualBlocks(block1, result1)
+        self.assertEqualBlocks(block2, result2)
+        self.assertNotEqual(block1.hash_block, block2.hash_block)
+
     def test_update_block_with_beneficiary(self):
         """
         This test checks the functionality of updating a block in the blockchain.
