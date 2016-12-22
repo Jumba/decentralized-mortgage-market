@@ -49,7 +49,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
                                                         self.investment1, self.investment1, 6, 5,
                                                         'prev-hash-benefactor-ik12ei38', 'prev-hash-beneficiary-fj039r8',
                                                         'signature-benefactor-mdioaw030',
-                                                        'signature-beneficiary-jfrkf29', 800)
+                                                        'signature-beneficiary-jfrkf29', 900)
 
         self.payload_request_latest_hash = Payload('benefactor-key-i298w4yjexrw', 'beneficiary-key-d893dyt4rew', self.investment1, None,
                                    5, 0, 'prev-hash-benefactor-urc89utqhokp9', '', '', '', 600)
@@ -120,10 +120,19 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         result1 = self.db.get_by_hash(block1.hash_block)
         result2 = self.db.get_by_hash(block2.hash_block)
 
+        # Get the latest hash
+        latest_hash_benefactor = self.db.get_latest_hash(message1.payload.benefactor)
+        latest_hash_beneficiary = self.db.get_latest_hash(message1.payload.beneficiary)
+
         # Check whether the blocks were added correctly
         self.assertEqualBlocks(block1, result1)
         self.assertEqualBlocks(block2, result2)
         self.assertNotEqual(block1.hash_block, block2.hash_block)
+        self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
+        self.assertEqual(latest_hash_benefactor, block2.hash_block)
+        self.assertEqual(latest_hash_beneficiary, block2.hash_block)
+        self.assertNotEqual(latest_hash_benefactor, block1.hash_block)
+        self.assertNotEqual(latest_hash_beneficiary, block1.hash_block)
 
     def test_update_block_with_beneficiary(self):
         """
