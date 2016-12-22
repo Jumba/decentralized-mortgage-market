@@ -16,7 +16,7 @@ from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.models import DatabaseModel
 from market.models.house import House
-from market.models.loans import LoanRequest, Mortgage, Campaign
+from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile
 from market.models.user import User
 
@@ -141,6 +141,10 @@ class CommunityTestSuite(unittest.TestCase):
         self.campaign = Campaign(mortgage_id=self.mortgage.id, amount=self.mortgage.amount, end_date=datetime.datetime.now(),
                                  completed=False)
         self.campaign.post_or_put(self.neutral_api.db)
+
+        self.investment = Investment(investor_key=self.investor.id, amount=1000, duration=36, interest_rate=2.0,
+                                     mortgage_id=self.mortgage.id, status=STATUS.PENDING)
+        self.investment.post_or_put(self.neutral_api.db)
 
     def isModelInDB(self, api, model):
         return not api.db.get(model.type, model.id) is None
@@ -312,7 +316,78 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertEqual(mortgage.status, STATUS.REJECTED)
         self.assertNotIn(mortgage.id, self.bank.mortgage_ids)
 
+    def test_on_investment_offer(self):
+        """
+        Test an investor sending an investment offer to a borrower
+        investor -> user
+        """
+        payload = FakePayload()
+        payload.request = u"investment_offer"
+        payload.models = {self.investor.type: self.investor,
+                          self.investment.type: self.investment}
 
+        # Check if user doesn't have the investment yet
+        self.assertFalse(self.isModelInDB(self.api, self.investment))
+
+        # Send investment offer message
+        self.community.on_investment_offer(payload)
+
+        # Check if the user has the investment
+        self.assertTrue(self.isModelInDB(self.api, self.investment))
+
+    def test_on_investment_accept(self):
+        """
+        Test a user rejecting an investment
+        user -> investor
+        """
+        # Pre-condition. Investor has the investment saved with status.PENDING
+        self.investment.post_or_put(self.api_investor.db)
+        self.investor.investment_ids.append(self.investment.id)
+        self.investor.post_or_put(self.api_investor.db)
+
+        # Create the payload
+        payload = FakePayload()
+        payload.request = u"investment_accept"
+        payload.models = {self.user.type: self.user,
+                          self.investment.type: self.investment}
+
+        self.investment.status = STATUS.ACCEPTED
+
+        self.community_investor.on_investment_accept(payload)
+
+        self.investor.update(self.api_investor.db)
+
+        investment = self.api_investor.db.get(self.investment.type, self.investment.id)
+
+        self.assertEqual(investment.status, STATUS.ACCEPTED)
+        self.assertIn(investment.id, self.investor.investment_ids)
+
+    def test_on_investment_reject(self):
+        """
+        Test a user accepting an investment
+        user -> investor
+        """
+        # Pre-condition. Investor has the investment saved with status.PENDING
+        self.investment.post_or_put(self.api_investor.db)
+        self.investor.investment_ids.append(self.investment.id)
+        self.investor.post_or_put(self.api_investor.db)
+
+        # Create the payload
+        payload = FakePayload()
+        payload.request = u"investment_reject"
+        payload.models = {self.user.type: self.user,
+                          self.investment.type: self.investment}
+
+        self.investment.status = STATUS.REJECTED
+
+        self.community_investor.on_investment_reject(payload)
+
+        self.investor.update(self.api_investor.db)
+
+        investment = self.api_investor.db.get(self.investment.type, self.investment.id)
+
+        self.assertEqual(investment.status, STATUS.REJECTED)
+        self.assertNotIn(investment.id, self.investor.investment_ids)
 
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
