@@ -22,25 +22,25 @@ class BorrowersPortfolioController:
             if isinstance(loan, Mortgage):
                 self.mainwindow.insert_row(self.accepted_table, [loan.amount, loan.interest_rate,
                                                                  loan.default_rate, loan.duration,
-                                                                 loan._type])
+                                                                 loan.type])
             elif isinstance(loan, Investment):
                 self.mainwindow.insert_row(self.accepted_table, [loan.amount, loan.interest_rate,
-                                                                 ' ', loan.duration, loan._type])
+                                                                 ' ', loan.duration, loan.type])
         for offer in self.pending_loans:
             if isinstance(offer, Mortgage):
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,
                                                                 offer.default_rate, offer.duration,
-                                                                offer._type])
+                                                                offer.type])
             elif isinstance(offer, Investment):
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,
-                                                                ' ', offer.duration, offer._type])
+                                                                ' ', offer.duration, offer.type])
 
     def accept_offer(self):
         try:
             selected_row = self.pending_table.selectedIndexes()[0].row()
             offer = self.pending_loans[selected_row]
 
-            if offer._type == Investment._type:
+            if offer.type == Investment.type:
                 self.mainwindow.api.accept_investment_offer(self.mainwindow.app.user, {'investment_id': offer.id})
             else:
                 self.mainwindow.api.accept_mortgage_offer(self.mainwindow.app.user, {'mortgage_id': offer.id})
@@ -56,7 +56,7 @@ class BorrowersPortfolioController:
             selected_row = self.pending_table.selectedIndexes()[0].row()
             offer = self.pending_loans[selected_row]
 
-            if offer._type == Investment._type:
+            if offer.type == Investment.type:
                 self.mainwindow.api.reject_investment_offer(self.mainwindow.app.user, {'investment_id': offer.id})
             else:
                 self.mainwindow.api.reject_mortgage_offer(self.mainwindow.app.user, {'mortgage_id': offer.id})
