@@ -3,7 +3,7 @@ from twisted.python.threadable import registerAsIOThread
 
 from mock import Mock
 
-from dispersy.candidate import Candidate, LoopbackCandidate
+from dispersy.candidate import LoopbackCandidate
 from dispersy.dispersy import Dispersy
 from dispersy.endpoint import ManualEnpoint
 from dispersy.member import DummyMember, Member
@@ -13,6 +13,7 @@ from market.community.conversion import MortgageMarketConversion
 from market.community.payload import SignedConfirmPayload
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
+from market.models import DatabaseModel
 from market.models.house import House
 from market.models.loans import LoanRequest
 from market.models.profiles import BorrowersProfile
@@ -39,27 +40,44 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Object creation and preperation
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
-        self.api = MarketAPI(MockDatabase(MemoryBackend()))
-        self.api.db.backend.clear()
+        self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
 
-        user, _, priv = self.api.create_user()
-        self.bank, _, _ = self.api.create_user()
-        self.user = user
-        self.private_key = priv
+        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
+
+        self.api.db.backend.clear()
+        self.api_bank.db.backend.clear()
+
+        self.user, _, priv_user = self.api.create_user()
+        self.bank, _, priv_bank = self.api.create_user()
+
+        # save the user to the bank api
+        self.user.post_or_put(self.api_bank.db)
+        self.bank.post_or_put(self.api_bank.db)
+
 
         self.dispersy._database.open()
+        self.dispersy_bank._database.open()
+
         self.master_member = DummyMember(self.dispersy, 1, "a" * 20)
-        self.member = self.dispersy.get_member(private_key=self.private_key.decode("HEX"))
+
+        self.member = self.dispersy.get_member(private_key=priv_user.decode("HEX"))
+        self.member_bank = self.dispersy.get_member(private_key=priv_bank.decode("HEX"))
+
         self.community = MortgageMarketCommunity.init_community(self.dispersy, self.master_member, self.member)
+        self.community_bank = MortgageMarketCommunity.init_community(self.dispersy_bank, self.master_member, self.member_bank)
+
 
         self.community.api = self.api
         self.community.user = self.user
         self.api.community = self.community
 
+        self.community_bank.api = self.api_bank
+        self.community_bank.user = self.bank
+        self.api.community = self.community_bank
+
         # Add our conversion to the community.
         self.conversion = MortgageMarketConversion(self.community)
-        self.community._conversions = []
-        self.community.add_conversion(self.conversion)
 
         self.setupModels()
 
@@ -79,12 +97,13 @@ class CommunityTestSuite(unittest.TestCase):
                                         status={}
                                         )
         self.loan_request.post_or_put(self.api.db)
-        self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas', phone_number='213131', current_postal_code='2312AA',
+        self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas',
+                                        phone_number='213131', current_postal_code='2312AA',
                                         current_house_number='2132', current_address='Damstraat 1', document_list=[])
         self.profile.post_or_put(self.api.db)
 
-    def isModelInDB(self, model):
-        return not self.api.db.get(model.type, model.id) is None
+    def isModelInDB(self, api, model):
+        return not api.db.get(model.type, model.id) is None
 
     def remove_from_db(self, model):
         self.api.db.backend.delete(model)
@@ -101,65 +120,55 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertEqual(self.user.id, self.member.public_key.encode("HEX"))
 
     def test_on_loan_request_receive(self):
+        """
+        Test a user sending a loan request to a bank
+        """
         payload = FakePayload()
         payload.request = u"loan_request"
         payload.models = {self.house.type: self.house, self.loan_request.type: self.loan_request,
                           self.user.type: self.user, self.profile.type: self.profile}
 
+        # Bank doesn't have them yet
+        self.assertFalse(self.isModelInDB(self.api_bank, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.profile))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.house))
 
-        # Remove the models to act as a remote peer with none of the models saved.
-        self.remove_payload_models_from_db(payload)
+        self.community_bank.on_loan_request_receive(payload)
 
-        self.assertFalse(self.isModelInDB(self.loan_request))
-        self.assertFalse(self.isModelInDB(self.profile))
-        self.assertFalse(self.isModelInDB(self.house))
-
-        self.community.on_loan_request_receive(payload)
-
-        self.assertTrue(self.isModelInDB(self.loan_request))
-        self.assertTrue(self.isModelInDB(self.profile))
-        self.assertTrue(self.isModelInDB(self.house))
-
-    def test_on_loan_request_receive_bank(self):
-        payload = FakePayload()
-        payload.request = u"loan_request"
-        payload.models = {self.house.type: self.house, self.loan_request.type: self.loan_request,
-                          self.user.type: self.user, self.profile.type: self.profile}
-
-        self.remove_payload_models_from_db(payload)
-
-        self.assertFalse(self.isModelInDB(self.loan_request))
-        self.assertFalse(self.isModelInDB(self.profile))
-        self.assertFalse(self.isModelInDB(self.house))
-
-        # Be the bank
-        self.community._user = self.bank
-
-        self.community.on_loan_request_receive(payload)
-
-        self.assertTrue(self.isModelInDB(self.loan_request))
-        self.assertTrue(self.isModelInDB(self.profile))
-        self.assertTrue(self.isModelInDB(self.house))
-        self.assertIn(self.loan_request.id, self.bank.loan_request_ids)
+        self.assertTrue(self.isModelInDB(self.api_bank, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.profile))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.house))
 
     def test_on_loan_request_reject(self):
-        payload = FakePayload()
-        payload.request = u"loan_request_reject"
-        payload.models = {self.loan_request.type: self.loan_request,
-                          self.user.type: self.user}
-
-        self.loan_request.status[self.bank.id] = STATUS.REJECTED
+        """
+        Test a bank rejecting a users loan_request
+        """
+        # Save the user-side initial data which is a pending loan request.
+        self.loan_request.status[self.bank.id] = STATUS.PENDING
         self.user.loan_request_ids.append(self.loan_request.id)
         self.user.post_or_put(self.api.db)
 
+        self.assertIn(self.loan_request.id, self.user.loan_request_ids)
+
+        # Deep copy the loan request
+        loan_request_bank = DatabaseModel.decode(self.loan_request.encode())
+        loan_request_bank.status[self.bank.id] = STATUS.REJECTED
+
+        # Make the payload
+        payload = FakePayload()
+        payload.request = u"loan_request_reject"
+        payload.models = {self.loan_request.type: loan_request_bank,
+                          self.user.type: self.bank}
+
         self.community.on_loan_request_reject(payload)
 
-        self.assertTrue(self.isModelInDB(self.loan_request))
-        self.assertTrue(self.isModelInDB(self.user))
-        self.assertEqual(self.loan_request.status[self.bank.id], STATUS.REJECTED)
+        # Now let's pull the loan request from the user database
+        self.assertTrue(self.isModelInDB(self.api, loan_request_bank))
+        loan_request = self.api.db.get(loan_request_bank.type, loan_request_bank.id)
+
+
+        self.assertEqual(loan_request.status[self.bank.id], STATUS.REJECTED)
         self.assertNotIn(self.loan_request.id, self.user.loan_request_ids)
-
-
 
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
@@ -359,7 +368,7 @@ class OutgoingQueueTestCase(unittest.TestCase):
 
 class ConversionTestCase(unittest.TestCase):
     def setUp(self):
-         # Faking IOThread
+        # Faking IOThread
         registerAsIOThread()
 
         # Object creation and preperation
@@ -404,16 +413,16 @@ class ConversionTestCase(unittest.TestCase):
                                         status={}
                                         )
         self.loan_request.post_or_put(self.api.db)
-        self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas', phone_number='213131', current_postal_code='2312AA',
+        self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas',
+                                        phone_number='213131', current_postal_code='2312AA',
                                         current_house_number='2132', current_address='Damstraat 1', document_list=[])
         self.profile.post_or_put(self.api.db)
-
 
     def test_encode_introduce_user(self):
         meta = self.community.get_meta_message(u"introduce_user")
         message = meta.impl(authentication=(self.member,),
                             distribution=(self.community.claim_global_time(),),
-                            payload=([self.user.type],{self.user.type: self.user}),
+                            payload=([self.user.type], {self.user.type: self.user}),
                             destination=(LoopbackCandidate(),))
 
         encoded_message = self.conversion._encode_model(message)[0]
@@ -438,7 +447,7 @@ class ConversionTestCase(unittest.TestCase):
         meta = self.community.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.member,),
                             distribution=(self.community.claim_global_time(), meta.distribution.claim_sequence_number()),
-                            payload=(u"unicode_message", [self.user.type],{self.user.type: self.user},),
+                            payload=(u"unicode_message", [self.user.type], {self.user.type: self.user},),
                             destination=(LoopbackCandidate(),))
 
         encoded_message = self.conversion._encode_api_message(message)[0]
@@ -450,7 +459,7 @@ class ConversionTestCase(unittest.TestCase):
         meta = self.community.get_meta_message(u"api_message_candidate")
         message = meta.impl(authentication=(self.member,),
                             distribution=(self.community.claim_global_time(),),
-                            payload=(u"unicode_message", [self.user.type],{self.user.type: self.user},),
+                            payload=(u"unicode_message", [self.user.type], {self.user.type: self.user},),
                             destination=(LoopbackCandidate(),))
 
         encoded_message = self.conversion._encode_api_message(message)[0]
@@ -501,6 +510,7 @@ class ConversionTestCase(unittest.TestCase):
         self.assertEqual(p1.signature_beneficiary, p2.signature_beneficiary)
         self.assertEqual(p1.signature_benefactor, p1.signature_benefactor)
         self.assertEqual(p1.time, p2.time)
+
 
 if __name__ == '__main__':
     unittest.main()
