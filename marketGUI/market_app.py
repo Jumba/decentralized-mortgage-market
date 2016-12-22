@@ -78,7 +78,7 @@ class MarketApplication(QApplication):
         self.community = MortgageMarketCommunity.init_community(self.dispersy, master_member, my_member)
         self.community.api = self.api
         self.community.user = self.user
-        self.community.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory, self.database_prefix)
+        self.community.persistence = MultiChainDB(unicode('sqlite'), u'multichain-%s.db' % self.database_prefix)
         self.api.community = self.community
 
         # Run the scenario every 3 seconds
