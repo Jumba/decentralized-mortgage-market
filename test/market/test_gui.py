@@ -5,32 +5,31 @@ import sys
 import unittest
 from uuid import UUID
 
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QTableWidget
 
 from market.api.api import STATUS
 from market.controllers.main_view_controller import MainWindowController
 from market.controllers.navigation import NavigateUser
-from market.models.loans import Mortgage, Campaign
 from market.models.role import Role
 from market.models.user import User
-from market.views.main_view import Ui_MainWindow
 
 from marketGUI.market_app import TestMarketApplication
 
-from mock import Mock, MagicMock
+from mock import MagicMock
 
 
 class GUITestSuite(unittest.TestCase):
     def setUp(self):
         self.app = TestMarketApplication(sys.argv)
-        self.window = MainWindowController(app=self.app, ui_location=os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../', 'ui/mainwindow.ui'))
+        self.window = MainWindowController(app=self.app,
+                                           ui_location=os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                                    '../../', 'ui/mainwindow.ui'))
 
-
+        # Clear the database
         self.app.api.db.backend.clear()
-        #######
+
+        # Create new users
         user, _, _ = self.app.api.create_user()
         bank_role = Role.FINANCIAL_INSTITUTION.value
         bank1, _, _ = self.app.api.create_user()
@@ -52,7 +51,6 @@ class GUITestSuite(unittest.TestCase):
         self.app.bank4 = bank4
         self.window.bplr_controller.banks_ids = [self.app.bank1.id, self.app.bank2.id, self.app.bank3.id,
                                                  self.app.bank4.id]
-        #######
 
         # Define payloads
         self.payload_borrower_profile = {'role': 1, 'first_name': u'Bob', 'last_name': u'Saget',
@@ -64,52 +62,63 @@ class GUITestSuite(unittest.TestCase):
                                          'email': 'example1@example.com', 'iban': 'NL53 INGBB 04027 30393',
                                          'phonenumber': '+3170253719290'}
         self.payload_loan_request = {'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'mortgage_type': 1,
-                                     'banks': [self.app.bank1.id, self.app.bank2.id, self.app.bank3.id, self.app.bank4.id],
-                                     'description': unicode('I want to buy a house'), 'amount_wanted': 123456,
-                                     'postal_code': '1111AA',
+                                     'banks': [self.app.bank1.id, self.app.bank2.id, self.app.bank3.id,
+                                               self.app.bank4.id], 'description': unicode('I want to buy a house'),
+                                     'amount_wanted': 123456, 'postal_code': '1111AA',
                                      'house_number': '11', 'address': 'straat', 'price': 123456,
                                      'house_link': 'http://www.myhouseee.com/', 'seller_phone_number': '0612345678',
                                      'seller_email': 'seller1@gmail.com'}
         self.payload_mortgage = {'house_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'), 'mortgage_type': 1,
-                                 'amount': 123000, 'interest_rate': 5.5, 'max_invest_rate': 7.0, 'default_rate': 9.0,
-                                 'duration': 30, 'risk': 'hi', 'investors': []}
+                                 'amount': 123000, 'interest_rate': 5.5, 'max_invest_rate': 7.0,
+                                 'default_rate': 9.0, 'duration': 30, 'risk': 'hi', 'investors': []}
         self.payload_loan_offer = {'role': 1, 'user_key': 'rfghiw98594pio3rjfkhs', 'amount': 1000, 'duration': 24,
-                                   'interest_rate': 2.5,
-                                   'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
+                                   'interest_rate': 2.5, 'mortgage_id': UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
                                    'status': STATUS.PENDING}
 
-
-    def tearDown(self):
-        pass
-
     def test_profile_empty(self):
-        # Test that the controller calls a QMessageBox with unique input when the form has not been filled in
+        """
+        This test checks if a dialog pops up when the 'save profile' button has been clicked without
+        filling in all the required information
+        """
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
-        self.window.msg.about.assert_called_with(self.window, 'Profile error', 'You didn\'t enter all of the required information.')
+        self.window.msg.about.assert_called_with(self.window, 'Profile error',
+                                                 'You didn\'t enter all of the required information.')
 
     def test_profile_create_profile(self):
-        # Testing loading of the current borrower's profile
+        """
+        This test checks if a dialog pops up when the 'save profile' button in the 'profile' screen
+        has been clicked after filling in all the required information
+        """
+        # Test if the user doesn't have a profile yet
+        self.window.profile_controller.setup_view()
         self.assertEqual(None, self.window.profile_controller.current_profile)
 
-        # Create profile so when we can populate the form easier
+        # Create a profile
         user, _, _ = self.app.api.create_user()
         profile = self.app.api.create_profile(user, self.payload_borrower_profile)
         self.assertNotEqual(None, profile)
 
-        # Fill in the form and press the 'save'-button
+        # Fill in the form and press the 'save' button
         self.window.profile_controller.update_form(profile)
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Profile saved', 'Your profile has been saved.')
 
     def test_profile_load_current_borrower(self):
-        # Testing loading of the current borrower's profile
+        """
+        This test checks the loading of an existing borrower's profile into the 'profile' screen
+        """
+        # Check if there is no profile on start up
+        self.window.profile_controller.setup_view()
         self.assertEqual(None, self.window.profile_controller.current_profile)
+
+        # Create a profile
         profile = self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.assertNotEqual(None, profile)
+
+        # Check if the input fields are the same as the saved profile
         self.window.profile_controller.setup_view()
-        # Check if the input fields are the same as the payload
         self.assertEqual(self.window.profile_firstname_lineedit.text(), 'Bob')
         self.assertEqual(self.window.profile_lastname_lineedit.text(), 'Saget')
         self.assertEqual(self.window.profile_email_lineedit.text(), 'example@example.com')
@@ -120,11 +129,18 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.profile_address_lineedit.text(), 'straat')
 
     def test_profile_load_current_investor(self):
+        """
+        This test checks the loading of an existing investor's profile into the 'profile' screen
+        """
+        # Check if there is no current profile on start up
+        self.assertEqual(None, self.window.profile_controller.current_profile)
 
+        # Create profile
         profile = self.app.api.create_profile(self.app.user, self.payload_investor_profile)
         self.assertNotEqual(None, profile)
+
+        # Check if the input fields are the same as the saved profile
         self.window.profile_controller.setup_view()
-        # Check if the input fields are the same as the payload
         self.assertEqual(self.window.profile_firstname_lineedit.text(), 'Ruby')
         self.assertEqual(self.window.profile_lastname_lineedit.text(), 'Cue')
         self.assertEqual(self.window.profile_email_lineedit.text(), 'example1@example.com')
@@ -132,22 +148,38 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.profile_phonenumber_lineedit.text(), '+3170253719290')
 
     def test_profile_switch_role_valid(self):
-        # A user is only allowed to switch roles when he has no active loan requests or campaigns
+        """
+        This test checks a valid role switch in the 'profile' screen. A user is only allowed
+        to switch roles when they have no active loan requests or campaigns
+        """
+        # Create a borrower's profile
         profile = self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.assertNotEqual(None, profile)
-        # self.window.profile_controller.setup_view()
+
+        # Load the profile
+        self.window.profile_controller.setup_view()
 
         # Try to switch from borrower to investor
-        user, _, _ = self.app.api.create_user()
-        new_profile = self.app.api.create_profile(user, self.payload_investor_profile)
-        self.app.user.role_id = 2
-        self.window.profile_controller.update_form(new_profile)
+        self.window.profile_investor_radiobutton.setChecked(True)
 
+        # Check if the role has been switched
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
+        self.window.msg.about.assert_called_with(self.window, 'Profile saved', 'Your profile has been saved.')
+
+        # Try to switch back from investor to borrower
+        self.window.profile_borrower_radiobutton.setChecked(True)
+
+        # Check if the role has been switched
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Profile saved', 'Your profile has been saved.')
 
     def test_profile_switch_role_invalid(self):
+        """
+        This test checks an invalid role switch in the profile screen. A user is only allowed
+        to switch roles when they have no active loan requests or campaigns
+        """
         # A user is only allowed to switch roles when he has no active loan requests or campaigns
         profile = self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.assertNotEqual(None, profile)
@@ -155,18 +187,24 @@ class GUITestSuite(unittest.TestCase):
 
         # Place a loan request
         self.app.api.create_loan_request(self.app.user, self.payload_loan_request)
-        # Try to switch from borrower to investor
-        user, _, _ = self.app.api.create_user()
-        new_profile = self.app.api.create_profile(user, self.payload_investor_profile)
-        self.app.user.role_id = 2
-        self.window.profile_controller.update_form(new_profile)
 
+        # Load the borrower user's profile
+        self.window.profile_controller.setup_view()
+
+        # Try to switch from borrower to investor
+        self.window.profile_investor_radiobutton.setChecked(True)
+
+        # Check if the role hasn't been switched
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.profile_save_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Role switch failed',
                                                  'It is not possible to change your role at this time')
 
     def test_place_loan_request_empty(self):
+        """
+        This test checks if a dialog pops up if the 'submit' button in the 'place loan request'
+        screen has been clicked without entering any information
+        """
         self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
 
         self.window.msg.about = MagicMock()
@@ -175,7 +213,10 @@ class GUITestSuite(unittest.TestCase):
                                                  "You didn't enter the required information.")
 
     def test_place_loan_request_filled_in_linear(self):
-        # Ui_MainWindow.bplr_bank1_checkbox.
+        """
+        This test checks if a dialog pops up when the 'submit' button in the 'place loan request'
+        screen has been clicked after entering all information
+        """
         self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.window.bplr_address_lineedit.setText('straat')
         self.window.bplr_postcode_lineedit.setText('1111aa')
@@ -193,8 +234,11 @@ class GUITestSuite(unittest.TestCase):
         self.window.msg.about.assert_called_with(self.window, "Loan request created",
                                                  'Your loan request has been sent.')
 
-    def test_place_loan_request_filled_in_fixed(self):
-        # Ui_MainWindow.bplr_fixedrate_radiobutton
+    def test_place_loan_request_filled_in_fixedrate(self):
+        """
+        This test checks if a dialog pops up when the 'submit' button in the 'place loan request'
+        screen has been clicked after entering all information
+        """
         self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.window.bplr_address_lineedit.setText('straat')
         self.window.bplr_postcode_lineedit.setText('1111aa')
@@ -214,7 +258,10 @@ class GUITestSuite(unittest.TestCase):
                                                  'Your loan request has been sent.')
 
     def test_place_loan_request_no_banks(self):
-        # Ui_MainWindow.bplr_description_textedit.se
+        """
+        This test checks if a dialog pops up if the 'submit' button in the 'place loan request'
+        screen has been clicked without selecting any banks
+        """
         self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.window.bplr_address_lineedit.setText('straat')
         self.window.bplr_postcode_lineedit.setText('1111aa')
@@ -232,7 +279,10 @@ class GUITestSuite(unittest.TestCase):
                                                  "You didn't enter the required information.")
 
     def test_place_loan_request_filled_in_twice(self):
-        # Ui_MainWindow.bplr_bank1_checkbox.
+        """
+        This test checks if a dialog pops up if the 'submit' button in the 'place loan request'
+        screen has been clicked twice. The user can only have one loan request at a time
+        """
         self.app.api.create_profile(self.app.user, self.payload_borrower_profile)
         self.window.bplr_address_lineedit.setText('straat')
         self.window.bplr_postcode_lineedit.setText('1111aa')
@@ -247,12 +297,14 @@ class GUITestSuite(unittest.TestCase):
 
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
-        self.window.msg.about.assert_called_with(self.window, "Loan request created",
-                                                 'Your loan request has been sent.')
         QTest.mouseClick(self.window.bplr_submit_pushbutton, Qt.LeftButton)
-        self.window.msg.about.assert_called_with(self.window, 'Loan request error', 'You can only have a single loan request.')
+        self.window.msg.about.assert_called_with(self.window, 'Loan request error',
+                                                 'You can only have a single loan request.')
 
     def create_mortgage_campaign_and_bids(self):
+        """
+        This function creates two loan requests, both with a mortgage and a loan offer
+        """
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
         self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
@@ -306,10 +358,16 @@ class GUITestSuite(unittest.TestCase):
         self.window.api.accept_investment_offer(borrower2, {'investment_id': loan_offer2.id})
 
     def test_openmarket_table_empty(self):
+        """
+        This test checks if the table in the 'open market' screen is empty when there are no campaigns
+        """
         self.window.openmarket_controller.setup_view()
         self.assertFalse(self.window.openmarket_open_market_table.rowCount())
 
     def test_openmarket_table_filled(self):
+        """
+        This test checks if the table in the 'open market' screen is not empty when there are campaigns
+        """
         # Create the investor user
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
@@ -348,23 +406,14 @@ class GUITestSuite(unittest.TestCase):
                                                                                 self.payload_mortgage)
 
         # Accept mortgages
-        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id' : mortgage1.id})
-        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id' : mortgage2.id})
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id': mortgage2.id})
 
-        # Place loan offers
-        self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
-        self.payload_loan_offer['mortgage_id'] = mortgage1.id
-        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
-
-        self.payload_loan_offer['mortgage_id'] = mortgage2.id
-        self.payload_loan_offer['amount'] = 123456
-        loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
-
-        # Check if there's only 2 investments in the table
+        # Check if there's only 2 campaigns in the table
         self.window.openmarket_controller.setup_view()
         self.assertEqual(self.window.openmarket_open_market_table.rowCount(), 2)
 
-        # Check if the first investment is in the table with the right values
+        # Check if the first campaign is in the table with the right values
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 1).text(), '456')
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 2).text(), '5.5')
@@ -372,7 +421,7 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 4).text(), '29')
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 5).text(), 'hi')
 
-        # Check if the second investment is in the table with the right values
+        # Check if the second campaign is in the table with the right values
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 1).text(), '456')
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 2).text(), '5.5')
@@ -381,11 +430,19 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 5).text(), 'hi')
 
     def test_openmarket_view_campaign_unselected(self):
+        """
+        This test checks if a dialog pops up if the 'view loan bids' button in the 'open market'
+        screen has been clicked without selecting a campaign
+        """
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, "Select campaign", 'No campaigns have been selected.')
 
     def test_openmarket_view_campaign(self):
+        """
+        This test checks if the 'campaign bids' screen shows when the 'view loan bids' button in
+        the 'open market' screen has been clicked after selecting a campaign
+        """
         # Create the investor user
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
@@ -397,30 +454,35 @@ class GUITestSuite(unittest.TestCase):
         borrower.role_id = role_id
         self.window.api.db.put(User._type, borrower.id, borrower)
 
-        # Createa  loan request
+        # Create a loan request
         borrower = self.window.api.db.get(User._type, borrower.id)
-        loan_request1 = self.window.api.create_loan_request(borrower, self.payload_loan_request)
+        loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
 
         # Accept the loan request
         self.payload_mortgage['user_key'] = borrower.id
-        self.payload_mortgage['request_id'] = loan_request1.id
+        self.payload_mortgage['request_id'] = loan_request.id
         self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
         self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
 
         accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
                                                                                 self.payload_mortgage)
 
-        # Accept mortgages
+        # Accept the mortgage
         self.window.api.accept_mortgage_offer(borrower, {'mortgage_id': mortgage1.id})
         self.window.openmarket_controller.setup_view()
         self.window.openmarket_open_market_table.selectRow(0)
 
+        # Check if the screen has been switched to the 'campaign bids screen'
         self.window.msg.about = MagicMock()
         self.window.navigation.switch_to_campaign_bids = MagicMock()
         QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
         self.window.navigation.switch_to_campaign_bids.assert_called_with(mortgage1.id)
 
     def test_view_campaign_no_bids(self):
+        """
+        This test checks if no bids are displayed in the table in the 'campaign bids' screen
+        when no bids have been offered yet
+        """
         # Create the investor user
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
@@ -445,7 +507,7 @@ class GUITestSuite(unittest.TestCase):
         _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1, self.payload_mortgage)
 
         # Accept the mortgage
-        self.window.api.accept_mortgage_offer(borrower, {'mortgage_id' : mortgage.id})
+        self.window.api.accept_mortgage_offer(borrower, {'mortgage_id': mortgage.id})
 
         # Check if there are no bids
         self.window.cb_controller.setup_view(mortgage.id)
@@ -458,6 +520,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.icb_remaining_amount_lineedit.text(), '456')
 
     def test_view_campaign_place_bid_empty(self):
+        """
+        This test checks if a dialog pops up when the 'place bid' button in the 'campaign bids'
+        screen has been clicked without entering any information
+        """
         self.create_mortgage_campaign_and_bids()
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.icb_place_bid_pushbutton, Qt.LeftButton)
@@ -465,6 +531,12 @@ class GUITestSuite(unittest.TestCase):
                                                  "You didn't enter all of the required information.")
 
     def test_view_campaign_place_bid_filled(self):
+        """
+        This test checks if a dialog pops up when the 'place bid' button in the 'campaign bids'
+        screen has been clicked after entering investment information, and if the investment shows up
+        in the table when the bid has been placed
+        """
+        # Create mortgages and bids, and fill in the bid information
         self.create_mortgage_campaign_and_bids()
         self.window.cb_controller.setup_view(self.payload_loan_offer['mortgage_id'])
         self.assertEqual(1, self.window.icb_current_bids_table.rowCount())
@@ -473,20 +545,23 @@ class GUITestSuite(unittest.TestCase):
         self.window.icb_duration_lineedit.setText('69')
         self.window.icb_interest_lineedit.setText('6.9')
 
+        # Click the 'place bid' button
         QTest.mouseClick(self.window.icb_place_bid_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Offer placed', 'Your bid has been placed.')
 
+        # Check if the bid was added to the table
         self.assertEqual(2, self.window.icb_current_bids_table.rowCount())
-        self.assertEqual(self.window.icb_amount_lineedit.text(), '123')
-        self.assertEqual(self.window.icb_duration_lineedit.text(), '69')
-        self.assertEqual(self.window.icb_interest_lineedit.text(), '6.9')
 
+        # Check if the right bid values are in the table
         self.assertEqual(self.window.icb_current_bids_table.item(1, 0).text(), '123')
         self.assertEqual(self.window.icb_current_bids_table.item(1, 1).text(), '69')
         self.assertEqual(self.window.icb_current_bids_table.item(1, 2).text(), '6.9')
         self.assertEqual(self.window.icb_current_bids_table.item(1, 3).text(), 'PENDING')
 
     def test_navigation_initial_visibility(self):
+        """
+        This test checks if the navigation bar is empty initially
+        """
         navigation = NavigateUser(self.window)
         self.assertFalse(navigation.mainwindow.navigation_pushbutton_1.isVisible())
         self.assertFalse(navigation.mainwindow.navigation_pushbutton_2.isVisible())
@@ -494,6 +569,9 @@ class GUITestSuite(unittest.TestCase):
         self.assertFalse(navigation.mainwindow.navigation_pushbutton_4.isVisible())
 
     def test_navigation_switching(self):
+        """
+        This test checks if switching to other windows works properly
+        """
         navigation = NavigateUser(self.window)
 
         navigation.switch_to_bplr()
@@ -521,24 +599,40 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fiplr2_page, self.window.stackedWidget.currentWidget())
 
     def test_navigation_user(self):
+        """
+        This test checks if switching between navigation bars works properly
+        """
+        # Check if no navigation bar has been set if the user has no role
         self.app.user.role_id = 0
         self.window.navigation.switch_to_profile = MagicMock()
+        self.window.navigation.set_borrower_navigation = MagicMock()
+        self.window.navigation.set_investor_navigation = MagicMock()
+        self.window.navigation.set_bank_navigation = MagicMock()
         self.window.navigation.user_screen_navigation()
         self.window.navigation.switch_to_profile.assert_called()
+        self.window.navigation.set_borrower_navigation.assert_not_called()
+        self.window.navigation.set_investor_navigation.assert_not_called()
+        self.window.navigation.set_bank_navigation.assert_not_called()
+
+        # Check if the borrower's navigation bar has been set if the user is a borrower
         self.app.user.role_id = 1
-        self.window.navigation.set_borrower_navigation = MagicMock()
         self.window.navigation.user_screen_navigation()
         self.window.navigation.set_borrower_navigation.assert_called()
+
+        # Check if the investor's navigation bar has been set if the user is a investor
         self.app.user.role_id = 2
-        self.window.navigation.set_investor_navigation = MagicMock()
         self.window.navigation.user_screen_navigation()
         self.window.navigation.set_investor_navigation.assert_called()
+
+        # Check if the bank's navigation bar has been set if the user is a bank
         self.app.user.role_id = 3
-        self.window.navigation.set_bank_navigation = MagicMock()
         self.window.navigation.user_screen_navigation()
         self.window.navigation.set_bank_navigation.assert_called()
 
     def test_navigation_borrower(self):
+        """
+        This test checks if the labels on the navigation bar are correct
+        """
         self.window.navigation.set_borrower_navigation()
         self.assertEqual('Profile', self.window.navigation_pushbutton_1.text())
         self.assertEqual('Portfolio', self.window.navigation_pushbutton_2.text())
@@ -546,28 +640,50 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual('Open Market', self.window.navigation_pushbutton_4.text())
 
     def test_navigation_investor(self):
+        """
+        This test checks if the labels on the navigation bar are correct
+        """
+
         self.window.navigation.set_investor_navigation()
         self.assertEqual('Profile', self.window.navigation_pushbutton_1.text())
         self.assertEqual('Portfolio', self.window.navigation_pushbutton_2.text())
         self.assertEqual('Open Market', self.window.navigation_pushbutton_3.text())
 
     def test_navigation_bank(self):
+        """
+        This test checks if the labels on the navigation bar are correct
+        """
+
         self.window.navigation.set_bank_navigation()
         self.assertEqual('Portfolio', self.window.navigation_pushbutton_1.text())
         self.assertEqual('Loan Requests', self.window.navigation_pushbutton_2.text())
         self.assertEqual('Open Market', self.window.navigation_pushbutton_3.text())
 
     def test_borrowers_portfolio_loans_table_empty(self):
+        """
+        This test checks if the ongoing loans table in the 'borrowers portfolio' screen is empty when
+        the user doesn't have a loan request yet
+        """
         # Check if the ongoing loans list is empty
         self.window.bp_controller.setup_view()
         self.assertFalse(self.window.bp_ongoing_loans_table.rowCount())
 
     def test_borrowers_portfolio_offers_table_empty(self):
+        """
+        This test checks if the offers table in the 'borrowers portfolio' screen is empty when the
+        user doesn't have a loan request yet
+        """
+
         # Check if the offers list is empty
         self.window.bp_controller.setup_view()
         self.assertFalse(self.window.bp_open_offers_table.rowCount())
 
     def test_borrowers_portfolio_offers_and_loans_table_filled(self):
+        """
+        This test checks if the tables in the 'borrowers portfolio' screen are filled correctly.
+        The ongoing loans table should only show loans that the user has accepted.
+        The offers table should only show offers that the user hasn't accepted or rejected yet.
+        """
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
@@ -623,6 +739,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.bp_open_offers_table.item(0, 4).text(), u'investment')
 
     def test_borrowers_portfolio_reject_unselected(self):
+        """
+        This test checks if a dialog pops up when the 'reject' button in the 'borrowers portfolio'
+        screen has been clicked without selecting any offers
+        """
         # Click the 'reject' button without selecting an item in the table
         self.window.bp_controller.setup_view()
         self.window.msg.about = MagicMock()
@@ -632,6 +752,10 @@ class GUITestSuite(unittest.TestCase):
         self.window.msg.about.assert_called_with(self.window, "Select offer", 'No offers have been selected.')
 
     def test_borrowers_portfolio_accept_unselected(self):
+        """
+        This test checks if a dialog pops up when the 'accept' button in the 'borrowers portfolio'
+        screen has been clicked without selecting any offers
+        """
         # Click the 'reject' button without selecting an item in the table
         self.window.bp_controller.setup_view()
         self.window.msg.about = MagicMock()
@@ -641,6 +765,10 @@ class GUITestSuite(unittest.TestCase):
         self.window.msg.about.assert_called_with(self.window, "Select offer", 'No offers have been selected.')
 
     def test_borrowers_portfolio_reject_mortgage_selected(self):
+        """
+        This test checks if a dialog pops up when the 'reject' button in the 'borrowers portfolio'
+        screen has been clicked after selecting an offer
+        """
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
@@ -685,6 +813,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertFalse(self.window.bp_ongoing_loans_table.rowCount())
 
     def test_borrowers_portfolio_accept_mortgage_selected(self):
+        """
+        This test checks if a dialog pops up when the 'accept' button in the 'borrowers portfolio'
+        screen has been clicked after selecting an offer
+        """
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
@@ -729,6 +861,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.bp_ongoing_loans_table.rowCount(), 1)
 
     def test_borrowers_portfolio_reject_investment_selected(self):
+        """
+        This test checks if a dialog pops up when the 'reject' button in the 'borrowers portfolio'
+        screen has been clicked after selecting an offer
+        """
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
@@ -781,6 +917,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.bp_ongoing_loans_table.rowCount(), 1)
 
     def test_borrowers_portfolio_accept_investment_selected(self):
+        """
+        This test checks if a dialog pops up when the 'accept' button in the 'borrowers portfolio'
+        screen has been clicked after selecting an offer
+        """
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
@@ -833,11 +973,19 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.bp_ongoing_loans_table.rowCount(), 2)
 
     def test_investors_portfolio_table_empty(self):
+        """
+        This test checks if the table in the 'investors portfolio' screen is empty when the
+        user hasn't placed any bids yet
+        """
         # Check if the investments list is empty
         self.window.ip_controller.setup_view()
         self.assertFalse(self.window.ip_investments_table.rowCount())
 
     def test_investors_portfolio_table_filled(self):
+        """
+        This test checks if the table in the 'investors portfolio' screen has been filled
+        after the user has placed bids
+        """
         # Create the investor user
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
@@ -876,11 +1024,11 @@ class GUITestSuite(unittest.TestCase):
                                                                                 self.payload_mortgage)
 
         # Accept mortgages
-        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id' : mortgage1.id})
-        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id' : mortgage2.id})
+        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id': mortgage2.id})
 
         # Place loan offers
-        self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
+        self.payload_loan_offer['user_key'] = self.window.app.user.id  # set user_key to the investor's public key
         self.payload_loan_offer['mortgage_id'] = mortgage1.id
         self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
@@ -889,7 +1037,7 @@ class GUITestSuite(unittest.TestCase):
         loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
         # Accept one of the loan offers
-        self.window.api.accept_investment_offer(borrower2, {'investment_id' : loan_offer2.id})
+        self.window.api.accept_investment_offer(borrower2, {'investment_id': loan_offer2.id})
 
         # Check if there's only 2 investments in the table
         self.window.ip_controller.setup_view()
@@ -911,11 +1059,19 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.ip_investments_table.item(1, 5).text(), '24')
 
     def test_banks_portfolio_table_empty(self):
+        """
+        This test checks if the table in the 'banks portfolio' screen is empty when
+        the user doesn't have any accepted mortgages yet
+        """
         # Check if the mortgage list is empty
         self.window.fip_controller.setup_view()
         self.assertFalse(self.window.fip_campaigns_table.rowCount())
 
     def test_banks_portfolio_table_filled(self):
+        """
+        This test checks if the table in the 'investors portfolio' screen has been filled
+        after the user has placed bids
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -990,11 +1146,19 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fip_campaigns_table.item(1, 5).text(), '30')
 
     def test_pending_loan_requests_table_empty(self):
+        """
+        This test checks if the table in the 'pending loan requests' screen is empty when there are
+        no open loan requests
+        """
         # Check if the loan request list is empty
         self.window.fiplr1_controller.setup_view()
         self.assertFalse(self.window.fiplr1_loan_requests_table.rowCount())
 
     def test_pending_loan_requests_table_filled(self):
+        """
+        This test checks if the table in the 'pending loan requests' screen has been filled when the
+        user has open loan requests
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1033,6 +1197,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fiplr1_loan_requests_table.item(1, 3).text(), '123456')
 
     def test_pending_loan_requests_table_unselected(self):
+        """
+        This test checks if a dialog pops up when the 'view loan request' button in the
+        'pending loan request' has been clicked when no loan requests have been selected
+        """
         # Click the 'view loan request' button without selecting an item in the table
         self.window.fiplr1_controller.setup_view()
         self.window.msg.about = MagicMock()
@@ -1043,6 +1211,10 @@ class GUITestSuite(unittest.TestCase):
                                                  'No loan requests have been selected.')
 
     def test_pending_loan_requests_table_selected(self):
+        """
+        This test checks if the 'pending loan request' screen is showed when clicking on the
+        'view loan request' button after selecting a loan request
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1069,6 +1241,9 @@ class GUITestSuite(unittest.TestCase):
         self.window.fiplr2_controller.setup_view.assert_called_with(loan_request.id)
 
     def test_pending_loan_request_forms_filled_linear(self):
+        """
+        This test checks if the fields in the 'pending loan request' screen are filled correctly
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1097,6 +1272,9 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fiplr2_description_textedit.toPlainText(), u'I want to buy a house')
 
     def test_pending_loan_request_forms_filled_fixedrate(self):
+        """
+        This test checks if the fields in the 'pending loan request' screen are filled correctly
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1126,6 +1304,10 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fiplr2_description_textedit.toPlainText(), u'I want to buy a house')
 
     def test_pending_loan_request_accept_empty(self):
+        """
+        This test checks if a dialog pops up when clicking the 'accept' button in the 'pending loan request'
+        screen without entering any information
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1151,6 +1333,10 @@ class GUITestSuite(unittest.TestCase):
                                                  'You didn\'t enter all of the required information.')
 
     def test_pending_loan_request_accept_filled(self):
+        """
+        This test checks if a dialog pops up when clicking the 'accept' button in the 'pending loan request'
+        screen after entering mortgage information
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1182,6 +1368,9 @@ class GUITestSuite(unittest.TestCase):
                                                  'This loan request has been accepted.')
 
     def test_pending_loan_request_reject(self):
+        """
+        This test checks if a dialog pops up when clicking the 'reject' button in the 'pending loan request' screen
+        """
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
