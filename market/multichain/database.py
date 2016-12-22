@@ -165,9 +165,9 @@ class MultiChainDB(Database):
     def get_latest_sequence_number(self, public_key):
         """
         Return the latest sequence number known for this public_key.
-        If no block for the pk is know returns -1.
+        If no block for the pk is known returns 0.
         :param public_key: Corresponding public key
-        :return: sequence number (integer) or -1 if no block is known
+        :return: sequence number (integer) or 0 if no block is known
         """
         public_key = buffer(public_key)
         db_query = u"SELECT MAX(sequence_number) FROM (" \
@@ -176,7 +176,7 @@ class MultiChainDB(Database):
                    u"SELECT sequence_number_beneficiary AS sequence_number " \
                    u"FROM multi_chain WHERE beneficiary = ? )"
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
-        return db_result if db_result is not None else -1
+        return db_result if db_result is not None else 0
 
     def open(self, initial_statements=True, prepare_visioning=True):
         return super(MultiChainDB, self).open(initial_statements, prepare_visioning)

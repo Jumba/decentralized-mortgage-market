@@ -121,9 +121,16 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertEqual(latest_hash_beneficiary, latest_block_beneficiary.hash_block)
         self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
 
+    def test_get_latest_hash_nonexistent(self):
+        """
+        This test checks the functionality of getting a nonexistent latest hash.
+        """
+
+        self.assertEqual(self.db.get_latest_hash('benefactor-key-ey8391yuq3'), '')
+
     def test_get_latest_sequence_number(self):
         """
-        This test checks he functionality of getting the latest sequence number
+        This test checks the functionality of getting the latest sequence number
         """
 
         message_request = MessageBenefactor()
@@ -149,6 +156,13 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         # Check whether the sequence numbers are the right ones
         self.assertEqual(latest_sequence_number_benefactor, latest_block_benefactor.sequence_number_benefactor)
         self.assertEqual(latest_sequence_number_beneficiary, latest_block_beneficiary.sequence_number_beneficiary)
+
+    def test_get_latest_sequence_number_nonexistent(self):
+        """
+        This test checks the functionality of getting a nonexistent latest sequence number.
+        """
+
+        self.assertEqual(self.db.get_latest_sequence_number('benefactor-key-34892yrqwe'), 0)
 
     def tearDown(self):
         self.db.close()
