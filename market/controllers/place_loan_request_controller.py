@@ -1,7 +1,11 @@
-from PyQt5.QtWidgets import *
 from market import Global
 
+
 class PlaceLoanRequestController:
+    """
+    Create a PlaceLoanRequestController object that performs tasks on the Place Loan Request section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.mainwindow.bplr_submit_pushbutton.clicked.connect(self.submit_loan_request)
@@ -11,17 +15,23 @@ class PlaceLoanRequestController:
         pass
 
     def submit_loan_request(self):
+        """
+        Submit a loan request with the data supplied from the form on the screen.
+        Shows a "Loan request created" if the placing the request was successful.
+        Shows a "Loan request error" if the user tries to make a second loan request
+        or if the form was not filled in correctly.
+        """
         try:
             payload = {'address': str(self.mainwindow.bplr_address_lineedit.text()),
-                            'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
-                            'house_number': str(self.mainwindow.bplr_housenumber_lineedit.text()),
-                            'price': int(self.mainwindow.bplr_house_price_lineedit.text()),
-                            'amount_wanted': int(self.mainwindow.bplr_amount_wanted_lineedit.text()),
-                            'description': unicode(self.mainwindow.bplr_description_textedit.toPlainText()),
-                            'seller_phone_number': str(self.mainwindow.bplr_seller_phone_number_lineedit.text()),
-                            'seller_email': str(self.mainwindow.bplr_seller_email_lineedit.text()),
-                            'house_link': str(self.mainwindow.bplr_house_link_lineedit.text())
-                            }
+                       'postal_code': str(self.mainwindow.bplr_postcode_lineedit.text()),
+                       'house_number': str(self.mainwindow.bplr_housenumber_lineedit.text()),
+                       'price': int(self.mainwindow.bplr_house_price_lineedit.text()),
+                       'amount_wanted': int(self.mainwindow.bplr_amount_wanted_lineedit.text()),
+                       'description': unicode(self.mainwindow.bplr_description_textedit.toPlainText()),
+                       'seller_phone_number': str(self.mainwindow.bplr_seller_phone_number_lineedit.text()),
+                       'seller_email': str(self.mainwindow.bplr_seller_email_lineedit.text()),
+                       'house_link': str(self.mainwindow.bplr_house_link_lineedit.text())
+                       }
             banks = [self.mainwindow.bplr_bank1_checkbox, self.mainwindow.bplr_bank2_checkbox,
                      self.mainwindow.bplr_bank3_checkbox,
                      self.mainwindow.bplr_bank4_checkbox]

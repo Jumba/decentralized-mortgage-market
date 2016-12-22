@@ -4,11 +4,18 @@ from market.api.api import STATUS
 
 
 class InvestorsPortfolioController:
+    """
+    Create a InvestorsPortfolioController object that performs tasks on the Investor's Portfolio section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.investments_table = self.mainwindow.ip_investments_table
 
     def setup_view(self):
+        """
+        Update the table of the view with up-to-date data.
+        """
         # Clear table
         self.investments_table.setRowCount(0)
 
@@ -22,13 +29,11 @@ class InvestorsPortfolioController:
                 # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
                 address = house.address + ' ' + house.house_number + ', ' + house.postal_code
 
-                campaign_status = ''
                 if campaign.completed:
                     campaign_status = 'Completed'
                 else:
                     campaign_status = 'Running'
 
-                investment_status = ''
                 if investment.status == STATUS.ACCEPTED:
                     investment_status = 'Accepted'
                 else:

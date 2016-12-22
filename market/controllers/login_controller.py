@@ -1,12 +1,10 @@
 import os
-import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 
 class LoginController:
     def __init__(self, mainwindow):
-        # self.mainwindow = Ui_MainWindow
         self.mainwindow = mainwindow
         self.app = mainwindow.app
         self.mainwindow.login_generate_pushbutton.clicked.connect(self.generate)
@@ -31,10 +29,6 @@ class LoginController:
 
         if not fh.open(QFile.ReadOnly):
             qApp.quit()
-        #
-        # data = fh.readAll()
-        # codec = QTextCodec.codecForUtfText(data)
-        # private_key = codec.toUnicode(data)
 
         self.mainwindow.login_private_key_lineedit.setText(filename)
 
@@ -72,12 +66,4 @@ class LoginController:
             user = self.app.api.login_user(key_file.encode('HEX'))
             if user:
                 self.app.user = user
-                print 'Login successful.'
-                print 'Current User: '
-                print user
                 self.mainwindow.navigation.prepare_views_for_user()
-            else:
-                print 'Login failed.'
-        else:
-            print 'Key field is empty'
-
