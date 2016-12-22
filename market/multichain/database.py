@@ -5,7 +5,6 @@ from hashlib import sha256
 
 from market.community.encoding import encode
 from market.dispersy.database import Database
-from market.models import DatabaseModel
 
 # Path to the database location + dispersy._workingdirectory
 DATABASE_PATH = u"multichain.db"
