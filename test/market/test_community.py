@@ -15,7 +15,7 @@ from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.models import DatabaseModel
 from market.models.house import House
-from market.models.loans import LoanRequest
+from market.models.loans import LoanRequest, Mortgage
 from market.models.profiles import BorrowersProfile
 from market.models.user import User
 
@@ -41,6 +41,11 @@ class CommunityTestSuite(unittest.TestCase):
         # Object creation and preperation
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
         self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
+
+        # a neutral api to generate the intial id's for loan requests and such to skip
+        # having to save the loan request to the (sending) user from each test as that
+        # isn't relevant.
+        self.neutral_api = MarketAPI(MockDatabase(MemoryBackend()))
 
         self.api = MarketAPI(MockDatabase(MemoryBackend()))
         self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
@@ -83,7 +88,7 @@ class CommunityTestSuite(unittest.TestCase):
 
     def setupModels(self):
         self.house = House('2500AA', '34', 'Aa Weg', 1000)
-        self.house.post_or_put(self.api.db)
+        self.house.post_or_put(self.neutral_api.db)
 
         self.loan_request = LoanRequest(user_key=self.user.id,
                                         house_id=self.house.id,
@@ -96,11 +101,27 @@ class CommunityTestSuite(unittest.TestCase):
                                         amount_wanted=10000,
                                         status={}
                                         )
-        self.loan_request.post_or_put(self.api.db)
+        self.loan_request.post_or_put(self.neutral_api.db)
         self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas',
                                         phone_number='213131', current_postal_code='2312AA',
                                         current_house_number='2132', current_address='Damstraat 1', document_list=[])
-        self.profile.post_or_put(self.api.db)
+        self.profile.post_or_put(self.neutral_api.db)
+
+        self.mortgage = Mortgage(
+                                    request_id=self.loan_request.id,
+                                    house_id=self.house.id,
+                                    bank=self.bank.id,
+                                    amount=10000,
+                                    mortgage_type=1,
+                                    interest_rate=1.0,
+                                    max_invest_rate=2.0,
+                                    default_rate=3.0,
+                                    duration=60,
+                                    risk='A',
+                                    investors=[],
+                                    status=STATUS.PENDING
+                                )
+        self.mortgage.post_or_put(self.neutral_api.db)
 
     def isModelInDB(self, api, model):
         return not api.db.get(model.type, model.id) is None
@@ -122,6 +143,8 @@ class CommunityTestSuite(unittest.TestCase):
     def test_on_loan_request_receive(self):
         """
         Test a user sending a loan request to a bank
+
+        user --> bank
         """
         payload = FakePayload()
         payload.request = u"loan_request"
@@ -142,6 +165,8 @@ class CommunityTestSuite(unittest.TestCase):
     def test_on_loan_request_reject(self):
         """
         Test a bank rejecting a users loan_request
+
+        bank --> user
         """
         # Save the user-side initial data which is a pending loan request.
         self.loan_request.status[self.bank.id] = STATUS.PENDING
@@ -166,13 +191,41 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertTrue(self.isModelInDB(self.api, loan_request_bank))
         loan_request = self.api.db.get(loan_request_bank.type, loan_request_bank.id)
 
-
         self.assertEqual(loan_request.status[self.bank.id], STATUS.REJECTED)
         self.assertNotIn(self.loan_request.id, self.user.loan_request_ids)
+
+    def test_on_mortgage_offer(self):
+        """
+        Test a bank sending a mortgage offer to a user
+
+        bank -> user
+        """
+        payload = FakePayload()
+        payload.request = u"mortgage_offer"
+        payload.models = {self.loan_request.type: self.loan_request,
+                          self.mortgage.type: self.mortgage}
+        self.loan_request.status[self.bank.id] = STATUS.ACCEPTED
+
+        self.assertFalse(self.isModelInDB(self.api, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api, self.mortgage))
+
+        self.community.on_mortgage_offer(payload)
+
+        # The user now has the models.
+        self.assertTrue(self.isModelInDB(self.api, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api, self.mortgage))
+
+        # Check if the mortgage id is in the user
+        self.user.update(self.api.db)
+        self.assertIn(self.mortgage.id, self.user.mortgage_ids)
+
+
+
 
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
         self.dispersy._database.close()
+        self.dispersy_bank._database.close()
 
 
 class IncomingQueueTestCase(unittest.TestCase):
