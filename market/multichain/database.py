@@ -79,13 +79,13 @@ class MultiChainDB(Database):
         """
         data = (
             buffer(block.agreement_beneficiary),
-            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary),
-            buffer(block.signature_beneficiary), buffer(block.hash_block), block.sequence_number_benefactor)
+            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary), buffer(block.signature_benefactor),
+            buffer(block.signature_beneficiary), buffer(block.hash_block), block.sequence_number_benefactor,)
 
         self.execute(
             u"UPDATE multi_chain "
             u"SET agreement_beneficiary = ?, "
-            u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, "
+            u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, signature_benefactor = ?,"
             u"signature_beneficiary = ?, hash_block = ? "
             u"WHERE sequence_number_benefactor = ?",
             data)
@@ -116,8 +116,9 @@ class MultiChainDB(Database):
         :return: The block that was requested or None
         """
         db_query = u"SELECT benefactor, beneficiary, " \
-                   u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, " \
-                   u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
+                   u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, " \
+                   u"sequence_number_beneficiary, previous_hash_benefactor, " \
+                   u"previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
                    u"time, hash_block " \
                    u"FROM `multi_chain` WHERE hash_block = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash),)).fetchone()
@@ -238,7 +239,9 @@ class DatabaseBlock:
     @classmethod
     def from_signed_confirm_message(cls, message):
         payload = message.payload
-        return cls((payload.benefactor, payload.beneficiary, payload.agreement_benefactor and payload.agreement_benefactor.encode() or '',
+        return cls((payload.benefactor, payload.beneficiary,
+                    payload.agreement_benefactor and payload.agreement_benefactor.encode() or '',
                     payload.agreement_beneficiary and payload.agreement_beneficiary.encode() or '',
-                    payload.sequence_number_benefactor, payload.sequence_number_beneficiary, payload.previous_hash_benefactor,
-                    payload.previous_hash_beneficiary, payload.signature_benefactor, payload.signature_beneficiary, payload.time))
+                    payload.sequence_number_benefactor, payload.sequence_number_beneficiary,
+                    payload.previous_hash_benefactor, payload.previous_hash_beneficiary,
+                    payload.signature_benefactor, payload.signature_beneficiary, payload.time))

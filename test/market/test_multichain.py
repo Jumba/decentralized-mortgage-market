@@ -3,7 +3,7 @@ from uuid import UUID
 
 from market.api.api import STATUS
 from market.models import DatabaseModel
-from market.models.loans import Mortgage
+from market.models.loans import Mortgage, Investment
 from market.multichain.database import MultiChainDB, DatabaseBlock
 
 class CustomAssertions(object):
@@ -29,12 +29,51 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
     def setUp(self):
         self.db = MultiChainDB('.', u'test.db')
 
+        self.mortgage1 = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'), UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
+                             'ING', 80000, 1, 2.5, 1.5, 2.5, 36, 'A', [], STATUS.ACCEPTED)
+        self.investment1 = Investment('benefactor-key-i298w4yjexrw', 1000, 24, 1.5,
+                                      UUID('b97dfa1c-e125-4ded-9b1a-5066462c5299'), STATUS.ACCEPTED)
+
+        self.payload_request1 = Payload('benefactor-key-hiuwehduiee2u8', 'beneficiary-key-d8923yr94fh3re', self.mortgage1, None,
+                                   3, 0, 'prev-hash-benefactor-urc89utqhoird', '', '', '', 300)
+        self.payload_response1 = Payload('benefactor-key-hiuwehduiee2u8', 'beneficiary-key-d8923yr94fh3re', self.mortgage1,
+                                    self.mortgage1, 3, 2, 'prev-hash-benefactor-urc89utqhoird',
+                                    'prev-hash-beneficiary-cru894yhfrri2', 'signature-benefactor-8397yhdi287r',
+                                    'signature-beneficiary-e89ydughdb23', 300)
+
+        self.payload_response_multiple_blocks1 = Payload('benefactor-key-0ed203rd2', 'beneficiary-key-jfwru9f3w8',
+                                    self.investment1, self.investment1, 5, 4,
+                                    'prev-hash-benefactor-ik12ei3', 'prev-hash-beneficiary-fj039r',
+                                    'signature-benefactor-mdioaw030', 'signature-beneficiary-jfrkf29', 800)
+        self.payload_response_multiple_blocks2 = Payload('benefactor-key-0ed203rd2', 'beneficiary-key-jfwru9f3w8',
+                                                        self.investment1, self.investment1, 6, 5,
+                                                        'prev-hash-benefactor-ik12ei38', 'prev-hash-beneficiary-fj039r8',
+                                                        'signature-benefactor-mdioaw030',
+                                                        'signature-beneficiary-jfrkf29', 800)
+
+        self.payload_request_latest_hash = Payload('benefactor-key-i298w4yjexrw', 'beneficiary-key-d893dyt4rew', self.investment1, None,
+                                   5, 0, 'prev-hash-benefactor-urc89utqhokp9', '', '', '', 600)
+        self.payload_response_latest_hash = Payload('benefactor-key-i298w4yjexrw', 'beneficiary-key-d893dyt4rew',
+                                    self.investment1, self.investment1, 5, 4,
+                                    'prev-hash-benefactor-urc89utqhokp9', 'prev-hash-beneficiary-98eud284r',
+                                    'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr', 600)
+
+        self.payload_request_latest_sequence_number = Payload('benefactor-key-i298w4y483xrw', 'beneficiary-key-d893dyt4rei920',
+                                                   self.mortgage1, None,
+                                                   8, 0, 'prev-hash-benefactor-urc89utqhokp9', '', '', '', 500)
+        self.payload_response_latest_sequence_number = Payload('benefactor-key-i298w4y483xrw', 'beneficiary-key-d893dyt4rei920',
+                                                    self.mortgage1, self.mortgage1,
+                                                    8, 6, 'prev-hash-benefactor-urc89utqhokp9',
+                                                    'prev-hash-beneficiary-dqf9df',
+                                                    'signature-benefactor-ci90sje', 'signature-beneficiary-943uwr',
+                                                    500)
+
     def test_from_signed_confirm_message(self):
         """
         This test checks the functionality of making a block with the payload from a message.
         """
 
-        message = MessageBeneficiary()
+        message = Message(self.payload_response1)
         block = DatabaseBlock.from_signed_confirm_message(message)
 
         self.assertEqual(block.benefactor, message.payload.benefactor)
@@ -52,7 +91,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         This test checks the functionality of adding a block to the blockchain.
         """
 
-        message = MessageBeneficiary()
+        message = Message(self.payload_response1)
         block = DatabaseBlock.from_signed_confirm_message(message)
 
         # Add the block to the blockchain
@@ -65,21 +104,23 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
 
     def test_add_multiple_blocks(self):
         """
-        This test checks the functionality of adding a block to the blockchain.
+        This test checks the functionality of adding two blocks to the blockchain.
         """
 
-        message = MessageBeneficiary()
-        block1 = DatabaseBlock.from_signed_confirm_message(message)
-        block2 = DatabaseBlock.from_signed_confirm_message(message)
+        message1 = Message(self.payload_response_multiple_blocks1)
+        message2 = Message(self.payload_response_multiple_blocks2)
+        block1 = DatabaseBlock.from_signed_confirm_message(message1)
+        block2 = DatabaseBlock.from_signed_confirm_message(message2)
 
-
-        # Add the block to the blockchain
+        # Add the blocks to the blockchain
         self.db.add_block(block1)
         self.db.add_block(block2)
-        # Get the block by the hash of the block
+
+        # Get the blocks by the hash of the block
         result1 = self.db.get_by_hash(block1.hash_block)
         result2 = self.db.get_by_hash(block2.hash_block)
-        # Check whether the block was added correctly
+
+        # Check whether the blocks were added correctly
         self.assertEqualBlocks(block1, result1)
         self.assertEqualBlocks(block2, result2)
         self.assertNotEqual(block1.hash_block, block2.hash_block)
@@ -89,8 +130,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         This test checks the functionality of updating a block in the blockchain.
         """
 
-        message_request = MessageBenefactor()
-        message_response = MessageBeneficiary()
+        message_request = Message(self.payload_request1)
+        message_response = Message(self.payload_response1)
 
         # Add the block with only the information from benefactor to the blockchain
         block_benefactor = DatabaseBlock.from_signed_confirm_message(message_request)
@@ -117,8 +158,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         This test checks the functionality of getting the latest hash of a user.
         """
 
-        message_request = MessageBenefactor()
-        message_response = MessageBeneficiary()
+        message_request = Message(self.payload_request_latest_hash)
+        message_response = Message(self.payload_response_latest_hash)
 
         # Add the block with only the information from benefactor to the blockchain
         block_benefactor = DatabaseBlock.from_signed_confirm_message(message_request)
@@ -154,8 +195,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         This test checks the functionality of getting the latest sequence number
         """
 
-        message_request = MessageBenefactor()
-        message_response = MessageBeneficiary()
+        message_request = Message(self.payload_request_latest_sequence_number)
+        message_response = Message(self.payload_response_latest_sequence_number)
 
         # Add the block with only the information from benefactor to the blockchain
         block_benefactor = DatabaseBlock.from_signed_confirm_message(message_request)
@@ -189,40 +230,71 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.db.close()
 
 
-class PayloadBeneficiary(object):
-    mortgage = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'), UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
-                                    'ING', 80000, 1, 2.5, 1.5, 2.5, 36, 'A', [], STATUS.ACCEPTED)
+class Payload(object):
+    def __init__(self, benefactor, beneficiary, agreement_benefactor, agreement_beneficiary,
+                 sequence_number_benefactor, sequence_number_beneficiary, previous_hash_benefactor,
+                 previous_hash_beneficiary, signature_benefactor, signature_beneficiary, time):
 
-    benefactor = 'benefactor-key-hiuwehduiee2u8'
-    beneficiary = 'beneficiary-key-d8923yr94fh3re'
-    agreement_benefactor = mortgage
-    agreement_beneficiary = mortgage
-    sequence_number_benefactor = 3
-    sequence_number_beneficiary = 1
-    previous_hash_benefactor = 'prev-hash-benefactor-urc89utqhoird'
-    previous_hash_beneficiary = 'prev-hash-beneficiary-cru894yhfrri2'
-    signature_benefactor = 'signature-benefactor-8397yhdi287r'
-    signature_beneficiary = 'signature-beneficiary-e89ydughdb23'
-    time = 300
+        self._benefactor = benefactor
+        self._beneficiary = beneficiary
+        self._agreement_benefactor = agreement_benefactor
+        self._agreement_beneficiary = agreement_benefactor
+        self._sequence_number_benefactor = sequence_number_benefactor
+        self._sequence_number_beneficiary = sequence_number_beneficiary
+        self._previous_hash_benefactor = previous_hash_benefactor
+        self._previous_hash_beneficiary = previous_hash_beneficiary
+        self._signature_benefactor = signature_benefactor
+        self._signature_beneficiary = signature_beneficiary
+        self._time = time
 
-class MessageBeneficiary(object):
-    payload = PayloadBeneficiary()
+    @property
+    def benefactor(self):
+        return self._benefactor
 
-class PayloadBenefactor(object):
-    mortgage = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'), UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
-                        'ING', 80000, 1, 2.5, 1.5, 2.5, 36, 'A', [], STATUS.ACCEPTED)
+    @property
+    def beneficiary(self):
+        return self._beneficiary
 
-    benefactor = 'benefactor-key-hiuwehduiee2u8'
-    beneficiary = 'beneficiary-key-d8923yr94fh3re'
-    agreement_benefactor = mortgage
-    agreement_beneficiary = None
-    sequence_number_benefactor = 3
-    sequence_number_beneficiary = 0
-    previous_hash_benefactor = 'prev-hash-benefactor-urc89utqhoird'
-    previous_hash_beneficiary = ''
-    signature_benefactor = ''
-    signature_beneficiary = ''
-    time = 300
+    @property
+    def agreement_benefactor(self):
+        return self._agreement_benefactor
 
-class MessageBenefactor(object):
-    payload = PayloadBeneficiary()
+    @property
+    def agreement_beneficiary(self):
+        return self._agreement_beneficiary
+
+    @property
+    def sequence_number_benefactor(self):
+        return self._sequence_number_benefactor
+
+    @property
+    def sequence_number_beneficiary(self):
+        return self._sequence_number_beneficiary
+
+    @property
+    def previous_hash_benefactor(self):
+        return self._previous_hash_benefactor
+
+    @property
+    def previous_hash_beneficiary(self):
+        return self._previous_hash_beneficiary
+
+    @property
+    def signature_benefactor(self):
+        return self._signature_benefactor
+
+    @property
+    def signature_beneficiary(self):
+        return self._signature_beneficiary
+
+    @property
+    def time(self):
+        return self._time
+
+class Message(object):
+    def __init__(self, payload):
+        self._payload = payload
+
+    @property
+    def payload(self):
+        return self._payload
