@@ -19,13 +19,8 @@ class OpenMarketController:
             mortgage = tpl[0]
             campaign = tpl[1]
             house = tpl[2]
-            row = []
-            row.append(house.address + ' ' + house.house_number + ' , ' + house.postal_code)
-            row.append(campaign.amount)
-            row.append(mortgage.interest_rate)
-            row.append(mortgage.duration)
-            row.append((campaign.end_date - datetime.now()).days)
-            row.append(mortgage.risk)
+            row = [house.address + ' ' + house.house_number + ', ' + house.postal_code, campaign.amount,
+                   mortgage.interest_rate, mortgage.duration, (campaign.end_date - datetime.now()).days, mortgage.risk]
             self.mainwindow.insert_row(self.table, row)
 
     def view_campaign(self):
