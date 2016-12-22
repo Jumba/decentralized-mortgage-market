@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QTableWidget
 
 from market.api.api import STATUS
 from market.controllers.main_view_controller import MainWindowController
-from market.models.loans import Mortgage
+from market.models.loans import Mortgage, Campaign
 from market.models.role import Role
 from market.models.user import User
 from market.views.main_view import Ui_MainWindow
@@ -366,11 +366,280 @@ class GUITestSuite(unittest.TestCase):
         # self.payload_loan_offer['amount'] = 123456
         # loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
 
+    def test_borrowers_portfolio_loans_table_empty(self):
+        # Check if the ongoing loans list is empty
+        self.window.bp_controller.setup_view()
+        self.assertFalse(self.window.bp_ongoing_loans_table.rowCount())
 
+    def test_borrowers_portfolio_offers_table_empty(self):
+        # Check if the offers list is empty
+        self.window.bp_controller.setup_view()
+        self.assertFalse(self.window.bp_open_offers_table.rowCount())
 
+    def test_borrowers_portfolio_offers_and_loans_table_filled(self):
+        # Create the borrower user
+        role_id = Role.BORROWER.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
 
+        # Create an investor
+        investor, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        investor.role_id = role_id
+        self.window.api.db.put(User._type, investor.id, investor)
 
-###################################################################################################################
+        # Create a loan request
+        self.window.app.user = self.window.api.db.get(User._type, self.window.app.user.id)
+        loan_request = self.window.api.create_loan_request(self.window.app.user, self.payload_loan_request)
+
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = self.window.app.user.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                          self.payload_mortgage)
+
+        # Check if the mortgage shows up in the table
+        self.window.bp_controller.setup_view()
+        self.assertEqual(self.window.bp_open_offers_table.rowCount(), 1)
+
+        # Check if the right values of the mortgage are in the offer table
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 0).text(), '123000')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 1).text(), '5.5')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 2).text(), '9.0')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 3).text(), '30')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 4).text(), u'mortgage')
+
+        # Accept mortgage
+        self.window.api.accept_mortgage_offer(self.window.app.user, {'mortgage_id': mortgage.id})
+
+        # Place loan offer
+        self.payload_loan_offer['user_key'] = investor.id  # set user_key to the investor's public key
+        self.payload_loan_offer['mortgage_id'] = mortgage.id
+        self.window.api.place_loan_offer(investor, self.payload_loan_offer)
+
+        # Check if the loan offer shows up in the table
+        self.window.bp_controller.setup_view()
+        self.assertEqual(self.window.bp_open_offers_table.rowCount(), 1)
+
+        # Check if the right values of the loan offer are in the offer table
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 0).text(), '1000')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 1).text(), '2.5')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 2).text(), ' ')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 3).text(), '24')
+        self.assertEqual(self.window.bp_open_offers_table.item(0, 4).text(), u'investment')
+
+    def test_borrowers_portfolio_reject_unselected(self):
+        # Click the 'reject' button without selecting an item in the table
+        self.window.bp_controller.setup_view()
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bp_reject_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Select offer", 'No offers have been selected.')
+
+    def test_borrowers_portfolio_accept_unselected(self):
+        # Click the 'reject' button without selecting an item in the table
+        self.window.bp_controller.setup_view()
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bp_accept_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, "Select offer", 'No offers have been selected.')
+
+    def test_borrowers_portfolio_reject_mortgage_selected(self):
+        # Create the borrower user
+        role_id = Role.BORROWER.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create an investor
+        investor, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        investor.role_id = role_id
+        self.window.api.db.put(User._type, investor.id, investor)
+
+        # Create a loan request
+        self.window.app.user = self.window.api.db.get(User._type, self.window.app.user.id)
+        loan_request = self.window.api.create_loan_request(self.window.app.user, self.payload_loan_request)
+
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = self.window.app.user.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                          self.payload_mortgage)
+
+        # Check if the mortgage shows up in the table
+        self.window.bp_controller.setup_view()
+        self.assertEqual(self.window.bp_open_offers_table.rowCount(), 1)
+        self.window.bp_open_offers_table.selectRow(0)
+
+        # Click the 'reject' button
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bp_reject_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, 'Offer rejected',
+                                                 'You have rejected the chosen offer')
+
+        # Check if the mortgage has been removed from the offers table
+        self.assertFalse(self.window.bp_open_offers_table.rowCount())
+
+        # Check if the mortgage is not in the loan table
+        self.assertFalse(self.window.bp_ongoing_loans_table.rowCount())
+
+    def test_borrowers_portfolio_accept_mortgage_selected(self):
+        # Create the borrower user
+        role_id = Role.BORROWER.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create an investor
+        investor, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        investor.role_id = role_id
+        self.window.api.db.put(User._type, investor.id, investor)
+
+        # Create a loan request
+        self.window.app.user = self.window.api.db.get(User._type, self.window.app.user.id)
+        loan_request = self.window.api.create_loan_request(self.window.app.user, self.payload_loan_request)
+
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = self.window.app.user.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                          self.payload_mortgage)
+
+        # Check if the mortgage shows up in the table
+        self.window.bp_controller.setup_view()
+        self.assertEqual(self.window.bp_open_offers_table.rowCount(), 1)
+        self.window.bp_open_offers_table.selectRow(0)
+
+        # Click the 'reject' button
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bp_accept_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, 'Offer accepted',
+                                                 'You have accepted the chosen offer')
+
+        # Check if the mortgage has been removed from the offers table
+        self.assertFalse(self.window.bp_open_offers_table.rowCount())
+
+        # Check if the mortgage is in the loan table
+        self.assertEqual(self.window.bp_ongoing_loans_table.rowCount(), 1)
+
+    def test_borrowers_portfolio_reject_investment_selected(self):
+        # Create the borrower user
+        role_id = Role.BORROWER.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create an investor
+        investor, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        investor.role_id = role_id
+        self.window.api.db.put(User._type, investor.id, investor)
+
+        # Create a loan request
+        self.window.app.user = self.window.api.db.get(User._type, self.window.app.user.id)
+        loan_request = self.window.api.create_loan_request(self.window.app.user, self.payload_loan_request)
+
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = self.window.app.user.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                          self.payload_mortgage)
+
+        # Accept mortgage
+        self.window.api.accept_mortgage_offer(self.window.app.user, {'mortgage_id': mortgage.id})
+
+        # Place loan offer
+        self.payload_loan_offer['user_key'] = investor.id  # set user_key to the investor's public key
+        self.payload_loan_offer['mortgage_id'] = mortgage.id
+        self.window.api.place_loan_offer(investor, self.payload_loan_offer)
+
+        # Check if the loan offer shows up in the table
+        self.window.bp_controller.setup_view()
+        self.assertEqual(self.window.bp_open_offers_table.rowCount(), 1)
+        self.window.bp_open_offers_table.selectRow(0)
+
+        # Click the 'reject' button
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bp_reject_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, 'Offer rejected',
+                                                 'You have rejected the chosen offer')
+
+        # Check if the mortgage has been removed from the offers table
+        self.assertFalse(self.window.bp_open_offers_table.rowCount())
+
+        # Check if the investment is not in the loan table
+        self.assertEqual(self.window.bp_ongoing_loans_table.rowCount(), 1)
+
+    def test_borrowers_portfolio_accept_investment_selected(self):
+        # Create the borrower user
+        role_id = Role.BORROWER.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+
+        # Create an investor
+        investor, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        investor.role_id = role_id
+        self.window.api.db.put(User._type, investor.id, investor)
+
+        # Create a loan request
+        self.window.app.user = self.window.api.db.get(User._type, self.window.app.user.id)
+        loan_request = self.window.api.create_loan_request(self.window.app.user, self.payload_loan_request)
+
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = self.window.app.user.id
+        self.payload_mortgage['request_id'] = loan_request.id
+        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
+        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
+
+        _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1,
+                                                          self.payload_mortgage)
+
+        # Accept mortgage
+        self.window.api.accept_mortgage_offer(self.window.app.user, {'mortgage_id': mortgage.id})
+
+        # Place loan offer
+        self.payload_loan_offer['user_key'] = investor.id  # set user_key to the investor's public key
+        self.payload_loan_offer['mortgage_id'] = mortgage.id
+        self.window.api.place_loan_offer(investor, self.payload_loan_offer)
+
+        # Check if the loan offer shows up in the table
+        self.window.bp_controller.setup_view()
+        self.assertEqual(self.window.bp_open_offers_table.rowCount(), 1)
+        self.window.bp_open_offers_table.selectRow(0)
+
+        # Click the 'reject' button
+        self.window.msg.about = MagicMock()
+        QTest.mouseClick(self.window.bp_accept_pushbutton, Qt.LeftButton)
+
+        # Check if a dialog opens
+        self.window.msg.about.assert_called_with(self.window, 'Offer accepted',
+                                                 'You have accepted the chosen offer')
+
+        # Check if the investment has been removed from the offers table
+        self.assertFalse(self.window.bp_open_offers_table.rowCount())
+
+        # Check if the investment is in the loan table (that already contained the mortgage)
+        self.assertEqual(self.window.bp_ongoing_loans_table.rowCount(), 2)
 
     def test_investors_portfolio_table_empty(self):
         # Check if the investments list is empty
@@ -596,7 +865,7 @@ class GUITestSuite(unittest.TestCase):
         borrower = self.window.api.db.get(User._type, borrower.id)
         loan_request = self.window.api.create_loan_request(borrower, self.payload_loan_request)
 
-        # Select the item on the first row in the first column in the table
+        # Select the item on the first row in the table
         self.window.fiplr1_controller.setup_view()
         self.window.fiplr1_loan_requests_table.selectRow(0)
 
