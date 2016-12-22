@@ -114,7 +114,6 @@ class MultiChainDB(Database):
 
         return str(db_result) if db_result else ''
 
-    # Could be used for testing
     def get_by_hash(self, hash):
         """
         Returns a block saved in the persistence.
@@ -130,18 +129,17 @@ class MultiChainDB(Database):
         # Create a DB Block or return None
         return self._create_database_block(db_result)
 
-    # Could be used for testing
     def get_by_public_key_and_sequence_number(self, public_key, sequence_number):
         """
         Returns a block saved in the persistence.
         :param public_key: The public key corresponding to the block
         :param sequence_number: The sequence number corresponding to the block.
         :return: The block that was requested or None"""
-        db_query = u"SELECT benefactor, beneficiary, hash_block, " \
-                   u"agreement_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
-                   u"signature_benefactor, " \
-                   u"agreement_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
-                   u"signature_beneficiary, time " \
+        db_query = u"SELECT benefactor, beneficiary, " \
+                   u"agreement_benefactor, agreement_beneficiary, " \
+                   u"sequence_number_benefactor, sequence_number_beneficiary, " \
+                   u"previous_hash_benefactor, previous_hash_beneficiary, " \
+                   u"signature_benefactor, signature_beneficiary, time, hash_block " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_benefactor AS sequence_number, " \
                    u"benefactor AS pk FROM `multi_chain` " \
