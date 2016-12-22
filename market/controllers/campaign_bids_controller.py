@@ -15,7 +15,7 @@ class CampaignBidsController:
         self.mainwindow.icb_place_bid_pushbutton.disconnect()
         self.mainwindow.icb_place_bid_pushbutton.clicked.connect(self.place_bid)
         bids, house, campaign = self.mainwindow.api.load_bids({'mortgage_id': mortgage_id})
-        self.mainwindow.icb_property_address_lineedit.setText(house.address + ' ' + house.house_number + ' , ' + house.postal_code)
+        self.mainwindow.icb_property_address_lineedit.setText(house.address + ' ' + house.house_number + ', ' + house.postal_code)
         self.mainwindow.icb_remaining_amount_lineedit.setText(str(campaign.amount))
         for investment in bids:
             self.mainwindow.insert_row(self.table, [investment.amount, investment.duration, investment.interest_rate, investment.status.name])
