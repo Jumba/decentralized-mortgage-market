@@ -12,16 +12,12 @@ class NavigateUser:
         # user_role = 3    # The user you want to be. Only used for testing.
         if user_role:
             if user_role == 1:
-                print 'User logged in as: borrower'
                 self.set_borrower_navigation()
             elif user_role == 2:
-                print 'User logged in as: investor'
                 self.set_investor_navigation()
             elif user_role == 3:
-                print 'User logged in as: financial institution'
                 self.set_bank_navigation()
         else:
-            print 'User has no recognized role.'
             self.switch_to_profile()
 
     def set_borrower_navigation(self):
