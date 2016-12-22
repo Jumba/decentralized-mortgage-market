@@ -92,23 +92,23 @@ class GUITestSuite(unittest.TestCase):
         # Create the investor user
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
-        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
+        self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create borrowers
         borrower1, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
-        self.window.api.db.put(User._type, borrower1.id, borrower1)
+        self.window.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.window.api.create_user()
         borrower2.role_id = role_id
-        self.window.api.db.put(User._type, borrower2.id, borrower2)
+        self.window.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create loan requests
-        borrower1 = self.window.api.db.get(User._type, borrower1.id)
+        borrower1 = self.window.api.db.get(User.type, borrower1.id)
         loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
 
-        borrower2 = self.window.api.db.get(User._type, borrower2.id)
+        borrower2 = self.window.api.db.get(User.type, borrower2.id)
         loan_request2 = self.window.api.create_loan_request(borrower2, self.payload_loan_request)
 
         # Accept the loan requests

@@ -4,60 +4,124 @@ from dispersy.database import Database
 
 
 class Backend(object):
-    def get(self, type, id):
+    """
+    The backend interface
+    """
+    
+    def get(self, _type, _id):
+        """
+        Get an item out of the key value store.
+        :param _type: The type name of the value
+        :param _id: The id of the value
+        :return: The value
+        :raises: IndexError if not found
+        """
         raise NotImplementedError
 
-    def post(self, type, id, obj):
+    def post(self, _type, _id, obj):
+        """
+        Save a value to the key value store
+        :param _type: The type name of the value
+        :param _id: The id of the value
+        :param obj: The value
+        :return: True if succeeds, IndexError if `_id` already in use.
+        """
         raise NotImplementedError
 
-    def put(self, type, id, obj):
+    def put(self, _type, _id, obj):
+        """
+        Replace a value in the key value store
+        :param _type: The type name of the value
+        :param _id:  The id of the value
+        :param obj: The value
+        :return: True if succeeds, False if <type, id> not already in use. (Won't be saved either)
+        """
         raise NotImplementedError
 
     def delete(self, obj):
+        """
+        Delete a value in the key value store
+        :param obj:
+        :return:
+        """
         raise NotImplementedError
 
-    def id_available(self, id):
+    def id_available(self, _id):
+        """
+        Check if an ID is available
+        :param _id:
+        :return:
+        """
         raise NotImplementedError
 
-    def exists(self, type, id):
+    def exists(self, _type, _id):
+        """
+        Check if a <type, id> pair exists
+        :param _type:
+        :param _id:
+        :return:
+        """
         raise NotImplementedError
 
     def clear(self):
+        """
+        Purge the database
+        :return:
+        """
         raise NotImplementedError
 
-    def get_all(self, type):
+    def get_all(self, _type):
+        """
+        Get all values of `_type`
+        :param _type:
+        :return:
+        """
         raise NotImplementedError
 
     def get_option(self, option_name):
+        """
+        Return an option
+        :param option_name:
+        :return:
+        """
         raise NotImplementedError
 
     def set_option(self, option_name, value):
+        """
+        Set an option
+        :param option_name:
+        :param value:
+        :return:
+        """
         raise NotImplementedError
 
 
 class MemoryBackend(Backend):
+    """
+    An in memory implementation of the backend.
+    """
     _data = {'__option': {}}
     _id = {}
 
-    def get(self, type, id):
+    def get(self, type_name, value_id):
         try:
-            return self._data[type][id]
+            return self._data[type_name][value_id]
         except:
             raise IndexError
 
-    def post(self, type, id, obj):
-        if type not in self._data:
-            self._data[type] = {}
+    def post(self, type_name, value_id, obj):
+        if type_name not in self._data:
+            self._data[type_name] = {}
 
-        if not self.id_available(id):
+        if not self.id_available(value_id):
             raise IndexError("Index already in use")
 
-        self._data[type][id] = obj
-        self._id[id] = True
+        self._data[type_name][value_id] = obj
+        self._id[value_id] = True
 
-    def put(self, type, id, obj):
-        if self.exists(type, id):
-            self._data[type][id] = obj
+    def put(self, type_name, value_id, obj):
+        if self.exists(type_name, value_id):
+            self._data[type_name][value_id] = obj
             return True
         return False
 
@@ -68,21 +132,21 @@ class MemoryBackend(Backend):
                 return True
         return False
 
-    def id_available(self, id):
-        return id not in self._id
+    def id_available(self, value_id):
+        return value_id not in self._id
 
-    def exists(self, type, id):
-        if type in self._data:
-            return id in self._data[type]
+    def exists(self, type_name, value_id):
+        if type_name in self._data:
+            return value_id in self._data[type_name]
         return False
 
     def clear(self):
         self._data = {'__option': {}}
         self._id = {}
 
-    def get_all(self, type):
+    def get_all(self, type_name):
         try:
-            return self._data[type].values()
+            return self._data[type_name].values()
         except:
             raise KeyError
 
@@ -97,6 +161,10 @@ class MemoryBackend(Backend):
 
 
 class PersistentBackend(Database, Backend):
+    """
+    A SQlite backed implementation of the backend.
+    Uses the dispersy Database class.
+    """
 
     # Path to the database location + dispersy._workingdirectory
     DATABASE_PATH = u"market.db"
@@ -140,33 +208,33 @@ class PersistentBackend(Database, Backend):
 
         return self.LATEST_DB_VERSION
 
-    def get(self, type, id):
+    def get(self, type_name, value_id):
         db_query = u"SELECT value FROM `market` WHERE type_name = ? AND id = ?"
-        db_result = self.execute(db_query, (unicode(type), unicode(id))).fetchall()
+        db_result = self.execute(db_query, (unicode(type_name), unicode(value_id))).fetchall()
 
         if len(db_result) != 1:
             raise IndexError
 
         return db_result[0][0]
 
-    def get_all(self, type):
+    def get_all(self, type_name):
         db_query = u"SELECT value FROM `market` WHERE type_name = ?"
-        db_result = self.execute(db_query, (unicode(type),)).fetchall()
+        db_result = self.execute(db_query, (unicode(type_name),)).fetchall()
 
-        return [t[0] for t in  db_result]
+        return [t[0] for t in db_result]
 
-    def post(self, type, id, obj):
-        if not self.id_available(id):
+    def post(self, type_name, value_id, obj):
+        if not self.id_available(value_id):
             raise IndexError("Index already in use")
 
         db_query = u"INSERT INTO `market` (id, type_name, value) VALUES (?, ?, ?)"
-        self.execute(db_query, (unicode(id), unicode(type), unicode(obj)))
+        self.execute(db_query, (unicode(value_id), unicode(type_name), unicode(obj)))
         self.commit()
 
-    def put(self, type, id, obj):
-        if self.exists(type, id):
+    def put(self, type_name, value_id, obj):
+        if self.exists(type_name, value_id):
             db_query = u"UPDATE `market` SET value = ? WHERE id = ? AND type_name = ?"
-            self.execute(db_query, (unicode(obj), unicode(id), unicode(type)))
+            self.execute(db_query, (unicode(obj), unicode(value_id), unicode(type_name)))
             self.commit()
             return True
         else:
@@ -178,20 +246,19 @@ class PersistentBackend(Database, Backend):
         self.commit()
         return cur.rowcount > 0
 
-    def id_available(self, id):
+    def id_available(self, value_id):
         db_query = u"SELECT COUNT(*) FROM `market` WHERE id = ?"
-        db_result = self.execute(db_query, (unicode(id),)).fetchall()
+        db_result = self.execute(db_query, (unicode(value_id),)).fetchall()
         return db_result[0][0] == 0
 
-    def exists(self, type, id):
+    def exists(self, type_name, value_id):
         db_query = u"SELECT COUNT(*) FROM `market` WHERE id = ? AND type_name = ?"
-        db_result = self.execute(db_query, (unicode(id), unicode(type))).fetchall()
+        db_result = self.execute(db_query, (unicode(value_id), unicode(type_name))).fetchall()
         return db_result[0][0] == 1
 
     def clear(self):
         self.execute(u"DELETE FROM market")
         self.execute(u"DELETE FROM option")
-
 
     def set_option(self, option_name, value):
         db_query = u"INSERT INTO `option` (key, value) VALUES (?, ?)"

@@ -161,10 +161,10 @@ class TestMarketApplication(QApplication):
         bank2.role_id = bank_role
         bank3.role_id = bank_role
         bank4.role_id = bank_role
-        self._api.db.put(User._type, bank1.id, bank1)
-        self._api.db.put(User._type, bank2.id, bank2)
-        self._api.db.put(User._type, bank3.id, bank3)
-        self._api.db.put(User._type, bank4.id, bank4)
+        self._api.db.put(User.type, bank1.id, bank1)
+        self._api.db.put(User.type, bank2.id, bank2)
+        self._api.db.put(User.type, bank3.id, bank3)
+        self._api.db.put(User.type, bank4.id, bank4)
         self.user = user
         self.bank1 = bank1
         self.bank2 = bank2

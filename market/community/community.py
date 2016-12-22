@@ -194,10 +194,10 @@ class MortgageMarketCommunity(Community):
     ########### API MESSAGES
 
     def on_loan_request_receive(self, payload):
-        user = payload.models[User._type]
-        loan_request = payload.models[LoanRequest._type]
-        house = payload.models[House._type]
-        profile = payload.models[BorrowersProfile._type]
+        user = payload.models[User.type]
+        loan_request = payload.models[LoanRequest.type]
+        house = payload.models[House.type]
+        profile = payload.models[BorrowersProfile.type]
 
         assert isinstance(user, User)
         assert isinstance(loan_request, LoanRequest)
@@ -218,8 +218,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_loan_request_reject(self, payload):
-        user = payload.models[User._type]
-        loan_request = payload.models[LoanRequest._type]
+        user = payload.models[User.type]
+        loan_request = payload.models[LoanRequest.type]
 
         assert isinstance(user, User)
         assert isinstance(loan_request, LoanRequest)
@@ -241,8 +241,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_mortgage_offer(self, payload):
-        loan_request = payload.models[LoanRequest._type]
-        mortgage = payload.models[Mortgage._type]
+        loan_request = payload.models[LoanRequest.type]
+        mortgage = payload.models[Mortgage.type]
 
         assert isinstance(loan_request, LoanRequest)
         assert isinstance(mortgage, Mortgage)
@@ -264,9 +264,9 @@ class MortgageMarketCommunity(Community):
         :param payload:
         :return:
         """
-        user = payload.models[User._type]
-        mortgage = payload.models[Mortgage._type]
-        campaign = payload.models[Campaign._type]
+        user = payload.models[User.type]
+        mortgage = payload.models[Mortgage.type]
+        campaign = payload.models[Campaign.type]
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
@@ -290,10 +290,10 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_mortgage_accept_unsigned(self, payload):
-        user = payload.models[User._type]
-        loan_request = payload.models[LoanRequest._type]
-        mortgage = payload.models[Mortgage._type]
-        campaign = payload.models[Campaign._type]
+        user = payload.models[User.type]
+        loan_request = payload.models[LoanRequest.type]
+        mortgage = payload.models[Mortgage.type]
+        campaign = payload.models[Campaign.type]
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
@@ -308,8 +308,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_mortgage_reject(self, payload):
-        user = payload.models[User._type]
-        mortgage = payload.models[Mortgage._type]
+        user = payload.models[User.type]
+        mortgage = payload.models[Mortgage.type]
 
         assert isinstance(user, User)
         assert isinstance(mortgage, Mortgage)
@@ -325,8 +325,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_investment_offer(self, payload):
-        user = payload.models[User._type]
-        investment = payload.models[Investment._type]
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
 
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
@@ -342,8 +342,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_investment_accept(self, payload):
-        user = payload.models[User._type]
-        investment = payload.models[Investment._type]
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
 
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
@@ -354,8 +354,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_investment_reject(self, payload):
-        user = payload.models[User._type]
-        investment = payload.models[Investment._type]
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
 
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
@@ -528,12 +528,12 @@ class MortgageMarketCommunity(Community):
             # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
             if agreement_local == agreement:
                 if isinstance(agreement, Investment):
-                    mortgage = self.api.db.get(Mortgage._type, agreement.mortgage_id)
+                    mortgage = self.api.db.get(Mortgage.type, agreement.mortgage_id)
                 elif isinstance(agreement, Mortgage):
                     mortgage = agreement
 
-                loan_request = self.api.db.get(LoanRequest._type, mortgage.request_id)
-                beneficiary = self.api.db.get(User._type, loan_request.user_key)
+                loan_request = self.api.db.get(LoanRequest.type, mortgage.request_id)
+                beneficiary = self.api.db.get(User.type, loan_request.user_key)
 
                 return (response.payload.beneficiary == beneficiary.id and response.payload.benefactor == self.user.id
                         and modified)

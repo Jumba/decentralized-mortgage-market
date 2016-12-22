@@ -8,7 +8,7 @@ from dispersy.crypto import ECCrypto
 
 
 class DatabaseModel(object):
-    _type = 'database_model'
+    type = 'database_model'
     _hash_exclude = ['_signature', '_time_signed', '_signer']
 
     def __init__(self, id=None):
@@ -23,10 +23,6 @@ class DatabaseModel(object):
     @property
     def id(self):
         return self._id
-
-    @property
-    def type(self):
-        return self._type
 
     @property
     def signature(self):

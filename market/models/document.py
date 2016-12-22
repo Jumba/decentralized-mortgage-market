@@ -4,7 +4,7 @@ from market.models import DatabaseModel
 
 
 class Document(DatabaseModel):
-    _type = 'document'
+    type = 'document'
 
     def __init__(self, mime, data):
         super(Document, self).__init__()

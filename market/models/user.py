@@ -2,7 +2,7 @@ from market.models import DatabaseModel
 
 
 class User(DatabaseModel):
-    _type = 'users'
+    type = 'users'
 
     def __init__(self, public_key, time_added, role_id=None, profile_id=None, loan_request_ids=None, campaign_ids=None, mortgage_ids=None, investment_ids=None):
         super(User, self).__init__()
