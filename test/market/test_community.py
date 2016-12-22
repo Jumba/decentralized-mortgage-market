@@ -282,6 +282,37 @@ class CommunityTestSuite(unittest.TestCase):
         self.bank.update(self.api_bank.db)
         self.assertIn(self.campaign.id, self.bank.campaign_ids)
 
+    def test_on_mortgage_reject(self):
+        """
+        Test a user rejecting a mortgage
+        user -> bank
+        """
+
+        #Pre-condition. Bank has the mortgage saved with status.PENDING
+        self.mortgage.post_or_put(self.api_bank.db)
+        self.bank.mortgage_ids.append(self.mortgage.id)
+        self.bank.post_or_put(self.api_bank.db)
+
+
+        # Create the payload
+        payload = FakePayload()
+        payload.request = u"mortgage_reject"
+        payload.models = {
+                          self.mortgage.type: self.mortgage,
+                          self.user.type: self.user,
+                          }
+
+        self.mortgage.status = STATUS.REJECTED
+        self.community_bank.on_mortgage_reject(payload)
+
+        self.bank.update(self.api_bank.db)
+
+        mortgage = self.api_bank.db.get(self.mortgage.type, self.mortgage.id)
+
+        self.assertEqual(mortgage.status, STATUS.REJECTED)
+        self.assertNotIn(mortgage.id, self.bank.mortgage_ids)
+
+
 
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
