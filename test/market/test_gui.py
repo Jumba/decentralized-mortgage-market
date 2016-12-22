@@ -305,9 +305,8 @@ class GUITestSuite(unittest.TestCase):
         # Accept one of the loan offers
         self.window.api.accept_investment_offer(borrower2, {'investment_id': loan_offer2.id})
 
-    def test_openmarket_no_select(self):
+    def test_openmarket_table_empty(self):
         self.window.openmarket_controller.setup_view()
-        # print self.window.openmarket_controller.content[0][0].__dict__
         self.assertFalse(self.window.openmarket_open_market_table.rowCount())
 
     def test_openmarket_table_filled(self):
@@ -381,7 +380,7 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 4).text(), '29')
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 5).text(), 'hi')
 
-    def test_openmarket_view_campaign_no_focus(self):
+    def test_openmarket_view_campaign_unselected(self):
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.openmarket_view_loan_bids_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, "Select campaign", 'No campaigns have been selected.')
@@ -392,18 +391,18 @@ class GUITestSuite(unittest.TestCase):
         self.window.app.user.role_id = role_id
         self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
 
-        # Create borrowers
-        borrower1, _, _ = self.window.api.create_user()
+        # Create a borrower
+        borrower, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
-        borrower1.role_id = role_id
-        self.window.api.db.put(User._type, borrower1.id, borrower1)
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
 
-        # Create loan requests
-        borrower1 = self.window.api.db.get(User._type, borrower1.id)
-        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
+        # Createa  loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        loan_request1 = self.window.api.create_loan_request(borrower, self.payload_loan_request)
 
-        # Accept the loan requests
-        self.payload_mortgage['user_key'] = borrower1.id
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = borrower.id
         self.payload_mortgage['request_id'] = loan_request1.id
         self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
         self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
@@ -412,7 +411,7 @@ class GUITestSuite(unittest.TestCase):
                                                                                 self.payload_mortgage)
 
         # Accept mortgages
-        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id': mortgage1.id})
+        self.window.api.accept_mortgage_offer(borrower, {'mortgage_id': mortgage1.id})
         self.window.openmarket_controller.setup_view()
         self.window.openmarket_open_market_table.selectRow(0)
 
@@ -427,126 +426,45 @@ class GUITestSuite(unittest.TestCase):
         self.window.app.user.role_id = role_id
         self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
 
-        # Create borrowers
-        borrower1, _, _ = self.window.api.create_user()
+        # Create a borrower
+        borrower, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
-        borrower1.role_id = role_id
-        self.window.api.db.put(User._type, borrower1.id, borrower1)
+        borrower.role_id = role_id
+        self.window.api.db.put(User._type, borrower.id, borrower)
 
-        borrower2, _, _ = self.window.api.create_user()
-        borrower2.role_id = role_id
-        self.window.api.db.put(User._type, borrower2.id, borrower2)
+        # Create a loan request
+        borrower = self.window.api.db.get(User._type, borrower.id)
+        loan_request1 = self.window.api.create_loan_request(borrower, self.payload_loan_request)
 
-        # Create loan requests
-        borrower1 = self.window.api.db.get(User._type, borrower1.id)
-        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
-
-        borrower2 = self.window.api.db.get(User._type, borrower2.id)
-        loan_request2 = self.window.api.create_loan_request(borrower2, self.payload_loan_request)
-
-        # Accept the loan requests
-        self.payload_mortgage['user_key'] = borrower1.id
+        # Accept the loan request
+        self.payload_mortgage['user_key'] = borrower.id
         self.payload_mortgage['request_id'] = loan_request1.id
         self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
         self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
 
-        accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
-                                                                                self.payload_mortgage)
+        _, mortgage = self.window.api.accept_loan_request(self.window.app.bank1, self.payload_mortgage)
 
-        self.payload_mortgage['user_key'] = borrower2.id
-        self.payload_mortgage['request_id'] = loan_request2.id
+        # Accept the mortgage
+        self.window.api.accept_mortgage_offer(borrower, {'mortgage_id' : mortgage.id})
 
-        accepted_loan_request2, mortgage2 = self.window.api.accept_loan_request(self.window.app.bank1,
-                                                                                self.payload_mortgage)
+        # Check if there are no bids
+        self.window.cb_controller.setup_view(mortgage.id)
+        self.assertEqual(self.window.icb_current_bids_table.rowCount(), 0)
 
-        # Accept mortgages
-        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id' : mortgage1.id})
-        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id' : mortgage2.id})
+        # Check if the property address is correct
+        self.assertEqual(self.window.icb_property_address_lineedit.text(), 'straat 11, 1111AA')
 
-        # Place loan offers
-        self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
-        self.payload_loan_offer['mortgage_id'] = mortgage1.id
-        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
+        # Check if the remaining amount is correct
+        self.assertEqual(self.window.icb_remaining_amount_lineedit.text(), '456')
 
-        self.payload_loan_offer['mortgage_id'] = mortgage2.id
-        self.payload_loan_offer['amount'] = 123456
-        loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
-
-        # Accept one of the loan offers
-        # self.window.api.accept_investment_offer(borrower2, {'investment_id' : loan_offer2.id})
-
-        # Check if there's only 2 investments in the table
-
-        self.window.cb_controller.setup_view(mortgage2.id)
-        self.assertEqual(self.window.icb_current_bids_table.rowCount(), 1)
-
-    def test_view_campaign_with_bids(self):
-        # Create the investor user
-        role_id = Role.INVESTOR.value
-        self.window.app.user.role_id = role_id
-        self.window.api.db.put(User._type, self.window.app.user.id, self.window.app.user)
-
-        # Create borrowers
-        borrower1, _, _ = self.window.api.create_user()
-        role_id = Role.BORROWER.value
-        borrower1.role_id = role_id
-        self.window.api.db.put(User._type, borrower1.id, borrower1)
-
-        borrower2, _, _ = self.window.api.create_user()
-        borrower2.role_id = role_id
-        self.window.api.db.put(User._type, borrower2.id, borrower2)
-
-        # Create loan requests
-        borrower1 = self.window.api.db.get(User._type, borrower1.id)
-        loan_request1 = self.window.api.create_loan_request(borrower1, self.payload_loan_request)
-
-        borrower2 = self.window.api.db.get(User._type, borrower2.id)
-        loan_request2 = self.window.api.create_loan_request(borrower2, self.payload_loan_request)
-
-        # Accept the loan requests
-        self.payload_mortgage['user_key'] = borrower1.id
-        self.payload_mortgage['request_id'] = loan_request1.id
-        self.payload_mortgage['house_id'] = self.payload_loan_request['house_id']
-        self.payload_mortgage['mortgage_type'] = self.payload_loan_request['mortgage_type']
-
-        accepted_loan_request1, mortgage1 = self.window.api.accept_loan_request(self.window.app.bank1,
-                                                                                self.payload_mortgage)
-
-        self.payload_mortgage['user_key'] = borrower2.id
-        self.payload_mortgage['request_id'] = loan_request2.id
-
-        accepted_loan_request2, mortgage2 = self.window.api.accept_loan_request(self.window.app.bank1,
-                                                                                self.payload_mortgage)
-
-        # Accept mortgages
-        self.window.api.accept_mortgage_offer(borrower1, {'mortgage_id' : mortgage1.id})
-        self.window.api.accept_mortgage_offer(borrower2, {'mortgage_id' : mortgage2.id})
-
-        # Place loan offers
-        self.payload_loan_offer['user_key'] = self.window.app.user.id # set user_key to the investor's public key
-        self.payload_loan_offer['mortgage_id'] = mortgage1.id
-        self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
-
-        self.payload_loan_offer['mortgage_id'] = mortgage2.id
-        self.payload_loan_offer['amount'] = 123456
-        loan_offer2 = self.window.api.place_loan_offer(self.window.app.user, self.payload_loan_offer)
-
-        # Accept one of the loan offers
-        self.window.api.accept_investment_offer(borrower2, {'investment_id' : loan_offer2.id})
-
-        # Check if there's only 2 investments in the table
-
-        self.window.cb_controller.setup_view(mortgage2.id)
-        self.assertEqual(self.window.icb_current_bids_table.rowCount(), 1)
-
-    def test_view_campaign_submit_empty_form(self):
+    def test_view_campaign_place_bid_empty(self):
         self.create_mortgage_campaign_and_bids()
         self.window.msg.about = MagicMock()
         QTest.mouseClick(self.window.icb_place_bid_pushbutton, Qt.LeftButton)
         self.window.msg.about.assert_called_with(self.window, 'Bid error',
                                                  "You didn't enter all of the required information.")
 
-    def test_view_campaign_place_bid(self):
+    def test_view_campaign_place_bid_filled(self):
         self.create_mortgage_campaign_and_bids()
         self.window.cb_controller.setup_view(self.payload_loan_offer['mortgage_id'])
         self.assertEqual(1, self.window.icb_current_bids_table.rowCount())
@@ -568,8 +486,6 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.icb_current_bids_table.item(1, 2).text(), '6.9')
         self.assertEqual(self.window.icb_current_bids_table.item(1, 3).text(), 'PENDING')
 
-
-
     def test_navigation_initial_visibility(self):
         navigation = NavigateUser(self.window)
         self.assertFalse(navigation.mainwindow.navigation_pushbutton_1.isVisible())
@@ -579,7 +495,6 @@ class GUITestSuite(unittest.TestCase):
 
     def test_navigation_switching(self):
         navigation = NavigateUser(self.window)
-        # self.window = Ui_MainWindow
 
         navigation.switch_to_bplr()
         self.assertEqual(self.window.bplr_page, self.window.stackedWidget.currentWidget())
