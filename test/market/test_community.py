@@ -1,3 +1,4 @@
+import datetime
 import unittest
 from twisted.python.threadable import registerAsIOThread
 
@@ -15,7 +16,7 @@ from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.models import DatabaseModel
 from market.models.house import House
-from market.models.loans import LoanRequest, Mortgage
+from market.models.loans import LoanRequest, Mortgage, Campaign
 from market.models.profiles import BorrowersProfile
 from market.models.user import User
 
@@ -40,7 +41,8 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Object creation and preperation
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
-        self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
+        self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary2"))
+        self.dispersy_investor = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary3"))
 
         # a neutral api to generate the intial id's for loan requests and such to skip
         # having to save the loan request to the (sending) user from each test as that
@@ -49,29 +51,38 @@ class CommunityTestSuite(unittest.TestCase):
 
         self.api = MarketAPI(MockDatabase(MemoryBackend()))
         self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api_investor = MarketAPI(MockDatabase(MemoryBackend()))
 
         self.api.db.backend.clear()
         self.api_bank.db.backend.clear()
+        self.api_investor.db.backend.clear()
 
         self.user, _, priv_user = self.api.create_user()
         self.bank, _, priv_bank = self.api.create_user()
+        self.investor, _, priv_investor = self.api.create_user()
 
-        # save the user to the bank api
+        # save the user to the bank and investor db
         self.user.post_or_put(self.api_bank.db)
         self.bank.post_or_put(self.api_bank.db)
+        self.investor.post_or_put(self.api_bank.db)
 
+        self.user.post_or_put(self.api_investor.db)
+        self.bank.post_or_put(self.api_investor.db)
+        self.investor.post_or_put(self.api_investor.db)
 
         self.dispersy._database.open()
         self.dispersy_bank._database.open()
+        self.dispersy_investor._database.open()
 
         self.master_member = DummyMember(self.dispersy, 1, "a" * 20)
 
         self.member = self.dispersy.get_member(private_key=priv_user.decode("HEX"))
         self.member_bank = self.dispersy.get_member(private_key=priv_bank.decode("HEX"))
+        self.member_investor = self.dispersy.get_member(private_key=priv_investor.decode("HEX"))
 
         self.community = MortgageMarketCommunity.init_community(self.dispersy, self.master_member, self.member)
         self.community_bank = MortgageMarketCommunity.init_community(self.dispersy_bank, self.master_member, self.member_bank)
-
+        self.community_investor = MortgageMarketCommunity.init_community(self.dispersy_investor, self.master_member, self.member_investor)
 
         self.community.api = self.api
         self.community.user = self.user
@@ -80,6 +91,10 @@ class CommunityTestSuite(unittest.TestCase):
         self.community_bank.api = self.api_bank
         self.community_bank.user = self.bank
         self.api.community = self.community_bank
+
+        self.community_investor.api = self.api_investor
+        self.community_investor.user = self.investor
+        self.api.community = self.community_investor
 
         # Add our conversion to the community.
         self.conversion = MortgageMarketConversion(self.community)
@@ -108,20 +123,24 @@ class CommunityTestSuite(unittest.TestCase):
         self.profile.post_or_put(self.neutral_api.db)
 
         self.mortgage = Mortgage(
-                                    request_id=self.loan_request.id,
-                                    house_id=self.house.id,
-                                    bank=self.bank.id,
-                                    amount=10000,
-                                    mortgage_type=1,
-                                    interest_rate=1.0,
-                                    max_invest_rate=2.0,
-                                    default_rate=3.0,
-                                    duration=60,
-                                    risk='A',
-                                    investors=[],
-                                    status=STATUS.PENDING
-                                )
+            request_id=self.loan_request.id,
+            house_id=self.house.id,
+            bank=self.bank.id,
+            amount=10000,
+            mortgage_type=1,
+            interest_rate=1.0,
+            max_invest_rate=2.0,
+            default_rate=3.0,
+            duration=60,
+            risk='A',
+            investors=[],
+            status=STATUS.PENDING
+        )
         self.mortgage.post_or_put(self.neutral_api.db)
+
+        self.campaign = Campaign(mortgage_id=self.mortgage.id, amount=self.mortgage.amount, end_date=datetime.datetime.now(),
+                                 completed=False)
+        self.campaign.post_or_put(self.neutral_api.db)
 
     def isModelInDB(self, api, model):
         return not api.db.get(model.type, model.id) is None
@@ -205,6 +224,7 @@ class CommunityTestSuite(unittest.TestCase):
         payload.models = {self.loan_request.type: self.loan_request,
                           self.mortgage.type: self.mortgage}
         self.loan_request.status[self.bank.id] = STATUS.ACCEPTED
+        self.mortgage.status = STATUS.ACCEPTED
 
         self.assertFalse(self.isModelInDB(self.api, self.loan_request))
         self.assertFalse(self.isModelInDB(self.api, self.mortgage))
@@ -218,14 +238,56 @@ class CommunityTestSuite(unittest.TestCase):
         # Check if the mortgage id is in the user
         self.user.update(self.api.db)
         self.assertIn(self.mortgage.id, self.user.mortgage_ids)
+        self.assertEqual(self.api.db.get(self.mortgage.type, self.mortgage.id).status, STATUS.ACCEPTED)
 
+    def test_on_mortgage_accept(self):
+        """
+        Test a user accepting a mortgage
 
+        user -> bank
+        user -> investor
+        """
+        payload = FakePayload()
+        payload.request = u"mortgage_offer"
+        payload.models = {self.loan_request.type: self.loan_request,
+                          self.mortgage.type: self.mortgage,
+                          self.user.type: self.user,
+                          self.campaign.type: self.campaign,
+                          }
+        self.loan_request.status[self.bank.id] = STATUS.ACCEPTED
+        self.mortgage.status = STATUS.ACCEPTED
+        self.user.campaign_ids.append(self.campaign.id)
+        self.user.mortgage_ids.append(self.mortgage.id)
+        self.user.loan_request_ids.append(self.loan_request.id)
+
+        self.community_bank.on_mortgage_accept_signed(payload)
+        self.community_investor.on_mortgage_accept_unsigned(payload)
+
+        # The bank now has the models.
+        self.assertTrue(self.isModelInDB(self.api_bank, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.campaign))
+        # The loan request isn't sent to the bank
+        self.assertFalse(self.isModelInDB(self.api_bank, self.loan_request))
+
+        # The investor has the models.
+        self.assertTrue(self.isModelInDB(self.api_investor, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.campaign))
+
+        # And knowledge of the campaign.
+        user_from_inv_db = self.api_investor.db.get(self.user.type, self.user.id)
+        self.assertIn(self.campaign.id, user_from_inv_db.campaign_ids)
+
+        # Check of the campaign has been added to the bank
+        self.bank.update(self.api_bank.db)
+        self.assertIn(self.campaign.id, self.bank.campaign_ids)
 
 
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
         self.dispersy._database.close()
         self.dispersy_bank._database.close()
+        self.dispersy_investor._database.close()
 
 
 class IncomingQueueTestCase(unittest.TestCase):
