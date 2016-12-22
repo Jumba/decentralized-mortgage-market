@@ -7,9 +7,8 @@ from market.community.encoding import encode
 from market.dispersy.database import Database
 from market.models import DatabaseModel
 
-DATABASE_DIRECTORY = path.join(u"sqlite")
 # Path to the database location + dispersy._workingdirectory
-DATABASE_PATH = path.join(DATABASE_DIRECTORY, u"multichain.db")
+DATABASE_PATH = u"multichain.db"
 # Version to keep track if the db schema needs to be updated.
 LATEST_DB_VERSION = 1
 # Schema for the MultiChain DB.
@@ -43,17 +42,14 @@ class MultiChainDB(Database):
     Ensures a proper DB schema on startup.
     """
 
-    def __init__(self, working_directory, database_name):
+    def __init__(self, working_directory, database_name=DATABASE_PATH):
         """
         Sets up the persistence layer ready for use.
         :param working_directory: Path to the working directory
         that will contain the the db at working directory/DATABASE_PATH
         :return:
         """
-        print path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s' % database_name)
-
-        super(MultiChainDB, self).__init__(path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s.db' % database_name))
-
+        super(MultiChainDB, self).__init__(path.join(working_directory, database_name))
         self.open()
 
     def add_block(self, block):

@@ -27,7 +27,7 @@ class CustomAssertions(object):
 
 class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
     def setUp(self):
-        self.db = MultiChainDB('.', 'test-db')
+        self.db = MultiChainDB('.', u'test.db')
 
     def test_from_signed_confirm_message(self):
         """
