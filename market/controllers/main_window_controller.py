@@ -7,7 +7,6 @@ from market.controllers.investors_portfolio_controller import InvestorsPortfolio
 from market.controllers.pending_loan_requests_1_controller import PendingLoanRequests1Controller
 from market.controllers.pending_loan_requests_2_controller import PendingLoanRequests2Controller
 from navigation import NavigateUser
-from login_controller import LoginController
 from profile_controller import ProfileController
 from borrowers_portfolio_controller import BorrowersPortfolioController
 from openmarket_controller import OpenMarketController
@@ -35,7 +34,6 @@ class MainWindowController(QMainWindow):
         self.bp_controller = BorrowersPortfolioController(self)
         self.cb_controller = CampaignBidsController(self)
         self.ip_controller = InvestorsPortfolioController(self)
-        self.login_controller = LoginController(self)
         self.openmarket_controller = OpenMarketController(self)
         self.icb_controller = CampaignBidsController(self)
         self.fiplr1_controller = PendingLoanRequests1Controller(self)
