@@ -15,8 +15,8 @@ LATEST_DB_VERSION = 1
 # Schema for the MultiChain DB.
 schema = u"""
 CREATE TABLE IF NOT EXISTS multi_chain(
- public_key_benefactor		  TEXT NOT NULL,
- public_key_beneficiary		  TEXT NOT NULL,
+ benefactor		              TEXT NOT NULL,
+ beneficiary		          TEXT NOT NULL,
 
  agreement_benefactor         TEXT NOT NULL,
  agreement_beneficiary        TEXT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS multi_chain(
  signature_benefactor		  TEXT NOT NULL,
  signature_beneficiary		  TEXT NOT NULL,
 
- insert_time                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+ time                         TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
  hash_block                   TEXT NOT NULL
  );
 
@@ -61,18 +61,18 @@ class MultiChainDB(Database):
         Persist a block
         :param block: The data that will be saved.
         """
-        data = (buffer(block.public_key_benefactor), buffer(block.public_key_beneficiary),
+        data = (buffer(block.benefactor), buffer(block.beneficiary),
                 buffer(block.agreement_benefactor), buffer(block.agreement_beneficiary),
                 block.sequence_number_benefactor, block.sequence_number_beneficiary,
                 buffer(block.previous_hash_benefactor), buffer(block.previous_hash_beneficiary),
                 buffer(block.signature_benefactor), buffer(block.signature_beneficiary),
-                block.insert_time, buffer(block.hash_block))
+                block.time, buffer(block.hash_block))
 
         self.execute(
-            u"INSERT INTO multi_chain (public_key_benefactor, public_key_beneficiary, "
+            u"INSERT INTO multi_chain (benefactor, beneficiary, "
             u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, "
             u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, "
-            u"insert_time, hash_block) "
+            u"time, hash_block) "
             u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             data)
         self.commit()
@@ -105,10 +105,10 @@ class MultiChainDB(Database):
         public_key = buffer(public_key)
         db_query = u"SELECT block_hash, MAX(sequence_number) FROM (" \
                    u"SELECT hash_block AS block_hash, sequence_number_benefactor AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_benefactor = ? " \
+                   u"FROM multi_chain WHERE benefactor = ? " \
                    u"UNION " \
                    u"SELECT hash_block AS block_hash, sequence_number_beneficiary AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_beneficiary = ?)"
+                   u"FROM multi_chain WHERE beneficiary = ?)"
 
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
 
@@ -121,10 +121,10 @@ class MultiChainDB(Database):
         :param hash: The hash of the block that needs to be retrieved.
         :return: The block that was requested or None
         """
-        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, " \
+        db_query = u"SELECT benefactor, beneficiary, " \
                    u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, " \
                    u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
-                   u"insert_time, hash_block " \
+                   u"time, hash_block " \
                    u"FROM `multi_chain` WHERE hash_block = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash),)).fetchone()
         # Create a DB Block or return None
@@ -137,17 +137,17 @@ class MultiChainDB(Database):
         :param public_key: The public key corresponding to the block
         :param sequence_number: The sequence number corresponding to the block.
         :return: The block that was requested or None"""
-        db_query = u"SELECT public_key_benefactor, public_key_beneficiary, hash_block, " \
+        db_query = u"SELECT benefactor, beneficiary, hash_block, " \
                    u"agreement_benefactor, sequence_number_benefactor, previous_hash_benefactor, " \
                    u"signature_benefactor, " \
                    u"agreement_beneficiary, sequence_number_beneficiary, previous_hash_beneficiary, " \
-                   u"signature_beneficiary, insert_time " \
+                   u"signature_beneficiary, time " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_benefactor AS sequence_number, " \
-                   u"public_key_benefactor AS pk FROM `multi_chain` " \
+                   u"benefactor AS pk FROM `multi_chain` " \
                    u"UNION " \
                    u"SELECT *, sequence_number_beneficiary AS sequence_number," \
-                   u"public_key_beneficiary AS pk FROM `multi_chain`) " \
+                   u"beneficiary AS pk FROM `multi_chain`) " \
                    u"WHERE sequence_number = ? AND pk = ? LIMIT 1"
         db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchone()
         # Create a DB Block or return None
@@ -174,9 +174,9 @@ class MultiChainDB(Database):
         public_key = buffer(public_key)
         db_query = u"SELECT MAX(sequence_number) FROM (" \
                    u"SELECT sequence_number_benefactor AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_benefactor == ? UNION " \
+                   u"FROM multi_chain WHERE benefactor == ? UNION " \
                    u"SELECT sequence_number_beneficiary AS sequence_number " \
-                   u"FROM multi_chain WHERE public_key_beneficiary = ? )"
+                   u"FROM multi_chain WHERE beneficiary = ? )"
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
         return db_result if db_result is not None else -1
 
@@ -209,8 +209,8 @@ class DatabaseBlock:
 
     def __init__(self, data):
         """ Create a block from data """
-        self.public_key_benefactor = str(data[0])
-        self.public_key_beneficiary = str(data[1])
+        self.benefactor = str(data[0])
+        self.beneficiary = str(data[1])
         self.agreement_benefactor = str(data[2])
         self.agreement_beneficiary = str(data[3])
         self.sequence_number_benefactor = data[4]
@@ -220,15 +220,15 @@ class DatabaseBlock:
         self.signature_benefactor = str(data[8])
         self.signature_beneficiary = str(data[9])
 
-        self.insert_time = data[10]
+        self.time = data[10]
 
         self.hash_block = sha256(self.hash()).hexdigest()
 
     def hash(self):
         packet = encode(
             (
-                self.public_key_benefactor,
-                self.public_key_beneficiary,
+                self.benefactor,
+                self.beneficiary,
                 self.agreement_benefactor,
                 self.agreement_beneficiary,
                 self.sequence_number_benefactor,
@@ -237,7 +237,7 @@ class DatabaseBlock:
                 self.previous_hash_beneficiary,
                 self.signature_benefactor,
                 self.signature_beneficiary,
-                self.insert_time,
+                self.time,
             )
         )
         return packet
