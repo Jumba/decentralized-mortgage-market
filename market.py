@@ -7,7 +7,7 @@ from twisted.internet import reactor
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMessageBox, QApplication
 
-from market.controllers.main_view_controller import MainWindowController
+from market.controllers.main_window_controller import MainWindowController
 from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneInvestor, \
     MarketAppSceneBankMONEYOU, MarketAppSceneBankRABO
 

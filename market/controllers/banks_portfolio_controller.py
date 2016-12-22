@@ -2,11 +2,18 @@ from PyQt5 import QtWidgets
 
 
 class BanksPortfolioController:
+    """
+    Create a BanksPortfolioController object that performs tasks on the Bank's Portfolio section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.mortgages_table = self.mainwindow.fip_campaigns_table
 
     def setup_view(self):
+        """
+        Update the table of the view with up-to-date data.
+        """
         # Clear table
         self.mortgages_table.setRowCount(0)
 
@@ -20,7 +27,6 @@ class BanksPortfolioController:
                 # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
                 address = house.address + ' ' + house.house_number + ', ' + house.postal_code
 
-                campaign_status = ''
                 if campaign.completed:
                     campaign_status = 'Completed'
                 else:

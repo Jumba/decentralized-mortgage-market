@@ -1,11 +1,13 @@
-from PyQt5.QtWidgets import *
-
 from market.models.loans import Mortgage, Investment
 
 
 class BorrowersPortfolioController:
+    """
+    Create a BorrowersPortfolioController object that performs tasks on the Borrower's Portfolio section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
-        self.mainwindow = mainwindow  # Uncomment before running
+        self.mainwindow = mainwindow
         self.accepted_loans = None
         self.pending_loans = None
         self.accepted_table = self.mainwindow.bp_ongoing_loans_table
@@ -14,6 +16,9 @@ class BorrowersPortfolioController:
         self.mainwindow.bp_reject_pushbutton.clicked.connect(self.reject_offer)
 
     def setup_view(self):
+        """
+        Setup the portfolio screen with up-to-date data.
+        """
         self.accepted_table.setRowCount(0)
         self.pending_table.setRowCount(0)
         self.accepted_loans = self.mainwindow.api.load_borrowers_loans(self.mainwindow.app.user)
@@ -36,6 +41,12 @@ class BorrowersPortfolioController:
                                                                 ' ', offer.duration, offer.type])
 
     def accept_offer(self):
+        """
+        Accept a loan offer or investment.
+
+        Shows a "Offer accepted" alert if accepting the offer was successful.
+        Shows a "Select offer" alert if the user has not selected any offers from the table.
+        """
         try:
             selected_row = self.pending_table.selectedIndexes()[0].row()
             offer = self.pending_loans[selected_row]
@@ -52,6 +63,12 @@ class BorrowersPortfolioController:
             self.mainwindow.show_dialog("Select offer", 'No offers have been selected.')
 
     def reject_offer(self):
+        """
+        Reject a loan offer or investment.
+
+        Shows a "Offer rejected" alert if rejecting the offer was successful.
+        Shows a "Select offer" alert if the user has not selected any offers from the table.
+        """
         try:
             selected_row = self.pending_table.selectedIndexes()[0].row()
             offer = self.pending_loans[selected_row]

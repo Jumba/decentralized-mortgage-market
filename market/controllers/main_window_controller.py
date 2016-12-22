@@ -15,6 +15,16 @@ from place_loan_request_controller import PlaceLoanRequestController
 
 
 class MainWindowController(QMainWindow):
+    """
+
+        Create a MainWindowController. Extends QMainWindow from the PyQt5 library.
+
+        Takes a MarketApplication and the location of the ui file as parameters during construction.
+
+        Used for hooking up the controllers to the view that is generated during runtime.
+
+    """
+
     def __init__(self, parent=None, app=None, ui_location='ui/mainwindow.ui'):
         super(MainWindowController, self).__init__(parent)
         self.app = app
@@ -37,6 +47,10 @@ class MainWindowController(QMainWindow):
         self.setup_view()
 
     def setup_view(self):
+        """
+            Calls the right user's navigation bar and redirects to the user's starting page.
+
+        """
         # If user is a bank, show the bank's portfolio. Otherwise show profile
         if self.app.user.role_id == 3:
             self.navigation.switch_to_banks_portfolio()
@@ -52,10 +66,29 @@ class MainWindowController(QMainWindow):
 
     # @staticmethod
     def insert_row(self, table, row):
+        """
+
+            General method used by the controllers to insert rows with data into tables.
+
+            :param table: QTableWidget object used for insertion
+            :param row: A list of items that need to be inserted into the given table
+
+        """
         rowcount = table.rowCount()  # necessary even when there are no rows in the table
         table.insertRow(rowcount)
         for i in range(0, len(row)):
             table.setItem(rowcount, i, QTableWidgetItem(str(row[i])))
 
     def show_dialog(self, title, message):
+        """
+
+            Shows a QMessageBox alert with the given title and message.
+
+            The window has only an 'ok'-button
+            The pop-up closes when this button is pressed.
+
+            :param title: Title of the window as string
+            :param message: Message that will be displayed inside the alert.
+
+        """
         self.msg.about(self, title, message)
