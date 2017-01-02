@@ -346,14 +346,15 @@ class APITestSuite(unittest.TestCase):
         self.assertIsInstance(current_investment, list)
         self.assertIsInstance(pending_investment, list)
         # Check if the elements of the lists are Investment-objects
-        for investment in current_investment:
+        for investment, profile in current_investment:
             self.assertIsInstance(investment, Investment)
+            self.assertIsInstance(profile, BorrowersProfile)
         for investment in pending_investment:
             self.assertIsInstance(investment, Investment)
 
         # Check if the Investment-objects are saved in the correct list
         self.assertIn(loan_offer1, pending_investment)
-        self.assertIn(loan_offer2, current_investment)
+        self.assertIn(loan_offer2, current_investment[0])
         self.assertIn(loan_offer3, pending_investment)
 
     def test_load_borrowers_offers_mortgage_pending(self):
@@ -529,11 +530,11 @@ class APITestSuite(unittest.TestCase):
         loans = self.api.load_borrowers_loans(updated_borrower)
 
         # Check if the loans are in the list
-        self.assertIn(mortgage, loans)
-        self.assertIn(investment1, loans)
-        self.assertIn(investment2, loans)
+        self.assertIn(mortgage, loans[0])
+        self.assertIn(investment1, loans[1])
+        self.assertIn(investment2, loans[2])
         # Check that the rejected offer is not in the list
-        self.assertNotIn(investment3, loans)
+        self.assertEqual(len(loans), 3)
 
     def test_get_role_borrower(self):
         """

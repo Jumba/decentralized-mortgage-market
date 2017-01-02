@@ -274,10 +274,10 @@ class MarketAPI(object):
             investment = self.db.get(Investment._type, investment_id)
             assert isinstance(investment, Investment)
             if investment.status == STATUS.ACCEPTED:
-                mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
-                loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
-                borrower = self.db.get(User.type, loan_request.user_key)
-                borrowers_profile = self.db.get(BorrowersProfile.type, borrower.profile_id)
+                mortgage = self.db.get(Mortgage._type, investment.mortgage_id)
+                loan_request = self.db.get(LoanRequest._type, mortgage.request_id)
+                borrower = self.db.get(User._type, loan_request.user_key)
+                borrowers_profile = self.db.get(BorrowersProfile._type, borrower.profile_id)
                 current_investments.append([investment, borrowers_profile])
             elif investment.status == STATUS.PENDING:
                 pending_investments.append(investment)
@@ -401,7 +401,8 @@ class MarketAPI(object):
         """
         Get the borrower's current active loans (funding goal has been reached) or the not yet active loans (funding goal has not been reached yet)
         :param user: User-object, in this case the user has the role of a borrower
-        :return: list of the loans, containing either the current active loans or the not yet active loans
+        :return: list of the loans, containing either the current active loans or the not yet active loans,
+        and the investor's profile
         """
         user = self._get_user(user)
         loans = []
@@ -409,7 +410,7 @@ class MarketAPI(object):
             if self.db.get(Mortgage._type, mortgage_id).status == STATUS.ACCEPTED:
                 mortgage = self.db.get(Mortgage._type, mortgage_id)
                 # Add the accepted mortgage in the loans list
-                loans.append(mortgage)
+                loans.append([mortgage, None])  # TODO (How) do we show the bank's iban?
                 campaign = self.db.get(Campaign._type, user.campaign_ids[0])
                 for investor_id in mortgage.investors:
                     investor = self.db.get(User._type, investor_id)
@@ -417,7 +418,8 @@ class MarketAPI(object):
                         investment = self.db.get(Investment._type, investment_id)
                         # Add the loan to the loans list if the investment has been accepted by the borrower and the mortgage id's match
                         if investment.status == STATUS.ACCEPTED and investment.mortgage_id == mortgage_id:
-                            loans.append(investment)
+                            investors_profile = self.db.get(Profile.type, investor.profile_id)
+                            loans.append([investment, investors_profile])
 
         return loans
 
