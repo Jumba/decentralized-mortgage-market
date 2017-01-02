@@ -343,12 +343,15 @@ class MortgageMarketCommunity(Community):
     def on_investment_accept(self, payload):
         user = payload.models[User._type]
         investment = payload.models[Investment._type]
+        profile = payload.models[BorrowersProfile.type]
 
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
+        assert isinstance(profile, BorrowersProfile)
 
         user.post_or_put(self.api.db)
         investment.post_or_put(self.api.db)
+        profile.post_or_put(self.api.db)
 
         return True
 

@@ -571,7 +571,10 @@ class MarketAPI(object):
 
             # Add message to queue
             investor = self.db.get(User._type, investment.investor_key)
-            self.outgoing_queue.push((u"investment_accept", [Investment._type, User._type], {Investment._type: investment, User._type: user}, [investor]))
+            borrowers_profile = self.db.get(User.type, user.profile_id)
+            self.outgoing_queue.push((u"investment_accept", [Investment._type, User._type, BorrowersProfile.type],
+                                      {Investment._type: investment, User._type: user, BorrowersProfile.type:
+                                          borrowers_profile}, [investor]))
 
             return self.db.put(Campaign._type, campaign.id, campaign)
         return False
