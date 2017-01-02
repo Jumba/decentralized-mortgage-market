@@ -239,7 +239,8 @@ class MarketAPI(object):
 
             # Add message to queue
             borrower = self.db.get(User._type, borrower.id)
-            self.outgoing_queue.push((u"investment_offer", [Investment._type, User._type], {Investment._type: investment, User._type: investor}, [borrower]))
+            investors_profile = self.db.get(Profile.type, investor.profile_id)
+            self.outgoing_queue.push((u"investment_offer", [Investment._type, User._type, Profile.type], {Investment._type: investment, User._type: investor, Profile.type: investors_profile}, [borrower]))
 
             return investment
         else:
@@ -261,7 +262,8 @@ class MarketAPI(object):
 
         :param user: The user whose investments need to be retrieved.
         :type user: :any:`User`
-        :return: A tuple containing the list of current and pending investments
+        :return: A tuple containing the list of current investments and the borrower's portfolio, and the list of
+        pending investments
         :rtype: tuple(CurrentInvestments, PendingInvestments)
         """
         user = self._get_user(user)
@@ -272,7 +274,11 @@ class MarketAPI(object):
             investment = self.db.get(Investment._type, investment_id)
             assert isinstance(investment, Investment)
             if investment.status == STATUS.ACCEPTED:
-                current_investments.append(investment)
+                mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
+                loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
+                borrower = self.db.get(User.type, loan_request.user_key)
+                borrowers_profile = self.db.get(BorrowersProfile.type, borrower.profile_id)
+                current_investments.append([investment, borrowers_profile])
             elif investment.status == STATUS.PENDING:
                 pending_investments.append(investment)
             else:

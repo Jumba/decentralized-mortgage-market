@@ -14,7 +14,7 @@ from market.api.api import STATUS
 from market.models import DatabaseModel
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
-from market.models.profiles import BorrowersProfile
+from market.models.profiles import BorrowersProfile, Profile
 from market.models.user import User
 from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
 
@@ -323,12 +323,15 @@ class MortgageMarketCommunity(Community):
     def on_investment_offer(self, payload):
         user = payload.models[User._type]
         investment = payload.models[Investment._type]
+        profile = payload.models[Profile.type]
 
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
+        assert isinstance(profile, Profile)
 
         user.post_or_put(self.api.db)
         investment.post_or_put(self.api.db)
+        profile.post_or_put(self.api.db)
 
         # Save the investment to the borrower
         self.user.update(self.api.db)
