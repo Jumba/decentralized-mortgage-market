@@ -849,7 +849,7 @@ class MarketAPI(object):
 
             :param user: The bank :any:`User`
             :type user: :any:`User`
-            :return: A list of the :any: 'Mortgage's if there are any, False otherwise.
+            :return: A list of the :any: 'Mortgage's and the borrower's profile if there are any, False otherwise.
             :rtype: list or False
         """
         assert isinstance(user, User)
@@ -863,7 +863,10 @@ class MarketAPI(object):
                 mortgage = self.db.get(Mortgage._type, mortgage_id)
                 assert isinstance(mortgage, Mortgage)
                 if mortgage.status == STATUS.ACCEPTED:
-                    mortgages.append(mortgage)
+                    loan_request = self.db.get(LoanRequest._type, mortgage.request_id)
+                    borrower = self.db.get(User._type, loan_request.user_key)
+                    borrowers_profile = self.db.get(BorrowersProfile._type, borrower.profile_id)
+                    mortgages.append([mortgage, borrowers_profile])
 
             return mortgages
         else:
