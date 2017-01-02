@@ -58,6 +58,26 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
                                     'prev-hash-benefactor-urc89utqhokp9', 'prev-hash-beneficiary-98eud284r',
                                     'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr', 600)
 
+        self.payload_request_latest_hash_two_blocks1 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
+                                                   self.investment1, None,
+                                                   5, 0, 'prev-hash-benefactor-urc89utf924f0fj', '', '', '', 400)
+        self.payload_response_latest_hash_two_blocks1 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
+                                                    self.investment1, self.investment1, 5, 4,
+                                                    'prev-hash-benefactor-urc89utf924f0fj',
+                                                    'prev-hash-beneficiary-98eud284r9e0',
+                                                    'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr',
+                                                    400)
+
+        self.payload_request_latest_hash_two_blocks2 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
+                                                   self.investment1, None,
+                                                   8, 0, 'prev-hash-benefactor-93rudf9e8wjf', '', '', '', 900)
+        self.payload_response_latest_hash_two_blocks2 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
+                                                    self.investment1, self.investment1, 8, 7,
+                                                    'prev-hash-benefactor-93rudf9e8wjf',
+                                                    'prev-hash-beneficiary-jcse09i3rgh',
+                                                    'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr',
+                                                    900)
+
         self.payload_request_latest_sequence_number = Payload('benefactor-key-i298w4y483xrw', 'beneficiary-key-d893dyt4rei920',
                                                    self.mortgage1, None,
                                                    8, 0, 'prev-hash-benefactor-urc89utqhokp9', '', '', '', 500)
@@ -130,6 +150,11 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertNotEqual(block1.hash_block, block2.hash_block)
         self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
         self.assertEqual(latest_hash_benefactor, block2.hash_block)
+       # print "latest_hash_benefactor = " + str(latest_hash_benefactor)
+       # print "block2.hash_block = " + str(block2.hash_block)
+       # print "latest_hash_beneficiary = " + str(latest_hash_beneficiary)
+       # print "block1.hash_block = "+ str(block1.hash_block)
+
         self.assertEqual(latest_hash_beneficiary, block2.hash_block)
         self.assertNotEqual(latest_hash_benefactor, block1.hash_block)
         self.assertNotEqual(latest_hash_beneficiary, block1.hash_block)
@@ -191,6 +216,52 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertEqual(latest_hash_benefactor, latest_block_benefactor.hash_block)
         self.assertEqual(latest_hash_beneficiary, latest_block_beneficiary.hash_block)
         self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
+        self.assertEqual(block_beneficiary.hash_block, latest_hash_benefactor)
+        self.assertEqual(block_beneficiary.hash_block, latest_hash_beneficiary)
+
+    def test_get_latest_hash_two_blocks(self):
+        """
+        This test checks the functionality of getting the latest hash of a user when two blocks are added.
+        """
+
+        # Add the first block
+        message_request1 = Message(self.payload_request_latest_hash_two_blocks1)
+        message_response1 = Message(self.payload_response_latest_hash_two_blocks1)
+        # Add the block with only the information from benefactor to the blockchain
+        block_benefactor1 = DatabaseBlock.from_signed_confirm_message(message_request1)
+        self.db.add_block(block_benefactor1)
+        # Update the block with the information from the beneficiary
+        block_beneficiary1 = DatabaseBlock.from_signed_confirm_message(message_response1)
+        self.db.update_block_with_beneficiary(block_beneficiary1)
+
+        # Add the second block
+        message_request2 = Message(self.payload_request_latest_hash_two_blocks2)
+        message_response2 = Message(self.payload_response_latest_hash_two_blocks2)
+
+        # Add the block with only the information from benefactor to the blockchain
+        block_benefactor2 = DatabaseBlock.from_signed_confirm_message(message_request2)
+        self.db.add_block(block_benefactor2)
+        # Update the block with the information from the beneficiary
+        block_beneficiary2 = DatabaseBlock.from_signed_confirm_message(message_response2)
+        self.db.update_block_with_beneficiary(block_beneficiary2)
+
+        # Get the latest block added
+        latest_block_benefactor = self.db.get_by_public_key_and_sequence_number(message_request2.payload.benefactor,
+                                                                                block_benefactor2.sequence_number_benefactor)
+        latest_block_beneficiary = self.db.get_by_public_key_and_sequence_number(message_request2.payload.beneficiary,
+                                                                                 block_beneficiary2.sequence_number_beneficiary)
+
+        # Get the latest hash
+        latest_hash_benefactor = self.db.get_latest_hash(message_request2.payload.benefactor)
+        latest_hash_beneficiary = self.db.get_latest_hash(message_request2.payload.beneficiary)
+
+        # Check whether the hash is the right one
+        self.assertEqual(latest_hash_benefactor, latest_block_benefactor.hash_block)
+        self.assertEqual(latest_hash_beneficiary, latest_block_beneficiary.hash_block)
+        self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
+        self.assertEqual(block_beneficiary2.hash_block, latest_hash_benefactor)
+        self.assertEqual(block_beneficiary2.hash_block, latest_hash_beneficiary)
+
 
     def test_get_latest_hash_nonexistent(self):
         """
