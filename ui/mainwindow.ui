@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -39,7 +39,7 @@
         <x>360</x>
         <y>130</y>
         <width>91</width>
-        <height>41</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -167,7 +167,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>420</y>
+        <y>430</y>
         <width>181</width>
         <height>17</height>
        </rect>
@@ -179,8 +179,8 @@
      <widget class="QLabel" name="profile_lastname_label">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>120</y>
+        <x>280</x>
+        <y>130</y>
         <width>211</width>
         <height>17</height>
        </rect>
@@ -195,8 +195,8 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>320</y>
+        <x>280</x>
+        <y>330</y>
         <width>191</width>
         <height>27</height>
        </rect>
@@ -206,7 +206,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>120</y>
+        <y>130</y>
         <width>131</width>
         <height>17</height>
        </rect>
@@ -218,8 +218,8 @@
      <widget class="QLineEdit" name="profile_lastname_lineedit">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>140</y>
+        <x>280</x>
+        <y>150</y>
         <width>191</width>
         <height>27</height>
        </rect>
@@ -229,7 +229,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>240</y>
+        <y>250</y>
         <width>141</width>
         <height>17</height>
        </rect>
@@ -242,7 +242,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>360</y>
+        <y>370</y>
         <width>57</width>
         <height>17</height>
        </rect>
@@ -255,7 +255,7 @@
       <property name="geometry">
        <rect>
         <x>110</x>
-        <y>90</y>
+        <y>100</y>
         <width>104</width>
         <height>22</height>
        </rect>
@@ -271,7 +271,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>320</y>
+        <y>330</y>
         <width>191</width>
         <height>27</height>
        </rect>
@@ -281,30 +281,17 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>200</y>
+        <y>210</y>
         <width>191</width>
         <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QListWidget" name="profile_documents_list">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>440</y>
-        <width>401</width>
-        <height>131</height>
        </rect>
       </property>
      </widget>
      <widget class="QPushButton" name="profile_save_pushbutton">
       <property name="geometry">
        <rect>
-        <x>340</x>
-        <y>580</y>
+        <x>350</x>
+        <y>590</y>
         <width>121</width>
         <height>27</height>
        </rect>
@@ -317,7 +304,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>300</y>
+        <y>310</y>
         <width>141</width>
         <height>17</height>
        </rect>
@@ -329,8 +316,8 @@
      <widget class="QLineEdit" name="profile_housenumber_lineedit">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>200</y>
+        <x>280</x>
+        <y>210</y>
         <width>191</width>
         <height>27</height>
        </rect>
@@ -343,8 +330,8 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>260</y>
-        <width>401</width>
+        <y>270</y>
+        <width>411</width>
         <height>31</height>
        </rect>
       </property>
@@ -352,8 +339,8 @@
      <widget class="QLabel" name="profile_housenumber_label">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>180</y>
+        <x>280</x>
+        <y>190</y>
         <width>171</width>
         <height>17</height>
        </rect>
@@ -366,7 +353,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>90</y>
+        <y>100</y>
         <width>57</width>
         <height>21</height>
        </rect>
@@ -379,7 +366,7 @@
       <property name="geometry">
        <rect>
         <x>220</x>
-        <y>90</y>
+        <y>100</y>
         <width>104</width>
         <height>22</height>
        </rect>
@@ -397,7 +384,7 @@
         <x>60</x>
         <y>60</y>
         <width>191</width>
-        <height>21</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -415,7 +402,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>140</y>
+        <y>150</y>
         <width>191</width>
         <height>27</height>
        </rect>
@@ -424,8 +411,8 @@
      <widget class="QLabel" name="profile_phonenumber_label">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>300</y>
+        <x>280</x>
+        <y>310</y>
         <width>141</width>
         <height>17</height>
        </rect>
@@ -438,7 +425,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>180</y>
+        <y>190</y>
         <width>141</width>
         <height>17</height>
        </rect>
@@ -451,19 +438,97 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>380</y>
-        <width>401</width>
+        <y>390</y>
+        <width>411</width>
         <height>27</height>
        </rect>
       </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>450</y>
+        <width>411</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="showGrid">
+       <bool>false</bool>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::DotLine</enum>
+      </property>
+      <property name="cornerButtonEnabled">
+       <bool>false</bool>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>150</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Document Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Uploaded File</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string/>
+       </property>
+      </column>
+      <item row="0" column="0">
+       <property name="text">
+        <string>Example Document 1</string>
+       </property>
+      </item>
+      <item row="0" column="2">
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+      <item row="1" column="0">
+       <property name="text">
+        <string>Example Document 2</string>
+       </property>
+      </item>
+      <item row="2" column="0">
+       <property name="text">
+        <string>Example Document 3</string>
+       </property>
+      </item>
      </widget>
     </widget>
     <widget class="QWidget" name="bplr_page">
      <widget class="QLabel" name="bplr_property_information_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>60</y>
+        <x>60</x>
+        <y>99</y>
         <width>181</width>
         <height>18</height>
        </rect>
@@ -482,8 +547,8 @@
      <widget class="QPushButton" name="bplr_submit_pushbutton">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>600</y>
+        <x>389</x>
+        <y>639</y>
         <width>138</width>
         <height>26</height>
        </rect>
@@ -495,8 +560,8 @@
      <widget class="QLabel" name="bplr_house_price_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>210</y>
+        <x>60</x>
+        <y>249</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -513,8 +578,8 @@
      <widget class="QTextEdit" name="bplr_description_textedit">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>510</y>
+        <x>60</x>
+        <y>549</y>
         <width>465</width>
         <height>81</height>
        </rect>
@@ -523,8 +588,8 @@
      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>390</y>
+        <x>60</x>
+        <y>429</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -536,8 +601,8 @@
      <widget class="QLabel" name="bplr_amount_wanted_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>367</y>
+        <x>60</x>
+        <y>406</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -554,8 +619,8 @@
      <widget class="QLabel" name="bplr_property_seller_information_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>270</y>
+        <x>60</x>
+        <y>309</y>
         <width>201</width>
         <height>18</height>
        </rect>
@@ -574,8 +639,8 @@
      <widget class="QLabel" name="bplr_seller_email_label">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>290</y>
+        <x>327</x>
+        <y>329</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -587,8 +652,8 @@
      <widget class="QLineEdit" name="bplr_housenumber_lineedit">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>170</y>
+        <x>327</x>
+        <y>209</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -600,8 +665,8 @@
      <widget class="QLabel" name="bplr_preferred_banks_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>430</y>
+        <x>60</x>
+        <y>469</y>
         <width>111</width>
         <height>17</height>
        </rect>
@@ -613,8 +678,8 @@
      <widget class="QLabel" name="bplr_housenumber_label">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>150</y>
+        <x>327</x>
+        <y>189</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -631,8 +696,8 @@
      <widget class="QLabel" name="bplr_description_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>487</y>
+        <x>60</x>
+        <y>526</y>
         <width>431</width>
         <height>17</height>
        </rect>
@@ -651,9 +716,9 @@
      <widget class="QLineEdit" name="bplr_address_lineedit">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>110</y>
-        <width>471</width>
+        <x>60</x>
+        <y>149</y>
+        <width>466</width>
         <height>27</height>
        </rect>
       </property>
@@ -661,8 +726,8 @@
      <widget class="QLabel" name="bplr_mortgage_information_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>347</y>
+        <x>60</x>
+        <y>386</y>
         <width>147</width>
         <height>18</height>
        </rect>
@@ -681,10 +746,10 @@
      <widget class="QLabel" name="bplr_title_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>21</y>
+        <x>60</x>
+        <y>60</y>
         <width>291</width>
-        <height>37</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -701,8 +766,8 @@
      <widget class="QLineEdit" name="bplr_house_price_lineedit">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>230</y>
+        <x>60</x>
+        <y>269</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -714,8 +779,8 @@
      <widget class="QLabel" name="bplr_seller_phone_number_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>290</y>
+        <x>60</x>
+        <y>329</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -727,8 +792,8 @@
      <widget class="QLineEdit" name="bplr_postcode_lineedit">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>170</y>
+        <x>60</x>
+        <y>209</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -740,8 +805,8 @@
      <widget class="QLabel" name="bplr_house_link_label">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>210</y>
+        <x>327</x>
+        <y>249</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -758,8 +823,8 @@
      <widget class="QLineEdit" name="bplr_seller_phone_number_lineedit">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>310</y>
+        <x>60</x>
+        <y>349</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -771,8 +836,8 @@
      <widget class="QLineEdit" name="bplr_seller_email_lineedit">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>310</y>
+        <x>327</x>
+        <y>349</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -784,8 +849,8 @@
      <widget class="QLabel" name="bplr_address_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>88</y>
+        <x>60</x>
+        <y>127</y>
         <width>81</width>
         <height>17</height>
        </rect>
@@ -802,8 +867,8 @@
      <widget class="QLabel" name="bplr_mortgage_type_label">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>367</y>
+        <x>327</x>
+        <y>406</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -820,8 +885,8 @@
      <widget class="QLineEdit" name="bplr_house_link_lineedit">
       <property name="geometry">
        <rect>
-        <x>338</x>
-        <y>230</y>
+        <x>327</x>
+        <y>269</y>
         <width>200</width>
         <height>27</height>
        </rect>
@@ -830,8 +895,8 @@
      <widget class="QLabel" name="bplr_postcode_label">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>150</y>
+        <x>60</x>
+        <y>189</y>
         <width>200</width>
         <height>17</height>
        </rect>
@@ -848,8 +913,8 @@
      <widget class="QCheckBox" name="bplr_bank2_checkbox">
       <property name="geometry">
        <rect>
-        <x>171</x>
-        <y>450</y>
+        <x>160</x>
+        <y>489</y>
         <width>100</width>
         <height>22</height>
        </rect>
@@ -864,8 +929,8 @@
      <widget class="QCheckBox" name="bplr_bank1_checkbox">
       <property name="geometry">
        <rect>
-        <x>71</x>
-        <y>450</y>
+        <x>60</x>
+        <y>489</y>
         <width>100</width>
         <height>22</height>
        </rect>
@@ -877,8 +942,8 @@
      <widget class="QCheckBox" name="bplr_bank4_checkbox">
       <property name="geometry">
        <rect>
-        <x>371</x>
-        <y>450</y>
+        <x>360</x>
+        <y>489</y>
         <width>100</width>
         <height>22</height>
        </rect>
@@ -890,8 +955,8 @@
      <widget class="QCheckBox" name="bplr_bank3_checkbox">
       <property name="geometry">
        <rect>
-        <x>271</x>
-        <y>450</y>
+        <x>260</x>
+        <y>489</y>
         <width>100</width>
         <height>22</height>
        </rect>
@@ -906,8 +971,8 @@
      <widget class="QRadioButton" name="bplr_linear_radiobutton">
       <property name="geometry">
        <rect>
-        <x>339</x>
-        <y>391</y>
+        <x>328</x>
+        <y>430</y>
         <width>64</width>
         <height>27</height>
        </rect>
@@ -925,8 +990,8 @@
      <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
       <property name="geometry">
        <rect>
-        <x>409</x>
-        <y>391</y>
+        <x>398</x>
+        <y>430</y>
         <width>141</width>
         <height>27</height>
        </rect>
@@ -946,7 +1011,7 @@
         <x>60</x>
         <y>60</y>
         <width>401</width>
-        <height>41</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -1075,7 +1140,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>70</width>
+           <width>825</width>
            <height>1000</height>
           </rect>
          </property>
@@ -1280,7 +1345,7 @@
                <x>50</x>
                <y>40</y>
                <width>361</width>
-               <height>51</height>
+               <height>40</height>
               </rect>
              </property>
              <property name="font">
@@ -1963,7 +2028,7 @@
         <x>60</x>
         <y>60</y>
         <width>311</width>
-        <height>31</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -2430,7 +2495,7 @@
         <x>60</x>
         <y>60</y>
         <width>221</width>
-        <height>31</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -2581,7 +2646,7 @@
         <x>60</x>
         <y>60</y>
         <width>311</width>
-        <height>31</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -3141,7 +3206,7 @@
         <x>60</x>
         <y>60</y>
         <width>311</width>
-        <height>31</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -3373,7 +3438,7 @@
         <x>60</x>
         <y>60</y>
         <width>311</width>
-        <height>31</height>
+        <height>40</height>
        </rect>
       </property>
       <property name="font">
@@ -3870,7 +3935,6 @@
   <tabstop>profile_phonenumber_lineedit</tabstop>
   <tabstop>profile_iban_lineedit</tabstop>
   <tabstop>profile_save_pushbutton</tabstop>
-  <tabstop>profile_documents_list</tabstop>
   <tabstop>bplr_address_lineedit</tabstop>
   <tabstop>bplr_postcode_lineedit</tabstop>
   <tabstop>bplr_housenumber_lineedit</tabstop>
@@ -4000,22 +4064,6 @@
     <hint type="destinationlabel">
      <x>317</x>
      <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>profile_investor_radiobutton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>profile_documents_list</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>272</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>409</x>
-     <y>519</y>
     </hint>
    </hints>
   </connection>
