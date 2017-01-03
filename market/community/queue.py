@@ -1,6 +1,6 @@
 from threading import Lock
 
-from market.dispersy.message import Message
+from dispersy.message import Message
 
 
 class MessageQueue(object):

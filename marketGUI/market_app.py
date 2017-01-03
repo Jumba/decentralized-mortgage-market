@@ -15,8 +15,8 @@ from market.api.api import MarketAPI
 from market.community.community import MortgageMarketCommunity
 from market.database.backends import PersistentBackend
 from market.database.database import MockDatabase
-from market.dispersy.dispersy import Dispersy
-from market.dispersy.endpoint import StandaloneEndpoint
+from dispersy.dispersy import Dispersy
+from dispersy.endpoint import StandaloneEndpoint
 
 
 class MarketApplication(QApplication):
@@ -37,7 +37,6 @@ class MarketApplication(QApplication):
             bank = self.api._get_user(Global.BANKS[bank_name]) or User(public_key=Global.BANKS[bank_name], time_added=0)
             bank.post_or_put(self.api.db)
             self.api.create_profile(bank, {'role': 3})
-
 
         self.private_key = None
         self.user = None
@@ -96,25 +95,19 @@ class MarketApplication(QApplication):
         return self._api
 
 
-class MarketApplicationABN(MarketApplication):
-    database_prefix = 'ABN'
-    port = 1237
-
+class MarketApplicationBank(MarketApplication):
     def initialize_api(self):
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
 
     def identify(self):
         self.private_key = Global.BANKS_PRIV[self.database_prefix]
         try:
-            print "Attempting login"
             self.user = self.api.login_user(self.private_key.encode("HEX"))
             if not self.user:
                 raise IndexError
         except IndexError:
-            print "Creating new user"
             self.user = User(public_key=Global.BANKS[self.database_prefix], time_added=0)
             self.user.role_id = 3
-            print self.user, " has been created."
             self.api.db.post(self.user.type, self.user)
             # login via the API to save/init database fields.
 
@@ -124,32 +117,23 @@ class MarketApplicationABN(MarketApplication):
             self.api.db.backend.set_option('user_key_priv', Global.BANKS_PRIV[self.database_prefix])
         else:
             print "failed to identify as ", self.database_prefix
-            print "User is ", self.user
 
 
-class MarketApplicationING(MarketApplication):
+class MarketApplicationABN(MarketApplicationBank):
+    database_prefix = 'ABN'
+    port = 1237
+
+
+class MarketApplicationING(MarketApplicationBank):
     database_prefix = 'ING'
     port = 1239
 
-    def initialize_api(self):
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
 
-    def identify(self):
-        self.private_key = Global.BANKS_PRIV[self.database_prefix]
-        try:
-            print "Attempting login"
-            self.user = self.api.login_user(self.private_key.encode("HEX"))
-            if not self.user:
-                raise IndexError
-        except IndexError:
-            print "Creating new user"
-            self.user = User(public_key=Global.BANKS[self.database_prefix], time_added=0)
-            self.user.role_id = 3
-            print self.user, " has been created."
-            self.api.db.post(self.user.type, self.user)
+class MarketApplicationRABO(MarketApplicationBank):
+    database_prefix = 'RABO'
+    port = 1240
 
-        if self.user and self.user.user_key == Global.BANKS[self.database_prefix]:
-            print "Identified as ", self.database_prefix
-        else:
-            print "failed to identify as ", self.database_prefix
-            print "User is ", self.user
+
+class MarketApplicationMONEYOU(MarketApplicationBank):
+    database_prefix = 'MONEYOU'
+    port = 1241

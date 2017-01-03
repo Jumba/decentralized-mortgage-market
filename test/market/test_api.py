@@ -1,17 +1,17 @@
 import unittest
 from uuid import UUID
 
-from market.api.api import STATUS
+from dispersy.crypto import ECCrypto
 from market.api.api import MarketAPI
+from market.api.api import STATUS
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
-from market.dispersy.crypto import ECCrypto
+from market.models.loans import Investment
 from market.models.loans import LoanRequest, Mortgage, Campaign
 from market.models.profiles import BorrowersProfile
 from market.models.profiles import Profile
-from market.models.user import User
-from market.models.loans import Investment
 from market.models.role import Role
+from market.models.user import User
 
 
 class APITestSuite(unittest.TestCase):

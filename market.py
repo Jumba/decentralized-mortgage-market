@@ -7,15 +7,12 @@ from twisted.internet import reactor
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMessageBox, QApplication
 
-from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING
+from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneInvestor
 
 
 def sigint_handler(*args):
     """Handler for the SIGINT signal."""
     sys.stderr.write('\r')
-    #if QMessageBox.question(None, '', "Are you sure you want to quit?",
-    #                        QMessageBox.Yes | QMessageBox.No,
-    #                        QMessageBox.No) == QMessageBox.Yes:
     reactor.stop()
     QApplication.quit()
     os._exit(0) # TODO: THIS SHOULD BE DONE PROPERLY
@@ -34,8 +31,14 @@ if __name__ == "__main__":
             app = MarketAppSceneBank(sys.argv)
         elif bank == "ing":
             app = MarketAppSceneBankING(sys.argv)
+        elif bank == "rabo":
+            app = MarketAppSceneBankRABO(sys.argv)
+        elif bank == "moneyou":
+            app = MarketAppSceneBankMONEYOU(sys.argv)
         elif bank == "borrower":
             app = MarketAppSceneBorrower(sys.argv)
+        elif bank == "investor":
+            app = MarketAppSceneInvestor(sys.argv)
         else:
             raise SystemExit("Unknown bank")
 

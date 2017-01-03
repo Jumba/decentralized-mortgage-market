@@ -150,26 +150,26 @@ class Scenario(object):
         self.api.reject_investment_offer(user, FakePayload.reject_investment_offer(investments[rand]))
 
     def load_profile(self, user):
-        self.api.load_profile(user)
+        return self.api.load_profile(user)
 
     def load_investments(self, user):
         assert user.role_id == 2    # investor
-        self.api.load_investments(user)
+        return self.api.load_investments(user)
 
     def load_open_market(self):
-        self.api.load_open_market()
+        return self.api.load_open_market()
 
     def load_borrowers_loans(self, user):
         assert user.role_id == 1    # borrower
-        self.api.load_borrowers_loans(user)
+        return self.api.load_borrowers_loans(user)
 
     def load_borrowers_offers(self, user):
         assert user.role_id == 1    # borrower
-        self.api.load_borrowers_offers(user)
+        return self.api.load_borrowers_offers(user)
 
     def load_all_loan_requests(self, user):
         assert user.role_id == 3    # bank
-        self.api.load_all_loan_requests(user)
+        return self.api.load_all_loan_requests(user)
 
     def load_single_loan_request(self):
         pending_loan_requests = []
@@ -184,7 +184,7 @@ class Scenario(object):
         pending_loan_requests = list(set(pending_loan_requests))    # remove duplicate entries
         rand = random.randint(0, len(pending_loan_requests) - 1)
 
-        self.api.load_single_loan_request(pending_loan_requests[rand])
+        return self.api.load_single_loan_request(pending_loan_requests[rand])
 
     def load_bids(self):
         # Get all running campaigns
@@ -198,9 +198,9 @@ class Scenario(object):
         # Get a random campaign to load bids for
         rand = random.randint(0, len(mortgages) - 1)
 
-        self.api.load_bids(mortgages[rand])
+        return self.api.load_bids(mortgages[rand])
 
     def load_mortages(self, user):
         assert user.role_id == 3    # bank
-        self.api.load_mortgages(user)
+        return self.api.load_mortgages(user)
 
