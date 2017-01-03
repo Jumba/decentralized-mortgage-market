@@ -1,3 +1,4 @@
+import base64
 import logging
 import time
 
@@ -16,6 +17,7 @@ from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile, Profile
 from market.models.user import User
+from market.multichain.database import DatabaseBlock, MultiChainDB
 from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
 
 logger = logging.getLogger(__name__)
@@ -37,6 +39,7 @@ class MortgageMarketCommunity(Community):
         super(MortgageMarketCommunity, self).__init__(dispersy, master, my_member)
         self._api = None
         self._user = None
+        self.persistence = None
 
     def initialize(self):
         super(MortgageMarketCommunity, self).initialize()
@@ -91,13 +94,13 @@ class MortgageMarketCommunity(Community):
                     self.on_api_message),
             Message(self, u"signed_confirm",
                     DoubleMemberAuthentication(
-                        allow_signature_func=self.allow_signed_confirm),
+                        allow_signature_func=self.allow_signed_confirm_request),
                     PublicResolution(),
                     DirectDistribution(),
                     CandidateDestination(),
                     SignedConfirmPayload(),
                     self._generic_timeline_check,
-                    self.received_signed_confirm),
+                    self.received_signed_confirm_response),
         ]
 
     def initiate_conversions(self):
@@ -191,10 +194,10 @@ class MortgageMarketCommunity(Community):
     ########### API MESSAGES
 
     def on_loan_request_receive(self, payload):
-        user = payload.models[User._type]
-        loan_request = payload.models[LoanRequest._type]
-        house = payload.models[House._type]
-        profile = payload.models[BorrowersProfile._type]
+        user = payload.models[User.type]
+        loan_request = payload.models[LoanRequest.type]
+        house = payload.models[House.type]
+        profile = payload.models[BorrowersProfile.type]
 
         assert isinstance(user, User)
         assert isinstance(loan_request, LoanRequest)
@@ -215,8 +218,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_loan_request_reject(self, payload):
-        user = payload.models[User._type]
-        loan_request = payload.models[LoanRequest._type]
+        user = payload.models[User.type]
+        loan_request = payload.models[LoanRequest.type]
 
         assert isinstance(user, User)
         assert isinstance(loan_request, LoanRequest)
@@ -225,20 +228,21 @@ class MortgageMarketCommunity(Community):
         loan_request.post_or_put(self.api.db)
 
         # If not all banks have rejected the loan request, do nothing
-        for _, status in loan_request.banks:
+        for items in loan_request.status.items():
+            status = items[1]
             if status == STATUS.ACCEPTED or status == STATUS.PENDING:
                 return True
 
         # If all banks have rejected the loan request, remove the request from the borrower
         self.user.update(self.api.db)
-        self.user.loan_request_ids = []
+        self.user.loan_request_ids.remove(loan_request.id)
         self.user.post_or_put(self.api.db)
 
         return True
 
     def on_mortgage_offer(self, payload):
-        loan_request = payload.models[LoanRequest._type]
-        mortgage = payload.models[Mortgage._type]
+        loan_request = payload.models[LoanRequest.type]
+        mortgage = payload.models[Mortgage.type]
 
         assert isinstance(loan_request, LoanRequest)
         assert isinstance(mortgage, Mortgage)
@@ -260,9 +264,9 @@ class MortgageMarketCommunity(Community):
         :param payload:
         :return:
         """
-        user = payload.models[User._type]
-        mortgage = payload.models[Mortgage._type]
-        campaign = payload.models[Campaign._type]
+        user = payload.models[User.type]
+        mortgage = payload.models[Mortgage.type]
+        campaign = payload.models[Campaign.type]
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
@@ -276,7 +280,7 @@ class MortgageMarketCommunity(Community):
         if self.user.id == mortgage.bank:
             print "Signing the agreement"
             # resign because the status has been changed.
-            self.publish_signed_confirm_message(user.id, mortgage)
+            self.publish_signed_confirm_request_message(user.id, mortgage)
 
         # Save the started campaign to the bank
         self.user.update(self.api.db)
@@ -286,10 +290,10 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_mortgage_accept_unsigned(self, payload):
-        user = payload.models[User._type]
-        loan_request = payload.models[LoanRequest._type]
-        mortgage = payload.models[Mortgage._type]
-        campaign = payload.models[Campaign._type]
+        user = payload.models[User.type]
+        loan_request = payload.models[LoanRequest.type]
+        mortgage = payload.models[Mortgage.type]
+        campaign = payload.models[Campaign.type]
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
@@ -304,8 +308,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_mortgage_reject(self, payload):
-        user = payload.models[User._type]
-        mortgage = payload.models[Mortgage._type]
+        user = payload.models[User.type]
+        mortgage = payload.models[Mortgage.type]
 
         assert isinstance(user, User)
         assert isinstance(mortgage, Mortgage)
@@ -321,8 +325,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_investment_offer(self, payload):
-        user = payload.models[User._type]
-        investment = payload.models[Investment._type]
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
         profile = payload.models[Profile.type]
 
         assert isinstance(user, User)
@@ -341,8 +345,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_investment_accept(self, payload):
-        user = payload.models[User._type]
-        investment = payload.models[Investment._type]
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
         profile = payload.models[BorrowersProfile.type]
 
         assert isinstance(user, User)
@@ -356,8 +360,8 @@ class MortgageMarketCommunity(Community):
         return True
 
     def on_investment_reject(self, payload):
-        user = payload.models[User._type]
-        investment = payload.models[Investment._type]
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
 
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
@@ -406,38 +410,66 @@ class MortgageMarketCommunity(Community):
     ##### SIGNED MESSAGES
     ###############
 
-    def publish_signed_confirm_message(self, user_key, agreement):
+    def publish_signed_confirm_request_message(self, user_key, agreement_benefactor):
         """
         Creates and sends out a signed signature_request message
         Returns true upon success
         """
-        if user_key in self.api.user_candidate and isinstance(agreement, DatabaseModel):
+        if user_key in self.api.user_candidate and isinstance(agreement_benefactor, DatabaseModel):
             candidate = self.api.user_candidate[user_key]
-            message = self.create_signed_confirm_request_message(candidate, agreement)
+            message = self.create_signed_confirm_request_message(candidate, agreement_benefactor)
             self.create_signature_request(candidate, message, self.allow_signed_confirm_response)
-            # TODO: Save on blockchain
             return True
         else:
             return False
 
-    def create_signed_confirm_request_message(self, candidate, agreement):
+    def create_signed_confirm_request_message(self, candidate, agreement_benefactor):
         """
 
         """
-        # Init the data being sent
+        # agreement_benefactor, 2
+        # agreement_beneficiary, 3
+        # sequence_number_benefactor, 4
+        # sequence_number_beneficiary, 5
+        # previous_hash_benefactor, 6
+        # previous_hash_beneficiary, 7
+        # signature_benefactor, 8
+        # signature_beneficiary, 9
+        # time 10
         benefactor = self.user.id
-        beneficiary = ''  # Target user fills it in themselves.
-        timestamp = int(time.time())
 
-        payload = (benefactor, beneficiary, agreement, timestamp)
+        payload_list = []
+        for k in range(1, 12):
+            payload_list.append(None)
+
+        payload_list[0] = benefactor  # benefactor, 0
+        payload_list[1] = ''  # beneficiary, 1
+        payload_list[2] = agreement_benefactor
+        payload_list[3] = None  # agreement beneficiary
+        payload_list[4] = self._get_next_sequence_number(benefactor)
+        payload_list[5] = 0  # sequence number beneficiary
+        payload_list[6] = self._get_latest_hash(benefactor)
+        payload_list[7] = ''  # previous hash beneficiary
+        payload_list[8] = ''  # Signature benefactor
+        payload_list[9] = ''  # Signature beneficiary
+        payload_list[10] = int(time.time())
+
         meta = self.get_meta_message(u"signed_confirm")
 
         message = meta.impl(authentication=([self.my_member, candidate.get_member()],),
                             distribution=(self.claim_global_time(),),
-                            payload=payload)
+                            payload=tuple(payload_list))
+
+        for signature in message.authentication.signed_members:
+            encoded_sig = signature[1].public_key.encode("HEX")
+            if encoded_sig == benefactor:
+                message.payload._benefactor_signature = signature[0].encode("HEX")
+
+        self.persist_signature(message)
+
         return message
 
-    def allow_signed_confirm(self, message):
+    def allow_signed_confirm_request(self, message):
         """
         We've received a signature request message, we must either:
             a. Create and sign the response part of the message, send it back, and persist the block.
@@ -446,17 +478,41 @@ class MortgageMarketCommunity(Community):
         """
         payload = message.payload
 
-        agreement = payload.agreement
+        agreement = payload.agreement_benefactor
         agreement_local = self.api.db.get(agreement.type, agreement.id)
 
         if agreement == agreement_local:
+            sequence_number_beneficiary = self._get_next_sequence_number(self.user.id)
+            previous_hash_beneficiary = self._get_latest_hash(self.user.id)
 
-            payload = (payload.benefactor, self.user.id, agreement, payload.time)
+            new_payload = (
+                payload.benefactor,
+                self.user.id,
+                agreement,
+                agreement_local,
+                payload.sequence_number_benefactor,
+                sequence_number_beneficiary,
+                payload.previous_hash_benefactor,
+                previous_hash_beneficiary,
+                '',
+                '',
+                payload.time,
+            )
+
             meta = self.get_meta_message(u"signed_confirm")
             message = meta.impl(authentication=(message.authentication.members, message.authentication.signatures),
                                 distribution=(message.distribution.global_time,),
-                                payload=payload)
-            # TODO: Save to blockchain
+                                payload=new_payload)
+
+            for signature in message.authentication.signed_members:
+                encoded_sig = signature[1].public_key.encode("HEX")
+                if encoded_sig == payload.benefactor:
+                    message.payload._benefactor_signature = signature[0].encode("HEX")
+                elif encoded_sig == self.user.id:
+                    message.payload._beneficiary_signature = signature[0].encode("HEX")
+
+            self.persist_signature(message)
+
             return message
         else:
             return None
@@ -467,33 +523,67 @@ class MortgageMarketCommunity(Community):
             a. True, if we accept this message
             b. False, if not (because of inconsistencies in the payload)
         """
+
         if not response:
             print "Timeout received for signature request."
             return False
         else:
-            agreement = response.payload.agreement
-            agreement_local = request.payload.agreement
+            agreement = response.payload.agreement_beneficiary
+            agreement_local = request.payload.agreement_benefactor
 
             # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
             if agreement_local == agreement:
                 if isinstance(agreement, Investment):
-                    mortgage = self.api.db.get(Mortgage._type, agreement.mortgage_id)
+                    mortgage = self.api.db.get(Mortgage.type, agreement.mortgage_id)
                 elif isinstance(agreement, Mortgage):
                     mortgage = agreement
 
-                loan_request = self.api.db.get(LoanRequest._type, mortgage.request_id)
-                beneficiary = self.api.db.get(User._type, loan_request.user_key)
+                loan_request = self.api.db.get(LoanRequest.type, mortgage.request_id)
+                beneficiary = self.api.db.get(User.type, loan_request.user_key)
 
                 return (response.payload.beneficiary == beneficiary.id and response.payload.benefactor == self.user.id
                         and modified)
             else:
                 return False
 
-    def received_signed_confirm(self, messages):
+    def received_signed_confirm_response(self, messages):
         """
         We've received a valid signature response and must process this message.
         :param messages The received, and validated signature response messages
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
-            print message.payload.agreement, " is official. Message signed = ", message.authentication.is_signed
+            for signature in message.authentication.signed_members:
+                encoded_sig = signature[1].public_key.encode("HEX")
+                if encoded_sig == message.payload.beneficiary:
+                    message.payload._beneficiary_signature = signature[0].encode("HEX")
+
+            self.update_signature(message)
+
+
+    def persist_signature(self, message):
+        """
+        Persist the signature message, when this node has not yet persisted the corresponding block.
+        A hash will be created from the message.
+        :param message:
+        """
+        block = DatabaseBlock.from_signed_confirm_message(message)
+        logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
+        self.persistence.add_block(block)
+
+    def update_signature(self, message):
+        """
+        Update the signature response message, when this node has already persisted the corresponding request block.
+        A hash will be created from the message.
+        :param message:
+        """
+        block = DatabaseBlock.from_signed_confirm_message(message)
+        logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
+        self.persistence.update_block_with_beneficiary(block)
+
+    def _get_next_sequence_number(self, user):
+        return self.persistence.get_latest_sequence_number(user) + 1
+
+    def _get_latest_hash(self, user):
+        previous_hash = self.persistence.get_latest_hash(user)
+        return previous_hash

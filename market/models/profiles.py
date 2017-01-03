@@ -2,7 +2,7 @@ from market.models import DatabaseModel
 
 
 class Profile(DatabaseModel):
-    _type = 'profile'
+    type = 'profile'
 
     def __init__(self, first_name, last_name, email, iban, phone_number):
         super(Profile, self).__init__()
@@ -39,7 +39,7 @@ class Profile(DatabaseModel):
         return self._phone_number
 
 class BorrowersProfile(Profile):
-    _type = 'borrowers_profile'
+    type = 'borrowers_profile'
 
     def __init__(self, first_name, last_name, email, iban, phone_number, current_postal_code, current_house_number, current_address, document_list):
         super(BorrowersProfile, self).__init__(first_name, last_name, email, iban, phone_number)
