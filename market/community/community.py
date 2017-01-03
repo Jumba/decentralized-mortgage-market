@@ -499,9 +499,9 @@ class MortgageMarketCommunity(Community):
             for signature in message.authentication.signed_members:
                 encoded_sig = signature[1].public_key.encode("HEX")
                 if encoded_sig == payload.benefactor:
-                    message.payload._benefactor_signature = signature[0].encode("HEX")
+                    message.payload.signature_benefactor = signature[0].encode("HEX")
                 elif encoded_sig == self.user.id:
-                    message.payload._beneficiary_signature = signature[0].encode("HEX")
+                    message.payload.signature_beneficiary = signature[0].encode("HEX")
 
             self.persist_signature(message)
 
@@ -545,10 +545,10 @@ class MortgageMarketCommunity(Community):
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
-            for signature in message.authentication.signed_members:
-                encoded_sig = signature[1].public_key.encode("HEX")
-                if encoded_sig == message.payload.beneficiary:
-                    message.payload._beneficiary_signature = signature[0].encode("HEX")
+            # for signature in message.authentication.signed_members:
+            #     encoded_sig = signature[1].public_key.encode("HEX")
+            #     if encoded_sig == message.payload.beneficiary:
+            #         message.payload.signature_beneficiary = signature[0].encode("HEX")
 
             self.update_signature(message)
 
