@@ -12,12 +12,13 @@ before install:
 # command to install dependencies
 install:
   - ./travis-libsodium13.sh
-  - sudo sh travis-sip.sh
   - pip install decorator
   - pip install cryptography
   - pip install faker
   - pip install twisted
   - pip install m2crypto
+  - pip install netifaces
 # command to run tests
 script:
-  - nosetests -v test/market
+  - nosetests -v --ignore-files=^test_gui.*  test/market
+

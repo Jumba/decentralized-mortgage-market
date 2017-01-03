@@ -44,6 +44,7 @@ class MemoryBackendTestSuite(unittest.TestCase):
 
 
         class T(object):
+            type = 'test'
             def __init__(self, id):
                 self.id = id
 
@@ -101,8 +102,14 @@ class MemoryBackendTestSuite(unittest.TestCase):
 
     def test_delete(self):
         self.backend.clear()
-        with self.assertRaises(NotImplementedError):
-            self.backend.delete(self.block1.id)
+        self.backend.post('test', self.block1.id, self.block1)
+
+        self.assertEqual(self.backend.get('test', self.block1.id), self.block1)
+
+        self.backend.delete(self.block1)
+        with self.assertRaises(IndexError):
+                self.backend.get('test', self.block1.id)
+
 
     def test_get_all(self):
         self.backend.clear()
@@ -177,8 +184,7 @@ class PersistentBackendTestSuite(unittest.TestCase):
     def test_delete(self):
         self.backend.clear()
         self.backend.post('test', self.block1.id, self.block1)
-        self.backend.delete(self.block1.id)
-
+        self.backend.delete(self.block1)
         self.assertFalse(self.backend.exists('test', self.block1.id))
 
     def test_get_all(self):

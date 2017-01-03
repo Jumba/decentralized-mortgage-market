@@ -1,32 +1,16 @@
-from market.dispersy.crypto import ECCrypto
+"""
+Utility functions based on ECCrypto
+"""
 
-_DEFAULT_CURVE = u'high'
-
-
-def generate_key(curve=_DEFAULT_CURVE):
-    """
-    Generate public/private key with the given curve (defaults to 'high')
-    Based on the implementation in `<market/dispersy/createkey.py>`
-
-    :param _curve: unicode The curve level, can be 'very-low', 'low', 'medium', 'high'.
-    :return: A tuple (public_key_bin(HEX), private_key_bin(HEX), public_key, private_key)
-    """
-    eccrypto = ECCrypto()
-
-    private_pem = ""
-    public_pem = ""
-
-    ec = eccrypto.generate_key(curve)
-
-    private_pem = ec.key_to_pem()
-    public_pem = ec.pub().key_to_pem()
-    private_bin = eccrypto.key_to_bin(ec)
-    public_bin = eccrypto.key_to_bin(ec.pub())
-
-    return public_bin.encode("HEX"), private_bin.encode("HEX"), public_pem.strip(), private_pem.strip()
+from dispersy.crypto import ECCrypto
 
 
 def get_public_key(private_key):
+    """
+    Get the public key pertaining to a private_key
+    :param private_key: The private key, encoded in HEX
+    :return: Returns the public key encoded in HEX
+    """
     eccrypto = ECCrypto()
     try:
         if eccrypto.is_valid_private_bin(private_key.decode("HEX")):

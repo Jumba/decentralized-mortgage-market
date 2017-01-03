@@ -1,6 +1,6 @@
+from dispersy.conversion import BinaryConversion
+from dispersy.conversion import DropPacket
 from market.community.encoding import encode, decode
-from market.dispersy.conversion import BinaryConversion
-from market.dispersy.message import DropPacket
 from market.models import DatabaseModel
 
 
@@ -13,7 +13,6 @@ class MortgageMarketConversion(BinaryConversion):
         self.define_meta_message(chr(14), community.get_meta_message(u"api_message_community"), self._encode_api_message, self._decode_api_message)
         self.define_meta_message(chr(15), community.get_meta_message(u"api_message_candidate"), self._encode_api_message, self._decode_api_message)
         self.define_meta_message(chr(16), community.get_meta_message(u"signed_confirm"), self._encode_signed_confirm, self._decode_signed_confirm)
-
 
     def _encode_api_message(self, message):
         encoded_models = dict()
@@ -48,8 +47,23 @@ class MortgageMarketConversion(BinaryConversion):
         return offset, placeholder.meta.payload.implement(request, fields, decoded_models)
 
     def _encode_signed_confirm(self, message):
-        packet = encode((message.payload.benefactor, message.payload.beneficiary, message.payload.agreement.encode(), message.payload.time))
+        packet = encode(
+                (
+                    message.payload.benefactor,
+                    message.payload.beneficiary,
+                    message.payload.agreement_benefactor.encode(),
+                    message.payload.agreement_beneficiary and message.payload.agreement_beneficiary.encode() or "",
+                    message.payload.sequence_number_benefactor,
+                    message.payload.sequence_number_beneficiary,
+                    message.payload.previous_hash_benefactor,
+                    message.payload.previous_hash_beneficiary,
+                    message.payload.signature_benefactor,
+                    message.payload.signature_beneficiary,
+                    message.payload.time
+                 )
+                )
         return packet,
+
 
     def _decode_signed_confirm(self, placeholder, offset, data):
         try:
@@ -60,19 +74,40 @@ class MortgageMarketConversion(BinaryConversion):
         if not isinstance(payload, tuple):
             raise DropPacket("Invalid payload type")
 
-        benefactor, beneficiary, agreement_encoded, time = payload
-        if not isinstance(benefactor, str):
+        # benefactor, 0
+        # beneficiary, 1
+        # agreement_benefactor_encoded, 2
+        # agreement_beneficiary_encoded, 3
+        # sequence_number_benefactor, 4
+        # sequence_number_beneficiary, 5
+        # previous_hash_benefactor, 6
+        # previous_hash_beneficiary, 7
+        # signature_benefactor, 8
+        # signature_beneficiary, 9
+        # time 10
+
+        if not isinstance(payload[0], str):
             raise DropPacket("Invalid 'benefactor' type")
-        if not isinstance(beneficiary, str):
+        if not isinstance(payload[1], str):
             raise DropPacket("Invalid 'beneficiary' type")
-        if not isinstance(time, int):
-            raise DropPacket("Invalid 'int' type")
+        #TODO: Do the rest.
 
-        agreement = DatabaseModel.decode(agreement_encoded)
-        if not isinstance(agreement, DatabaseModel):
-            raise DropPacket("Invalid 'agreement' type")
+        agreement_benefactor = DatabaseModel.decode(payload[2])
+        agreement_beneficiary = DatabaseModel.decode(payload[3])
 
-        return offset, placeholder.meta.payload.implement(benefactor, beneficiary, agreement, time)
+        return offset, placeholder.meta.payload.implement(
+            payload[0],
+            payload[1],
+            agreement_benefactor,
+            agreement_beneficiary,
+            payload[4],
+            payload[5],
+            payload[6],
+            payload[7],
+            payload[8],
+            payload[9],
+            payload[10],
+        )
 
 
     def _encode_model(self, message):
@@ -83,6 +118,7 @@ class MortgageMarketConversion(BinaryConversion):
 
         packet = encode((message.payload.fields, encoded_models))
         return packet,
+
 
     def _decode_model(self, placeholder, offset, data):
         try:
@@ -105,9 +141,11 @@ class MortgageMarketConversion(BinaryConversion):
 
         return offset, placeholder.meta.payload.implement(fields, decoded_models)
 
+
     def _encode_model_request(self, message):
         packet = encode((message.payload.models,))
         return packet,
+
 
     def _decode_model_request(self, placeholder, offset, data):
         try:

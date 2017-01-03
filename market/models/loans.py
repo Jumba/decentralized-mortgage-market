@@ -6,7 +6,7 @@ from datetime import datetime
 from market.models import DatabaseModel
 
 class LoanRequest(DatabaseModel):
-    _type = 'loan_request'
+    type = 'loan_request'
 
     def __init__(self, user_key, house_id, house_link, seller_phone_number, seller_email, mortgage_type, banks, description, amount_wanted, status):
         super(LoanRequest, self).__init__()
@@ -84,7 +84,7 @@ class LoanRequest(DatabaseModel):
 
 
 class Mortgage(DatabaseModel):
-    _type = 'mortgage'
+    type = 'mortgage'
 
     def __init__(self, request_id, house_id, bank, amount, mortgage_type, interest_rate, max_invest_rate, default_rate, duration, risk, investors, status, campaign_id=None):
         super(Mortgage, self).__init__()
@@ -184,7 +184,7 @@ class Mortgage(DatabaseModel):
 
 
 class Investment(DatabaseModel):
-    _type = 'investment'
+    type = 'investment'
 
     def __init__(self, investor_key, amount, duration, interest_rate, mortgage_id, status):
         super(Investment, self).__init__()
@@ -238,7 +238,7 @@ class Investment(DatabaseModel):
 
 
 class Campaign(DatabaseModel):
-    _type = 'campaign'
+    type = 'campaign'
 
     def __init__(self, mortgage_id, amount, end_date, completed):
         super(Campaign, self).__init__()
@@ -280,9 +280,9 @@ class Campaign(DatabaseModel):
 
     def _is_valid_signer(self, api=None):
         if api and self._has_signature():
-            mortgage = api.db.get(Mortgage._type, self.mortgage_id)
+            mortgage = api.db.get(Mortgage.type, self.mortgage_id)
             if mortgage:
-                loan_request = api.db.get(LoanRequest._type, mortgage.request_id)
+                loan_request = api.db.get(LoanRequest.type, mortgage.request_id)
                 if loan_request:
                     return self.signer == loan_request.user_key
 

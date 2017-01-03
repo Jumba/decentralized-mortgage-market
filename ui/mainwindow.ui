@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -464,7 +464,7 @@
        <rect>
         <x>71</x>
         <y>60</y>
-        <width>140</width>
+        <width>181</width>
         <height>18</height>
        </rect>
       </property>
@@ -520,41 +520,6 @@
        </rect>
       </property>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>338</x>
-        <y>390</y>
-        <width>159</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="bplr_linear_radiobutton">
-         <property name="text">
-          <string>Linear</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-         <property name="autoExclusive">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
-         <property name="text">
-          <string>Fixed-Rate</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QLineEdit" name="bplr_amount_wanted_lineedit">
       <property name="geometry">
        <rect>
@@ -591,7 +556,7 @@
        <rect>
         <x>71</x>
         <y>270</y>
-        <width>180</width>
+        <width>201</width>
         <height>18</height>
        </rect>
       </property>
@@ -637,7 +602,7 @@
        <rect>
         <x>71</x>
         <y>430</y>
-        <width>91</width>
+        <width>111</width>
         <height>17</height>
        </rect>
       </property>
@@ -668,7 +633,7 @@
        <rect>
         <x>71</x>
         <y>487</y>
-        <width>335</width>
+        <width>431</width>
         <height>17</height>
        </rect>
       </property>
@@ -718,7 +683,7 @@
        <rect>
         <x>71</x>
         <y>21</y>
-        <width>261</width>
+        <width>291</width>
         <height>37</height>
        </rect>
       </property>
@@ -821,7 +786,7 @@
        <rect>
         <x>71</x>
         <y>88</y>
-        <width>46</width>
+        <width>81</width>
         <height>17</height>
        </rect>
       </property>
@@ -883,14 +848,14 @@
      <widget class="QCheckBox" name="bplr_bank2_checkbox">
       <property name="geometry">
        <rect>
-        <x>145</x>
+        <x>171</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 2</string>
+       <string>ING</string>
       </property>
       <property name="checked">
        <bool>false</bool>
@@ -899,40 +864,75 @@
      <widget class="QCheckBox" name="bplr_bank1_checkbox">
       <property name="geometry">
        <rect>
-        <x>72</x>
+        <x>71</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 1</string>
+       <string>ABN AMRO</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="bplr_bank4_checkbox">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>371</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 4</string>
+       <string>MoneYou</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="bplr_bank3_checkbox">
       <property name="geometry">
        <rect>
-        <x>217</x>
+        <x>271</x>
         <y>450</y>
-        <width>67</width>
+        <width>100</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bank 3</string>
+       <string>Rabobank</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="bplr_linear_radiobutton">
+      <property name="geometry">
+       <rect>
+        <x>339</x>
+        <y>391</y>
+        <width>64</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Linear</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="bplr_fixedrate_radiobutton">
+      <property name="geometry">
+       <rect>
+        <x>409</x>
+        <y>391</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fixed-Rate</string>
       </property>
       <property name="checked">
        <bool>false</bool>
@@ -1075,7 +1075,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>825</width>
+           <width>70</width>
            <height>1000</height>
           </rect>
          </property>
@@ -3854,94 +3854,104 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
-  <tabstop>fip_campaigns_table</tabstop>
-  <tabstop>bp_open_offers_table</tabstop>
-  <tabstop>bp_reject_pushbutton</tabstop>
-  <tabstop>bp_accept_pushbutton</tabstop>
+  <tabstop>login_private_key_lineedit</tabstop>
+  <tabstop>login_browse_pushbutton</tabstop>
+  <tabstop>login_remember_me_checkbox</tabstop>
+  <tabstop>login_login_pushbutton</tabstop>
+  <tabstop>login_generate_pushbutton</tabstop>
+  <tabstop>profile_borrower_radiobutton</tabstop>
   <tabstop>profile_investor_radiobutton</tabstop>
-  <tabstop>ip_investments_table</tabstop>
+  <tabstop>profile_firstname_lineedit</tabstop>
+  <tabstop>profile_lastname_lineedit</tabstop>
+  <tabstop>profile_postcode_lineedit</tabstop>
+  <tabstop>profile_housenumber_lineedit</tabstop>
+  <tabstop>profile_address_lineedit</tabstop>
+  <tabstop>profile_email_lineedit</tabstop>
+  <tabstop>profile_phonenumber_lineedit</tabstop>
   <tabstop>profile_iban_lineedit</tabstop>
-  <tabstop>ip_search_lineedit</tabstop>
+  <tabstop>profile_save_pushbutton</tabstop>
+  <tabstop>profile_documents_list</tabstop>
+  <tabstop>bplr_address_lineedit</tabstop>
+  <tabstop>bplr_postcode_lineedit</tabstop>
   <tabstop>bplr_housenumber_lineedit</tabstop>
   <tabstop>bplr_house_price_lineedit</tabstop>
-  <tabstop>bplr_postcode_lineedit</tabstop>
-  <tabstop>bplr_seller_phone_number_lineedit</tabstop>
   <tabstop>bplr_house_link_lineedit</tabstop>
-  <tabstop>bplr_submit_pushbutton</tabstop>
+  <tabstop>bplr_seller_phone_number_lineedit</tabstop>
+  <tabstop>bplr_seller_email_lineedit</tabstop>
   <tabstop>bplr_amount_wanted_lineedit</tabstop>
   <tabstop>bplr_linear_radiobutton</tabstop>
   <tabstop>bplr_fixedrate_radiobutton</tabstop>
-  <tabstop>bplr_description_textedit</tabstop>
-  <tabstop>bplr_bank2_checkbox</tabstop>
   <tabstop>bplr_bank1_checkbox</tabstop>
+  <tabstop>bplr_bank2_checkbox</tabstop>
   <tabstop>bplr_bank3_checkbox</tabstop>
   <tabstop>bplr_bank4_checkbox</tabstop>
-  <tabstop>bplr_seller_email_lineedit</tabstop>
+  <tabstop>bplr_description_textedit</tabstop>
+  <tabstop>bplr_submit_pushbutton</tabstop>
   <tabstop>fiplr1_loan_requests_table</tabstop>
   <tabstop>fiplr1_view_loan_request_pushbutton</tabstop>
-  <tabstop>scrollArea</tabstop>
-  <tabstop>fiplr2_lastname_lineedit</tabstop>
-  <tabstop>fiplr2_property_value_lineedit</tabstop>
-  <tabstop>fiplr2_risk_lineedit</tabstop>
-  <tabstop>fiplr2_reject_pushbutton</tabstop>
-  <tabstop>fiplr2_offer_amount_lineedit</tabstop>
-  <tabstop>fiplr2_documents_listview</tabstop>
-  <tabstop>fiplr2_loan_amount_lineedit</tabstop>
-  <tabstop>fiplr2_default_rate_lineedit</tabstop>
-  <tabstop>fiplr2_loan_duration_lineedit</tabstop>
-  <tabstop>fiplr2_mortgage_type_lineedit</tabstop>
-  <tabstop>fiplr2_address_lineedit</tabstop>
-  <tabstop>fiplr2_offer_interest_lineedit</tabstop>
-  <tabstop>fiplr2_phonenumber_lineedit</tabstop>
-  <tabstop>fiplr2_property_address_lineedit</tabstop>
-  <tabstop>fiplr2_email_lineedit</tabstop>
   <tabstop>fiplr2_firstname_lineedit</tabstop>
-  <tabstop>fiplr2_accept_pushbutton</tabstop>
-  <tabstop>fiplr2_description_textedit</tabstop>
-  <tabstop>openmarket_view_loan_bids_pushbutton</tabstop>
-  <tabstop>openmarket_min_amount_lineedit</tabstop>
-  <tabstop>openmarket_rating_checkbox_b</tabstop>
+  <tabstop>fiplr2_lastname_lineedit</tabstop>
+  <tabstop>fiplr2_documents_listview</tabstop>
+  <tabstop>fiplr2_address_lineedit</tabstop>
+  <tabstop>fiplr2_phonenumber_lineedit</tabstop>
+  <tabstop>fiplr2_risk_lineedit</tabstop>
+  <tabstop>fiplr2_email_lineedit</tabstop>
+  <tabstop>fiplr2_property_address_lineedit</tabstop>
+  <tabstop>fiplr2_loan_amount_lineedit</tabstop>
+  <tabstop>fiplr2_mortgage_type_lineedit</tabstop>
+  <tabstop>fiplr2_property_value_lineedit</tabstop>
   <tabstop>openmarket_search_lineedit</tabstop>
-  <tabstop>openmarket_max_amount_lineedit</tabstop>
-  <tabstop>openmarket_interest1_lineedit</tabstop>
-  <tabstop>openmarket_duration2_lineedit</tabstop>
-  <tabstop>openmarket_rating_checkbox_c</tabstop>
   <tabstop>openmarket_search_pushbutton</tabstop>
-  <tabstop>openmarket_rating_checkbox_a</tabstop>
-  <tabstop>openmarket_duration1_lineedit</tabstop>
+  <tabstop>openmarket_max_amount_lineedit</tabstop>
+  <tabstop>openmarket_min_amount_lineedit</tabstop>
+  <tabstop>openmarket_interest1_lineedit</tabstop>
   <tabstop>openmarket_interest2_lineedit</tabstop>
+  <tabstop>openmarket_duration1_lineedit</tabstop>
+  <tabstop>openmarket_duration2_lineedit</tabstop>
+  <tabstop>openmarket_rating_checkbox_a</tabstop>
+  <tabstop>openmarket_rating_checkbox_b</tabstop>
+  <tabstop>openmarket_rating_checkbox_c</tabstop>
   <tabstop>openmarket_open_market_table</tabstop>
-  <tabstop>icb_amount_lineedit</tabstop>
+  <tabstop>openmarket_view_loan_bids_pushbutton</tabstop>
   <tabstop>icb_property_address_lineedit</tabstop>
-  <tabstop>icb_duration_lineedit</tabstop>
   <tabstop>icb_current_bids_table</tabstop>
-  <tabstop>icb_place_bid_pushbutton</tabstop>
+  <tabstop>icb_amount_lineedit</tabstop>
+  <tabstop>icb_duration_lineedit</tabstop>
   <tabstop>icb_interest_lineedit</tabstop>
-  <tabstop>ip_reject_pushbutton</tabstop>
-  <tabstop>login_login_pushbutton</tabstop>
-  <tabstop>profile_email_lineedit</tabstop>
-  <tabstop>profile_lastname_lineedit</tabstop>
-  <tabstop>login_remember_me_checkbox</tabstop>
-  <tabstop>profile_phonenumber_lineedit</tabstop>
-  <tabstop>login_generate_pushbutton</tabstop>
-  <tabstop>ip_accept_pushbutton</tabstop>
-  <tabstop>profile_borrower_radiobutton</tabstop>
-  <tabstop>login_private_key_lineedit</tabstop>
-  <tabstop>login_browse_pushbutton</tabstop>
-  <tabstop>profile_save_pushbutton</tabstop>
-  <tabstop>profile_postcode_lineedit</tabstop>
-  <tabstop>profile_housenumber_lineedit</tabstop>
-  <tabstop>profile_documents_list</tabstop>
-  <tabstop>ip_interest2_lineedit</tabstop>
-  <tabstop>bp_ongoing_loans_table</tabstop>
-  <tabstop>ip_max_lineedit</tabstop>
-  <tabstop>ip_min_amount_lineedit</tabstop>
-  <tabstop>profile_address_lineedit</tabstop>
-  <tabstop>ip_duration1_lineedit</tabstop>
-  <tabstop>ip_duration2_lineedit</tabstop>
+  <tabstop>icb_place_bid_pushbutton</tabstop>
+  <tabstop>ip_search_lineedit</tabstop>
   <tabstop>ip_search_pushbutton</tabstop>
   <tabstop>ip_interest1_lineedit</tabstop>
-  <tabstop>profile_firstname_lineedit</tabstop>
+  <tabstop>ip_interest2_lineedit</tabstop>
+  <tabstop>ip_duration1_lineedit</tabstop>
+  <tabstop>ip_duration2_lineedit</tabstop>
+  <tabstop>ip_max_lineedit</tabstop>
+  <tabstop>ip_min_amount_lineedit</tabstop>
+  <tabstop>ip_investments_table</tabstop>
+  <tabstop>bp_ongoing_loans_table</tabstop>
+  <tabstop>bp_open_offers_table</tabstop>
+  <tabstop>bp_reject_pushbutton</tabstop>
+  <tabstop>bp_accept_pushbutton</tabstop>
+  <tabstop>fip_search_lineedit</tabstop>
+  <tabstop>fip_search_pushbutton</tabstop>
+  <tabstop>fip_interest1_lineedit</tabstop>
+  <tabstop>fip_interest2_lineedit</tabstop>
+  <tabstop>fip_duration1_lineedit</tabstop>
+  <tabstop>fip_duration2_lineedit</tabstop>
+  <tabstop>fip_max_lineedit</tabstop>
+  <tabstop>fip_min_amount_lineedit</tabstop>
+  <tabstop>fip_campaigns_table</tabstop>
+  <tabstop>fiplr2_offer_amount_lineedit</tabstop>
+  <tabstop>fiplr2_accept_pushbutton</tabstop>
+  <tabstop>icb_remaining_amount_lineedit</tabstop>
+  <tabstop>fiplr2_loan_duration_lineedit</tabstop>
+  <tabstop>fiplr2_description_textedit</tabstop>
+  <tabstop>ip_reject_pushbutton</tabstop>
+  <tabstop>fiplr2_default_rate_lineedit</tabstop>
+  <tabstop>fiplr2_reject_pushbutton</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>ip_accept_pushbutton</tabstop>
+  <tabstop>fiplr2_offer_interest_lineedit</tabstop>
  </tabstops>
  <resources/>
  <connections>

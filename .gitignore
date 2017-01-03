@@ -6,9 +6,10 @@ docs/_build/
 *.db
 test/*.db
 test/market/*.db
-sqlite/*.db
+sqlite/*
 docs/pdf
 market.log
 *.db-wal
 *.db-shm
 peercache.txt
+.coverage

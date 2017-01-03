@@ -1,8 +1,11 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMessageBox
 
 
 class PendingLoanRequests1Controller:
+    """
+    Create a PendingLoanRequests1Controller object that performs tasks on the Pending Loan Request 1 section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.loan_request_table = self.mainwindow.fiplr1_loan_requests_table
@@ -12,6 +15,9 @@ class PendingLoanRequests1Controller:
         self.mainwindow.fiplr1_view_loan_request_pushbutton.clicked.connect(self.show_request)
 
     def setup_view(self):
+        """
+        Setup the view with up-to-date data. Clears and reloads the table on re-entry of the page.
+        """
         # Clear table
         self.loan_request_table.setRowCount(0)
 
@@ -40,6 +46,10 @@ class PendingLoanRequests1Controller:
                 self.loan_request_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(house.price)))
 
     def show_request(self):
+        """
+        Redirects to a Pending Loan Request 2 that shows more information about the request
+        Shows "Select request" if the user did not choose any items in the table.
+        """
         try:
             # Get the selected row index
             selected_index = self.loan_request_table.selectedIndexes()[0].row()
@@ -48,4 +58,4 @@ class PendingLoanRequests1Controller:
             self.mainwindow.fiplr2_controller.setup_view(loan_request.id)
             self.mainwindow.navigation.switch_to_fiplr2()
         except IndexError:
-            QMessageBox.about(self.mainwindow, "Select request", 'No loan requests have been selected.')
+            self.mainwindow.show_dialog("Select request", 'No loan requests have been selected.')

@@ -1,6 +1,8 @@
 import logging
 
+from market.models.role import Role
 from market.models.user import User
+from market.multichain.database import MultiChainDB
 
 logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
@@ -14,8 +16,8 @@ from market.api.api import MarketAPI
 from market.community.community import MortgageMarketCommunity
 from market.database.backends import PersistentBackend, MemoryBackend
 from market.database.database import MockDatabase
-from market.dispersy.dispersy import Dispersy
-from market.dispersy.endpoint import StandaloneEndpoint
+from dispersy.dispersy import Dispersy
+from dispersy.endpoint import StandaloneEndpoint
 
 
 class MarketApplication(QApplication):
@@ -29,6 +31,7 @@ class MarketApplication(QApplication):
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
         self.initialize_api()
+
 
         # Load banks
         for bank_name in Global.BANKS:
@@ -77,6 +80,7 @@ class MarketApplication(QApplication):
         self.community = MortgageMarketCommunity.init_community(self.dispersy, master_member, my_member)
         self.community.api = self.api
         self.community.user = self.user
+        self.community.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory, self.database_prefix)
         self.api.community = self.community
 
         # Run the scenario every 3 seconds
@@ -146,6 +150,29 @@ class TestMarketApplication(QApplication):
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
         self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        # Create users
+        user, _, _ = self._api.create_user()
+        bank_role = Role.FINANCIAL_INSTITUTION.value
+        bank1, _, _ = self._api.create_user()
+        bank2, _, _ = self._api.create_user()
+        bank3, _, _ = self._api.create_user()
+        bank4, _, _ = self._api.create_user()
+        bank1.role_id = bank_role
+        bank2.role_id = bank_role
+        bank3.role_id = bank_role
+        bank4.role_id = bank_role
+        self._api.db.put(User.type, bank1.id, bank1)
+        self._api.db.put(User.type, bank2.id, bank2)
+        self._api.db.put(User.type, bank3.id, bank3)
+        self._api.db.put(User.type, bank4.id, bank4)
+        self.user = user
+        self.bank1 = bank1
+        self.bank2 = bank2
+        self.bank3 = bank3
+        self.bank4 = bank4
+
+    def run(self):
+        self.exec_()
 
     @property
     def api(self):
