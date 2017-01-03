@@ -28,6 +28,8 @@ class InvestorsPortfolioController:
             for investment, house, campaign, profile in investments:
                 # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
                 address = house.address + ' ' + house.house_number + ', ' + house.postal_code
+                name = ' '
+                iban = ' '
 
                 if campaign.completed:
                     campaign_status = 'Completed'
@@ -36,6 +38,8 @@ class InvestorsPortfolioController:
 
                 if investment.status == STATUS.ACCEPTED:
                     investment_status = 'Accepted'
+                    name = profile.first_name + ' ' + profile.last_name
+                    iban = profile.iban
                 else:
                     investment_status = 'Pending'
 
@@ -47,3 +51,5 @@ class InvestorsPortfolioController:
                 self.investments_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(investment.amount)))
                 self.investments_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(investment.interest_rate)))
                 self.investments_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(investment.duration)))
+                self.investments_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(name))
+                self.investments_table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(iban))

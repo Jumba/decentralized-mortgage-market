@@ -24,13 +24,19 @@ class BorrowersPortfolioController:
         self.accepted_loans = self.mainwindow.api.load_borrowers_loans(self.mainwindow.app.user)
         self.pending_loans = self.mainwindow.api.load_borrowers_offers(self.mainwindow.app.user)
         for loan, profile in self.accepted_loans:
+            default_rate = ' '
+            name = ' '
+            iban = ' '
+
             if isinstance(loan, Mortgage):
-                self.mainwindow.insert_row(self.accepted_table, [loan.amount, loan.interest_rate,
-                                                                 loan.default_rate, loan.duration,
-                                                                 loan.type])
+                default_rate = loan.default_rate
             elif isinstance(loan, Investment):
-                self.mainwindow.insert_row(self.accepted_table, [loan.amount, loan.interest_rate,
-                                                                 ' ', loan.duration, loan.type])
+                name = profile.first_name + ' ' + profile.last_name
+                iban = profile.iban
+
+            self.mainwindow.insert_row(self.accepted_table, [loan.amount, loan.interest_rate,
+                                                             default_rate, loan.duration,
+                                                             loan.type, name, iban])
         for offer in self.pending_loans:
             if isinstance(offer, Mortgage):
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,

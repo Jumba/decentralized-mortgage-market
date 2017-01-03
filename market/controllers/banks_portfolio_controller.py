@@ -40,3 +40,6 @@ class BanksPortfolioController:
                 self.mortgages_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
                 self.mortgages_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
                 self.mortgages_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
+                self.mortgages_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
+                                                                                      profile.last_name))
+                self.mortgages_table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.iban))
