@@ -2,15 +2,16 @@ import base64
 import logging
 import time
 
+from dispersy.community import Community
+from dispersy.conversion import DefaultConversion
+from dispersy.destination import CommunityDestination, CandidateDestination
+from dispersy.distribution import DirectDistribution, FullSyncDistribution
+from dispersy.message import Message, DelayMessageByProof
+from dispersy.resolution import PublicResolution
+
 from conversion import MortgageMarketConversion
+from dispersy.authentication import MemberAuthentication, DoubleMemberAuthentication
 from market.api.api import STATUS
-from market.dispersy.authentication import MemberAuthentication, DoubleMemberAuthentication
-from market.dispersy.community import Community
-from market.dispersy.conversion import DefaultConversion
-from market.dispersy.destination import CommunityDestination, CandidateDestination
-from market.dispersy.distribution import DirectDistribution, FullSyncDistribution
-from market.dispersy.message import Message, DelayMessageByProof
-from market.dispersy.resolution import PublicResolution
 from market.models import DatabaseModel
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
@@ -498,9 +499,9 @@ class MortgageMarketCommunity(Community):
             for signature in message.authentication.signed_members:
                 encoded_sig = signature[1].public_key.encode("HEX")
                 if encoded_sig == payload.benefactor:
-                    message.payload._benefactor_signature = signature[0].encode("HEX")
+                    message.payload.signature_benefactor = signature[0].encode("HEX")
                 elif encoded_sig == self.user.id:
-                    message.payload._beneficiary_signature = signature[0].encode("HEX")
+                    message.payload.signature_beneficiary = signature[0].encode("HEX")
 
             self.persist_signature(message)
 
@@ -544,10 +545,10 @@ class MortgageMarketCommunity(Community):
         """
         print "Valid %s signature response(s) received." % len(messages)
         for message in messages:
-            for signature in message.authentication.signed_members:
-                encoded_sig = signature[1].public_key.encode("HEX")
-                if encoded_sig == message.payload.beneficiary:
-                    message.payload._beneficiary_signature = signature[0].encode("HEX")
+            # for signature in message.authentication.signed_members:
+            #     encoded_sig = signature[1].public_key.encode("HEX")
+            #     if encoded_sig == message.payload.beneficiary:
+            #         message.payload.signature_beneficiary = signature[0].encode("HEX")
 
             self.update_signature(message)
 
