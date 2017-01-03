@@ -3,7 +3,7 @@ import os
 import threading
 
 
-class TftpServer():
+class TftpServer:
     def __init__(self):
         self.server = tftpy.TftpServer(os.getcwd())
         self.server_thread = threading.Thread(target=self.server_start)
