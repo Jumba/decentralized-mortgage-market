@@ -1,4 +1,4 @@
-from market.dispersy.crypto import ECCrypto
+from dispersy.crypto import ECCrypto
 
 _DEFAULT_CURVE = u'high'
 

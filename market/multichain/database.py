@@ -4,7 +4,7 @@ from os import path
 from hashlib import sha256
 
 from market.community.encoding import encode
-from market.dispersy.database import Database
+from dispersy.database import Database
 
 # Path to the database location + dispersy._workingdirectory
 DATABASE_PATH = u"multichain.db"
@@ -78,13 +78,13 @@ class MultiChainDB(Database):
         :param block: The data that will be saved.
         """
         data = (
-            buffer(block.agreement_beneficiary),
+            buffer(block.beneficiary), buffer(block.agreement_beneficiary),
             block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary), buffer(block.signature_benefactor),
             buffer(block.signature_beneficiary), buffer(block.hash_block), block.sequence_number_benefactor,)
 
         self.execute(
             u"UPDATE multi_chain "
-            u"SET agreement_beneficiary = ?, "
+            u"SET beneficiary = ?, agreement_beneficiary = ?, "
             u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, signature_benefactor = ?,"
             u"signature_beneficiary = ?, hash_block = ? "
             u"WHERE sequence_number_benefactor = ?",
