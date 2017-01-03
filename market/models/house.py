@@ -2,7 +2,7 @@ from market.models import DatabaseModel
 
 
 class House(DatabaseModel):
-    _type = 'house'
+    type = 'house'
 
     def __init__(self, postal_code, house_number, address, price):
         super(House, self).__init__()

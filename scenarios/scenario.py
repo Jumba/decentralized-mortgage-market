@@ -48,7 +48,7 @@ class Scenario(object):
 
         # Find all pending loan requests from the user
         for loan_request_id in user.loan_request_ids:
-            loan_request = self.api.db.get(LoanRequest._type, loan_request_id)
+            loan_request = self.api.db.get(LoanRequest.type, loan_request_id)
             if loan_request.status == STATUS.PENDING:
                 loan_requests.append(loan_request)
 
@@ -63,7 +63,7 @@ class Scenario(object):
 
         # Find all pending loan requests from the user
         for loan_request_id in user.loan_request_ids:
-            loan_request = self.api.db.get(LoanRequest._type, loan_request_id)
+            loan_request = self.api.db.get(LoanRequest.type, loan_request_id)
             if loan_request.status == STATUS.PENDING:
                 loan_requests.append(loan_request)
 
@@ -78,7 +78,7 @@ class Scenario(object):
 
         # Find all pending mortgages from the user
         for mortgage_id in user.mortgage_ids:
-            mortgage = self.api.db.get(Mortgage._type, mortgage_id)
+            mortgage = self.api.db.get(Mortgage.type, mortgage_id)
             if mortgage.status == STATUS.PENDING:
                 mortgages.append(mortgage)
 
@@ -93,7 +93,7 @@ class Scenario(object):
 
         # Find all pending mortgages from the user
         for mortgage_id in user.mortgage_ids:
-            mortgage = self.api.db.get(Mortgage._type, mortgage_id)
+            mortgage = self.api.db.get(Mortgage.type, mortgage_id)
             if mortgage.status == STATUS.PENDING:
                 mortgages.append(mortgage)
 
@@ -107,7 +107,7 @@ class Scenario(object):
         mortgages = []
 
         # Find all accepted mortgages
-        mortgage = self.api.db.get_all(Mortgage._type)
+        mortgage = self.api.db.get_all(Mortgage.type)
         if mortgage.status == STATUS.ACCEPTED:
             mortgages.append(mortgage)
 
@@ -122,7 +122,7 @@ class Scenario(object):
 
         # Find all pending investment offers from the user
         for investment_id in user.investment_ids:
-            investment = self.api.db.get(Investment._type, investment_id)
+            investment = self.api.db.get(Investment.type, investment_id)
             assert isinstance(investment, Investment)
 
             if investment.status == STATUS.PENDING:
@@ -139,7 +139,7 @@ class Scenario(object):
 
         # Find all pending investment offers from the user
         for investment_id in user.investment_ids:
-            investment = self.api.db.get(Investment._type, investment_id)
+            investment = self.api.db.get(Investment.type, investment_id)
             assert isinstance(investment, Investment)
 
             if investment.status == STATUS.PENDING:
@@ -175,7 +175,7 @@ class Scenario(object):
         pending_loan_requests = []
 
         # Get a random pending loan request
-        loan_requests = self.api.db.get_all(LoanRequest._type)
+        loan_requests = self.api.db.get_all(LoanRequest.type)
         for loan_request in loan_requests:
             for loan_status in loan_request.status:
                 if loan_status == STATUS.PENDING:
@@ -188,12 +188,12 @@ class Scenario(object):
 
     def load_bids(self):
         # Get all running campaigns
-        campaigns = self.api.db.get_all(Campaign._type)
+        campaigns = self.api.db.get_all(Campaign.type)
         mortgages = []
         for campaign in campaigns:
             assert isinstance(campaign, Campaign)
             if not campaign.completed:
-                mortgages.append(self.api.db.get(Mortgage._type, campaign.mortgage_id))
+                mortgages.append(self.api.db.get(Mortgage.type, campaign.mortgage_id))
 
         # Get a random campaign to load bids for
         rand = random.randint(0, len(mortgages) - 1)

@@ -1,3 +1,7 @@
+"""
+Implementation of the Mortgage Market API
+"""
+
 import time
 from datetime import timedelta, datetime
 from enum import Enum
@@ -15,6 +19,9 @@ from market.models.user import User
 
 
 class STATUS(Enum):
+    """
+    Representation of the status of a LoanRequest or Mortgage.
+    """
     NONE = 0
     PENDING = 1
     ACCEPTED = 2
@@ -43,16 +50,26 @@ class MarketAPI(object):
 
     @property
     def db(self):
+        """
+        Returns the database object
+        """
         return self._database
 
     def user_key(self):
+        """
+        Returns the user key the API communicates as.
+        """
         return self._user_key
 
     def _get_user(self, user):
+        """
+        Return a user from the database.
+        :param user: Either a user object or id.
+        """
         if isinstance(user, User):
-            return self.db.get(User._type, user.id)
+            return self.db.get(User.type, user.id)
         elif isinstance(user, str):
-            return self.db.get(User._type, user)
+            return self.db.get(User.type, user)
         else:
             return None
 
@@ -70,18 +87,20 @@ class MarketAPI(object):
         public_bin = self.crypto.key_to_bin(key.pub())
         private_bin = self.crypto.key_to_bin(key)
 
-        user = User(public_key=public_bin.encode("HEX"), time_added=time.time())  # Save the public key bin (encode as HEX) in the database along with the register time.
+        user = User(public_key=public_bin.encode("HEX"), time_added=time.time())
+        # Save the public key bin (encode as HEX) in the database along with the register time.
         self.db.backend.set_option('user_key_pub', public_bin.encode("HEX"))
         self.db.backend.set_option('user_key_priv', private_bin.encode("HEX"))
 
-        if self.db.post(User._type, user):
+        if self.db.post(User.type, user):
             return user, public_bin.encode("HEX"), private_bin.encode("HEX")
         else:
             return None
 
     def login_user(self, private_key):
         """
-            Login a user by generating the public key from the private key supplied, and searching the user object in the database using the generated key.
+            Login a user by generating the public key from the private key supplied, and searching the user object in the
+            database using the generated key.
 
         :param private_key: The private key of the user encoded in HEX.
         :type private_key: str
@@ -89,7 +108,7 @@ class MarketAPI(object):
         """
         private_key = private_key.decode("HEX")
         if get_public_key(private_key):
-            user = self.db.get(User._type, get_public_key(private_key))
+            user = self.db.get(User.type, get_public_key(private_key))
             return user
         return None
 
@@ -128,8 +147,9 @@ class MarketAPI(object):
         :type user: :any:`User`
         :param payload: The payload containing the data for the profile, as described above.
         :type payload: dict
-        :return The Profile or True if a bank role was set or False if the payload is malformed
-        :rtype :any:`Profile` or True or False
+        :return: The Profile if a borrower or investor role was set, True if a bank role was set, False if the
+        payload is malformed
+        :rtype: :any:`Profile` or True or False
         """
         assert isinstance(user, User)
         assert isinstance(payload, dict)
@@ -141,18 +161,18 @@ class MarketAPI(object):
             profile = None
             if role.name == 'INVESTOR':
                 profile = Profile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'], payload['phonenumber'])
-                user.profile_id = self.db.post(Profile._type, profile)
+                user.profile_id = self.db.post(Profile.type, profile)
             elif role.name == 'BORROWER':
                 profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
                                            payload['phonenumber'], payload['current_postalcode'],
                                            payload['current_housenumber'], payload['current_address'],
                                            payload['documents_list'])
-                user.profile_id = self.db.post(BorrowersProfile._type, profile)
+                user.profile_id = self.db.post(BorrowersProfile.type, profile)
             elif role.name == 'FINANCIAL_INSTITUTION':
-                self.db.put(User._type, user.id, user)
+                self.db.put(User.type, user.id, user)
                 return True
 
-            self.db.put(User._type, user.id, user)
+            self.db.put(User.type, user.id, user)
             return profile
         except KeyError:
             return False
@@ -172,10 +192,9 @@ class MarketAPI(object):
             role = Role(user.role_id)
 
             if role.name == 'INVESTOR':
-                profile = self.db.get(Profile._type, user.profile_id)
+                profile = self.db.get(Profile.type, user.profile_id)
             elif role.name == 'BORROWER':
-                # profile = self.db.get(BorrowersProfile._type, user.profile_id)
-                profile = self.db.get('borrowers_profile', user.profile_id)
+                profile = self.db.get(BorrowersProfile.type, user.profile_id)
             else:
                 profile = None
         except AttributeError:
@@ -207,7 +226,7 @@ class MarketAPI(object):
         :type investor: :any:`User`
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: The loan offer if successful or False.
+        :return: The loan offer if successful, False otherwise.
         :rtype: :any:`Investment` or False
         """
         assert isinstance(investor, User)
@@ -220,26 +239,27 @@ class MarketAPI(object):
                                     payload['mortgage_id'], STATUS.PENDING)
 
             # Update the investor
-            investment_id = self.db.post(Investment._type, investment)
+            investment_id = self.db.post(Investment.type, investment)
             investor.investment_ids.append(investment_id)
 
             # Save the updated investor
-            self.db.put(User._type, investor.id, investor)
+            self.db.put(User.type, investor.id, investor)
 
             # Update the mortgage
-            mortgage = self.db.get(Mortgage._type, payload['mortgage_id'])
+            mortgage = self.db.get(Mortgage.type, payload['mortgage_id'])
             mortgage.investors.append(investor.id)
-            self.db.put(Mortgage._type, mortgage.id, mortgage)
+            self.db.put(Mortgage.type, mortgage.id, mortgage)
 
             # Update the borrower
-            loan_request = self.db.get(LoanRequest._type, mortgage.request_id)
-            borrower = self.db.get(User._type, loan_request.user_key)
+            loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
+            borrower = self.db.get(User.type, loan_request.user_key)
             borrower.investment_ids.append(investment.id)
-            self.db.put(User._type, borrower.id, borrower)
+            self.db.put(User.type, borrower.id, borrower)
 
             # Add message to queue
-            borrower = self.db.get(User._type, borrower.id)
-            self.outgoing_queue.push((u"investment_offer", [Investment._type, User._type], {Investment._type: investment, User._type: investor}, [borrower]))
+            borrower = self.db.get(User.type, borrower.id)
+            self.outgoing_queue.push(
+                (u"investment_offer", [Investment.type, User.type], {Investment.type: investment, User.type: investor}, [borrower]))
 
             return investment
         else:
@@ -257,43 +277,45 @@ class MarketAPI(object):
 
     def load_investments(self, user):
         """
-        Get the current investments list and the pending investments list from the database.
+        Get the pending and current investments list from the investor.
 
         :param user: The user whose investments need to be retrieved.
         :type user: :any:`User`
-        :return: A tuple containing the list of current and pending investments
-        :rtype: tuple(CurrentInvestments, PendingInvestments)
+        :return: A list containing lists with the investments, the house, and the campaign
+        :rtype: list
         """
         user = self._get_user(user)
 
-        current_investments = []
-        pending_investments = []
+        investments = []
+
         for investment_id in user.investment_ids:
-            investment = self.db.get(Investment._type, investment_id)
+            investment = self.db.get(Investment.type, investment_id)
             assert isinstance(investment, Investment)
-            if investment.status == STATUS.ACCEPTED:
-                current_investments.append(investment)
-            elif investment.status == STATUS.PENDING:
-                pending_investments.append(investment)
-            else:
-                pass
-        return current_investments, pending_investments
+            if investment.status == STATUS.ACCEPTED or investment.status == STATUS.PENDING:
+                mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
+                house = self.db.get(House.type, mortgage.house_id)
+                campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+                investments.append([investment, house, campaign])
+        return investments
 
     def load_open_market(self):
         """
-        Returns a list of all mortgages who have an active campaign going on.
+        Returns a list of all mortgages that have an active campaign going on.
 
-        :return: A list of :any:`Mortgage` objects.
+        :return: A list containing lists with :any:`Mortgage` objects, :any: 'House' objects, and :any: 'Campaign'
+        objects.
         :rtype: list
         """
-        campaigns = self.db.get_all(Campaign._type)
+        campaigns = self.db.get_all(Campaign.type)
         mortgages = []
 
         if campaigns:
             # If campaign is not completed or end time has not passed yet, get mortgage info
             for campaign in campaigns:
                 if campaign.end_date > datetime.now() and not campaign.completed:
-                    mortgages.append(self.db.get(Mortgage._type, campaign.mortgage_id))
+                    mortgage = self.db.get(Mortgage.type, campaign.mortgage_id)
+                    house = self.db.get(House.type, mortgage.house_id)
+                    mortgages.append([mortgage, campaign, house])
 
         return mortgages
 
@@ -341,7 +363,7 @@ class MarketAPI(object):
         :type user: :any:`User`
         :param payload: The payload containing the data for the :any:`House` and :any:`LoanRequest`, as described above.
         :type payload: dict
-        :return: The loan request object if succesful or False
+        :return: The loan request object if succesful, False otherwise
         :rtype: :any:`LoanRequest` or False
         """
         assert isinstance(user, User)
@@ -354,16 +376,18 @@ class MarketAPI(object):
             if not user.loan_request_ids:
                 # Create the house
                 house = House(payload['postal_code'], payload['house_number'], payload['address'], payload['price'])
-                house_id = self.db.post(House._type, house)
+                house_id = self.db.post(House.type, house)
                 payload['house_id'] = house_id
                 # Set status of the loan request (which is a dictionary of the banks) to pending
                 payload['status'] = dict().fromkeys(payload['banks'], STATUS.PENDING)
 
-                loan_request = LoanRequest(user.id, house_id, payload['house_link'], payload['seller_phone_number'], payload['seller_email'],
-                                           payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'], payload['status'])
+                loan_request = LoanRequest(user.id, house_id, payload['house_link'], payload['seller_phone_number'],
+                                           payload['seller_email'],
+                                           payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'],
+                                           payload['status'])
 
                 # Add the loan request to the borrower
-                user.loan_request_ids.append(self.db.post(LoanRequest._type, loan_request))
+                user.loan_request_ids.append(self.db.post(LoanRequest.type, loan_request))
                 user.post_or_put(self.db)
 
                 # The loan request won't be changed anymore. Sign it.
@@ -372,17 +396,18 @@ class MarketAPI(object):
                 # Add the loan request to the banks' pending loan request list
                 banks = []
                 for bank_id in payload['banks']:
-                    bank = self.db.get(User._type, bank_id)
+                    bank = self.db.get(User.type, bank_id)
                     assert isinstance(bank, User)
                     bank.loan_request_ids.append(loan_request.id)
-                    self.db.put(User._type, bank.id, bank)
+                    self.db.put(User.type, bank.id, bank)
                     banks.append(bank)
 
                 # Add message to queue
                 profile = self.load_profile(user)
 
-                self.outgoing_queue.push((u"loan_request", [LoanRequest._type, House._type, BorrowersProfile._type, User._type],
-                                          {LoanRequest._type: loan_request, House._type: house, BorrowersProfile._type: profile, User._type: user}, banks))
+                self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
+                                          {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
+                                           User.type: user}, banks))
 
                 return loan_request
 
@@ -393,22 +418,21 @@ class MarketAPI(object):
 
     def load_borrowers_loans(self, user):
         """
-        Get the borrower's current active loans (funding goal has been reached) or the not yet active loans (funding goal has not been reached yet)
+        Get the borrower's current accepted loans
         :param user: User-object, in this case the user has the role of a borrower
-        :return: list of the loans, containing either the current active loans or the not yet active loans
+        :return: list of the loans, containing the borrower's current accepted loans
         """
         user = self._get_user(user)
         loans = []
         for mortgage_id in user.mortgage_ids:
-            if self.db.get(Mortgage._type, mortgage_id).status == STATUS.ACCEPTED:
-                mortgage = self.db.get(Mortgage._type, mortgage_id)
+            if self.db.get(Mortgage.type, mortgage_id).status == STATUS.ACCEPTED:
+                mortgage = self.db.get(Mortgage.type, mortgage_id)
                 # Add the accepted mortgage in the loans list
                 loans.append(mortgage)
-                campaign = self.db.get(Campaign._type, user.campaign_ids[0])
                 for investor_id in mortgage.investors:
-                    investor = self.db.get(User._type, investor_id)
+                    investor = self.db.get(User.type, investor_id)
                     for investment_id in investor.investment_ids:
-                        investment = self.db.get(Investment._type, investment_id)
+                        investment = self.db.get(Investment.type, investment_id)
                         # Add the loan to the loans list if the investment has been accepted by the borrower and the mortgage id's match
                         if investment.status == STATUS.ACCEPTED and investment.mortgage_id == mortgage_id:
                             loans.append(investment)
@@ -426,13 +450,13 @@ class MarketAPI(object):
         user = self._get_user(user)
         offers = []
         for mortgage_id in user.mortgage_ids:
-            mortgage = self.db.get(Mortgage._type, mortgage_id)
+            mortgage = self.db.get(Mortgage.type, mortgage_id)
             # If the mortgage is already accepted, we get the loan offers from the investors
             if mortgage.status == STATUS.ACCEPTED:
                 for investor_id in mortgage.investors:
-                    investor = self.db.get(User._type, investor_id)
+                    investor = self.db.get(User.type, investor_id)
                     for investment_id in investor.investment_ids:
-                        investment = self.db.get(Investment._type, investment_id)
+                        investment = self.db.get(Investment.type, investment_id)
                         if investment.status == STATUS.PENDING:
                             offers.append(investment)
 
@@ -454,28 +478,32 @@ class MarketAPI(object):
         :type: mortgage: :any:`Mortgage`
         :param loan_request: The :any:`LoanRequest` created prior to the mortgage being accepted.
         :type loan_request: :any:`LoanRequest`
-        :return: True if created, None otherwise.
-        :rtype: bool or None
+        :return: True if created, False otherwise.
+        :rtype: bool or False
         """
         bank = self._get_user(mortgage.bank)
-        house = self.db.get(House._type, mortgage.house_id)
+        house = self.db.get(House.type, mortgage.house_id)
 
         # Add the newly created campaign to the database
         end_date = datetime.now() + timedelta(days=CAMPAIGN_LENGTH_DAYS)
         finance_goal = house.price - mortgage.amount
 
         campaign = Campaign(mortgage.id, finance_goal, end_date, False)
-        if self.db.post(Campaign._type, campaign):
+        if self.db.post(Campaign.type, campaign):
             user.campaign_ids.append(campaign.id)
             bank.campaign_ids.append(campaign.id)
-            self.db.put(User._type, bank.id, bank)
+            self.db.put(User.type, bank.id, bank)
+            mortgage.campaign_id = campaign.id
+            self.db.put(Mortgage.type, mortgage.id, mortgage)
 
             # TODO: The user should broadcast a signed campaign
             # Add message to queue
-            self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage._type, Campaign._type, User._type], {Mortgage._type: mortgage, Campaign._type: campaign, User._type: user}, [bank]))
-            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest._type, Mortgage._type, Campaign._type,User._type], {LoanRequest._type: loan_request, Mortgage._type: mortgage, Campaign._type: campaign, User._type: user},
+            self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
+                                      {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
+            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type, User.type],
+                                      {LoanRequest.type: loan_request, Mortgage.type: mortgage, Campaign.type: campaign, User.type: user},
                                       []))
-            return self.db.put(User._type, user.id, user)
+            return self.db.put(User.type, user.id, user)
         return False
 
     def accept_mortgage_offer(self, user, payload):
@@ -500,9 +528,9 @@ class MarketAPI(object):
         :return: Returns True if successful, False otherwise.
         :rtype: bool
         """
-        mortgage = self.db.get(Mortgage._type, payload['mortgage_id'])
+        mortgage = self.db.get(Mortgage.type, payload['mortgage_id'])
         assert isinstance(mortgage, Mortgage)
-        loan_request = self.db.get(LoanRequest._type, mortgage.request_id)
+        loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
         assert isinstance(loan_request, LoanRequest)
 
         loan_request.status[mortgage.bank] = STATUS.ACCEPTED
@@ -515,10 +543,9 @@ class MarketAPI(object):
                 loan_request.status[bank] = STATUS.REJECTED
 
         # Save the objects
-        self.db.put(Mortgage._type, mortgage.id, mortgage)
-        self.db.put(LoanRequest._type, loan_request.id, loan_request)
-        self.db.put(User._type, user.id, user)
-
+        self.db.put(Mortgage.type, mortgage.id, mortgage)
+        self.db.put(LoanRequest.type, loan_request.id, loan_request)
+        self.db.put(User.type, user.id, user)
 
         # Create the campaign
         return self.create_campaign(user, mortgage, loan_request)
@@ -545,7 +572,7 @@ class MarketAPI(object):
         """
         user = self._get_user(user)
 
-        investment = self.db.get(Investment._type, payload['investment_id'])
+        investment = self.db.get(Investment.type, payload['investment_id'])
         assert isinstance(investment, Investment)
 
         campaign = None
@@ -553,7 +580,7 @@ class MarketAPI(object):
             raise AssertionError("The user does not have a campaign")
 
         for campaign_id in user.campaign_ids:
-            campaign = self.db.get(Campaign._type, campaign_id)
+            campaign = self.db.get(Campaign.type, campaign_id)
             assert isinstance(campaign, Campaign)
             if investment.mortgage_id == campaign.mortgage_id:
                 break
@@ -561,13 +588,14 @@ class MarketAPI(object):
         if campaign:
             investment.status = STATUS.ACCEPTED
             campaign.subtract_amount(investment.amount)
-            self.db.put(Investment._type, investment.id, investment)
+            self.db.put(Investment.type, investment.id, investment)
 
             # Add message to queue
-            investor = self.db.get(User._type, investment.investor_key)
-            self.outgoing_queue.push((u"investment_accept", [Investment._type, User._type], {Investment._type: investment, User._type: user}, [investor]))
+            investor = self.db.get(User.type, investment.investor_key)
+            self.outgoing_queue.push(
+                (u"investment_accept", [Investment.type, User.type], {Investment.type: investment, User.type: user}, [investor]))
 
-            return self.db.put(Campaign._type, campaign.id, campaign)
+            return self.db.put(Campaign.type, campaign.id, campaign)
         return False
 
     def reject_mortgage_offer(self, user, payload):
@@ -591,19 +619,19 @@ class MarketAPI(object):
         :rtype: bool
         """
         user = self._get_user(user)
-        mortgage = self.db.get(Mortgage._type, payload['mortgage_id'])
-        loan_request = self.db.get(LoanRequest._type, mortgage.request_id)
+        mortgage = self.db.get(Mortgage.type, payload['mortgage_id'])
+        loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
 
         mortgage.status = STATUS.REJECTED
         loan_request.status[mortgage.bank] = STATUS.REJECTED
         user.mortgage_ids.remove(mortgage.id)
-        self.db.put(Mortgage._type, mortgage.id, mortgage)
+        self.db.put(Mortgage.type, mortgage.id, mortgage)
 
         # Add message to queue
-        bank = self.db.get(User._type, mortgage.bank)
-        self.outgoing_queue.push((u"mortgage_reject", [Mortgage._type, User._type], {Mortgage._type: mortgage, User._type: user}, [bank]))
+        bank = self.db.get(User.type, mortgage.bank)
+        self.outgoing_queue.push((u"mortgage_reject", [Mortgage.type, User.type], {Mortgage.type: mortgage, User.type: user}, [bank]))
 
-        return self.db.put(LoanRequest._type, loan_request.id, loan_request) and self.db.put(User._type, user.id, user)
+        return self.db.put(LoanRequest.type, loan_request.id, loan_request) and self.db.put(User.type, user.id, user)
 
     def reject_investment_offer(self, user, payload):
         """
@@ -624,14 +652,15 @@ class MarketAPI(object):
         :return: Returns True if successful, False otherwise.
         :rtype: bool
         """
-        investment = self.db.get(Investment._type, payload['investment_id'])
+        investment = self.db.get(Investment.type, payload['investment_id'])
 
         investment.status = STATUS.REJECTED
-        self.db.put(Investment._type, investment.id, investment)
+        self.db.put(Investment.type, investment.id, investment)
 
         # Add message to queue
-        investor = self.db.get(User._type, investment.investor_key)
-        self.outgoing_queue.push((u"investment_reject", [Investment._type, User._type], {Investment._type: investment, User._type: user}, [investor]))
+        investor = self.db.get(User.type, investment.investor_key)
+        self.outgoing_queue.push(
+            (u"investment_reject", [Investment.type, User.type], {Investment.type: investment, User.type: user}, [investor]))
 
         return investment
 
@@ -641,39 +670,40 @@ class MarketAPI(object):
 
         :param user: The bank :any:`User`
         :type user: :any:`User`
-        :return: A list of the :any: 'LoanRequest's if there are any, False otherwise.
-        :rtype: list or False
+        :return: A list of lists containing the :any: 'LoanRequest's and the :any: 'House's
+        :rtype: list
         """
         assert isinstance(user, User)
 
         user = self._get_user(user)
-        role = self.get_role(user)
 
-        if role.name == 'FINANCIAL_INSTITUTION':
-            pending_loan_requests = []
+        pending_loan_requests = []
 
-            # Only show loan requests that are still pending
-            for pending_loan_request_id in user.loan_request_ids:
-                if self.db.get(LoanRequest._type, pending_loan_request_id).status[user.id] == STATUS.PENDING:
-                    pending_loan_requests.append(self.db.get(LoanRequest._type, pending_loan_request_id))
+        # Only show loan requests that are still pending
+        for pending_loan_request_id in user.loan_request_ids:
+            if self.db.get(LoanRequest.type, pending_loan_request_id).status[user.id] == STATUS.PENDING:
+                pending_loan_request = self.db.get(LoanRequest.type, pending_loan_request_id)
+                house = self.db.get(House.type, pending_loan_request.house_id)
+                pending_loan_requests.append([pending_loan_request, house])
 
-            return pending_loan_requests
-        else:
-            return False
+        return pending_loan_requests
 
     def load_single_loan_request(self, payload):
         """
         Display the selected pending loan request
 
-        :return: The :any: 'LoanRequest's
-        :rtype: LoanRequest
+        :return: A list of lists containing the :any: 'LoanRequest', the :any: 'Profile' of the borrower that wants a
+        mortgage, and the :any: 'House' that the borrower wants
+        :rtype: list
         """
         assert isinstance(payload, dict)
 
-        loan_request = self.db.get(LoanRequest._type, payload['loan_request_id'])
-        assert isinstance(loan_request, LoanRequest)
+        loan_request = self.db.get(LoanRequest.type, payload['loan_request_id'])
+        borrower = self.db.get(User.type, loan_request.user_key)
+        borrower_profile = self.db.get(BorrowersProfile.type, borrower.profile_id)
+        house = self.db.get(House.type, loan_request.house_id)
 
-        return loan_request
+        return [loan_request, borrower_profile, house]
 
     def accept_loan_request(self, bank, payload):
         """
@@ -688,8 +718,6 @@ class MarketAPI(object):
         +-------------------+---------------------------------------------------------------+
         | amount            | The amount the bank is willing to finance                     |
         +-------------------+---------------------------------------------------------------+
-        | mortgage_type     | The mortgage type: 1 = linear, 2 = fixed-rate                 |
-        +-------------------+---------------------------------------------------------------+
         | interest_rate     | The interest rate to be paid over the financed amount (float) |
         +-------------------+---------------------------------------------------------------+
         | default_rate      | The default rate (float)                                      |
@@ -697,8 +725,6 @@ class MarketAPI(object):
         | max_invest_rate   | The maximum investment interest rate (float)                  |
         +-------------------+---------------------------------------------------------------+
         | duration          | The duration of the mortgage                                  |
-        +-------------------+---------------------------------------------------------------+
-        | investors         | List of initial investors, can be empty.                      |
         +-------------------+---------------------------------------------------------------+
         | risk              | The risk associated with the loan                             |
         +-------------------+---------------------------------------------------------------+
@@ -714,34 +740,36 @@ class MarketAPI(object):
         assert self.get_role(bank).name == 'FINANCIAL_INSTITUTION'
 
         # Accept the loan request
-        loan_request = self.db.get(LoanRequest._type, payload['request_id'])
+        loan_request = self.db.get(LoanRequest.type, payload['request_id'])
         assert isinstance(loan_request, LoanRequest)
         loan_request.status[bank.id] = STATUS.ACCEPTED
 
         # Create a mortgage
-        mortgage = Mortgage(loan_request.id, loan_request.house_id, bank.id, payload['amount'], payload['mortgage_type'], payload['interest_rate'], payload['max_invest_rate'],
-                            payload['default_rate'], payload['duration'], payload['risk'], payload['investors'], STATUS.PENDING)
-        borrower = self.db.get(User._type, loan_request.user_key)
+        mortgage = Mortgage(loan_request.id, loan_request.house_id, bank.id, payload['amount'],
+                            loan_request.mortgage_type, payload['interest_rate'], payload['max_invest_rate'],
+                            payload['default_rate'], payload['duration'], payload['risk'], [], STATUS.PENDING)
+        borrower = self.db.get(User.type, loan_request.user_key)
         assert isinstance(borrower, User)
 
         # Add mortgage to borrower
-        self.db.post(Mortgage._type, mortgage)
+        self.db.post(Mortgage.type, mortgage)
         borrower.mortgage_ids.append(mortgage.id)
-        self.db.put(User._type, borrower.id, borrower)
+        self.db.put(User.type, borrower.id, borrower)
 
         # Add mortgage to bank
         bank.mortgage_ids.append(mortgage.id)
-        self.db.put(User._type, bank.id, bank)
+        self.db.put(User.type, bank.id, bank)
 
         # Save the accepted loan request
-        if self.db.put(LoanRequest._type, loan_request.id, loan_request):
+        if self.db.put(LoanRequest.type, loan_request.id, loan_request):
             # Sign the mortage and loan request
             mortgage.sign(self)
             loan_request.sign(self)
 
             # Add message to queue
-            borrower = self.db.get(User._type, borrower.id)
-            self.outgoing_queue.push((u"mortgage_offer", [LoanRequest._type, Mortgage._type], {LoanRequest._type: loan_request, Mortgage._type: mortgage}, [borrower]))
+            borrower = self.db.get(User.type, borrower.id)
+            self.outgoing_queue.push((u"mortgage_offer", [LoanRequest.type, Mortgage.type],
+                                      {LoanRequest.type: loan_request, Mortgage.type: mortgage}, [borrower]))
 
             return loan_request, mortgage
         else:
@@ -771,12 +799,12 @@ class MarketAPI(object):
         assert isinstance(payload, dict)
 
         # Reject the loan request
-        rejected_loan_request = self.db.get(LoanRequest._type, payload['request_id'])
+        rejected_loan_request = self.db.get(LoanRequest.type, payload['request_id'])
         assert isinstance(rejected_loan_request, LoanRequest)
         rejected_loan_request.status[user.id] = STATUS.REJECTED
 
         # Save rejected loan request
-        borrower = self.db.get(User._type, rejected_loan_request.user_key)
+        borrower = self.db.get(User.type, rejected_loan_request.user_key)
         assert isinstance(borrower, User)
         loan_request_id = borrower.loan_request_ids[0]
 
@@ -792,13 +820,14 @@ class MarketAPI(object):
         # If all banks have rejected the loan request, remove the loan request from borrower
         if rejected:
             borrower.loan_request_ids.remove(loan_request_id)
-            self.db.put(User._type, borrower.id, borrower)
+            self.db.put(User.type, borrower.id, borrower)
 
         # Save the rejected loan request
-        if self.db.put(LoanRequest._type, loan_request_id, rejected_loan_request):
+        if self.db.put(LoanRequest.type, loan_request_id, rejected_loan_request):
             # Add message to queue
-            borrower = self.db.get(User._type, borrower.id)
-            self.outgoing_queue.push((u"loan_request_reject", [LoanRequest._type, User._type], {LoanRequest._type: rejected_loan_request, User._type: user}, [borrower]))
+            borrower = self.db.get(User.type, borrower.id)
+            self.outgoing_queue.push((u"loan_request_reject", [LoanRequest.type, User.type],
+                                      {LoanRequest.type: rejected_loan_request, User.type: user}, [borrower]))
 
             return rejected_loan_request
         else:
@@ -817,20 +846,23 @@ class MarketAPI(object):
 
         :param payload: The payload containing the data for the :any:`Investment`, as described above.
         :type payload: dict
-        :return: A list of :any: 'Investment' objects.
-        :rtype: list
+        :return: A list :any: 'Investment' objects, a :any: 'House' object, and a :any: 'Campaign' object.
+        :rtype: list, House, Campaign
         """
 
         # Get the list of all the bids (pending/accepted/rejected) on the campaign
-        mortgage = self.db.get(Mortgage._type, payload['mortgage_id'])
-        loan_request = self.db.get(LoanRequest._type, mortgage.request_id)
-        borrower = self.db.get(User._type, loan_request.user_key)
+        mortgage = self.db.get(Mortgage.type, payload['mortgage_id'])
+        loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
+        borrower = self.db.get(User.type, loan_request.user_key)
 
         bids = []
         for investment_bid in borrower.investment_ids:
-            bids.append(self.db.get(Investment._type, investment_bid))
+            bids.append(self.db.get(Investment.type, investment_bid))
 
-        return bids
+        house = self.db.get(House.type, loan_request.house_id)
+        campaign = self.db.get(Campaign.type, borrower.campaign_ids[0])
+
+        return bids, house, campaign
 
     def load_mortgages(self, user):
         """
@@ -838,22 +870,20 @@ class MarketAPI(object):
 
             :param user: The bank :any:`User`
             :type user: :any:`User`
-            :return: A list of the :any: 'Mortgage's if there are any, False otherwise.
-            :rtype: list or False
+            :return: A list of lists containing the :any: 'Mortgage', the :any: 'House', and the :any: 'Campaign'
+            :rtype: list
         """
         assert isinstance(user, User)
         user = self._get_user(user)
-        role = self.get_role(user)
 
-        if role.name == 'FINANCIAL_INSTITUTION':
-            mortgages = []
+        mortgages = []
 
-            for mortgage_id in user.mortgage_ids:
-                mortgage = self.db.get(Mortgage._type, mortgage_id)
-                assert isinstance(mortgage, Mortgage)
-                if mortgage.status == STATUS.ACCEPTED:
-                    mortgages.append(mortgage)
+        for mortgage_id in user.mortgage_ids:
+            mortgage = self.db.get(Mortgage.type, mortgage_id)
+            assert isinstance(mortgage, Mortgage)
+            if mortgage.status == STATUS.ACCEPTED:
+                house = self.db.get(House.type, mortgage.house_id)
+                campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+                mortgages.append([mortgage, house, campaign])
 
-            return mortgages
-        else:
-            return False
+        return mortgages
