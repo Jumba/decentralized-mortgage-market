@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from market.api.api import STATUS
-from market.controllers.main_view_controller import MainWindowController
+from market.controllers.main_window_controller import MainWindowController
 from market.controllers.navigation import NavigateUser
 from market.models.role import Role
 from market.models.user import User
@@ -304,19 +304,22 @@ class GUITestSuite(unittest.TestCase):
     def create_mortgage_campaign_and_bids(self):
         """
         This function creates two loan requests, both with a mortgage and a loan offer
-        """
+        """ # TODO Fix
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_investor_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create borrowers
         borrower1, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.window.api.create_profile(borrower1, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.window.api.create_user()
         borrower2.role_id = role_id
+        self.window.api.create_profile(borrower2, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create loan requests
@@ -678,7 +681,7 @@ class GUITestSuite(unittest.TestCase):
         self.window.bp_controller.setup_view()
         self.assertFalse(self.window.bp_open_offers_table.rowCount())
 
-    def test_borrowers_portfolio_offers_and_loans_table_filled(self):
+    def test_borrowers_portfolio_offers_table_filled(self):
         """
         This test checks if the tables in the 'borrowers portfolio' screen are filled correctly.
         The ongoing loans table should only show loans that the user has accepted.
@@ -687,12 +690,14 @@ class GUITestSuite(unittest.TestCase):
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_borrower_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create an investor
         investor, _, _ = self.window.api.create_user()
         role_id = Role.INVESTOR.value
         investor.role_id = role_id
+        self.window.api.create_profile(investor, self.payload_investor_profile)
         self.window.api.db.put(User.type, investor.id, investor)
 
         # Create a loan request
@@ -924,12 +929,14 @@ class GUITestSuite(unittest.TestCase):
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_borrower_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create an investor
         investor, _, _ = self.window.api.create_user()
         role_id = Role.INVESTOR.value
         investor.role_id = role_id
+        self.window.api.create_profile(investor, self.payload_investor_profile)
         self.window.api.db.put(User.type, investor.id, investor)
 
         # Create a loan request
@@ -995,10 +1002,12 @@ class GUITestSuite(unittest.TestCase):
         borrower1, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.window.api.create_profile(borrower1, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.window.api.create_user()
         borrower2.role_id = role_id
+        self.window.api.create_profile(borrower2, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create loan requests
@@ -1050,13 +1059,18 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.ip_investments_table.item(0, 3).text(), '1000')
         self.assertEqual(self.window.ip_investments_table.item(0, 4).text(), '2.5')
         self.assertEqual(self.window.ip_investments_table.item(0, 5).text(), '24')
+        self.assertEqual(self.window.ip_investments_table.item(0, 6).text(), ' ')
+        self.assertEqual(self.window.ip_investments_table.item(0, 7).text(), ' ')
 
         # Check if the second investment is in the table with the right values
         self.assertEqual(self.window.ip_investments_table.item(1, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.ip_investments_table.item(1, 1).text(), 'Completed')
+        self.assertEqual(self.window.ip_investments_table.item(1, 2).text(), 'Accepted')
         self.assertEqual(self.window.ip_investments_table.item(1, 3).text(), '123456')
         self.assertEqual(self.window.ip_investments_table.item(1, 4).text(), '2.5')
         self.assertEqual(self.window.ip_investments_table.item(1, 5).text(), '24')
+        self.assertEqual(self.window.ip_investments_table.item(1, 6).text(), 'Bob Saget')
+        self.assertEqual(self.window.ip_investments_table.item(1, 7).text(), 'NL53 INGBB 04027 30393')
 
     def test_banks_portfolio_table_empty(self):
         """
@@ -1079,10 +1093,12 @@ class GUITestSuite(unittest.TestCase):
         borrower1, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.window.api.create_profile(borrower1, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.window.api.create_user()
         borrower2.role_id = role_id
+        self.window.api.create_profile(borrower2, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create loan requests
@@ -1136,6 +1152,8 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fip_campaigns_table.item(0, 3).text(), '5.5')
         self.assertEqual(self.window.fip_campaigns_table.item(0, 4).text(), '9.0')
         self.assertEqual(self.window.fip_campaigns_table.item(0, 5).text(), '30')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 6).text(), 'Bob Saget')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 7).text(), 'NL53 INGBB 04027 30393')
 
         # Check if the second mortgage is in the table with the right values
         self.assertEqual(self.window.fip_campaigns_table.item(1, 0).text(), 'straat 11, 1111AA')
@@ -1144,6 +1162,8 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.fip_campaigns_table.item(1, 3).text(), '5.5')
         self.assertEqual(self.window.fip_campaigns_table.item(1, 4).text(), '9.0')
         self.assertEqual(self.window.fip_campaigns_table.item(1, 5).text(), '30')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 6).text(), 'Bob Saget')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 7).text(), 'NL53 INGBB 04027 30393')
 
     def test_pending_loan_requests_table_empty(self):
         """

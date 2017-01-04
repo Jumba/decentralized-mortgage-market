@@ -4,6 +4,10 @@ from PyQt5.QtWidgets import *
 
 
 class OpenMarketController:
+    """
+    Create a ProfileController object that performs tasks on the Profile section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.content = None
@@ -13,6 +17,9 @@ class OpenMarketController:
         self.mainwindow.openmarket_view_loan_bids_pushbutton.clicked.connect(self.view_campaign)
 
     def setup_view(self):
+        """
+        Setup the open market table with up-to-date data.
+        """
         self.table.setRowCount(0)
         self.content = self.mainwindow.api.load_open_market()
         for tpl in self.content:
@@ -24,6 +31,11 @@ class OpenMarketController:
             self.mainwindow.insert_row(self.table, row)
 
     def view_campaign(self):
+        """
+        View a selected campaign. Redirects to the a "Campaign Bids" screen that shows all investment offers on a
+        specific campaign.
+        Shows a "Select campaign" alert of no campaign was selected before the button was pressed.
+        """
         if self.table.selectedIndexes():
             # selected_data = map((lambda item: item.data()), self.table.selectedIndexes())
             selected_row = self.table.selectedIndexes()[0].row()

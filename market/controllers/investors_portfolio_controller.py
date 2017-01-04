@@ -4,11 +4,18 @@ from market.api.api import STATUS
 
 
 class InvestorsPortfolioController:
+    """
+    Create a InvestorsPortfolioController object that performs tasks on the Investor's Portfolio section of the gui.
+    Takes a MainWindowController object during construction.
+    """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.investments_table = self.mainwindow.ip_investments_table
 
     def setup_view(self):
+        """
+        Update the table of the view with up-to-date data.
+        """
         # Clear table
         self.investments_table.setRowCount(0)
 
@@ -18,19 +25,21 @@ class InvestorsPortfolioController:
         # If the list is empty, do nothing. Otherwise fill table
         if investments:
             # Fill the investments table
-            for [investment, house, campaign] in investments:
+            for investment, house, campaign, profile in investments:
                 # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
                 address = house.address + ' ' + house.house_number + ', ' + house.postal_code
+                name = ' '
+                iban = ' '
 
-                campaign_status = ''
                 if campaign.completed:
                     campaign_status = 'Completed'
                 else:
                     campaign_status = 'Running'
 
-                investment_status = ''
                 if investment.status == STATUS.ACCEPTED:
                     investment_status = 'Accepted'
+                    name = profile.first_name + ' ' + profile.last_name
+                    iban = profile.iban
                 else:
                     investment_status = 'Pending'
 
@@ -42,3 +51,5 @@ class InvestorsPortfolioController:
                 self.investments_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(investment.amount)))
                 self.investments_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(investment.interest_rate)))
                 self.investments_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(investment.duration)))
+                self.investments_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(name))
+                self.investments_table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(iban))

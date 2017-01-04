@@ -1,7 +1,7 @@
 import sys
 
-from marketGUI.market_app import TestMarketApplication, MarketApplication
-from market.controllers.main_view_controller import MainWindowController
+from marketGUI.market_app import TestMarketApplication
+from market.controllers.main_window_controller import MainWindowController
 
 
 def main():

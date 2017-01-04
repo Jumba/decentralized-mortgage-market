@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>9</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -1075,7 +1075,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>70</width>
+           <width>823</width>
            <height>1000</height>
           </rect>
          </property>
@@ -2728,6 +2728,28 @@
         </font>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Borrower's Name</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Borrower's IBAN</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
      </widget>
      <widget class="QLineEdit" name="ip_max_lineedit">
       <property name="geometry">
@@ -3081,6 +3103,28 @@
         </font>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Investor's Name</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Investor's IBAN</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
      </widget>
      <widget class="QPushButton" name="bp_accept_pushbutton">
       <property name="geometry">
@@ -3358,6 +3402,28 @@
       <column>
        <property name="text">
         <string>Duration (months)</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Borrower's Name</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Borrower's IBAN</string>
        </property>
        <property name="font">
         <font>
