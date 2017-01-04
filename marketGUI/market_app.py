@@ -48,7 +48,7 @@ class MarketApplication(QApplication):
     def run(self):
         # Ready to start dispersy
         reactor.callWhenRunning(self.start_dispersy)
-        reactor.callWhenRunning(self.exec_())
+        reactor.callWhenRunning(self.exec_)
         reactor.run()
 
     def initialize_api(self):
