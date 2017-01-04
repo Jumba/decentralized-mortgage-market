@@ -294,16 +294,19 @@ class MortgageMarketCommunity(Community):
         loan_request = payload.models[LoanRequest.type]
         mortgage = payload.models[Mortgage.type]
         campaign = payload.models[Campaign.type]
+        house = payload.models[House.type]
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
         assert isinstance(mortgage, Mortgage)
         assert isinstance(loan_request, LoanRequest)
+        assert isinstance(house, House)
 
         user.post_or_put(self.api.db)
         loan_request.post_or_put(self.api.db)
         mortgage.post_or_put(self.api.db)
         campaign.post_or_put(self.api.db)
+        house.post_or_put(self.api.db)
 
         return True
 

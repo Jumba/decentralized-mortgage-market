@@ -505,13 +505,15 @@ class MarketAPI(object):
             mortgage.campaign_id = campaign.id
             self.db.put(Mortgage.type, mortgage.id, mortgage)
 
+            house = self.db.get(House.type, mortgage.house_id)
+
             # TODO: The user should broadcast a signed campaign
             # Add message to queue
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
-            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type, User.type],
-                                      {LoanRequest.type: loan_request, Mortgage.type: mortgage, Campaign.type: campaign, User.type: user},
-                                      []))
+            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type,
+                                      User.type, House.type], {LoanRequest.type: loan_request, Mortgage.type: mortgage,
+                                      Campaign.type: campaign, User.type: user, House.type: house},[]))
             return self.db.put(User.type, user.id, user)
         return False
 

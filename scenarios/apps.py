@@ -8,7 +8,7 @@ class MarketAppSceneBorrower(MarketApplication):
     database_prefix = 'borrower'
 
     def __init__(self, *argv):
-        self.profile = False
+        self.profile = True
         self.loan_request = False
         self.mortgage_accept = False
         self.investor_accept = False
@@ -112,8 +112,8 @@ class MarketAppSceneInvestor(MarketApplication):
         if self.wait_for_campaign:
             campaigns = self.scenario.load_open_market()
             print len(campaigns), " available."
-            for campaign in campaigns:
-                print campaign.id, " found."
+            for list in campaigns:
+                print list[1].id, " found."
 
 
 
