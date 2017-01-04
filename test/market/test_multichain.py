@@ -71,10 +71,15 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
 
         self.community_bank.api = self.api_bank
         self.community_bank.user = self.bank
+
         self.api.community = self.community_bank
 
-        self.db = MultiChainDB('.', u'test.db')
-        self.bank_db = MultiChainDB('.', u'test.db')
+        self.db = MultiChainDB('.', u'test-borrower.db')
+        self.bank_db = MultiChainDB('.', u'test-bank.db')
+
+        self.community.persistence = self.db
+        self.community_bank.persistence = self.bank_db
+
 
         # Models
         self.mortgage = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'),
@@ -177,7 +182,10 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
 
         # Add the blocks to the blockchain
         self.db.add_block(block1)
+        self.bank_db.add_block(block1)
+
         self.db.add_block(block2)
+        self.bank_db.add_block(block2)
 
         # Get the blocks by the hash of the block
         result1 = self.db.get_by_hash(block1.hash_block)
@@ -185,7 +193,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
 
         # Get the latest hash
         latest_hash_benefactor = self.db.get_latest_hash(message1.payload.benefactor)
-        latest_hash_beneficiary = self.db.get_latest_hash(message1.payload.beneficiary)
+        latest_hash_beneficiary = self.bank_db.get_latest_hash(message2.payload.beneficiary)
 
         # Check whether the blocks were added correctly
         self.assertEqualBlocks(block1, result1)
