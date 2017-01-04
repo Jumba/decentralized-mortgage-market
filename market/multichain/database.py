@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS multi_chain(
  signature_beneficiary		  TEXT NOT NULL,
 
  time                         TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
- hash_block                   TEXT NOT NULL
+ hash_block                   TEXT NOT NULL,
+ previous_hash                TEXT NOT NULL,
+ sequence_number              INTEGER NOT NULL
  );
 
 CREATE TABLE option(key TEXT PRIMARY KEY, value BLOB);
@@ -61,14 +63,14 @@ class MultiChainDB(Database):
                 block.sequence_number_benefactor, block.sequence_number_beneficiary,
                 buffer(block.previous_hash_benefactor), buffer(block.previous_hash_beneficiary),
                 buffer(block.signature_benefactor), buffer(block.signature_beneficiary),
-                block.time, buffer(block.hash_block))
+                block.time, buffer(block.hash_block), buffer(self.get_latest_hash()), self.get_latest_sequence_number() + 1)
 
         self.execute(
             u"INSERT INTO multi_chain (benefactor, beneficiary, "
             u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, "
             u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, "
-            u"time, hash_block) "
-            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+            u"time, hash_block, previous_hash, sequence_number) "
+            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
             data)
         self.commit()
 
@@ -91,23 +93,16 @@ class MultiChainDB(Database):
             data)
         self.commit()
 
-    def get_latest_hash(self, public_key):
+    def get_latest_hash(self):
         """
         Get the hash of the latest block in the chain for a specific public key.
         :param public_key: The public_key for which the latest hash has to be found.
         :return: the relevant hash
         """
-        public_key = buffer(public_key)
-        db_query = u"SELECT hash_block, MAX(sequence_number) FROM (" \
-                   u"SELECT hash_block, sequence_number_benefactor AS sequence_number " \
-                   u"FROM multi_chain WHERE benefactor = ? " \
-                   u"UNION " \
-                   u"SELECT hash_block, sequence_number_beneficiary AS sequence_number " \
-                   u"FROM multi_chain WHERE beneficiary = ?)"
+        db_query = u"SELECT hash_block FROM multi_chain ORDER BY ROWID DESC LIMIT 1;"
+        db_result = self.execute(db_query).fetchone()
 
-        db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
-
-        return str(db_result) if db_result else ''
+        return str(db_result[0]) if db_result else ''
 
     def get_by_hash(self, hash):
         """
@@ -119,7 +114,7 @@ class MultiChainDB(Database):
                    u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, " \
                    u"sequence_number_beneficiary, previous_hash_benefactor, " \
                    u"previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
-                   u"time, hash_block " \
+                   u"time, hash_block, previous_hash, sequence_number " \
                    u"FROM `multi_chain` WHERE hash_block = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash),)).fetchone()
         # Create a DB Block or return None
@@ -135,7 +130,7 @@ class MultiChainDB(Database):
                    u"agreement_benefactor, agreement_beneficiary, " \
                    u"sequence_number_benefactor, sequence_number_beneficiary, " \
                    u"previous_hash_benefactor, previous_hash_beneficiary, " \
-                   u"signature_benefactor, signature_beneficiary, time, hash_block " \
+                   u"signature_benefactor, signature_beneficiary, time, hash_block, previous_hash, sequence_number " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_benefactor AS sequence_number, " \
                    u"benefactor AS pk FROM `multi_chain` " \
@@ -158,21 +153,16 @@ class MultiChainDB(Database):
         else:
             return None
 
-    def get_latest_sequence_number(self, public_key):
+    def get_latest_sequence_number(self):
         """
         Return the latest sequence number known for this public_key.
         If no block for the pk is known returns 0.
         :param public_key: Corresponding public key
         :return: sequence number (integer) or 0 if no block is known
         """
-        public_key = buffer(public_key)
-        db_query = u"SELECT MAX(sequence_number) FROM (" \
-                   u"SELECT sequence_number_benefactor AS sequence_number " \
-                   u"FROM multi_chain WHERE benefactor == ? UNION " \
-                   u"SELECT sequence_number_beneficiary AS sequence_number " \
-                   u"FROM multi_chain WHERE beneficiary = ? )"
-        db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
-        return db_result if db_result is not None else 0
+        db_query = u"SELECT sequence_number FROM multi_chain ORDER BY ROWID DESC LIMIT 1;"
+        db_result = self.execute(db_query).fetchone()
+        return db_result[0] if db_result is not None else 0
 
     def open(self, initial_statements=True, prepare_visioning=True):
         return super(MultiChainDB, self).open(initial_statements, prepare_visioning)
@@ -217,6 +207,9 @@ class DatabaseBlock:
         self.time = data[10]
 
         self.hash_block = sha256(self.hash()).hexdigest()
+        if len(data) > 12:
+            self.previous_hash = data[12]
+            self.sequence_number = data[13]
 
     def hash(self):
         packet = encode(

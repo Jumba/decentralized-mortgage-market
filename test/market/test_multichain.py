@@ -86,30 +86,30 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
                               'ING', 80000, 1, 2.5, 1.5, 2.5, 36, 'A', [], STATUS.ACCEPTED)
 
         self.payload =  (
-                self.user.id,
                 self.bank.id,
+                self.user.id,
                 self.mortgage,
                 self.mortgage,
                 1,
                 1,
-                '',
-                '',
-                '',
-                '',
-                100,
+                'prev_hash_bene',
+                'prev_hash_beni',
+                'sig_bene',
+                'sig_beni',
+                500,
             )
 
         self.payload2 = (
                 self.bank.id,
-                self.user.id,
+                '',
                 self.mortgage,
-                self.mortgage,
-                2,
-                4,
-                'rrr',
-                'ttt',
-                'aaa',
-                'sss',
+                None,
+                1,
+                1,
+                'prev_hash_bene',
+                '',
+                'sig_bene',
+                '',
                 500,
             )
 
@@ -191,8 +191,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         result2 = self.db.get_by_hash(block2.hash_block)
 
         # Get the latest hash
-        latest_hash_benefactor = self.db.get_latest_hash(message1.payload.benefactor)
-        latest_hash_beneficiary = self.bank_db.get_latest_hash(message2.payload.beneficiary)
+        latest_hash_benefactor = self.db.get_latest_hash()
+        latest_hash_beneficiary = self.bank_db.get_latest_hash()
 
         # Check whether the blocks were added correctly
         self.assertEqualBlocks(block1, result1)
@@ -203,35 +203,49 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertEqual(latest_hash_beneficiary, block2.hash_block)
         self.assertNotEqual(latest_hash_benefactor, block1.hash_block)
         self.assertNotEqual(latest_hash_beneficiary, block1.hash_block)
-#
-#     def test_update_block_with_beneficiary(self):
-#         """
-#         This test checks the functionality of updating a block in the blockchain.
-#         """
-#
-#         message_request = Message(self.payload_request1)
-#         message_response = Message(self.payload_response1)
-#
-#         # Add the block with only the information from benefactor to the blockchain
-#         block_benefactor = DatabaseBlock.from_signed_confirm_message(message_request)
-#         self.db.add_block(block_benefactor)
-#         # Update the block with the information from the beneficiary
-#         block_beneficiary = DatabaseBlock.from_signed_confirm_message(message_response)
-#         self.db.update_block_with_beneficiary(block_beneficiary)
-#
-#         # Get the updated block by the hash of the block
-#         result = self.db.get_by_hash(block_beneficiary.hash_block)
-#         # Get the updated block by the public key and the sequence number
-#         result_benefactor = self.db.get_by_public_key_and_sequence_number(message_request.payload.benefactor,
-#                                                                            block_benefactor.sequence_number_benefactor)
-#         result_beneficiary = self.db.get_by_public_key_and_sequence_number(message_request.payload.beneficiary,
-#                                                                            block_beneficiary.sequence_number_beneficiary)
-#
-#         #Check whether the block was updated correctly
-#         self.assertEqualBlocks(result_benefactor, result_beneficiary)
-#         self.assertEqualBlocks(result_benefactor, result)
-#         self.assertEqualBlocks(result_beneficiary, result)
-#
+
+
+    # def test_update_block_with_beneficiary(self):
+    #     """
+    #     This test checks the functionality of updating a block in the blockchain.
+    #     """
+    #
+    #     meta = self.community.get_meta_message(u"signed_confirm")
+    #     message1 = meta.impl(authentication=([self.member, self.member_bank],),
+    #                         distribution=(self.community.claim_global_time(),),
+    #                         payload=self.payload,
+    #                         destination=(LoopbackCandidate(),))
+    #
+    #     message2 = meta.impl(authentication=([self.member, self.member_bank],),
+    #                         distribution=(self.community.claim_global_time(),),
+    #                         payload=self.payload2,
+    #                         destination=(LoopbackCandidate(),))
+    #
+    #     # Add the block with only the information from benefactor to the blockchain
+    #     block_benefactor = DatabaseBlock.from_signed_confirm_message(message2)
+    #     self.db.add_block(block_benefactor)
+    #
+    #     # Update the block with the information from the beneficiary
+    #     block_beneficiary = DatabaseBlock.from_signed_confirm_message(message1)
+    #     self.db.update_block_with_beneficiary(block_beneficiary)
+    #
+    #     # Get the updated block by the hash of the block
+    #     result = self.db.get_by_hash(block_beneficiary.hash_block)
+    #
+    #     self.assertEqualBlocks(block_beneficiary, result)
+        # # Get the updated block by the public key and the sequence number
+        # result_benefactor = self.db.get_by_public_key_and_sequence_number(message1.payload.benefactor,
+        #                                                                    block_benefactor.sequence_number_benefactor)
+        # result_beneficiary = self.db.get_by_public_key_and_sequence_number(message1.payload.beneficiary,
+        #                                                                    block_beneficiary.sequence_number_beneficiary)
+        #
+        # print "bank", self.bank.id
+        # print "borrow", self.user.id
+        # #Check whether the block was updated correctly
+        # self.assertEqualBlocks(result_benefactor, result_beneficiary)
+        # self.assertEqualBlocks(result_benefactor, result)
+        # self.assertEqualBlocks(result_beneficiary, result)
+
 #     def test_get_latest_hash(self):
 #         """
 #         This test checks the functionality of getting the latest hash of a user.
@@ -364,73 +378,3 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.db.close()
         self.bank_db.close()
 
-#
-#
-# class Payload(object):
-#     def __init__(self, benefactor, beneficiary, agreement_benefactor, agreement_beneficiary,
-#                  sequence_number_benefactor, sequence_number_beneficiary, previous_hash_benefactor,
-#                  previous_hash_beneficiary, signature_benefactor, signature_beneficiary, time):
-#
-#         self._benefactor = benefactor
-#         self._beneficiary = beneficiary
-#         self._agreement_benefactor = agreement_benefactor
-#         self._agreement_beneficiary = agreement_beneficiary
-#         self._sequence_number_benefactor = sequence_number_benefactor
-#         self._sequence_number_beneficiary = sequence_number_beneficiary
-#         self._previous_hash_benefactor = previous_hash_benefactor
-#         self._previous_hash_beneficiary = previous_hash_beneficiary
-#         self._signature_benefactor = signature_benefactor
-#         self._signature_beneficiary = signature_beneficiary
-#         self._time = time
-#
-#     @property
-#     def benefactor(self):
-#         return self._benefactor
-#
-#     @property
-#     def beneficiary(self):
-#         return self._beneficiary
-#
-#     @property
-#     def agreement_benefactor(self):
-#         return self._agreement_benefactor
-#
-#     @property
-#     def agreement_beneficiary(self):
-#         return self._agreement_beneficiary
-#
-#     @property
-#     def sequence_number_benefactor(self):
-#         return self._sequence_number_benefactor
-#
-#     @property
-#     def sequence_number_beneficiary(self):
-#         return self._sequence_number_beneficiary
-#
-#     @property
-#     def previous_hash_benefactor(self):
-#         return self._previous_hash_benefactor
-#
-#     @property
-#     def previous_hash_beneficiary(self):
-#         return self._previous_hash_beneficiary
-#
-#     @property
-#     def signature_benefactor(self):
-#         return self._signature_benefactor
-#
-#     @property
-#     def signature_beneficiary(self):
-#         return self._signature_beneficiary
-#
-#     @property
-#     def time(self):
-#         return self._time
-#
-# class Message(object):
-#     def __init__(self, payload):
-#         self._payload = payload
-#
-#     @property
-#     def payload(self):
-#         return self._payload
