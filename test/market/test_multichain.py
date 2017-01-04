@@ -150,11 +150,6 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertNotEqual(block1.hash_block, block2.hash_block)
         self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
         self.assertEqual(latest_hash_benefactor, block2.hash_block)
-       # print "latest_hash_benefactor = " + str(latest_hash_benefactor)
-       # print "block2.hash_block = " + str(block2.hash_block)
-       # print "latest_hash_beneficiary = " + str(latest_hash_beneficiary)
-       # print "block1.hash_block = "+ str(block1.hash_block)
-
         self.assertEqual(latest_hash_beneficiary, block2.hash_block)
         self.assertNotEqual(latest_hash_benefactor, block1.hash_block)
         self.assertNotEqual(latest_hash_beneficiary, block1.hash_block)
@@ -213,6 +208,12 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         latest_hash_beneficiary = self.db.get_latest_hash(message_request.payload.beneficiary)
 
         # Check whether the hash is the right one
+        #print "latest_hash_beneficiary = " + str(latest_hash_beneficiary)
+        #print "latest_block_beneficiary.hash_block = " + str(latest_block_beneficiary.hash_block) # different one
+        #print "latest_block_benefactor.hash_block = " + str(latest_block_benefactor.hash_block)
+        #print "latest_hash_benefactor = " + str(latest_hash_benefactor)
+        #print "block_beneficiary.hash_block = " + str(block_beneficiary.hash_block)
+
         self.assertEqual(latest_hash_benefactor, latest_block_benefactor.hash_block)
         self.assertEqual(latest_hash_beneficiary, latest_block_beneficiary.hash_block)
         self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)

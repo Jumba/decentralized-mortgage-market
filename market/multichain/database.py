@@ -98,22 +98,12 @@ class MultiChainDB(Database):
         :return: the relevant hash
         """
         public_key = buffer(public_key)
-        # db_query = u"SELECT block_hash, MAX(sequence_number) FROM (" \
-        #            u"SELECT hash_block AS block_hash, sequence_number_benefactor AS sequence_number " \
-        #            u"FROM multi_chain WHERE benefactor = ? " \
-        #            u"UNION " \
-        #            u"SELECT hash_block AS block_hash, sequence_number_beneficiary AS sequence_number " \
-        #            u"FROM multi_chain WHERE beneficiary = ?)"
-        # db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
-
-        db_query = u"SELECT hash_block FROM (" \
-                   u"SELECT hash_block, sequence_number_benefactor AS sequence_number " \
-                   u"FROM multi_chain WHERE sequence_number_benefactor = (" \
-                   u"SELECT MAX(sequence_number_benefactor) FROM multi_chain WHERE benefactor = ?)" \
+        db_query = u"SELECT block_hash, MAX(sequence_number) FROM (" \
+                   u"SELECT hash_block AS block_hash, sequence_number_benefactor AS sequence_number " \
+                   u"FROM multi_chain WHERE benefactor = ? " \
                    u"UNION " \
-                   u"SELECT hash_block, sequence_number_beneficiary AS sequence_number " \
-                   u"FROM multi_chain WHERE sequence_number_beneficiary = (" \
-                   u"SELECT MAX(sequence_number_beneficiary) FROM multi_chain WHERE beneficiary = ?))"
+                   u"SELECT hash_block AS block_hash, sequence_number_beneficiary AS sequence_number " \
+                   u"FROM multi_chain WHERE beneficiary = ?)"
 
         db_result = self.execute(db_query, (public_key, public_key)).fetchone()[0]
 
