@@ -42,15 +42,11 @@ class ProfileController:
     def browse(self):
         index = self.mainwindow.sender().index
         path, _ = QFileDialog.getOpenFileName(self.mainwindow, 'Open File', os.getenv('HOME'))
-        fh = ''
 
         if QFile.exists(path):
             document_name = self.table.item(index, 0).text()
             self.documents[document_name] = path
             self.table.setItem(index, 1, QTableWidgetItem(str(ntpath.basename(path))))
-
-        # if not fh.open(QFile.ReadOnly):
-        #     qApp.quit()
 
     def setup_view(self):
         """
