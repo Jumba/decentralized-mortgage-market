@@ -44,6 +44,9 @@ class MainWindowController(QMainWindow):
 
         self.setup_view()
 
+    def closeEvent(self, event):
+        self.app.close()
+
     def setup_view(self):
         """
             Calls the right user's navigation bar and redirects to the user's starting page.

@@ -51,7 +51,6 @@ class MultiChainDB(Database):
         that will contain the the db at working directory/DATABASE_PATH
         :return:
         """
-        print path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s' % database_name)
 
         super(MultiChainDB, self).__init__(path.join(working_directory, DATABASE_DIRECTORY, 'multichain-%s.db' % database_name))
 

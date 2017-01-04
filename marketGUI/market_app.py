@@ -1,4 +1,9 @@
 import logging
+import os
+import signal
+import threading
+
+import time
 
 from market.models.role import Role
 from market.models.user import User
@@ -21,17 +26,15 @@ from dispersy.endpoint import StandaloneEndpoint
 
 
 class MarketApplication(QApplication):
-    port = 1236
-    database_prefix = ''
-
     """
     This class represents the main Market application.
     """
+    port = 1236
+    database_prefix = 'market'
 
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
         self.initialize_api()
-
 
         # Load banks
         for bank_name in Global.BANKS:
@@ -45,11 +48,20 @@ class MarketApplication(QApplication):
 
         self.identify()
 
+        signal.signal(signal.SIGINT, self.close)
+        signal.signal(signal.SIGQUIT, self.close)
+
     def run(self):
         # Ready to start dispersy
         reactor.callWhenRunning(self.start_dispersy)
         reactor.callWhenRunning(self.exec_)
         reactor.run()
+
+    def close(self, *_):
+        self.dispersy.stop()
+        reactor.stop()
+        time.sleep(2)
+        os._exit(1)
 
     def initialize_api(self):
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/market.db')))
