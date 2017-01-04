@@ -7,22 +7,15 @@ import time
 
 from market.models.role import Role
 from market.models.user import User
-from market.multichain.database import MultiChainDB
 
 logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
 
-from twisted.internet import reactor
-from twisted.internet.task import LoopingCall
 from PyQt5.QtWidgets import QApplication
 
 from market import Global
-from market.api.api import MarketAPI
-from market.community.community import MortgageMarketCommunity
-from market.database.backends import PersistentBackend, MemoryBackend
-from market.database.database import MockDatabase
-from dispersy.dispersy import Dispersy
-from dispersy.endpoint import StandaloneEndpoint
+
+
 
 
 class MarketApplication(QApplication):
@@ -34,36 +27,39 @@ class MarketApplication(QApplication):
 
     def __init__(self, *argv):
         QApplication.__init__(self, *argv)
-        self.initialize_api()
-
-        # Load banks
-        for bank_name in Global.BANKS:
-            bank = self.api._get_user(Global.BANKS[bank_name]) or User(public_key=Global.BANKS[bank_name], time_added=0)
-            bank.post_or_put(self.api.db)
-            self.api.create_profile(bank, {'role': 3})
-
-        self.private_key = None
-        self.user = None
-        self.community = None
-
-        self.identify()
-
-        signal.signal(signal.SIGINT, self.close)
-        signal.signal(signal.SIGQUIT, self.close)
+        # self.initialize_api()
+        #
+        # # Load banks
+        # for bank_name in Global.BANKS:
+        #     bank = self.api._get_user(Global.BANKS[bank_name]) or User(public_key=Global.BANKS[bank_name], time_added=0)
+        #     bank.post_or_put(self.api.db)
+        #     self.api.create_profile(bank, {'role': 3})
+        #
+        # self.private_key = None
+        # self.user = None
+        # self.community = None
+        #
+        # self.identify()
+        #
+        # signal.signal(signal.SIGINT, self.close)
+        # signal.signal(signal.SIGQUIT, self.close)
 
     def run(self):
-        # Ready to start dispersy
-        reactor.callWhenRunning(self.start_dispersy)
-        reactor.callWhenRunning(self.exec_)
-        reactor.run()
+        #print reactor
+        #reactor.callWhenRunning(self.start_dispersy)
+        #reactor.run()
+        pass
 
     def close(self, *_):
         self.dispersy.stop()
-        reactor.stop()
+        #reactor.stop()
         time.sleep(2)
         os._exit(1)
 
     def initialize_api(self):
+        from market.api.api import MarketAPI
+        from market.database.backends import PersistentBackend, MemoryBackend
+        from market.database.database import MockDatabase
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/market.db')))
 
     def identify(self):
@@ -82,7 +78,14 @@ class MarketApplication(QApplication):
             self.private_key = priv
             print "Using a new user"
 
+
     def start_dispersy(self):
+        from dispersy.dispersy import Dispersy
+        from dispersy.endpoint import StandaloneEndpoint
+        from market.community.community import MortgageMarketCommunity
+
+        from twisted.internet.task import LoopingCall
+
         self.dispersy = Dispersy(StandaloneEndpoint(self.port, '0.0.0.0'), unicode('.'), u'dispersy-%s.db' % self.database_prefix)
         self.dispersy.statistics.enable_debug_statistics(True)
         self.dispersy.start(autoload_discovery=True)
@@ -92,8 +95,11 @@ class MarketApplication(QApplication):
         self.community = MortgageMarketCommunity.init_community(self.dispersy, master_member, my_member)
         self.community.api = self.api
         self.community.user = self.user
+        from market.multichain.database import MultiChainDB
+
         self.community.persistence = MultiChainDB(self.dispersy, self.dispersy.working_directory, self.database_prefix)
         self.api.community = self.community
+
 
         # Run the scenario every 3 seconds
         LoopingCall(self._scenario).start(3.0)
