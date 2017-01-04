@@ -11,7 +11,7 @@ class MarketAppSceneBorrower(MarketApplication):
         self.profile = True
         self.loan_request = False
         self.mortgage_accept = False
-        self.investor_accept = False
+        self.investor_offer = False
 
         MarketApplication.__init__(self, *argv)
 
@@ -32,7 +32,7 @@ class MarketAppSceneBorrower(MarketApplication):
         self.scenario = Scenario(self.api)
         self.tasks = Tasks(self.api)
 
-        if not self.profile and not self.loan_request and not self.mortgage_accept and not self.investor_accept:
+        if not self.profile and not self.loan_request and not self.mortgage_accept and not self.investor_offer:
             for bank_id in Global.BANKS:
                 user = self.api._get_user(Global.BANKS[bank_id])
                 if user.id in self.api.user_candidate and self.bank_status[bank_id] == False:
@@ -68,6 +68,16 @@ class MarketAppSceneBorrower(MarketApplication):
             if accepted:
                 print "BLESS NOW TO WAIT FOR INVESTORS"
                 self.mortgage_accept = False
+                self.investor_offer = True
+
+        # Try to accept a loan offer
+        if self.investor_offer:
+            print "Trying desperately to accept a loan offer"
+            accepted = self.tasks.accept_loan_offers(self.user)
+
+            if accepted:
+                print "BLESS"
+
 
 class MarketAppSceneInvestor(MarketApplication):
 
@@ -90,7 +100,7 @@ class MarketAppSceneInvestor(MarketApplication):
         self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         # Start fresh
         self._api.db.backend.clear()
-        #self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        # self._api = MarketAPI(MockDatabase(MemoryBackend()))
 
     def _scenario(self):
         from scenarios.scenario import Scenario
@@ -107,14 +117,21 @@ class MarketAppSceneInvestor(MarketApplication):
             self.wait_for_campaign = True
             print "Looking for campaigns now"
 
-
         # Creating a loan request
         if self.wait_for_campaign:
             campaigns = self.scenario.load_open_market()
             print len(campaigns), " available."
+            if len(campaigns):
+                self.wait_for_campaign = False
+                self.mortgage_accept = True
+
             for list in campaigns:
                 print list[1].id, " found."
 
+        # Create a loan offer
+        if self.mortgage_accept:
+            print "Sending an investment offer"
+            self.scenario.create_investment_offer(self.user)
 
 
 class MarketAppSceneBank(MarketApplicationABN):
@@ -154,6 +171,7 @@ class MarketAppSceneBankING(MarketApplicationING):
         self.tasks = Tasks(self.api)
         self.tasks.handle_incoming_loan_request(self.user)
 
+
 class MarketAppSceneBankRABO(MarketApplicationING):
     def __init__(self, *argv):
         MarketApplicationRABO.__init__(self, *argv)
@@ -173,7 +191,6 @@ class MarketAppSceneBankRABO(MarketApplicationING):
         self.tasks.handle_incoming_loan_request(self.user)
 
 
-
 class MarketAppSceneBankMONEYOU(MarketApplicationING):
     def __init__(self, *argv):
         MarketApplicationMONEYOU.__init__(self, *argv)
@@ -191,4 +208,3 @@ class MarketAppSceneBankMONEYOU(MarketApplicationING):
         self.scenario = Scenario(self.api)
         self.tasks = Tasks(self.api)
         self.tasks.handle_incoming_loan_request(self.user)
-

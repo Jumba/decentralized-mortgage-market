@@ -1,6 +1,6 @@
 import random
 
-from market.models.loans import Mortgage
+from market.models.loans import Mortgage, Investment
 from scenarios.fake_provider import FakePayload
 
 
@@ -27,6 +27,20 @@ class Tasks(object):
             if isinstance(mortgage, Mortgage):
                 print "Agreeing with the mortgage offer from ", mortgage.bank, " signed?: ", mortgage.signature_valid(self.api)
                 self.api.accept_mortgage_offer(user, FakePayload.accept_mortgage_offer(mortgage))
+                accepted = True
+
+        return accepted
+
+    def accept_loan_offers(self, user):
+        user.update(self.api.db)
+        loan_offers = self.api.load_borrowers_offers(user)
+        accepted = False
+        for loan_offer in loan_offers:
+            print 'Found loan offer'
+            if isinstance(loan_offer, Investment):
+                print "Agreeing with the loan offer from ", loan_offer.investor_key, " signed?: ", \
+                    loan_offer.signature_valid(self.api)
+                self.api.accept_investment_offer(user, FakePayload.accept_investment_offer(loan_offer))
                 accepted = True
 
         return accepted

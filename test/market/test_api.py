@@ -448,14 +448,10 @@ class APITestSuite(unittest.TestCase):
         investment1 = self.api.place_loan_offer(investor1, self.payload_investment1)
         investment2 = self.api.place_loan_offer(investor2, self.payload_investment2)
 
-        # The borrower now accepts the offers.
-        #self.api.accept_investment_offer(user, {'investment_id': investment1.id})
-        #self.api.accept_investment_offer(user, {'investment_id': investment2.id})
-
         # Get the offers from the database
         offers = self.api.load_borrowers_offers(user)
 
-        # Check if the objects in the returned list are Mortgage-objects
+        # Check if the objects in the returned list are Investment-objects
         self.assertIsInstance(offers[0], Investment)
         self.assertIsInstance(offers[1], Investment)
 
