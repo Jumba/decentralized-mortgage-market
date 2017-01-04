@@ -44,7 +44,6 @@ class MortgageMarketCommunity(Community):
     def initialize(self):
         super(MortgageMarketCommunity, self).initialize()
         logger.info("Example community initialized")
-        print "gas"
 
     def on_introduction_response(self, messages):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
