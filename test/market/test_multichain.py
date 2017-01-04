@@ -41,8 +41,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         registerAsIOThread()
 
         # Object creation and preperation
-        self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
-        self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary2"))
+        self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary_mc1"))
+        self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary_mc2"))
 
         self.api = MarketAPI(MockDatabase(MemoryBackend()))
         self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
