@@ -1,42 +1,43 @@
 import sys
 from marketGUI.market_app import MarketApplication
-
-from PyQt5.QtWidgets import QApplication
-#from PyQt5.QtCore import QTimer
-
-
-app = MarketApplication(sys.argv)
-from twisted.application import reactors
-reactors.installReactor('qt5')
-
-from twisted.internet import reactor
-print reactor
-
-#reactor.callWhenRunning(app.start_dispersy)
-reactor.runReturn()
-
-from market.controllers.main_window_controller import MainWindowController
-
-#form = MainWindowController(app=app)
-#form.show()
-
+from scenarios.apps import MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneBankRABO, MarketAppSceneBankMONEYOU, \
+    MarketAppSceneBorrower, MarketAppSceneInvestor
 
 if __name__ == "__main__":
-    pass
+    if len(sys.argv) == 1:
+        app = MarketApplication(sys.argv)
+    else:
+        bank = sys.argv[1]
+        if bank == "abn":
+            app = MarketAppSceneBank(sys.argv)
+        elif bank == "ing":
+            app = MarketAppSceneBankING(sys.argv)
+        elif bank == "rabo":
+            app = MarketAppSceneBankRABO(sys.argv)
+        elif bank == "moneyou":
+            app = MarketAppSceneBankMONEYOU(sys.argv)
+        elif bank == "borrower":
+            app = MarketAppSceneBorrower(sys.argv)
+        elif bank == "investor":
+            app = MarketAppSceneInvestor(sys.argv)
+        else:
+            raise SystemExit("Unknown bank")
 
-    import qt5reactor
-    #qt5reactor.install()
 
+    from twisted.application import reactors
+    reactors.installReactor('qt5')
 
+    from twisted.internet import reactor
+    print reactor
 
+    reactor.callWhenRunning(app.start_dispersy)
+    app.initialize()
+    reactor.runReturn()
 
+    from market.controllers.main_window_controller import MainWindowController
 
-    # timer = QTimer()
-    # timer.start(500)  # You may change this if you wish.
-    # timer.timeout.connect(lambda: None)  # Let the interpreter run each 500 ms.
-    # # Your code here.
+    form = MainWindowController(app=app)
+    form.show()
 
+    app.exec_()
 
-    #app.run()
-
-    #sys.exit(app.exec_())
