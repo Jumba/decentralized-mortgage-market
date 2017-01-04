@@ -1,3 +1,13 @@
+import os
+import ntpath
+
+from PyQt5.QtCore import QFile
+from PyQt5.QtWidgets import QFileDialog, qApp
+from PyQt5.QtWidgets import QPushButton, QTableWidget
+from PyQt5.QtWidgets import QTableWidgetItem
+
+
+DOCUMENT_NAMES = ['Example Document 1', 'Example Document 2', 'Example Document 3']
 
 
 class ProfileController:
@@ -9,8 +19,38 @@ class ProfileController:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.current_profile = None
+        self.focused_button = None
+        self.documents = dict.fromkeys(DOCUMENT_NAMES)
         # Add listener to the save profile button
         self.mainwindow.profile_save_pushbutton.clicked.connect(self.save_form)
+        self.table = self.mainwindow.profile_documents_table
+        self.prepare_table()
+
+    def prepare_table(self):
+        rows = len(DOCUMENT_NAMES)
+        l = []
+        for i in range(0, rows):
+            self.table.insertRow(i)
+            edit_button = QPushButton('Browse')
+            edit_button.setText('Browse')
+            edit_button.index = i
+            edit_button.clicked.connect(self.browse)
+            self.table.setItem(i, 0, QTableWidgetItem(str(DOCUMENT_NAMES[i])))
+            self.table.setCellWidget(i, 2, edit_button)
+            l.append(edit_button)
+
+    def browse(self):
+        index = self.mainwindow.sender().index
+        path, _ = QFileDialog.getOpenFileName(self.mainwindow, 'Open File', os.getenv('HOME'))
+        fh = ''
+
+        if QFile.exists(path):
+            document_name = self.table.item(index, 0).text()
+            self.documents[document_name] = path
+            self.table.setItem(index, 1, QTableWidgetItem(str(ntpath.basename(path))))
+
+        # if not fh.open(QFile.ReadOnly):
+        #     qApp.quit()
 
     def setup_view(self):
         """
@@ -46,8 +86,9 @@ class ProfileController:
                 payload['current_postalcode'] = str(self.mainwindow.profile_postcode_lineedit.text())
                 payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text())
                 payload['current_address'] = str(self.mainwindow.profile_address_lineedit.text())
-                # TODO Add missing 'documents_list': self.documentsTable
-                payload['documents_list'] = []
+                # TODO Add missing 'documents_list'
+                # payload['documents_list'] = self.documents #The document payload as a dictionary.
+                payload['documents_list'] = map(lambda key: self.documents[key], sorted(self.documents))
 
             # Check if all fields are filled out
             for _, value in payload.iteritems():
