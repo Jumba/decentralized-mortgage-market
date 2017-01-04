@@ -8,7 +8,6 @@ from dispersy.endpoint import ManualEnpoint
 from dispersy.member import DummyMember
 from market.api.api import STATUS, MarketAPI
 from market.community.community import MortgageMarketCommunity
-from market.community.conversion import MortgageMarketConversion
 from market.database.backends import MemoryBackend
 from market.database.database import MockDatabase
 from market.models import DatabaseModel
@@ -47,8 +46,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.api = MarketAPI(MockDatabase(MemoryBackend()))
         self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
 
-        self.api.db.backend.clear()
-        self.api_bank.db.backend.clear()
+        #self.api.db.backend.clear()
+        #self.api_bank.db.backend.clear()
 
         self.user, _, priv_user = self.api.create_user()
         self.bank, _, priv_bank = self.api.create_user()
