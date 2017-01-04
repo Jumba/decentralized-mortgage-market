@@ -319,7 +319,7 @@ class Payload(object):
         self._benefactor = benefactor
         self._beneficiary = beneficiary
         self._agreement_benefactor = agreement_benefactor
-        self._agreement_beneficiary = agreement_benefactor
+        self._agreement_beneficiary = agreement_beneficiary
         self._sequence_number_benefactor = sequence_number_benefactor
         self._sequence_number_beneficiary = sequence_number_beneficiary
         self._previous_hash_benefactor = previous_hash_benefactor
