@@ -357,8 +357,13 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
 #
 #         self.assertEqual(self.db.get_latest_sequence_number('benefactor-key-34892yrqwe'), 0)
 #
-#     def tearDown(self):
-#         self.db.close()
+
+    def tearDown(self):
+        self.dispersy._database.close()
+        self.dispersy_bank._database.close()
+        self.db.close()
+        self.bank_db.close()
+
 #
 #
 # class Payload(object):
