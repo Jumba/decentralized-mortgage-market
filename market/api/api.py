@@ -431,6 +431,8 @@ class MarketAPI(object):
         """
         user = self._get_user(user)
         loans = []
+        print 'mortgages:'
+        print user.mortgage_ids
         for mortgage_id in user.mortgage_ids:
             if self.db.get(Mortgage.type, mortgage_id).status == STATUS.ACCEPTED:
                 mortgage = self.db.get(Mortgage.type, mortgage_id)
@@ -546,7 +548,7 @@ class MarketAPI(object):
 
         loan_request.status[mortgage.bank] = STATUS.ACCEPTED
         mortgage.status = STATUS.ACCEPTED
-        user.mortgage_ids.append(mortgage.id)
+        # user.mortgage_ids.append(mortgage.id)
 
         # Reject the other banks
         for bank in loan_request.status:
@@ -556,7 +558,7 @@ class MarketAPI(object):
         # Save the objects
         self.db.put(Mortgage.type, mortgage.id, mortgage)
         self.db.put(LoanRequest.type, loan_request.id, loan_request)
-        self.db.put(User.type, user.id, user)
+        # self.db.put(User.type, user.id, user)
 
         # Create the campaign
         return self.create_campaign(user, mortgage, loan_request)
