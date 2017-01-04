@@ -43,44 +43,27 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         # Object creation and preperation
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
         self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary2"))
-        self.dispersy_investor = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary3"))
 
         self.api = MarketAPI(MockDatabase(MemoryBackend()))
         self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
-        self.api_investor = MarketAPI(MockDatabase(MemoryBackend()))
 
         self.api.db.backend.clear()
         self.api_bank.db.backend.clear()
-        self.api_investor.db.backend.clear()
 
         self.user, _, priv_user = self.api.create_user()
         self.bank, _, priv_bank = self.api.create_user()
-        self.investor, _, priv_investor = self.api.create_user()
-
-        # save the user to the bank and investor and borrower db
-        self.user.post_or_put(self.api_bank.db)
-        self.bank.post_or_put(self.api_bank.db)
-        self.investor.post_or_put(self.api_bank.db)
-
-        self.user.post_or_put(self.api_investor.db)
-        self.bank.post_or_put(self.api_investor.db)
-        self.investor.post_or_put(self.api_investor.db)
 
         self.dispersy._database.open()
         self.dispersy_bank._database.open()
-        self.dispersy_investor._database.open()
 
         self.master_member = DummyMember(self.dispersy, 1, "a" * 20)
 
         self.member = self.dispersy.get_member(private_key=priv_user.decode("HEX"))
         self.member_bank = self.dispersy.get_member(private_key=priv_bank.decode("HEX"))
-        self.member_investor = self.dispersy.get_member(private_key=priv_investor.decode("HEX"))
 
         self.community = MortgageMarketCommunity.init_community(self.dispersy, self.master_member, self.member)
         self.community_bank = MortgageMarketCommunity.init_community(self.dispersy_bank, self.master_member,
                                                                      self.member_bank)
-        self.community_investor = MortgageMarketCommunity.init_community(self.dispersy_investor, self.master_member,
-                                                                         self.member_investor)
 
         self.community.api = self.api
         self.community.user = self.user
@@ -90,33 +73,52 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.community_bank.user = self.bank
         self.api.community = self.community_bank
 
-        self.community_investor.api = self.api_investor
-        self.community_investor.user = self.investor
-        self.api.community = self.community_investor
-
         self.db = MultiChainDB('.', u'test.db')
-
-        # Add our conversion to the community.
-        self.conversion = MortgageMarketConversion(self.community)
+        self.bank_db = MultiChainDB('.', u'test.db')
 
         # Models
-        self.mortgage1 = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'),
+        self.mortgage = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'),
                                   UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
                               'ING', 80000, 1, 2.5, 1.5, 2.5, 36, 'A', [], STATUS.ACCEPTED)
-        self.investment1 = Investment('benefactor-key-i298w4yjexrw', 1000, 24, 1.5,
-                                       UUID('b97dfa1c-e125-4ded-9b1a-5066462c5299'), STATUS.ACCEPTED)
+
+        self.payload =  (
+                self.user.id,
+                self.bank.id,
+                self.mortgage,
+                self.mortgage,
+                1,
+                1,
+                '',
+                '',
+                '',
+                '',
+                100,
+            )
+
+        self.payload2 = (
+                self.bank.id,
+                self.user.id,
+                self.mortgage,
+                self.mortgage,
+                2,
+                4,
+                'rrr',
+                'ttt',
+                'aaa',
+                'sss',
+                500,
+            )
+
 
 
     def test_from_signed_confirmed(self):
         """
         This test checks the functionality of making a block with the payload from a message.
         """
-
         meta = self.community.get_meta_message(u"signed_confirm")
         message = meta.impl(authentication=([self.member, self.member_bank],),
                             distribution=(self.community.claim_global_time(),),
-                            payload=(self.user.id, self.bank.id, self.mortgage1, self.mortgage1,
-                            1, 1, "", "", 100,),
+                            payload=self.payload,
                             destination=(LoopbackCandidate(),))
 
         block = DatabaseBlock.from_signed_confirm_message(message)
@@ -131,132 +133,69 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertEqual(block.previous_hash_beneficiary, message.payload.previous_hash_beneficiary)
         self.assertEqual(block.time, message.payload.time)
 
-        # self.db = MultiChainDB('.', u'test.db')
-        #
-        # self.mortgage1 = Mortgage(UUID('b97dfa1c-e125-4ded-9b1a-5066462c529c'), UUID('b97dfa1c-e125-4ded-9b1a-5066462c520c'),
-        #                      'ING', 80000, 1, 2.5, 1.5, 2.5, 36, 'A', [], STATUS.ACCEPTED)
-        # self.investment1 = Investment('benefactor-key-i298w4yjexrw', 1000, 24, 1.5,
-        #                               UUID('b97dfa1c-e125-4ded-9b1a-5066462c5299'), STATUS.ACCEPTED)
-        #
-        # self.payload_request1 = Payload('benefactor-key-hiuwehduiee2u8', 'beneficiary-key-d8923yr94fh3re', self.mortgage1, None,
-        #                            3, 0, 'prev-hash-benefactor-urc89utqhoird', '', '', '', 300)
-        # self.payload_response1 = Payload('benefactor-key-hiuwehduiee2u8', 'beneficiary-key-d8923yr94fh3re', self.mortgage1,
-        #                             self.mortgage1, 3, 2, 'prev-hash-benefactor-urc89utqhoird',
-        #                             'prev-hash-beneficiary-cru894yhfrri2', 'signature-benefactor-8397yhdi287r',
-        #                             'signature-beneficiary-e89ydughdb23', 300)
-        #
-        # self.payload_response_multiple_blocks1 = Payload('benefactor-key-0ed203rd2', 'beneficiary-key-jfwru9f3w8',
-        #                             self.investment1, self.investment1, 5, 4,
-        #                             'prev-hash-benefactor-ik12ei3', 'prev-hash-beneficiary-fj039r',
-        #                             'signature-benefactor-mdioaw030', 'signature-beneficiary-jfrkf29', 800)
-        # self.payload_response_multiple_blocks2 = Payload('benefactor-key-0ed203rd2', 'beneficiary-key-jfwru9f3w8',
-        #                                                 self.investment1, self.investment1, 6, 5,
-        #                                                 'prev-hash-benefactor-ik12ei38', 'prev-hash-beneficiary-fj039r8',
-        #                                                 'signature-benefactor-mdioaw030',
-        #                                                 'signature-beneficiary-jfrkf29', 900)
-        #
-        # self.payload_request_latest_hash = Payload('benefactor-key-i298w4yjexrw', 'beneficiary-key-d893dyt4rew', self.investment1, None,
-        #                            5, 0, 'prev-hash-benefactor-urc89utqhokp9', '', '', '', 600)
-        # self.payload_response_latest_hash = Payload('benefactor-key-i298w4yjexrw', 'beneficiary-key-d893dyt4rew',
-        #                             self.investment1, self.investment1, 5, 4,
-        #                             'prev-hash-benefactor-urc89utqhokp9', 'prev-hash-beneficiary-98eud284r',
-        #                             'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr', 600)
-        #
-        # self.payload_request_latest_hash_two_blocks1 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
-        #                                            self.investment1, None,
-        #                                            5, 0, 'prev-hash-benefactor-urc89utf924f0fj', '', '', '', 400)
-        # self.payload_response_latest_hash_two_blocks1 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
-        #                                             self.investment1, self.investment1, 5, 4,
-        #                                             'prev-hash-benefactor-urc89utf924f0fj',
-        #                                             'prev-hash-beneficiary-98eud284r9e0',
-        #                                             'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr',
-        #                                             400)
-        #
-        # self.payload_request_latest_hash_two_blocks2 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
-        #                                            self.investment1, None,
-        #                                            8, 0, 'prev-hash-benefactor-93rudf9e8wjf', '', '', '', 900)
-        # self.payload_response_latest_hash_two_blocks2 = Payload('benefactor-key-i298w4yje5wd', 'beneficiary-key-d893djw9a83ry',
-        #                                             self.investment1, self.investment1, 8, 7,
-        #                                             'prev-hash-benefactor-93rudf9e8wjf',
-        #                                             'prev-hash-beneficiary-jcse09i3rgh',
-        #                                             'signature-benefactor-eu8392ye', 'signature-beneficiary-eu8923yr',
-        #                                             900)
-        #
-        # self.payload_request_latest_sequence_number = Payload('benefactor-key-i298w4y483xrw', 'beneficiary-key-d893dyt4rei920',
-        #                                            self.mortgage1, None,
-        #                                            8, 0, 'prev-hash-benefactor-urc89utqhokp9', '', '', '', 500)
-        # self.payload_response_latest_sequence_number = Payload('benefactor-key-i298w4y483xrw', 'beneficiary-key-d893dyt4rei920',
-        #                                             self.mortgage1, self.mortgage1,
-        #                                             8, 6, 'prev-hash-benefactor-urc89utqhokp9',
-        #                                             'prev-hash-beneficiary-dqf9df',
-        #                                             'signature-benefactor-ci90sje', 'signature-beneficiary-943uwr',
-        #                                             500)
-#
-#     def test_from_signed_confirm_message(self):
-#         """
-#         This test checks the functionality of making a block with the payload from a message.
-#         """
-#
-#         message = Message(self.payload_response1)
-#         block = DatabaseBlock.from_signed_confirm_message(message)
-#
-#         self.assertEqual(block.benefactor, message.payload.benefactor)
-#         self.assertEqual(block.beneficiary, message.payload.beneficiary)
-#         self.assertEqual(DatabaseModel.decode(block.agreement_benefactor), message.payload.agreement_benefactor)
-#         self.assertEqual(DatabaseModel.decode(block.agreement_beneficiary), message.payload.agreement_beneficiary)
-#         self.assertEqual(block.sequence_number_benefactor, message.payload.sequence_number_benefactor)
-#         self.assertEqual(block.sequence_number_beneficiary, message.payload.sequence_number_beneficiary)
-#         self.assertEqual(block.previous_hash_benefactor, message.payload.previous_hash_benefactor)
-#         self.assertEqual(block.previous_hash_beneficiary, message.payload.previous_hash_beneficiary)
-#         self.assertEqual(block.time, message.payload.time)
-#
-#     def test_add_block(self):
-#         """
-#         This test checks the functionality of adding a block to the blockchain.
-#         """
-#
-#         message = Message(self.payload_response1)
-#         block = DatabaseBlock.from_signed_confirm_message(message)
-#
-#         # Add the block to the blockchain
-#         self.db.add_block(block)
-#         # Get the block by the hash of the block
-#         result = self.db.get_by_hash(block.hash_block)
-#
-#         # Check whether the block was added correctly
-#         self.assertEqualBlocks(block, result)
-#
-#     def test_add_multiple_blocks(self):
-#         """
-#         This test checks the functionality of adding two blocks to the blockchain.
-#         """
-#
-#         message1 = Message(self.payload_response_multiple_blocks1)
-#         message2 = Message(self.payload_response_multiple_blocks2)
-#         block1 = DatabaseBlock.from_signed_confirm_message(message1)
-#         block2 = DatabaseBlock.from_signed_confirm_message(message2)
-#
-#         # Add the blocks to the blockchain
-#         self.db.add_block(block1)
-#         self.db.add_block(block2)
-#
-#         # Get the blocks by the hash of the block
-#         result1 = self.db.get_by_hash(block1.hash_block)
-#         result2 = self.db.get_by_hash(block2.hash_block)
-#
-#         # Get the latest hash
-#         latest_hash_benefactor = self.db.get_latest_hash(message1.payload.benefactor)
-#         latest_hash_beneficiary = self.db.get_latest_hash(message1.payload.beneficiary)
-#
-#         # Check whether the blocks were added correctly
-#         self.assertEqualBlocks(block1, result1)
-#         self.assertEqualBlocks(block2, result2)
-#         self.assertNotEqual(block1.hash_block, block2.hash_block)
-#         self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
-#         self.assertEqual(latest_hash_benefactor, block2.hash_block)
-#         self.assertEqual(latest_hash_beneficiary, block2.hash_block)
-#         self.assertNotEqual(latest_hash_benefactor, block1.hash_block)
-#         self.assertNotEqual(latest_hash_beneficiary, block1.hash_block)
+
+    def test_add_get(self):
+        """
+        This test checks the functionality of adding a block to the blockchain then retrieving it.
+        """
+
+
+
+        meta = self.community.get_meta_message(u"signed_confirm")
+        message = meta.impl(authentication=([self.member, self.member_bank],),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=self.payload,
+                            destination=(LoopbackCandidate(),))
+        block = DatabaseBlock.from_signed_confirm_message(message)
+
+        # Add the block to the blockchain
+        self.db.add_block(block)
+        # Get the block by the hash of the block
+        result = self.db.get_by_hash(block.hash_block)
+
+        # Check whether the block was added correctly
+        self.assertEqualBlocks(block, result)
+
+    def test_add_multiple_blocks(self):
+        """
+        This test checks the functionality of adding two blocks to the blockchain.
+        """
+
+        meta = self.community.get_meta_message(u"signed_confirm")
+        message1 = meta.impl(authentication=([self.member, self.member_bank],),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=self.payload,
+                            destination=(LoopbackCandidate(),))
+
+        message2 = meta.impl(authentication=([self.member, self.member_bank],),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=self.payload2,
+                            destination=(LoopbackCandidate(),))
+
+        block1 = DatabaseBlock.from_signed_confirm_message(message1)
+        block2 = DatabaseBlock.from_signed_confirm_message(message2)
+
+        # Add the blocks to the blockchain
+        self.db.add_block(block1)
+        self.db.add_block(block2)
+
+        # Get the blocks by the hash of the block
+        result1 = self.db.get_by_hash(block1.hash_block)
+        result2 = self.db.get_by_hash(block2.hash_block)
+
+        # Get the latest hash
+        latest_hash_benefactor = self.db.get_latest_hash(message1.payload.benefactor)
+        latest_hash_beneficiary = self.db.get_latest_hash(message1.payload.beneficiary)
+
+        # Check whether the blocks were added correctly
+        self.assertEqualBlocks(block1, result1)
+        self.assertEqualBlocks(block2, result2)
+        self.assertNotEqual(block1.hash_block, block2.hash_block)
+        self.assertEqual(latest_hash_benefactor, latest_hash_beneficiary)
+        self.assertEqual(latest_hash_benefactor, block2.hash_block)
+        self.assertEqual(latest_hash_beneficiary, block2.hash_block)
+        self.assertNotEqual(latest_hash_benefactor, block1.hash_block)
+        self.assertNotEqual(latest_hash_beneficiary, block1.hash_block)
 #
 #     def test_update_block_with_beneficiary(self):
 #         """
