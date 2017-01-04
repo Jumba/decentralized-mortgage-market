@@ -17,7 +17,7 @@ from market.database.database import MockDatabase
 from market.models import DatabaseModel
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
-from market.models.profiles import BorrowersProfile
+from market.models.profiles import BorrowersProfile, Profile
 from market.models.user import User
 
 
@@ -117,10 +117,17 @@ class CommunityTestSuite(unittest.TestCase):
                                         status={}
                                         )
         self.loan_request.post_or_put(self.neutral_api.db)
-        self.profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com', iban='sadasdas',
-                                        phone_number='213131', current_postal_code='2312AA',
-                                        current_house_number='2132', current_address='Damstraat 1', document_list=[])
-        self.profile.post_or_put(self.neutral_api.db)
+
+        self.borrowers_profile = BorrowersProfile(first_name=u'Jebediah', last_name=u'Kerman',
+                                                  email='exmaple@asdsa.com', iban='sadasdas',
+                                                  phone_number='213131', current_postal_code='2312AA',
+                                                  current_house_number='2132', current_address='Damstraat 1',
+                                                  document_list=[])
+        self.borrowers_profile.post_or_put(self.neutral_api.db)
+
+        self.investors_profile = Profile(first_name=u'Jebediah', last_name=u'Kerman', email='exmaple@asdsa.com',
+                                         iban='sadasdas', phone_number='213131')
+        self.investors_profile.post_or_put(self.neutral_api.db)
 
         self.mortgage = Mortgage(
             request_id=self.loan_request.id,
@@ -172,17 +179,17 @@ class CommunityTestSuite(unittest.TestCase):
         payload = FakePayload()
         payload.request = u"loan_request"
         payload.models = {self.house.type: self.house, self.loan_request.type: self.loan_request,
-                          self.user.type: self.user, self.profile.type: self.profile}
+                          self.user.type: self.user, self.borrowers_profile.type: self.borrowers_profile}
 
         # Bank doesn't have them yet
         self.assertFalse(self.isModelInDB(self.api_bank, self.loan_request))
-        self.assertFalse(self.isModelInDB(self.api_bank, self.profile))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.borrowers_profile))
         self.assertFalse(self.isModelInDB(self.api_bank, self.house))
 
         self.community_bank.on_loan_request_receive(payload)
 
         self.assertTrue(self.isModelInDB(self.api_bank, self.loan_request))
-        self.assertTrue(self.isModelInDB(self.api_bank, self.profile))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.borrowers_profile))
         self.assertTrue(self.isModelInDB(self.api_bank, self.house))
 
     def test_on_loan_request_reject(self):
@@ -324,7 +331,8 @@ class CommunityTestSuite(unittest.TestCase):
         payload = FakePayload()
         payload.request = u"investment_offer"
         payload.models = {self.investor.type: self.investor,
-                          self.investment.type: self.investment}
+                          self.investment.type: self.investment,
+                          self.investors_profile.type: self.investors_profile}
 
         # Check if user doesn't have the investment yet
         self.assertFalse(self.isModelInDB(self.api, self.investment))
@@ -349,7 +357,8 @@ class CommunityTestSuite(unittest.TestCase):
         payload = FakePayload()
         payload.request = u"investment_accept"
         payload.models = {self.user.type: self.user,
-                          self.investment.type: self.investment}
+                          self.investment.type: self.investment,
+                          self.borrowers_profile.type: self.borrowers_profile}
 
         self.investment.status = STATUS.ACCEPTED
 
