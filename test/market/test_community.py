@@ -346,20 +346,27 @@ class CommunityTestSuite(unittest.TestCase):
 
     def test_on_campaign_bid(self):
         """
-        Test an investor sending a campaign bid
+        Test sending a campaign bid
+        user -> user
+        user -> bank
+        user -> investor
         investor -> user
         investor -> bank
         investor -> investor
         """
         payload = FakePayload()
         payload.request = u"campaign_bid"
-        payload.models = {self.investor.type: self.investor,
-                          self.investment.type: self.investment}
+        payload.models = {self.user.type: self.user,
+                          self.investment.type: self.investment,
+                          self.campaign.type: self.campaign}
 
         # Check if user doesn't have the investment yet
         self.assertFalse(self.isModelInDB(self.api, self.investment))
         self.assertFalse(self.isModelInDB(self.api_bank, self.investment))
         self.assertFalse(self.isModelInDB(self.api_investor, self.investment))
+        self.assertFalse(self.isModelInDB(self.api, self.campaign))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.campaign))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.campaign))
 
         # Send campaign bid
         self.community.on_campaign_bid(payload)
@@ -370,6 +377,9 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertTrue(self.isModelInDB(self.api, self.investment))
         self.assertTrue(self.isModelInDB(self.api_bank, self.investment))
         self.assertTrue(self.isModelInDB(self.api_investor, self.investment))
+        self.assertTrue(self.isModelInDB(self.api, self.campaign))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.campaign))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.campaign))
 
     def test_on_investment_accept(self):
         """
