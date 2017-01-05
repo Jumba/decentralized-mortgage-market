@@ -1,28 +1,9 @@
-import os
 import sys
-
-import signal
-from twisted.internet import reactor
-
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QMessageBox, QApplication
-
-from scenarios.apps import MarketAppSceneBorrower, MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneInvestor
-
-
-def sigint_handler(*args):
-    """Handler for the SIGINT signal."""
-    sys.stderr.write('\r')
-    reactor.stop()
-    QApplication.quit()
-    os._exit(0) # TODO: THIS SHOULD BE DONE PROPERLY
+from marketGUI.market_app import MarketApplication
+from scenarios.apps import MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneBankRABO, MarketAppSceneBankMONEYOU, \
+    MarketAppSceneBorrower, MarketAppSceneInvestor
 
 if __name__ == "__main__":
-
-    from marketGUI.market_app import MarketApplication, MarketApplicationABN
-
-    signal.signal(signal.SIGINT, sigint_handler)
-
     if len(sys.argv) == 1:
         app = MarketApplication(sys.argv)
     else:
@@ -42,9 +23,21 @@ if __name__ == "__main__":
         else:
             raise SystemExit("Unknown bank")
 
-    timer = QTimer()
-    timer.start(500)  # You may change this if you wish.
-    timer.timeout.connect(lambda: None)  # Let the interpreter run each 500 ms.
-    # Your code here.
 
-    sys.exit(app.exec_())
+    from twisted.application import reactors
+    reactors.installReactor('qt5')
+
+    from twisted.internet import reactor
+    print reactor
+
+    reactor.callWhenRunning(app.start_dispersy)
+    app.initialize()
+    reactor.runReturn()
+
+    from market.controllers.main_window_controller import MainWindowController
+
+    form = MainWindowController(app=app)
+    form.show()
+
+    app.exec_()
+
