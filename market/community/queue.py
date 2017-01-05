@@ -93,6 +93,8 @@ class IncomingMessageQueue(MessageQueue):
                 remove_message = community.on_mortgage_offer(payload)
             elif request == u"loan_request_reject":
                 remove_message = community.on_loan_request_reject(payload)
+            elif request == u"campaign_bid":
+                remove_message = community.on_campaign_bid(payload)
             else:
                 # Unknow message request, throw it away
                 remove_message = True

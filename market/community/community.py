@@ -347,6 +347,18 @@ class MortgageMarketCommunity(Community):
 
         return True
 
+    def on_campaign_bid(self, payload):
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
+
+        assert isinstance(user, User)
+        assert isinstance(investment, Investment)
+
+        user.post_or_put(self.api.db)
+        investment.post_or_put(self.api.db)
+
+        return True
+
     def on_investment_accept(self, payload):
         user = payload.models[User.type]
         investment = payload.models[Investment.type]

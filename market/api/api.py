@@ -259,7 +259,11 @@ class MarketAPI(object):
             # Add message to queue
             borrower = self.db.get(User.type, borrower.id)
             investors_profile = self.db.get(Profile.type, investor.profile_id)
-            self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type], {Investment.type: investment, User.type: investor, Profile.type: investors_profile}, [borrower]))
+            self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type],
+                                      {Investment.type: investment, User.type: investor,
+                                       Profile.type: investors_profile}, [borrower]))
+            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type], {User.type: investor,
+                                      Investment.type: investment}, []))
 
             return investment
         else:
@@ -520,7 +524,7 @@ class MarketAPI(object):
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
             self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type,
                                       User.type, House.type], {LoanRequest.type: loan_request, Mortgage.type: mortgage,
-                                      Campaign.type: campaign, User.type: user, House.type: house},[]))
+                                      Campaign.type: campaign, User.type: user, House.type: house}, []))
             return self.db.put(User.type, user.id, user)
         return False
 
