@@ -1,5 +1,6 @@
 import sys
-from marketGUI.market_app import MarketApplication
+from marketGUI.market_app import MarketApplication, MarketApplicationABN, MarketApplicationING, MarketApplicationRABO, \
+    MarketApplicationMONEYOU
 from scenarios.apps import MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneBankRABO, MarketAppSceneBankMONEYOU, \
     MarketAppSceneBorrower, MarketAppSceneInvestor
 
@@ -20,9 +21,18 @@ if __name__ == "__main__":
             app = MarketAppSceneBorrower(sys.argv)
         elif bank == "investor":
             app = MarketAppSceneInvestor(sys.argv)
+        # if bank == "abn":
+        #     app = MarketApplicationABN(sys.argv)
+        # elif bank == "ing":
+        #     app = MarketApplicationING(sys.argv)
+        # elif bank == "rabo":
+        #     app = MarketApplicationRABO(sys.argv)
+        # elif bank == "moneyou":
+        #     app = MarketApplicationMONEYOU(sys.argv)
+        # elif bank == "borrower" or bank == "investor":
+        #     app = MarketApplication(sys.argv)
         else:
             raise SystemExit("Unknown bank")
-
 
     from twisted.application import reactors
     reactors.installReactor('qt5')

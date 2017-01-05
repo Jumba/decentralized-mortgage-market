@@ -262,7 +262,7 @@ class MarketAPI(object):
             self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type],
                                       {Investment.type: investment, User.type: investor,
                                        Profile.type: investors_profile}, [borrower]))
-            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type], {User.type: investor,
+            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type], {User.type: borrower,
                                       Investment.type: investment}, []))
 
             return investment
