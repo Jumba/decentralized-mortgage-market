@@ -89,9 +89,7 @@ class MarketApplication(QApplication):
         from dispersy.endpoint import StandaloneEndpoint
         from market import Global
         from market.community.community import MortgageMarketCommunity
-        from market.multichain.database import MultiChainDB
         from twisted.internet.task import LoopingCall
-
 
         self.dispersy = Dispersy(StandaloneEndpoint(self.port, '0.0.0.0'), unicode('.'), u'dispersy-%s.db' % self.database_prefix)
         self.dispersy.statistics.enable_debug_statistics(True)
@@ -103,7 +101,6 @@ class MarketApplication(QApplication):
         self.community = MortgageMarketCommunity.init_community(self.dispersy, master_member, my_member)
         self.community.api = self.api
         self.community.user = self.user
-        self.community.persistence = MultiChainDB(unicode('sqlite'), u'multichain-%s.db' % self.database_prefix)
         self.api.community = self.community
 
         # Run the scenario every 3 seconds
