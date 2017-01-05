@@ -89,7 +89,8 @@ class SignedConfirmPayload(Payload):
                 assert isinstance(agreement_beneficiary, DatabaseModel)
             assert isinstance(sequence_number_benefactor, int)
             assert isinstance(sequence_number_beneficiary, int)
-            assert isinstance(previous_hash_benefactor, str), "Previous has not a string, rather %s with type %s" % (previous_hash_benefactor, type(previous_hash_benefactor))
+            assert isinstance(previous_hash_benefactor, str), "Previous has not a string, rather %s with type %s" % (
+            previous_hash_benefactor, type(previous_hash_benefactor))
             assert isinstance(previous_hash_beneficiary, str)
             assert isinstance(signature_benefactor, str)
             assert isinstance(signature_beneficiary, str)
@@ -108,7 +109,7 @@ class SignedConfirmPayload(Payload):
             self._signature_benefactor = signature_benefactor
             self._signature_beneficiary = signature_beneficiary
             self._time = time
-            
+
         @property
         def benefactor(self):
             return self._benefactor
@@ -149,9 +150,18 @@ class SignedConfirmPayload(Payload):
         def signature_beneficiary(self):
             return self._signature_beneficiary
 
+        @signature_benefactor.setter
+        def signature_benefactor(self, value):
+            self._signature_benefactor = value
+
+        @signature_beneficiary.setter
+        def signature_beneficiary(self, value):
+            self._signature_beneficiary = value
+
         @property
         def time(self):
             return self._time
+
 
 class ModelRequestPayload(Payload):
     class Implementation(Payload.Implementation):
