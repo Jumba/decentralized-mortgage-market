@@ -28,7 +28,6 @@ if __name__ == "__main__":
     reactors.installReactor('qt5')
 
     from twisted.internet import reactor
-    print reactor
 
     reactor.callWhenRunning(app.start_dispersy)
     app.initialize()
