@@ -23,6 +23,10 @@ if __name__ == "__main__":
         else:
             raise SystemExit("Unknown bank")
 
+    headless = False
+    if len(sys.argv) == 3:
+        headless = sys.argv[2] == "headless"
+
 
     from twisted.application import reactors
     reactors.installReactor('qt5')
@@ -33,10 +37,11 @@ if __name__ == "__main__":
     app.initialize()
     reactor.runReturn()
 
-    from market.controllers.main_window_controller import MainWindowController
+    if not headless:
+        from market.controllers.main_window_controller import MainWindowController
 
-    form = MainWindowController(app=app)
-    form.show()
+        form = MainWindowController(app=app)
+        form.show()
 
     app.exec_()
 
