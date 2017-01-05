@@ -6,16 +6,15 @@ class PlaceLoanRequestController:
     Create a PlaceLoanRequestController object that performs tasks on the Place Loan Request section of the gui.
     Takes a MainWindowController object during construction.
     """
-
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.mainwindow.bplr_submit_pushbutton.clicked.connect(self.submit_loan_request)
-        self.banks_ids = {
-            self.mainwindow.bplr_bank1_checkbox: Global.BANKS['ABN'],
-            self.mainwindow.bplr_bank2_checkbox: Global.BANKS['ING'],
-            self.mainwindow.bplr_bank3_checkbox: Global.BANKS['RABO'],
-            self.mainwindow.bplr_bank4_checkbox: Global.BANKS['MONEYOU'],
-        }
+        self.banks_ids = [
+            Global.BANKS['ABN'],
+            Global.BANKS['ING'],
+            Global.BANKS['RABO'],
+            Global.BANKS['MONEYOU'],
+        ]
 
     def setup_view(self):
         pass
@@ -48,7 +47,8 @@ class PlaceLoanRequestController:
             # Check which banks were chosen
             for obj in banks:
                 if obj.checkState():
-                    checked_banks.append(self.banks_ids[obj])
+                    checked_banks.append(self.banks_ids[pointer])
+                pointer += 1
 
             if not checked_banks:
                 raise ValueError
