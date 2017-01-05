@@ -439,9 +439,9 @@ class MortgageMarketCommunity(Community):
         payload_list[1] = ''  # beneficiary, 1
         payload_list[2] = agreement_benefactor
         payload_list[3] = None  # agreement beneficiary
-        payload_list[4] = self._get_next_sequence_number(benefactor)
+        payload_list[4] = self._get_next_sequence_number()
         payload_list[5] = 0  # sequence number beneficiary
-        payload_list[6] = self._get_latest_hash(benefactor)
+        payload_list[6] = self._get_latest_hash()
         payload_list[7] = ''  # previous hash beneficiary
         payload_list[8] = ''  # Signature benefactor
         payload_list[9] = ''  # Signature beneficiary
@@ -475,8 +475,8 @@ class MortgageMarketCommunity(Community):
         agreement_local = self.api.db.get(agreement.type, agreement.id)
 
         if agreement == agreement_local:
-            sequence_number_beneficiary = self._get_next_sequence_number(self.user.id)
-            previous_hash_beneficiary = self._get_latest_hash(self.user.id)
+            sequence_number_beneficiary = self._get_next_sequence_number()
+            previous_hash_beneficiary = self._get_latest_hash()
 
             new_payload = (
                 payload.benefactor,
@@ -529,6 +529,8 @@ class MortgageMarketCommunity(Community):
                     mortgage = self.api.db.get(Mortgage._type, agreement.mortgage_id)
                 elif isinstance(agreement, Mortgage):
                     mortgage = agreement
+                else:
+                    return False
 
                 loan_request = self.api.db.get(LoanRequest._type, mortgage.request_id)
                 beneficiary = self.api.db.get(User._type, loan_request.user_key)
@@ -570,12 +572,14 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         block = DatabaseBlock.from_signed_confirm_message(message)
+        block.sequence_number = self.persistence.get_latest_sequence_number()
+
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
         self.persistence.update_block_with_beneficiary(block)
 
-    def _get_next_sequence_number(self, user):
-        return self.persistence.get_latest_sequence_number(user) + 1
+    def _get_next_sequence_number(self):
+        return self.persistence.get_latest_sequence_number() + 1
 
-    def _get_latest_hash(self, user):
-        previous_hash = self.persistence.get_latest_hash(user)
+    def _get_latest_hash(self):
+        previous_hash = self.persistence.get_latest_hash()
         return previous_hash

@@ -82,15 +82,17 @@ class MultiChainDB(Database):
         data = (
             buffer(block.beneficiary), buffer(block.agreement_beneficiary),
             block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary), buffer(block.signature_benefactor),
-            buffer(block.signature_beneficiary), buffer(block.hash_block), block.sequence_number_benefactor,)
+            buffer(block.signature_beneficiary), buffer(block.hash_block))
+
+        where = (block.time, block.sequence_number_benefactor, buffer(block.benefactor))
 
         self.execute(
             u"UPDATE multi_chain "
             u"SET beneficiary = ?, agreement_beneficiary = ?, "
             u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, signature_benefactor = ?,"
             u"signature_beneficiary = ?, hash_block = ? "
-            u"WHERE sequence_number_benefactor = ?",
-            data)
+            u"WHERE time = ? AND sequence_number_benefactor = ? AND benefactor = ?",
+            data + where)
         self.commit()
 
     def get_latest_hash(self):
@@ -132,12 +134,12 @@ class MultiChainDB(Database):
                    u"previous_hash_benefactor, previous_hash_beneficiary, " \
                    u"signature_benefactor, signature_beneficiary, time, hash_block, previous_hash, sequence_number " \
                    u"FROM (" \
-                   u"SELECT *, sequence_number_benefactor AS sequence_number, " \
+                   u"SELECT *, sequence_number_benefactor AS seq_number, " \
                    u"benefactor AS pk FROM `multi_chain` " \
                    u"UNION " \
-                   u"SELECT *, sequence_number_beneficiary AS sequence_number," \
+                   u"SELECT *, sequence_number_beneficiary AS seq_number," \
                    u"beneficiary AS pk FROM `multi_chain`) " \
-                   u"WHERE sequence_number = ? AND pk = ? LIMIT 1"
+                   u"WHERE seq_number = ? AND pk = ? LIMIT 1"
         db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
