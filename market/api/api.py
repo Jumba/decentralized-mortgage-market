@@ -431,20 +431,22 @@ class MarketAPI(object):
         """
         user = self._get_user(user)
         loans = []
+
         for mortgage_id in user.mortgage_ids:
             if self.db.get(Mortgage.type, mortgage_id).status == STATUS.ACCEPTED:
                 mortgage = self.db.get(Mortgage.type, mortgage_id)
                 # Add the accepted mortgage in the loans list
                 loans.append([mortgage, None])  # TODO (How) do we show the bank's iban?
                 campaign = self.db.get(Campaign.type, user.campaign_ids[0])
-                for investor_id in mortgage.investors:
-                    investor = self.db.get(User.type, investor_id)
-                    for investment_id in investor.investment_ids:
-                        investment = self.db.get(Investment.type, investment_id)
-                        # Add the loan to the loans list if the investment has been accepted by the borrower and the mortgage id's match
-                        if investment.status == STATUS.ACCEPTED and investment.mortgage_id == mortgage_id:
-                            investors_profile = self.db.get(Profile.type, investor.profile_id)
-                            loans.append([investment, investors_profile])
+
+                for investment_id in user.investment_ids:
+                    investment = self.db.get(Investment.type, investment_id)
+                    if investment.status == STATUS.ACCEPTED and investment.mortgage_id == mortgage_id:
+                        investor = self.db.get(User.type, investment.investor_key)
+                        investors_profile = self.db.get(Profile.type, investor.profile_id)
+                        loans.append([investment, investors_profile])
+
+                return loans
 
         return loans
 
@@ -460,14 +462,19 @@ class MarketAPI(object):
         offers = []
         for mortgage_id in user.mortgage_ids:
             mortgage = self.db.get(Mortgage.type, mortgage_id)
+
             # If the mortgage is already accepted, we get the loan offers from the investors
             if mortgage.status == STATUS.ACCEPTED:
-                for investor_id in mortgage.investors:
-                    investor = self.db.get(User.type, investor_id)
-                    for investment_id in investor.investment_ids:
-                        investment = self.db.get(Investment.type, investment_id)
-                        if investment.status == STATUS.PENDING:
-                            offers.append(investment)
+                # for investor_id in mortgage.investors:
+                #     investor = self.db.get(User.type, investor_id)
+                #     for investment_id in investor.investment_ids:
+                #         investment = self.db.get(Investment.type, investment_id)
+                #         if investment.status == STATUS.PENDING:
+                #             offers.append(investment)
+                for investment_id in user.investment_ids:
+                    investment = self.db.get(Investment.type, investment_id)
+                    if investment.status == STATUS.PENDING:
+                        offers.append(investment)
 
                 return offers
             # If the mortgage has not yet been accepted, get the mortgage offers from the banks
@@ -505,13 +512,15 @@ class MarketAPI(object):
             mortgage.campaign_id = campaign.id
             self.db.put(Mortgage.type, mortgage.id, mortgage)
 
+            house = self.db.get(House.type, mortgage.house_id)
+
             # TODO: The user should broadcast a signed campaign
             # Add message to queue
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
-            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type, User.type],
-                                      {LoanRequest.type: loan_request, Mortgage.type: mortgage, Campaign.type: campaign, User.type: user},
-                                      []))
+            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type,
+                                      User.type, House.type], {LoanRequest.type: loan_request, Mortgage.type: mortgage,
+                                      Campaign.type: campaign, User.type: user, House.type: house},[]))
             return self.db.put(User.type, user.id, user)
         return False
 
@@ -554,7 +563,7 @@ class MarketAPI(object):
         # Save the objects
         self.db.put(Mortgage.type, mortgage.id, mortgage)
         self.db.put(LoanRequest.type, loan_request.id, loan_request)
-        self.db.put(User.type, user.id, user)
+        # self.db.put(User.type, user.id, user)
 
         # Create the campaign
         return self.create_campaign(user, mortgage, loan_request)

@@ -264,6 +264,7 @@ class CommunityTestSuite(unittest.TestCase):
                           self.mortgage.type: self.mortgage,
                           self.user.type: self.user,
                           self.campaign.type: self.campaign,
+                          self.house.type: self.house
                           }
         self.loan_request.status[self.bank.id] = STATUS.ACCEPTED
         self.mortgage.status = STATUS.ACCEPTED

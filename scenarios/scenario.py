@@ -107,13 +107,14 @@ class Scenario(object):
         mortgages = []
 
         # Find all accepted mortgages
-        mortgage = self.api.db.get_all(Mortgage.type)
-        if mortgage.status == STATUS.ACCEPTED:
-            mortgages.append(mortgage)
+        all_mortgages = self.api.db.get_all(Mortgage.type)
+        for mortgage in all_mortgages:
+            if mortgage.status == STATUS.ACCEPTED:
+                mortgages.append(mortgage)
 
         # Create an investment offer on a random mortgage
         rand = random.randint(0, len(mortgages) - 1)
-        self.api.place_loan_offer(user, FakePayload.place_investment_offer(mortgage[rand]))
+        self.api.place_loan_offer(user, FakePayload.place_investment_offer(mortgages[rand]))
 
     def create_accepted_investment_offer(self, user):
         assert user.role_id == 1
