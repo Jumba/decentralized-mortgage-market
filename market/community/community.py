@@ -17,7 +17,7 @@ from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile, Profile
 from market.models.user import User
-from market.multichain.database import DatabaseBlock, MultiChainDB
+from market.database.backends import DatabaseBlock, BlockChain
 from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,6 @@ class MortgageMarketCommunity(Community):
         super(MortgageMarketCommunity, self).__init__(dispersy, master, my_member)
         self._api = None
         self._user = None
-        self.persistence = None
 
     def initialize(self):
         super(MortgageMarketCommunity, self).initialize()
@@ -572,9 +571,11 @@ class MortgageMarketCommunity(Community):
         A hash will be created from the message.
         :param message:
         """
+        assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+
         block = DatabaseBlock.from_signed_confirm_message(message)
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
-        self.persistence.add_block(block)
+        self.api.db.backend.add_block(block)
 
     def update_signature(self, message):
         """
@@ -582,15 +583,20 @@ class MortgageMarketCommunity(Community):
         A hash will be created from the message.
         :param message:
         """
+        assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+
         block = DatabaseBlock.from_signed_confirm_message(message)
-        block.sequence_number = self.persistence.get_latest_sequence_number()
+        block.sequence_number = self.api.db.backend.get_latest_sequence_number()
 
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
-        self.persistence.update_block_with_beneficiary(block)
+        self.api.db.backend.update_block_with_beneficiary(block)
 
     def _get_next_sequence_number(self):
-        return self.persistence.get_latest_sequence_number() + 1
+        assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+        return self.api.db.backend.get_latest_sequence_number() + 1
 
     def _get_latest_hash(self):
-        previous_hash = self.persistence.get_latest_hash()
+        assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+
+        previous_hash = self.api.db.backend.get_latest_hash()
         return previous_hash
