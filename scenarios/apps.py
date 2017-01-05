@@ -172,7 +172,7 @@ class MarketAppSceneBankING(MarketApplicationING):
         self.tasks.handle_incoming_loan_request(self.user)
 
 
-class MarketAppSceneBankRABO(MarketApplicationING):
+class MarketAppSceneBankRABO(MarketApplicationRABO):
     def __init__(self, *argv):
         MarketApplicationRABO.__init__(self, *argv)
 
@@ -191,7 +191,7 @@ class MarketAppSceneBankRABO(MarketApplicationING):
         self.tasks.handle_incoming_loan_request(self.user)
 
 
-class MarketAppSceneBankMONEYOU(MarketApplicationING):
+class MarketAppSceneBankMONEYOU(MarketApplicationMONEYOU):
     def __init__(self, *argv):
         MarketApplicationMONEYOU.__init__(self, *argv)
 
