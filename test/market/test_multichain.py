@@ -13,7 +13,7 @@ from market.database.backends import PersistentBackend
 from market.database.database import MockDatabase
 from market.models import DatabaseModel
 from market.models.loans import Mortgage
-from market.multichain.database import DatabaseBlock
+from market.database.backends import DatabaseBlock
 
 
 class CustomAssertions(object):
