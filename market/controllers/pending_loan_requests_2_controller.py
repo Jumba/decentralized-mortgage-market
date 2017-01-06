@@ -1,3 +1,11 @@
+import ntpath
+import os
+import subprocess
+import sys
+
+from glob import glob
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QTableWidgetItem
 
 
 class PendingLoanRequests2Controller:
@@ -7,6 +15,7 @@ class PendingLoanRequests2Controller:
     """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
+        self.table = self.mainwindow.fiplr2_documents_table
         self.loan_request_id = None
 
         # Add listener to the 'accept' and 'reject' buttons
@@ -18,34 +27,55 @@ class PendingLoanRequests2Controller:
         Setup the view to show in depth information about the loan request and the user that requested it.
         :param loan_request_id: The UUID of the loan request
         """
-        self.loan_request_id = loan_request_id
-        [loan_request, borrower_profile, house] = self.mainwindow.api.load_single_loan_request(
-            {'loan_request_id': loan_request_id})
+        # self.loan_request_id = loan_request_id
+        # [loan_request, borrower_profile, house] = self.mainwindow.api.load_single_loan_request(
+        #     {'loan_request_id': loan_request_id})
+        #
+        # # Insert personal information
+        # self.mainwindow.fiplr2_firstname_lineedit.setText(str(borrower_profile.first_name))
+        # self.mainwindow.fiplr2_lastname_lineedit.setText(str(borrower_profile.last_name))
+        # self.mainwindow.fiplr2_address_lineedit.setText(str(borrower_profile.current_address) + ' '
+        #                                                 + str(borrower_profile.current_house_number) + ', '
+        #                                                 + str(borrower_profile.current_postal_code))
+        # self.mainwindow.fiplr2_phonenumber_lineedit.setText(str(borrower_profile.phone_number))
+        # self.mainwindow.fiplr2_email_lineedit.setText(str(borrower_profile.email))
+        # # TODO Add risk rating when it has been implemented
+        #
+        # # Insert mortgage request information
+        # self.mainwindow.fiplr2_property_address_lineedit.setText(str(house.address) + ' ' + str(house.house_number)
+        #                                                          + ', ' + str(house.postal_code))
+        # self.mainwindow.fiplr2_loan_amount_lineedit.setText(str(loan_request.amount_wanted))
+        #
+        # mortgage_type = ''
+        # if loan_request.mortgage_type == 1:
+        #     mortgage_type = 'Linear'
+        # elif loan_request.mortgage_type == 2:
+        #     mortgage_type = 'Fixed-Rate'
+        #
+        # self.mainwindow.fiplr2_mortgage_type_lineedit.setText(mortgage_type)
+        # self.mainwindow.fiplr2_property_value_lineedit.setText(str(house.price))
+        # self.mainwindow.fiplr2_description_textedit.setText(str(loan_request.description))
 
-        # Insert personal information
-        self.mainwindow.fiplr2_firstname_lineedit.setText(str(borrower_profile.first_name))
-        self.mainwindow.fiplr2_lastname_lineedit.setText(str(borrower_profile.last_name))
-        self.mainwindow.fiplr2_address_lineedit.setText(str(borrower_profile.current_address) + ' '
-                                                        + str(borrower_profile.current_house_number) + ', '
-                                                        + str(borrower_profile.current_postal_code))
-        self.mainwindow.fiplr2_phonenumber_lineedit.setText(str(borrower_profile.phone_number))
-        self.mainwindow.fiplr2_email_lineedit.setText(str(borrower_profile.email))
-        # TODO Add risk rating when it has been implemented
+        # documents = glob(os.getcwd() + '/resources/'+loan_request_id.int+'/*.pdf')
+        documents = glob(os.getcwd() + '/resources/217549233145534996352371298796218584312/*.pdf')
+        for i in range(0, len(documents)):
+            self.table.insertRow(i)
+            edit_button = QPushButton('View')
+            edit_button.clicked.connect(self.view_file)
+            edit_button.filepath = documents[i]
+            # self.table.setItem(i, 0, QTableWidgetItem(str(documents[i])))
+            self.table.setItem(i, 1, QTableWidgetItem(str(ntpath.basename(documents[i]))))
+            self.table.setCellWidget(i, 2, edit_button)
 
-        # Insert mortgage request information
-        self.mainwindow.fiplr2_property_address_lineedit.setText(str(house.address) + ' ' + str(house.house_number)
-                                                                 + ', ' + str(house.postal_code))
-        self.mainwindow.fiplr2_loan_amount_lineedit.setText(str(loan_request.amount_wanted))
+    def view_file(self):
+        filepath = self.mainwindow.sender().filepath
+        if sys.platform.startswith('darwin'):
+            subprocess.call(('open', filepath))
+        elif os.name == 'nt':
+            os.startfile(filepath)
+        elif os.name == 'posix':
+            subprocess.call(('xdg-open', filepath))
 
-        mortgage_type = ''
-        if loan_request.mortgage_type == 1:
-            mortgage_type = 'Linear'
-        elif loan_request.mortgage_type == 2:
-            mortgage_type = 'Fixed-Rate'
-
-        self.mainwindow.fiplr2_mortgage_type_lineedit.setText(mortgage_type)
-        self.mainwindow.fiplr2_property_value_lineedit.setText(str(house.price))
-        self.mainwindow.fiplr2_description_textedit.setText(str(loan_request.description))
 
     def reject_request(self):
         """

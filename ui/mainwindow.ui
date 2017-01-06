@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -519,7 +519,7 @@
       <property name="geometry">
        <rect>
         <x>389</x>
-        <y>639</y>
+        <y>610</y>
         <width>138</width>
         <height>26</height>
        </rect>
@@ -552,7 +552,7 @@
         <x>60</x>
         <y>549</y>
         <width>465</width>
-        <height>81</height>
+        <height>51</height>
        </rect>
       </property>
      </widget>
@@ -1111,7 +1111,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
+           <width>1321</width>
            <height>1000</height>
           </rect>
          </property>
@@ -1349,7 +1349,7 @@
               <string>Telephone Number</string>
              </property>
             </widget>
-            <widget class="QListView" name="fiplr2_documents_listview">
+            <widget class="QTableWidget" name="fiplr2_documents_listview">
              <property name="geometry">
               <rect>
                <x>420</x>
@@ -1358,6 +1358,48 @@
                <height>231</height>
               </rect>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <row>
+              <property name="text">
+               <string>1</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>2</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>3</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>Document </string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>File Name</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
             </widget>
             <widget class="QLabel" name="fiplr2_loan_request_label">
              <property name="geometry">

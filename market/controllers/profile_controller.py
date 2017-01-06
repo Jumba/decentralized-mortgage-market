@@ -32,7 +32,6 @@ class ProfileController:
         for i in range(0, rows):
             self.table.insertRow(i)
             edit_button = QPushButton('Browse')
-            edit_button.setText('Browse')
             edit_button.index = i
             edit_button.clicked.connect(self.browse)
             self.table.setItem(i, 0, QTableWidgetItem(str(DOCUMENT_NAMES[i])))
