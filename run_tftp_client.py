@@ -12,14 +12,14 @@ RESOURCES_PATH = '/resources/received/'
 
 
 class Client:
-    def __init__(self):
+    def __init__(self, host_ip=socket.gethostbyname(socket.gethostname())):
         self.resources = None
         tftpy.setLogLevel('INFO')
         fh = logging.FileHandler(os.getcwd()+'/logging/log_client_'+time.strftime('%d-%m-%Y_%H:%M:%S'))
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         tftpy.log.addHandler(fh)
-        self.client = TftpClient(socket.gethostbyname(socket.gethostname()), 50000)
+        self.client = TftpClient(host_ip, 50000)
         self.sent_files = []
         self.files = []
         self.failed_to_send = []
@@ -58,14 +58,16 @@ class Client:
     #         self.thread = Thread(target=self.download_from_server(remote_file_name, local_file_name))
     #         self.thread.start()
 
-    def upload_folder(self, path=os.getcwd()+'/resources'):
+    def upload_folder(self, path=os.getcwd()+'/resources/documents/', host_path=None):
         self.files = glob.glob(path+'/*.pdf')
-        print self.files
         for f in self.files:
-            self.upload(f)
+            if not host_path:
+                self.upload(f)
+            else:
+                self.upload(f, host_path+ntpath.basename(f))
 
 if __name__ == '__main__':
-    tc = Client()
+    tc = Client(socket.gethostbyname(socket.gethostname()))
     # tc.upload('server.pdf', 'downloaded.pdf')
     # tc.thread.target = tc.upload_folder
     thread = Thread(target=tc.upload_folder())

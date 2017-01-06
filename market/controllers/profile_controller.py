@@ -83,8 +83,8 @@ class ProfileController:
                 payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text())
                 payload['current_address'] = str(self.mainwindow.profile_address_lineedit.text())
                 # TODO Add missing 'documents_list'
-                # payload['documents_list'] = self.documents #The document payload as a dictionary.
-                payload['documents_list'] = map(lambda key: self.documents[key], sorted(self.documents))
+                payload['documents_list'] = self.documents  # The document payload as a dictionary.
+                # payload['documents_list'] = map(lambda key: self.documents[key], sorted(self.documents))
 
             # Check if all fields are filled out
             for _, value in payload.iteritems():

@@ -42,5 +42,3 @@ class Server:
 if __name__ == '__main__':
     ts = Server()
     ts.start()
-    time.sleep(3)
-    ts.stop()

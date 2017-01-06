@@ -1,15 +1,18 @@
 """
 Implementation of the Mortgage Market API
 """
-
+import os
+import socket
 import time
 from datetime import timedelta, datetime
 from enum import Enum
 
+import run_tftp_client
 from dispersy.crypto import ECCrypto
 from market.api.crypto import get_public_key
 from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
 from market.database.database import Database
+from market.models.document import Document
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Investment, Campaign
 from market.models.profiles import BorrowersProfile
@@ -163,10 +166,15 @@ class MarketAPI(object):
                 profile = Profile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'], payload['phonenumber'])
                 user.profile_id = self.db.post(Profile.type, profile)
             elif role.name == 'BORROWER':
+                documents = []
+                for document_name, document_path in payload['documents_list'].iteritems():
+                    document = Document.encode_document(document_name, document_path)
+                    self.db.post(Document.type, document)
+                    documents.append(document.id)
                 profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
                                            payload['phonenumber'], payload['current_postalcode'],
                                            payload['current_housenumber'], payload['current_address'],
-                                           payload['documents_list'])
+                                           documents)
                 user.profile_id = self.db.post(BorrowersProfile.type, profile)
             elif role.name == 'FINANCIAL_INSTITUTION':
                 self.db.put(User.type, user.id, user)
@@ -405,9 +413,18 @@ class MarketAPI(object):
                 # Add message to queue
                 profile = self.load_profile(user)
 
+                for document_id in profile.document_list:
+                    document = self.db.get(Document.type, document_id)
+                    document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
+
+                # TODO find the ip_addresses of the banks
+                tc = run_tftp_client.Client()
+                tc.upload_folder(os.getcwd()+'/resources/documents',
+                                 os.getcwd()+'/resources/'+str(loan_request.id.int)+'/')
                 self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
                                           {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
                                            User.type: user}, banks))
+                # TODO send a 'document' message
 
                 return loan_request
 

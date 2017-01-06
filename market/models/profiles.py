@@ -38,6 +38,7 @@ class Profile(DatabaseModel):
     def phone_number(self):
         return self._phone_number
 
+
 class BorrowersProfile(Profile):
     type = 'borrowers_profile'
 

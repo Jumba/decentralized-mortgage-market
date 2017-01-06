@@ -41,7 +41,6 @@ class MainWindowController(QMainWindow):
         self.bplr_controller = PlaceLoanRequestController(self)
         self.profile_controller = ProfileController(self)
         self.msg = QMessageBox
-
         self.setup_view()
 
     def setup_view(self):
