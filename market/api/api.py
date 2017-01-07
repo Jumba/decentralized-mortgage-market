@@ -167,10 +167,12 @@ class MarketAPI(object):
                 user.profile_id = self.db.post(Profile.type, profile)
             elif role.name == 'BORROWER':
                 documents = []
-                for document_name, document_path in payload['documents_list'].iteritems():
-                    document = Document.encode_document(document_name, document_path)
-                    self.db.post(Document.type, document)
-                    documents.append(document.id)
+                if payload['documents_list']:
+                    print payload['documents_list']
+                    for document_name, document_path in payload['documents_list'].iteritems():
+                        document = Document.encode_document(document_name, document_path)
+                        self.db.post(Document.type, document)
+                        documents.append(document.id)
                 profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
                                            payload['phonenumber'], payload['current_postalcode'],
                                            payload['current_housenumber'], payload['current_address'],
@@ -413,14 +415,16 @@ class MarketAPI(object):
                 # Add message to queue
                 profile = self.load_profile(user)
 
-                for document_id in profile.document_list:
-                    document = self.db.get(Document.type, document_id)
-                    document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
+                if profile:
+                    if profile.document_list:
+                        for document_id in profile.document_list:
+                            document = self.db.get(Document.type, document_id)
+                            document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
 
-                # TODO find the ip_addresses of the banks
-                tc = run_tftp_client.Client()
-                tc.upload_folder(os.getcwd()+'/resources/documents',
-                                 os.getcwd()+'/resources/'+str(loan_request.id.int)+'/')
+                        # TODO find the ip_addresses of the banks
+                        tc = run_tftp_client.Client()
+                        tc.upload_folder(os.getcwd()+'/resources/documents',
+                                         os.getcwd()+'/resources/'+str(loan_request.id.int)+'/')
                 self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
                                           {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
                                            User.type: user}, banks))

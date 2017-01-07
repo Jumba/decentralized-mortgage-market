@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -1111,7 +1111,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1321</width>
+           <width>825</width>
            <height>1000</height>
           </rect>
          </property>
@@ -1349,7 +1349,7 @@
               <string>Telephone Number</string>
              </property>
             </widget>
-            <widget class="QTableWidget" name="fiplr2_documents_listview">
+            <widget class="QTableWidget" name="fiplr2_documents_table">
              <property name="geometry">
               <rect>
                <x>420</x>
@@ -3968,7 +3968,7 @@
   <tabstop>fiplr1_view_loan_request_pushbutton</tabstop>
   <tabstop>fiplr2_firstname_lineedit</tabstop>
   <tabstop>fiplr2_lastname_lineedit</tabstop>
-  <tabstop>fiplr2_documents_listview</tabstop>
+  <tabstop>fiplr2_documents_table</tabstop>
   <tabstop>fiplr2_address_lineedit</tabstop>
   <tabstop>fiplr2_phonenumber_lineedit</tabstop>
   <tabstop>fiplr2_risk_lineedit</tabstop>
