@@ -356,7 +356,6 @@ class MortgageMarketCommunity(Community):
 
         # The investor can now initiate a signing step.
         if self.user.id == investment.investor_key:
-            # resign because the status has been changed.
             self.publish_signed_confirm_request_message(user.id, investment)
 
         user.post_or_put(self.api.db)
