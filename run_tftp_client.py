@@ -9,7 +9,7 @@ import time
 import logging
 
 RESOURCES_PATH = '/resources/received/'
-
+DEFAULT_PORT = 50000
 
 class Client:
     def __init__(self, host_ip=socket.gethostbyname(socket.gethostname())):
@@ -19,7 +19,7 @@ class Client:
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         tftpy.log.addHandler(fh)
-        self.client = TftpClient(host_ip, 50000)
+        self.client = TftpClient(host_ip, DEFAULT_PORT)
         self.sent_files = []
         self.files = []
         self.failed_to_send = []

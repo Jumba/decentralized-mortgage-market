@@ -4,6 +4,8 @@ import threading
 import time
 import logging
 
+DEFAULT_PORT = 50000
+
 
 class Server:
     def __init__(self):
@@ -30,7 +32,7 @@ class Server:
         self.thread.start()
 
     def server_start(self):
-        self.server.listen(listenport=50000)
+        self.server.listen(listenport=DEFAULT_PORT)
 
     @staticmethod
     def set_logging(level, filename=None):
