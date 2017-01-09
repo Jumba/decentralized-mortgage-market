@@ -408,11 +408,8 @@ class MarketAPI(object):
                         for ip_address in bank_ip_addresses:
                             # Add to queue
                             tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
-                                   os.getcwd()+'/resources/'+str(profile.id)+'/')
+                                   os.getcwd()+'/resources/received/'+str(profile.id)+'/')
                         tq.upload_all()
-                        #     pass
-                        # tc.upload_folder(os.getcwd()+'/resources/documents',
-                        #                  os.getcwd()+'/resources/'+str(profile.id)+'/')
 
                 # Add the loan request to the borrower
                 user.loan_request_ids.append(self.db.post(LoanRequest.type, loan_request))
@@ -432,18 +429,6 @@ class MarketAPI(object):
 
                 # Add message to queue
                 profile = self.load_profile(user)
-
-                # # Send the documents to the banks
-                # if profile:
-                #     if profile.document_list:
-                #         for document_id in profile.document_list:
-                #             document = self.db.get(Document.type, document_id)
-                #             document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
-                #
-                #         # TODO find the ip_addresses of the banks
-                #         tc = run_tftp_client.Client()
-                #         tc.upload_folder(os.getcwd()+'/resources/documents',
-                #                          os.getcwd()+'/resources/'+str(loan_request.id.int)+'/')
                 self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
                                           {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
                                            User.type: user}, banks))
