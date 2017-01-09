@@ -13,7 +13,7 @@ from market.community.encoding import (_a_encode_int, _a_encode_long, _a_encode_
                                              _a_decode_int, _a_decode_long, _a_decode_float,
                                              _a_decode_unicode, encode, _a_decode_bytes, _a_decode_list,
                                              _a_decode_mapping, _a_decode_set, _a_decode_tuple,
-                                             _a_decode_dictionary, decode)
+                                             _a_decode_dictionary, decode, add_url_params)
 
 
 class TriblerCoreTestUnicode(unittest.TestCase):
@@ -199,3 +199,9 @@ class TriblerCoreTestUnicode(unittest.TestCase):
 
     def test_decode(self):
         self.assertEqual(decode("a2d3sfoo3sbar3smoo4smilk", 0), (24, {'foo': 'bar', 'moo': 'milk'}))
+
+    def test_url_params(self):
+        url = 'http://stackoverflow.com/test?answers=true'
+        new_params = {'answers': False, 'data': ['some','values']}
+        new_url = add_url_params(url, new_params)
+        self.assertEqual(new_url, 'http://stackoverflow.com/test?data=some&data=values&answers=false')
