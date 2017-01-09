@@ -8,57 +8,45 @@ from threading import Thread
 import time
 import logging
 
-RESOURCES_PATH = '/resources/received/'
+DEFAULT_CLIENT_PATH = os.getcwd()+'/resources/documents/'
+DEFAULT_HOST_PATH = os.getcwd()+'/resources/received/'
 DEFAULT_PORT = 50000
 
+
 class Client:
-    def __init__(self, host_ip=socket.gethostbyname(socket.gethostname())):
+    def __init__(self, host_ip=socket.gethostbyname(socket.gethostname()), port=DEFAULT_PORT):
         self.resources = None
+        tftpy.TftpErrors
         tftpy.setLogLevel('INFO')
         fh = logging.FileHandler(os.getcwd()+'/logging/log_client_'+time.strftime('%d-%m-%Y_%H:%M:%S'))
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         tftpy.log.addHandler(fh)
-        self.client = TftpClient(host_ip, DEFAULT_PORT)
+        self.client = TftpClient(host_ip, port)
         self.sent_files = []
         self.files = []
         self.failed_to_send = []
-        # self.thread = Thread
 
     def upload(self, local_file_name, remote_file_name=None):
         if not remote_file_name:
-            remote_file_name = RESOURCES_PATH + ntpath.basename(local_file_name)
+            remote_file_name = DEFAULT_HOST_PATH + ntpath.basename(local_file_name)
         try:
             self.client.upload(remote_file_name, local_file_name)
-            self.sent_files.append(local_file_name)
+            # self.sent_files.append(local_file_name)
         except:
             print 'Uploading of ', remote_file_name, ' failed.'
-            self.failed_to_send.append(remote_file_name)
+            # self.failed_to_send.append(remote_file_name)
             raise
 
     def download(self, remote_file_name, local_file_name=None):
         if not local_file_name:
-            local_file_name = RESOURCES_PATH + ntpath.basename(remote_file_name)
+            local_file_name = DEFAULT_HOST_PATH + ntpath.basename(remote_file_name)
         try:
             self.client.download(local_file_name, remote_file_name)
         except:
             raise
 
-    # def upload(self, local_file_name, remote_file_name):
-    #     if self.thread.is_alive():
-    #         print 'The thread is busy.'
-    #     else:
-    #         self.thread = Thread(target=self.upload_to_server(local_file_name, remote_file_name))
-    #         self.thread.start()
-    #
-    # def download(self, remote_file_name, local_file_name):
-    #     if self.thread.is_alive():
-    #         print 'The thread is busy.'
-    #     else:
-    #         self.thread = Thread(target=self.download_from_server(remote_file_name, local_file_name))
-    #         self.thread.start()
-
-    def upload_folder(self, path=os.getcwd()+'/resources/documents/', host_path=None):
+    def upload_folder(self, path=DEFAULT_CLIENT_PATH, host_path=None):
         self.files = glob.glob(path+'/*.pdf')
         for f in self.files:
             if not host_path:
@@ -66,11 +54,63 @@ class Client:
             else:
                 self.upload(f, host_path+ntpath.basename(f))
 
+
+class TransferQueue:
+    def __init__(self):
+        self.queued = 0
+        # self.jobs = Queue.Queue
+        self.jobs = []
+        self.failed = []
+        self.sent = []
+
+    def add(self, ip_address, host_port, local_files, remote_files):
+        self.jobs.append((ip_address, host_port, local_files, remote_files))
+        self.queued += 1
+
+    def upload_all(self, response=None):
+        # Upload files to all hosts one by one, return true and run the response if no problems were found.
+        # If some files were not able to be sent, return the tuple.
+        for job in self.jobs:
+            ip_address, host_port, local_files, remote_files = job
+            try:
+                client = Client(ip_address, host_port)
+                if os.path.isdir(local_files):
+                    # if not os.path.isdir(remote_files):
+                    #     raise ValueError('The local path is directory while the path of the host is not.')
+                    client.upload_folder(local_files, remote_files)
+                    self.sent.append(job)
+                else:
+                    # if os.path.isdir(remote_files):
+                    #     raise ValueError('The local path points to a file while the path of the host is a directory.')
+                    client.upload(local_files, remote_files)
+                self.sent.append(job)
+            except tftpy.TftpException as e:
+                self.failed.append(job)
+                print e.message
+        if self.failed:
+            return False
+        else:
+            if callable(response):
+                response()
+            return True
+
+
+
+    def retry_all(self):
+        # Retry all transfers that have been added to the queue
+        pass
+
+    def retry_failed(self):
+        # Retry to send all of the failed transfers
+        pass
+
+    def in_queue(self):
+        return self.queued
+
 if __name__ == '__main__':
     tc = Client(socket.gethostbyname(socket.gethostname()))
     # tc.upload('server.pdf', 'downloaded.pdf')
     # tc.thread.target = tc.upload_folder
     thread = Thread(target=tc.upload_folder())
     thread.start()
-
 

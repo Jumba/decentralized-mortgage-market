@@ -404,9 +404,15 @@ class MarketAPI(object):
                         for document_id in profile.document_list:
                             document = self.db.get(Document.type, document_id)
                             document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
-                        tc = run_tftp_client.Client()
-                        tc.upload_folder(os.getcwd()+'/resources/documents',
-                                         os.getcwd()+'/resources/'+str(profile.id)+'/')
+                        tq = run_tftp_client.TransferQueue()
+                        for ip_address in bank_ip_addresses:
+                            # Add to queue
+                            tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
+                                   os.getcwd()+'/resources/'+str(profile.id)+'/')
+                        tq.upload_all()
+                        #     pass
+                        # tc.upload_folder(os.getcwd()+'/resources/documents',
+                        #                  os.getcwd()+'/resources/'+str(profile.id)+'/')
 
                 # Add the loan request to the borrower
                 user.loan_request_ids.append(self.db.post(LoanRequest.type, loan_request))

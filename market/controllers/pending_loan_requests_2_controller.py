@@ -56,7 +56,7 @@ class PendingLoanRequests2Controller:
         self.mainwindow.fiplr2_property_value_lineedit.setText(str(house.price))
         self.mainwindow.fiplr2_description_textedit.setText(str(loan_request.description))
 
-        documents = glob(os.getcwd() + '/resources/'+str(loan_request_id)+'/*.pdf')
+        documents = glob(os.getcwd() + '/resources/'+str(borrower_profile.id)+'/*.pdf')
         for i in range(0, len(documents)):
             self.table.insertRow(i)
             edit_button = QPushButton('View')
@@ -74,7 +74,6 @@ class PendingLoanRequests2Controller:
             os.startfile(filepath)
         elif os.name == 'posix':
             subprocess.call(('xdg-open', filepath))
-
 
     def reject_request(self):
         """
