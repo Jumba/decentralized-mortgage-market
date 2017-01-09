@@ -57,15 +57,12 @@ class Client:
 
 class TransferQueue:
     def __init__(self):
-        self.queued = 0
-        # self.jobs = Queue.Queue
         self.jobs = []
         self.failed = []
         self.sent = []
 
     def add(self, ip_address, host_port, local_files, remote_files):
         self.jobs.append((ip_address, host_port, local_files, remote_files))
-        self.queued += 1
 
     def upload_all(self, response=None):
         # Upload files to all hosts one by one, return true and run the response if no problems were found.
@@ -75,13 +72,9 @@ class TransferQueue:
             try:
                 client = Client(ip_address, host_port)
                 if os.path.isdir(local_files):
-                    # if not os.path.isdir(remote_files):
-                    #     raise ValueError('The local path is directory while the path of the host is not.')
                     client.upload_folder(local_files, remote_files)
                     self.sent.append(job)
                 else:
-                    # if os.path.isdir(remote_files):
-                    #     raise ValueError('The local path points to a file while the path of the host is a directory.')
                     client.upload(local_files, remote_files)
                 self.sent.append(job)
             except tftpy.TftpException as e:
@@ -93,19 +86,6 @@ class TransferQueue:
             if callable(response):
                 response()
             return True
-
-
-
-    def retry_all(self):
-        # Retry all transfers that have been added to the queue
-        pass
-
-    def retry_failed(self):
-        # Retry to send all of the failed transfers
-        pass
-
-    def in_queue(self):
-        return self.queued
 
 if __name__ == '__main__':
     tc = Client(socket.gethostbyname(socket.gethostname()))
