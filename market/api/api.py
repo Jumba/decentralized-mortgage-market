@@ -465,17 +465,13 @@ class MarketAPI(object):
         # Reload the user to get the latest data from the database.
         user = self._get_user(user)
         offers = []
+
         for mortgage_id in user.mortgage_ids:
             mortgage = self.db.get(Mortgage.type, mortgage_id)
+            campaign = self.db.get(Campaign.type, mortgage.campaign_id)
 
             # If the mortgage is already accepted, we get the loan offers from the investors
-            if mortgage.status == STATUS.ACCEPTED:
-                # for investor_id in mortgage.investors:
-                #     investor = self.db.get(User.type, investor_id)
-                #     for investment_id in investor.investment_ids:
-                #         investment = self.db.get(Investment.type, investment_id)
-                #         if investment.status == STATUS.PENDING:
-                #             offers.append(investment)
+            if mortgage.status == STATUS.ACCEPTED and not campaign.completed:
                 for investment_id in user.investment_ids:
                     investment = self.db.get(Investment.type, investment_id)
                     if investment.status == STATUS.PENDING:
