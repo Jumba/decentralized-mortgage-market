@@ -10,11 +10,6 @@ DEFAULT_PORT = 50000
 class Server:
     def __init__(self):
         self.server = tftpy.TftpServer(os.getcwd())
-        tftpy.setLogLevel('INFO')
-        fh = logging.FileHandler(os.getcwd()+'/logging/log_server_'+time.strftime('%d-%m-%Y_%H:%M:%S'))
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        fh.setFormatter(formatter)
-        tftpy.log.addHandler(fh)
         try:
             self.thread = threading.Thread(target=self.server_start)
         except:
@@ -35,12 +30,14 @@ class Server:
         self.server.listen(listenport=DEFAULT_PORT)
 
     @staticmethod
-    def set_logging(level, filename=None):
-        if not file:
-            tftpy.log.FileHandler(os.getcwd()+'/logging/'+filename)
-        tftpy.setLogLevel(level)
-
+    def set_logging(write_path):
+        tftpy.setLogLevel('INFO')
+        fh = logging.FileHandler(write_path+'log_server_'+time.strftime('%d-%m-%Y_%H:%M:%S'))
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        fh.setFormatter(formatter)
+        tftpy.log.addHandler(fh)
 
 if __name__ == '__main__':
     ts = Server()
+    ts.set_logging(os.getcwd()+'/logging/')
     ts.start()
