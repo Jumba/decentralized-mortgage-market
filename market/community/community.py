@@ -388,7 +388,8 @@ class MortgageMarketCommunity(Community):
 
         # Remove the investment from the investor
         self.user.update(self.api.db)
-        self.user.investment_ids.remove(investment.id)
+        if self.user.id == investment.investor_key:
+            self.user.investment_ids.remove(investment.id)
         self.user.post_or_put(self.api.db)
 
         return True
