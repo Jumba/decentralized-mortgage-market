@@ -341,7 +341,8 @@ class MortgageMarketCommunity(Community):
 
         # Save the investment to the borrower
         self.user.update(self.api.db)
-        self.user.investment_ids.append(investment.id)
+        if self.user.id != investment.investor_key:
+            self.user.investment_ids.append(investment.id)
         self.user.post_or_put(self.api.db)
 
         return True
