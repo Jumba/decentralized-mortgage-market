@@ -2,6 +2,7 @@ import datetime
 import unittest
 from twisted.python.threadable import registerAsIOThread
 
+import mock
 from mock import Mock
 
 from dispersy.candidate import LoopbackCandidate
@@ -98,6 +99,9 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Add our conversion to the community.
         self.conversion = MortgageMarketConversion(self.community)
+
+        self.dispersy_mock = Mock()
+        self.dispersy_mock.store_update_forward.return_value = True
 
         self.setupModels()
 
@@ -399,6 +403,200 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertEqual(investment.status, STATUS.REJECTED)
         self.assertNotIn(investment.id, self.investor.investment_ids)
 
+
+
+    @mock.patch('dispersy.dispersy.Dispersy.store_update_forward')
+    def test_send_community_message(self, patch):
+        self.assertFalse(patch.called)
+
+        # Set them as false to override the defaults
+        store = update = forward = False
+        message_name = u"api_message_community"
+
+        self.community.send_api_message_community(message_name, [self.loan_request.type],
+                                                  {self.loan_request.type: self.loan_request}, store, update, forward)
+
+        self.assertTrue(patch.called)
+        args, kwargs =  patch.call_args
+
+        self.assertEqual(type(args[0]), list)
+        self.assertEqual(args[0][0].name, message_name)
+
+        self.assertEqual(args[1], store)
+        self.assertEqual(args[2], update)
+        self.assertEqual(args[3], forward)
+
+    @mock.patch('dispersy.dispersy.Dispersy.store_update_forward')
+    def test_send_candidate_message(self, patch):
+        self.assertFalse(patch.called)
+
+        # Set them as false to override the defaults
+        store = update = forward = False
+        message_name = u"api_message_candidate"
+        candidates = (LoopbackCandidate(),)
+
+        self.community.send_api_message_candidate(message_name, [self.loan_request.type],
+                                                  {self.loan_request.type: self.loan_request}, candidates, store, update, forward)
+
+        self.assertTrue(patch.called)
+        args, kwargs =  patch.call_args
+        self.assertEqual(type(args[0]), list)
+
+        message = args[0][0]
+
+        self.assertEqual(message.name, message_name)
+        self.assertEqual(args[1], store)
+        self.assertEqual(args[2], update)
+        self.assertEqual(args[3], forward)
+
+    @mock.patch('dispersy.dispersy.Dispersy.store_update_forward')
+    def test_send_introduce_user(self, patch):
+        self.assertFalse(patch.called)
+
+        # Set them as false to override the defaults
+        store = update = forward = False
+        message_name = u"introduce_user"
+        candidate = LoopbackCandidate()
+
+        self.community.send_introduce_user([self.user.type], {self.user.type: self.user}, candidate, store, update, forward)
+
+        self.assertTrue(patch.called)
+        args, kwargs =  patch.call_args
+        self.assertEqual(type(args[0]), list)
+
+        message = args[0][0]
+
+        self.assertEqual(message.name, message_name)
+        self.assertEqual(args[1], store)
+        self.assertEqual(args[2], update)
+        self.assertEqual(args[3], forward)
+
+    @mock.patch('market.database.database.MockDatabase.post')
+    @mock.patch('dispersy.dispersy.Dispersy.store_update_forward')
+    def test_on_user_introduction(self, store_patch, api_patch):
+        # We'll be introducer the user to the bank. So remove user from the bank
+        self.api_bank.db.delete(self.user)
+
+        self.assertFalse(store_patch.called)
+
+        # Set them as false to override the defaults
+        store = update = forward = False
+        message_name = u"introduce_user"
+        candidate = LoopbackCandidate()
+
+        self.community.send_introduce_user([self.user.type], {self.user.type: self.user}, candidate)
+
+        self.assertTrue(store_patch.called)
+        args, _=  store_patch.call_args
+        self.assertEqual(type(args[0]), list)
+        message = args[0][0]
+        self.assertEqual(message.name, message_name)
+
+        # Receive the user as the bank and check if it is found in the database.
+        self.assertIsNone(self.api_bank._get_user(self.user))
+
+        # Send it to the bank
+        self.assertFalse(api_patch.called)
+        self.community_bank.on_user_introduction([message])
+        self.assertTrue(api_patch.called)
+        # Check if received
+        args, _ = api_patch.call_args
+        self.assertEqual(self.user.id, args[1].id)
+
+    @mock.patch('market.community.community.MortgageMarketCommunity.create_signature_request')
+    @mock.patch('market.community.community.MortgageMarketCommunity._get_latest_hash')
+    @mock.patch('market.community.community.MortgageMarketCommunity._get_next_sequence_number')
+    @mock.patch('market.community.community.MortgageMarketCommunity.update_signature')
+    @mock.patch('market.community.community.MortgageMarketCommunity.persist_signature')
+    def test_signature_request_flow(self, persist, update, next_seq, next_hash, create_sig):
+        persist.return_value = True
+        update.return_value = True
+        next_seq.return_value = 1
+        next_hash.return_value = 'hasdhashdsa'
+        create_sig.return_value = True
+
+        # Attempt to sign without having a user candidate
+        self.assertFalse(self.community_bank.publish_signed_confirm_request_message(self.user.id, self.mortgage))
+
+        # Set the candidate for the user
+        candidate = LoopbackCandidate()
+        candidate.associate(self.member)
+        self.api_bank.user_candidate[self.user.id] = candidate
+
+        # Attempt to sign without having a user candidate
+        self.assertTrue(self.community_bank.publish_signed_confirm_request_message(self.user.id, self.mortgage))
+        self.assertTrue(create_sig.called)
+
+
+    @mock.patch('market.community.community.MortgageMarketCommunity.create_signature_request')
+    @mock.patch('market.community.community.MortgageMarketCommunity._get_latest_hash')
+    @mock.patch('market.community.community.MortgageMarketCommunity._get_next_sequence_number')
+    @mock.patch('market.community.community.MortgageMarketCommunity.update_signature')
+    @mock.patch('market.community.community.MortgageMarketCommunity.persist_signature')
+    def test_create_signed_confirm_request_message(self, persist, update, next_seq, next_hash, create_sig):
+        persist.return_value = True
+        update.return_value = True
+        next_seq.return_value = 1
+        next_hash.return_value = 'hasdhashdsa'
+        create_sig.return_value = True
+
+        # Save the agreement for the user
+        self.mortgage.post_or_put(self.api.db)
+        self.loan_request.post_or_put(self.api_bank.db)
+
+        # Set the candidate for the user
+        candidate = LoopbackCandidate()
+        candidate.associate(self.member)
+        self.api_bank.user_candidate[self.user.id] = candidate
+
+        # Attempt to sign without having a user candidate
+        message = self.community_bank.create_signed_confirm_request_message(candidate, self.mortgage)
+
+        self.assertEqual(message.name, u"signed_confirm")
+        self.assertEqual(message.payload.agreement_benefactor, self.mortgage)
+        self.assertEqual(message.payload.benefactor, self.bank.id)
+        self.assertTrue(next_hash.called)
+        self.assertTrue(next_seq.called)
+        self.assertTrue(persist.called)
+        self.assertFalse(update.called)
+
+        persist.reset_mock()
+        next_hash.reset_mock()
+        next_seq.reset_mock()
+
+        message2 = self.community.allow_signed_confirm_request(message)
+
+        self.assertTrue(next_hash.called)
+        self.assertTrue(next_seq.called)
+        self.assertTrue(persist.called)
+        self.assertFalse(update.called)
+
+        self.assertEqual(message.name, message2.name)
+        self.assertEqual(message.payload.benefactor, message2.payload.benefactor)
+        self.assertNotEqual(message.payload.beneficiary, message2.payload.beneficiary)
+
+        # Finally check if the update call works
+        persist.reset_mock()
+        next_hash.reset_mock()
+        next_seq.reset_mock()
+
+        self.assertTrue(self.community_bank.allow_signed_confirm_response(message, message2, True))
+        self.assertFalse(next_hash.called)
+        self.assertFalse(next_seq.called)
+        self.assertFalse(persist.called)
+        self.assertFalse(update.called)
+
+
+        self.community_bank.received_signed_confirm_response([message2])
+
+        self.assertTrue(update.called)
+
+
+
+
+
+
+
     def tearDown(self):
         # Closing and unlocking dispersy database for other tests in test suite
         self.dispersy._database.close()
@@ -662,17 +860,6 @@ class ConversionTestCase(unittest.TestCase):
         self.assertEqual(message.payload.fields, decoded_payload.fields)
         self.assertEqual(message.payload.models, decoded_payload.models)
 
-    def test_encode_model_request(self):
-        meta = self.community.get_meta_message(u"model_request")
-        message = meta.impl(authentication=(self.member,),
-                            distribution=(self.community.claim_global_time(),),
-                            payload=(['boo', 'baa'],),
-                            destination=(LoopbackCandidate(),))
-
-        encoded_message = self.conversion._encode_model_request(message)[0]
-        decoded_payload = self.conversion._decode_model_request(message, 0, encoded_message)[1]
-
-        self.assertEqual(message.payload.models, decoded_payload.models)
 
     def test_encode_api_request_community(self):
         meta = self.community.get_meta_message(u"api_message_community")
