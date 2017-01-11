@@ -259,7 +259,12 @@ class MarketAPI(object):
             # Add message to queue
             borrower = self.db.get(User.type, borrower.id)
             investors_profile = self.db.get(Profile.type, investor.profile_id)
-            self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type], {Investment.type: investment, User.type: investor, Profile.type: investors_profile}, [borrower]))
+            campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+            self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type],
+                                      {Investment.type: investment, User.type: investor,
+                                       Profile.type: investors_profile}, [borrower]))
+            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type],
+                                      {User.type: borrower, Investment.type: investment, Campaign.type: campaign}, []))
 
             return investment
         else:
@@ -460,17 +465,13 @@ class MarketAPI(object):
         # Reload the user to get the latest data from the database.
         user = self._get_user(user)
         offers = []
+
         for mortgage_id in user.mortgage_ids:
             mortgage = self.db.get(Mortgage.type, mortgage_id)
+            campaign = self.db.get(Campaign.type, mortgage.campaign_id)
 
             # If the mortgage is already accepted, we get the loan offers from the investors
-            if mortgage.status == STATUS.ACCEPTED:
-                # for investor_id in mortgage.investors:
-                #     investor = self.db.get(User.type, investor_id)
-                #     for investment_id in investor.investment_ids:
-                #         investment = self.db.get(Investment.type, investment_id)
-                #         if investment.status == STATUS.PENDING:
-                #             offers.append(investment)
+            if mortgage.status == STATUS.ACCEPTED and not campaign.completed:
                 for investment_id in user.investment_ids:
                     investment = self.db.get(Investment.type, investment_id)
                     if investment.status == STATUS.PENDING:
@@ -498,11 +499,10 @@ class MarketAPI(object):
         :rtype: bool or False
         """
         bank = self._get_user(mortgage.bank)
-        house = self.db.get(House.type, mortgage.house_id)
 
         # Add the newly created campaign to the database
         end_date = datetime.now() + timedelta(days=CAMPAIGN_LENGTH_DAYS)
-        finance_goal = house.price - mortgage.amount
+        finance_goal = loan_request.amount_wanted - mortgage.amount
 
         campaign = Campaign(mortgage.id, finance_goal, end_date, False)
         if self.db.post(Campaign.type, campaign):
@@ -520,7 +520,7 @@ class MarketAPI(object):
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
             self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type,
                                       User.type, House.type], {LoanRequest.type: loan_request, Mortgage.type: mortgage,
-                                      Campaign.type: campaign, User.type: user, House.type: house},[]))
+                                      Campaign.type: campaign, User.type: user, House.type: house}, []))
             return self.db.put(User.type, user.id, user)
         return False
 
@@ -614,6 +614,8 @@ class MarketAPI(object):
             self.outgoing_queue.push((u"investment_accept", [Investment.type, User.type, BorrowersProfile.type],
                                       {Investment.type: investment, User.type: user, BorrowersProfile.type:
                                           borrowers_profile}, [investor]))
+            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type], {User.type: user,
+                                      Investment.type: investment, Campaign.type: campaign}, []))
 
             return self.db.put(Campaign.type, campaign.id, campaign)
         return False
@@ -649,7 +651,8 @@ class MarketAPI(object):
 
         # Add message to queue
         bank = self.db.get(User.type, mortgage.bank)
-        self.outgoing_queue.push((u"mortgage_reject", [Mortgage.type, User.type], {Mortgage.type: mortgage, User.type: user}, [bank]))
+        self.outgoing_queue.push((u"mortgage_reject", [Mortgage.type, User.type], {Mortgage.type: mortgage,
+                                  User.type: user}, [bank]))
 
         return self.db.put(LoanRequest.type, loan_request.id, loan_request) and self.db.put(User.type, user.id, user)
 
@@ -677,10 +680,15 @@ class MarketAPI(object):
         investment.status = STATUS.REJECTED
         self.db.put(Investment.type, investment.id, investment)
 
+        mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
+        campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+
         # Add message to queue
         investor = self.db.get(User.type, investment.investor_key)
-        self.outgoing_queue.push(
-            (u"investment_reject", [Investment.type, User.type], {Investment.type: investment, User.type: user}, [investor]))
+        self.outgoing_queue.push((u"investment_reject", [Investment.type, User.type], {Investment.type: investment,
+                                  User.type: user}, [investor]))
+        self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type], {User.type: user,
+                                  Investment.type: investment, Campaign.type: campaign}, []))
 
         return investment
 

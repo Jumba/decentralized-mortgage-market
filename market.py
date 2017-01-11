@@ -44,7 +44,6 @@ if __name__ == "__main__":
     else:
         raise SystemExit("Unknown bank")
 
-
     from twisted.application import reactors
     reactors.installReactor('qt5')
 
