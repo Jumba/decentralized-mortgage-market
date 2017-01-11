@@ -18,7 +18,7 @@ from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile, Profile
 from market.models.user import User
 from market.database.backends import DatabaseBlock, BlockChain
-from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
+from payload import DatabaseModelPayload, APIMessagePayload, SignedConfirmPayload
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -51,22 +51,6 @@ class MortgageMarketCommunity(Community):
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
-            Message(self, u"model_request",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CommunityDestination(node_count=50),
-                    ModelRequestPayload(),
-                    self.check_message,
-                    self.on_model_request),
-            Message(self, u"model_request_response",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_model_request_response),
             Message(self, u"introduce_user",
                     MemberAuthentication(),
                     PublicResolution(),
@@ -158,25 +142,6 @@ class MortgageMarketCommunity(Community):
         for message in messages:
             self.api.incoming_queue.push(message)
 
-    def send_model_request(self, models, store=True, update=True, forward=True):
-        assert isinstance(models, list)
-
-        meta = self.get_meta_message(u"model_request")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(models,), )
-        self.dispersy.store_update_forward([message], store, update, forward)
-
-    def send_model_request_response(self, fields, models, candidates, store=True, update=True, forward=True):
-        for field in fields:
-            assert isinstance(models[field], DatabaseModel)
-
-        meta = self.get_meta_message(u"model_request_response")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
-        self.dispersy.store_update_forward([message], store, update, forward)
 
     def send_introduce_user(self, fields, models, candidate, store=True, update=True, forward=True):
         for field in fields:
@@ -382,19 +347,6 @@ class MortgageMarketCommunity(Community):
         return True
 
     ########## END API MESSAGES
-
-    def on_model_request(self, messages):
-        for message in messages:
-            # Payload is a dictionary with {type : uuid}
-            for model_type, model_id in message.payload.models:
-                obj = self.api.db.get(model_type, model_id)
-                self.send_model_request_response([obj.id], {obj.id: obj})
-
-    def on_model_request_response(self, messages):
-        for message in messages:
-            for field in message.payload.fields:
-                obj = message.payload.models[field]
-                self.api.db.post(obj.type, obj)
 
     def on_user_introduction(self, messages):
         for message in messages:
