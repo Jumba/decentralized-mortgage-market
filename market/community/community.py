@@ -277,7 +277,6 @@ class MortgageMarketCommunity(Community):
 
         # The bank can now initiate a signing step.
         if self.user.id == mortgage.bank:
-            print "Signing the agreement"
             # resign because the status has been changed.
             self.publish_signed_confirm_request_message(user.id, mortgage)
 
@@ -354,6 +353,10 @@ class MortgageMarketCommunity(Community):
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
         assert isinstance(profile, BorrowersProfile)
+
+        # The investor can now initiate a signing step.
+        if self.user.id == investment.investor_key:
+            self.publish_signed_confirm_request_message(user.id, investment)
 
         user.post_or_put(self.api.db)
         investment.post_or_put(self.api.db)
