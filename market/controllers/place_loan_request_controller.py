@@ -9,7 +9,12 @@ class PlaceLoanRequestController:
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.mainwindow.bplr_submit_pushbutton.clicked.connect(self.submit_loan_request)
-        self.banks_ids = Global.BANKS.values()
+        self.banks_ids = [
+            Global.BANKS['ABN'],
+            Global.BANKS['ING'],
+            Global.BANKS['RABO'],
+            Global.BANKS['MONEYOU'],
+        ]
 
     def setup_view(self):
         pass
@@ -50,9 +55,9 @@ class PlaceLoanRequestController:
             payload['banks'] = checked_banks
 
             # Check the chosen mortgage type
-            payload['mortgage_type'] = 1
+            payload['mortgage_type'] = 2
             if self.mainwindow.bplr_linear_radiobutton.isChecked():
-                payload['mortgage_type'] = 0
+                payload['mortgage_type'] = 1
             if self.mainwindow.api.create_loan_request(self.mainwindow.app.user, payload):
                 self.mainwindow.show_dialog("Loan request created", 'Your loan request has been sent.')
             else:

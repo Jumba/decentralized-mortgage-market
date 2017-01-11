@@ -346,11 +346,10 @@ class APITestSuite(unittest.TestCase):
         # Check if the returned objects are Lists
         self.assertIsInstance(investments, list)
         # Check if the elements of the lists are Investment-objects
-        for [investment, house, campaign] in investments:
+        for investment, house, campaign, profile in investments:
             self.assertIsInstance(investment, Investment)
             self.assertIsInstance(house, House)
             self.assertIsInstance(campaign, Campaign)
-
         # Check if the Investment-objects are saved in the list
         self.assertIn(loan_offer1, investments[0])
         self.assertIn(loan_offer2, investments[1])
@@ -449,14 +448,10 @@ class APITestSuite(unittest.TestCase):
         investment1 = self.api.place_loan_offer(investor1, self.payload_investment1)
         investment2 = self.api.place_loan_offer(investor2, self.payload_investment2)
 
-        # The borrower now accepts the offers.
-        #self.api.accept_investment_offer(user, {'investment_id': investment1.id})
-        #self.api.accept_investment_offer(user, {'investment_id': investment2.id})
-
         # Get the offers from the database
         offers = self.api.load_borrowers_offers(user)
 
-        # Check if the objects in the returned list are Mortgage-objects
+        # Check if the objects in the returned list are Investment-objects
         self.assertIsInstance(offers[0], Investment)
         self.assertIsInstance(offers[1], Investment)
 
@@ -529,11 +524,11 @@ class APITestSuite(unittest.TestCase):
         loans = self.api.load_borrowers_loans(updated_borrower)
 
         # Check if the loans are in the list
-        self.assertIn(mortgage, loans)
-        self.assertIn(investment1, loans)
-        self.assertIn(investment2, loans)
+        self.assertIn(mortgage, loans[0])
+        self.assertIn(investment1, loans[1])
+        self.assertIn(investment2, loans[2])
         # Check that the rejected offer is not in the list
-        self.assertNotIn(investment3, loans)
+        self.assertEqual(len(loans), 3)
 
     def test_get_role_borrower(self):
         """
@@ -1135,4 +1130,4 @@ class APITestSuite(unittest.TestCase):
 
         # Check if only the accepted mortgage is in the bank's list
         self.assertIn(mortgage1, mortgages[0])
-        self.assertNotIn(mortgage2, mortgages[0])
+        self.assertEqual(len(mortgages), 1)
