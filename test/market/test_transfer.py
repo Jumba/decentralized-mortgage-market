@@ -3,17 +3,10 @@ import os
 import logging
 import threading
 import unittest
-
 import time
-
 import tftpy
-
 from run_tftp_server import Server
-from uuid import UUID
-from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
-from market.controllers.main_window_controller import MainWindowController
-from marketGUI.market_app import TestMarketApplication
+from run_tftp_client import Client
 from mock import MagicMock
 
 
@@ -30,9 +23,11 @@ class DocumentTransferTestSuite(unittest.TestCase):
     def tearDownClass(cls):
         cls.server.stop()
 
-    # def setUp(self):
-        # self.server = self.__class__.server
-        # print type(self.server)
+    def setUp(self):
+        self.client = Client()
+        self.tftp_client = self.client.client
+        # self.client_mock = MagicMock()
+        # self.client.client = self.client_mock
 
     # def tearDown(self):
         # self.assertTrue(self.server.is_running())
@@ -50,15 +45,56 @@ class DocumentTransferTestSuite(unittest.TestCase):
         server2 = Server()
         self.assertFalse(server2.is_running())
 
-    def test_logging(self):
+    def test_set_logging(self):
         tftpy.log.addHandler = MagicMock()
         logging.FileHandler = MagicMock()
-        loglevel1 = tftpy.log.level
-        self.assertEqual(loglevel1, 0)
+        tftpy.setLogLevel(0)
+        self.assertEqual(tftpy.log.level, 0)
         Server.set_logging(os.getcwd(), 'ERROR')
-        loglevel2 = tftpy.log.level
-        self.assertEqual(loglevel2, 40)
+        self.assertEqual(tftpy.log.level, 40)
+        tftpy.setLogLevel(0)
 
+    def test_client_construction(self):
+        self.assertEqual(self.client.files, [])
+        self.assertTrue(isinstance(self.client, Client))
 
+    def test_client_upload_custom_remote_path(self):
+        mock = MagicMock()
+        self.tftp_client.upload = mock
+        self.client.upload('file1.pdf', 'file2.pdf')
+        mock.assert_called_once_with('file2.pdf', 'file1.pdf')
 
+    def test_client_upload_default_remote_path(self):
+        mock = MagicMock()
+        self.tftp_client.upload = mock
+        self.client.upload('file1.pdf')
+        mock.assert_called_once_with('/home/arthur/Documents/git/mockchain-market/'
+                                     'test/market/resources/received/file1.pdf', 'file1.pdf')
+
+    def test_client_upload_folder_default_path(self):
+        mock = MagicMock()
+        self.client.file_search = lambda x: ['/home/arthur/Documents/git/mockchain-market'
+                                             '/resources/received/file1.pdf']
+        self.client.upload = mock
+        self.client.upload_folder()
+        mock.assert_called_once_with('/home/arthur/Documents/git/mockchain-market/resources/'
+                                     'received/file1.pdf')
+
+    def test_client_upload_folder_custom_path(self):
+        mock = MagicMock()
+        self.client.file_search = lambda x: ['/home/arthur/Documents/git/mockchain-market'
+                                             '/resources/received/file1.pdf']
+        self.client.upload = mock
+        self.client.upload_folder(host_path='/received/')
+        mock.assert_called_once_with('/home/arthur/Documents/git/mockchain-market/resources/received/file1.pdf',
+                                     '/received/file1.pdf')
+
+    def test_enable_logging(self):
+        tftpy.log.addHandler = MagicMock()
+        logging.FileHandler = MagicMock()
+        tftpy.setLogLevel(0)
+        self.assertEqual(tftpy.log.level, 0)
+        self.client.enable_logging()
+        self.assertEqual(tftpy.log.level, 20)
+        tftpy.setLogLevel(0)
 

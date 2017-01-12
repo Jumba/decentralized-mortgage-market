@@ -15,29 +15,17 @@ DEFAULT_PORT = 50000
 
 class Client:
     def __init__(self, host_ip=socket.gethostbyname(socket.gethostname()), port=DEFAULT_PORT):
-        self.enable_logging()
         self.client = TftpClient(host_ip, port)
         self.files = []
+        self.file_search = glob.glob
 
     def upload(self, local_file_name, remote_file_name=None):
         if not remote_file_name:
             remote_file_name = DEFAULT_HOST_PATH + ntpath.basename(local_file_name)
-        try:
-            self.client.upload(remote_file_name, local_file_name)
-        except:
-            print 'Uploading of ', remote_file_name, ' failed.'
-            raise
-
-    def download(self, remote_file_name, local_file_name=None):
-        if not local_file_name:
-            local_file_name = DEFAULT_HOST_PATH + ntpath.basename(remote_file_name)
-        try:
-            self.client.download(local_file_name, remote_file_name)
-        except:
-            raise
+        self.client.upload(remote_file_name, local_file_name)
 
     def upload_folder(self, path=DEFAULT_CLIENT_PATH, host_path=None):
-        self.files = glob.glob(path+'/*.pdf')
+        self.files = self.file_search(path + '/*.pdf')
         for f in self.files:
             if not host_path:
                 self.upload(f)
@@ -62,13 +50,13 @@ class TransferQueue:
     def add(self, ip_address, host_port, local_files, remote_files):
         self.jobs.append((ip_address, host_port, local_files, remote_files))
 
-    def upload_all(self, response=None):
-        self.upload_list(self.jobs, response)
+    def upload_all(self):
+        self.upload_list(self.jobs)
 
-    def retry_failed(self, response=None):
-        self.upload_list(self.failed, response)
+    def retry_failed(self):
+        self.upload_list(self.failed)
 
-    def upload_list(self, jobs, response=None):
+    def upload_list(self, jobs):
         # Upload files to all hosts one by one, return true and run the response if no problems were found.
         # If some files were not able to be sent, return the tuple.
         for job in jobs:
@@ -87,8 +75,6 @@ class TransferQueue:
         if self.failed:
             return False
         else:
-            if callable(response):
-                response()
             return True
 
 

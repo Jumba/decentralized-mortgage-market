@@ -16,10 +16,11 @@ class Server:
         self.port = port
         self.thread = threading.Thread(target=self.server_listen)
 
-
     def stop(self, now=False):
         """
             Stops the server and frees the socket.
+            :param now: False by default, will wait for processes to end before shutting down.
+            True if the server needs to be killed immediately.
         """
         self.server.stop(now)
 
