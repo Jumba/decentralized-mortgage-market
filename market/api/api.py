@@ -514,7 +514,6 @@ class MarketAPI(object):
 
             house = self.db.get(House.type, mortgage.house_id)
 
-            # TODO: The user should broadcast a signed campaign
             # Add message to queue
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
