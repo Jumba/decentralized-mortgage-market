@@ -441,7 +441,7 @@ class MarketAPI(object):
             if self.db.get(Mortgage.type, mortgage_id).status == STATUS.ACCEPTED:
                 mortgage = self.db.get(Mortgage.type, mortgage_id)
                 # Add the accepted mortgage in the loans list
-                loans.append([mortgage, None])  # TODO (How) do we show the bank's iban?
+                loans.append([mortgage, None])
                 campaign = self.db.get(Campaign.type, user.campaign_ids[0])
 
                 for investment_id in user.investment_ids:
