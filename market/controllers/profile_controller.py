@@ -40,11 +40,7 @@ class ProfileController:
 
     def browse(self):
         index = self.mainwindow.sender().index
-
-        # TODO put this shit back
-        # path, _ = QFileDialog.getOpenFileName(self.mainwindow, 'Open File', os.getenv('HOME'))
-        path = os.getcwd() + '/resources/file_1.pdf'
-        print 'Hardcoded path: ', path
+        path, _ = QFileDialog.getOpenFileName(self.mainwindow, 'Open File', os.getenv('HOME'))
 
         if QFile.exists(path):
             document_name = self.table.item(index, 0).text()
