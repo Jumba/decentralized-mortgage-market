@@ -8,10 +8,11 @@ DEFAULT_PORT = 50000
 
 
 class Server:
-    def __init__(self):
+    def __init__(self, port=DEFAULT_PORT):
         self.server = tftpy.TftpServer(os.getcwd())
+        self.port = port
         try:
-            self.thread = threading.Thread(target=self.server_start)
+            self.thread = threading.Thread(target=self.server_listen)
         except:
             tftpy.log.error('The socket was not properly closed after the last run. '
                             'Please kill the process or try again in a couple of minutes.'
@@ -26,12 +27,12 @@ class Server:
     def start(self):
         self.thread.start()
 
-    def server_start(self):
-        self.server.listen(listenport=DEFAULT_PORT)
+    def server_listen(self):
+        self.server.listen(listenport=self.port)
 
     @staticmethod
-    def set_logging(write_path):
-        tftpy.setLogLevel('INFO')
+    def set_logging(write_path, level):
+        tftpy.setLogLevel(level)
         fh = logging.FileHandler(write_path+'log_server_'+time.strftime('%d-%m-%Y_%H:%M:%S'))
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         fh.setFormatter(formatter)

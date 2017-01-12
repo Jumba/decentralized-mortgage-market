@@ -1,6 +1,7 @@
 import sys
 import argparse
 
+import run_tftp_server
 from marketGUI.market_app import MarketApplication, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU, \
     MarketApplicationBank, MarketApplicationABN
 from scenarios.apps import MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneBankRABO, MarketAppSceneBankMONEYOU, \
@@ -14,13 +15,17 @@ if __name__ == "__main__":
     parser.add_argument("--scenario", help="Select a scenario to enable", type=str, choices=['bank', 'borrower', 'investor'],)
 
     args = parser.parse_args()
+    start_tftp_server = True
 
     if not args.bank and not args.scenario:
         app = MarketApplication(sys.argv)
+        start_tftp_server = False
     elif args.scenario == 'borrower':
         app = MarketAppSceneBorrower(sys.argv)
+        start_tftp_server = False
     elif args.scenario == 'investor':
         app = MarketAppSceneInvestor(sys.argv)
+        start_tftp_server = False
     elif args.bank == "abn":
         if args.scenario == "bank":
             app = MarketAppSceneBank(sys.argv)
@@ -43,6 +48,10 @@ if __name__ == "__main__":
             app = MarketApplicationMONEYOU(sys.argv)
     else:
         raise SystemExit("Unknown bank")
+
+    if start_tftp_server:
+        tftp_server = run_tftp_server.Server()
+        tftp_server.start()
 
 
     from twisted.application import reactors
