@@ -1,3 +1,4 @@
+import os
 import sys
 import argparse
 
@@ -51,8 +52,8 @@ if __name__ == "__main__":
 
     if start_tftp_server:
         tftp_server = run_tftp_server.Server()
+        tftp_server.set_logging(os.getcwd()+'/logging/', 'INFO')
         tftp_server.start()
-
 
     from twisted.application import reactors
     reactors.installReactor('qt5')

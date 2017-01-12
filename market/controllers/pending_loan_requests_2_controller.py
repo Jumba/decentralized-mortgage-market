@@ -39,7 +39,6 @@ class PendingLoanRequests2Controller:
                                                         + str(borrower_profile.current_postal_code))
         self.mainwindow.fiplr2_phonenumber_lineedit.setText(str(borrower_profile.phone_number))
         self.mainwindow.fiplr2_email_lineedit.setText(str(borrower_profile.email))
-        # TODO Add risk rating when it has been implemented
 
         # Insert mortgage request information
         self.mainwindow.fiplr2_property_address_lineedit.setText(str(house.address) + ' ' + str(house.house_number)
@@ -56,15 +55,14 @@ class PendingLoanRequests2Controller:
         self.mainwindow.fiplr2_property_value_lineedit.setText(str(house.price))
         self.mainwindow.fiplr2_description_textedit.setText(str(loan_request.description))
 
-        documents = glob(os.getcwd() + '/resources/'+str(borrower_profile.id)+'/*.pdf')
+        documents = glob(os.getcwd() + '/resources/received/'+str(loan_request_id)+'/*.pdf')
         for i in range(0, len(documents)):
             self.table.insertRow(i)
             edit_button = QPushButton('View')
             edit_button.clicked.connect(self.view_file)
             edit_button.filepath = documents[i]
-            # self.table.setItem(i, 0, QTableWidgetItem(str(documents[i])))
-            self.table.setItem(i, 1, QTableWidgetItem(str(ntpath.basename(documents[i]))))
-            self.table.setCellWidget(i, 2, edit_button)
+            self.table.setItem(i, 0, QTableWidgetItem(str(ntpath.basename(documents[i]))))
+            self.table.setCellWidget(i, 1, edit_button)
 
     def view_file(self):
         filepath = self.mainwindow.sender().filepath

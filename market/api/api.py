@@ -8,6 +8,7 @@ from datetime import timedelta, datetime
 from enum import Enum
 
 import run_tftp_client
+from dispersy.candidate import WalkCandidate
 from dispersy.crypto import ECCrypto
 from market.api.crypto import get_public_key
 from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
@@ -402,25 +403,32 @@ class MarketAPI(object):
                                            payload['mortgage_type'], payload['banks'], payload['description'], payload['amount_wanted'],
                                            payload['status'])
 
-                # Send the documents to the banks
-                # TODO find the ip_addresses of the banks
-                bank_ip_addresses = ['127.0.0.1']
-                profile = self.load_profile(user)
-                if profile:
-                    if profile.document_list:
-                        for document_id in profile.document_list:
-                            document = self.db.get(Document.type, document_id)
-                            document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
-                        tq = run_tftp_client.TransferQueue()
-                        for ip_address in bank_ip_addresses:
-                            # Add to queue
-                            tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
-                                   os.getcwd()+'/resources/received/'+str(profile.id)+'/')
-                        tq.upload_all()
-
                 # Add the loan request to the borrower
                 user.loan_request_ids.append(self.db.post(LoanRequest.type, loan_request))
                 user.post_or_put(self.db)
+
+                # Send the documents to the banks
+                bank_ip_addresses = []
+                for bank_id in payload['banks']:
+                    if bank_id in self.user_candidate:
+                        # TODO bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
+                        bank_ip_addresses.append(self.user_candidate[bank_id].lan_address[0])
+                    # else:
+                    #     # TODO tell the user that the chosen bank is not online
+                    #     raise
+
+                profile = self.load_profile(user)
+                if profile:
+                    # if profile.document_list:
+                    for document_id in profile.document_list:
+                        document = self.db.get(Document.type, document_id)
+                        document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
+                    tq = run_tftp_client.TransferQueue()
+                    for ip_address in bank_ip_addresses:
+                        # Add to queue
+                        tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
+                               os.getcwd()+'/resources/received/'+str(loan_request.id)+'/')
+                    tq.upload_all()
 
                 # The loan request won't be changed anymore. Sign it.
                 loan_request.sign(self)
