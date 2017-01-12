@@ -441,7 +441,7 @@ class MarketAPI(object):
             if self.db.get(Mortgage.type, mortgage_id).status == STATUS.ACCEPTED:
                 mortgage = self.db.get(Mortgage.type, mortgage_id)
                 # Add the accepted mortgage in the loans list
-                loans.append([mortgage, None])  # TODO (How) do we show the bank's iban?
+                loans.append([mortgage, None])
                 campaign = self.db.get(Campaign.type, user.campaign_ids[0])
 
                 for investment_id in user.investment_ids:
@@ -514,7 +514,6 @@ class MarketAPI(object):
 
             house = self.db.get(House.type, mortgage.house_id)
 
-            # TODO: The user should broadcast a signed campaign
             # Add message to queue
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
@@ -803,7 +802,6 @@ class MarketAPI(object):
         else:
             return None
 
-    # TODO: Add a way to signal events to Users
     def reject_loan_request(self, user, payload):
         """
         Decline an investment offer for the given user.

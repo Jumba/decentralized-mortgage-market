@@ -505,7 +505,6 @@ class MortgageMarketCommunity(Community):
             agreement = response.payload.agreement_beneficiary
             agreement_local = request.payload.agreement_benefactor
 
-            # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
             if agreement_local == agreement:
                 if isinstance(agreement, Investment):
                     mortgage = self.api.db.get(Mortgage.type, agreement.mortgage_id)
