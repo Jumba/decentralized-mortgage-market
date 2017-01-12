@@ -6,7 +6,7 @@ import unittest
 import time
 import tftpy
 from run_tftp_server import Server
-from run_tftp_client import Client
+from run_tftp_client import Client, TransferQueue
 from mock import MagicMock
 
 
@@ -26,6 +26,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
     def setUp(self):
         self.client = Client()
         self.tftp_client = self.client.client
+        self.queue = TransferQueue()
         # self.client_mock = MagicMock()
         # self.client.client = self.client_mock
 
@@ -33,6 +34,9 @@ class DocumentTransferTestSuite(unittest.TestCase):
         # self.assertTrue(self.server.is_running())
         # self.server.stop()
         # self.assertFalse(self.server.is_running())
+
+    def throw(self, exception):
+        raise exception
 
     def test_server_construction(self):
         self.assertTrue(isinstance(self.server, Server))
@@ -68,25 +72,21 @@ class DocumentTransferTestSuite(unittest.TestCase):
         mock = MagicMock()
         self.tftp_client.upload = mock
         self.client.upload('file1.pdf')
-        mock.assert_called_once_with('/home/arthur/Documents/git/mockchain-market/'
-                                     'test/market/resources/received/file1.pdf', 'file1.pdf')
+        mock.assert_called_once_with(os.getcwd()+'/resources/received/file1.pdf', 'file1.pdf')
 
     def test_client_upload_folder_default_path(self):
         mock = MagicMock()
-        self.client.file_search = lambda x: ['/home/arthur/Documents/git/mockchain-market'
-                                             '/resources/received/file1.pdf']
+        self.client.file_search = lambda x: [os.getcwd()+'/resources/received/file1.pdf']
         self.client.upload = mock
         self.client.upload_folder()
-        mock.assert_called_once_with('/home/arthur/Documents/git/mockchain-market/resources/'
-                                     'received/file1.pdf')
+        mock.assert_called_once_with(os.getcwd()+'/resources/received/file1.pdf')
 
     def test_client_upload_folder_custom_path(self):
         mock = MagicMock()
-        self.client.file_search = lambda x: ['/home/arthur/Documents/git/mockchain-market'
-                                             '/resources/received/file1.pdf']
+        self.client.file_search = lambda x: [os.path.normpath(os.getcwd()+'/resources/received/file1.pdf')]
         self.client.upload = mock
         self.client.upload_folder(host_path='/received/')
-        mock.assert_called_once_with('/home/arthur/Documents/git/mockchain-market/resources/received/file1.pdf',
+        mock.assert_called_once_with(os.path.normpath(os.getcwd()+'/resources/received/file1.pdf'),
                                      '/received/file1.pdf')
 
     def test_enable_logging(self):
@@ -98,3 +98,8 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.assertEqual(tftpy.log.level, 20)
         tftpy.setLogLevel(0)
 
+    def test_queue_construction(self):
+        self.assertEqual(self.queue.jobs, [])
+        self.assertEqual(self.queue.failed, [])
+        self.assertEqual(self.queue.sent, [])
+        self.assertTrue(isinstance(self.queue, TransferQueue))
