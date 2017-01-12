@@ -802,7 +802,6 @@ class MarketAPI(object):
         else:
             return None
 
-    # TODO: Add a way to signal events to Users
     def reject_loan_request(self, user, payload):
         """
         Decline an investment offer for the given user.
