@@ -77,9 +77,3 @@ class TransferQueue:
         else:
             return True
 
-
-if __name__ == '__main__':
-    tc = Client(socket.gethostbyname(socket.gethostname()))
-    thread = Thread(target=tc.upload_folder())
-    thread.start()
-
