@@ -30,7 +30,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.tftp_client = self.client.client
         self.queue = TransferQueue()
         self.document_path_client = os.path.normpath(os.getcwd()+'/../../resources/documents/')
-        self.document_path_host = os.path.normpath(os.getcwd()+'/../../resources/received/')
+        self.document_path_host = os.path.normpath(os.getcwd()+'/../../resources/')
         # self.client_mock = MagicMock()
         # self.client.client = self.client_mock
 
@@ -138,8 +138,8 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.queue.add('127.0.1.1', 101, self.document_path_client+'/file.pdf',
                        self.document_path_host+'/file.pdf')
         self.assertEqual(self.queue.jobs, [('127.0.0.1', 99, self.document_path_client, self.document_path_host),
-                                           ('127.0.1.1', 101,
-                                            self.document_path_client+'/file.pdf', self.document_path_host+'/file.pdf')])
+                                           ('127.0.1.1', 101,self.document_path_client+'/file.pdf',
+                                            self.document_path_host+'/file.pdf')])
         self.assertTrue(self.queue.upload_list(self.queue.jobs))
         mock1.assert_called_once_with(self.document_path_client+'/file.pdf', self.document_path_host+'/file.pdf')
         mock2.assert_called_once_with(self.document_path_client, self.document_path_host)
