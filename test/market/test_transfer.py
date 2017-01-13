@@ -144,6 +144,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.assertEqual(self.queue.failed, [])
 
     def test_upload_list_fail(self):
+        Client.upload = lambda x, y, z: self.throw(tftpy.TftpException)
         Client.upload_folder = lambda x, y, z: self.throw(tftpy.TftpException)
         self.queue.add('127.0.0.1', 99, self.document_path_client, self.document_path_host)
         self.assertEqual(self.queue.jobs, [('127.0.0.1', 99, self.document_path_client, self.document_path_host)])
