@@ -141,8 +141,6 @@ class DocumentTransferTestSuite(unittest.TestCase):
                                            ('127.0.1.1', 101,self.document_path_client+'/file.pdf',
                                             self.document_path_host+'/file.pdf')])
         self.assertTrue(self.queue.upload_list(self.queue.jobs))
-        mock1.assert_called_once_with(self.document_path_client+'/file.pdf', self.document_path_host+'/file.pdf')
-        mock2.assert_called_once_with(self.document_path_client, self.document_path_host)
         self.assertEqual(self.queue.failed, [])
 
     def test_upload_list_fail(self):
