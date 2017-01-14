@@ -6,9 +6,9 @@ import unittest
 import time
 import tftpy
 
-import run_tftp_client
-from run_tftp_server import Server
-from run_tftp_client import Client, TransferQueue
+import tftp_client
+from tftp_server import Server
+from tftp_client import Client, TransferQueue
 from mock import MagicMock
 
 
@@ -17,7 +17,6 @@ class DocumentTransferTestSuite(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.server = Server()
-        # Server.set_logging(os.path.normpath(os.getcwd() + '/../../logging/'), 'INFO')
         cls.server.start()
         time.sleep(1)
 
@@ -31,13 +30,6 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.queue = TransferQueue()
         self.document_path_client = os.path.normpath(os.getcwd()+'/../../resources/documents/')
         self.document_path_host = os.path.normpath(os.getcwd()+'/../../resources/')
-        # self.client_mock = MagicMock()
-        # self.client.client = self.client_mock
-
-    # def tearDown(self):
-        # self.assertTrue(self.server.is_running())
-        # self.server.stop()
-        # self.assertFalse(self.server.is_running())
 
     def throw(self, exception):
         raise exception()
@@ -110,24 +102,25 @@ class DocumentTransferTestSuite(unittest.TestCase):
 
     def test_queue_add(self):
         self.assertEqual(self.queue.jobs, [])
-        self.queue.add('127.0.0.1', 69, run_tftp_client.DEFAULT_CLIENT_PATH, run_tftp_client.DEFAULT_HOST_PATH)
-        self.assertEqual(self.queue.jobs, [('127.0.0.1', 69, run_tftp_client.DEFAULT_CLIENT_PATH,
-                                            run_tftp_client.DEFAULT_HOST_PATH)])
+        self.queue.add('127.0.0.1', 69, tftp_client.DEFAULT_CLIENT_PATH, tftp_client.DEFAULT_HOST_PATH)
+        self.assertEqual(self.queue.jobs, [('127.0.0.1', 69, tftp_client.DEFAULT_CLIENT_PATH,
+                                            tftp_client.DEFAULT_HOST_PATH)])
 
     def test_queue_upload_all(self):
         mock = MagicMock()
         self.queue.upload_list = mock
-        self.queue.add('127.0.0.1', 79, run_tftp_client.DEFAULT_CLIENT_PATH, run_tftp_client.DEFAULT_HOST_PATH)
+        self.queue.add('127.0.0.1', 79, tftp_client.DEFAULT_CLIENT_PATH, tftp_client.DEFAULT_HOST_PATH)
         self.queue.upload_all()
         mock.assert_called_once_with(self.queue.jobs)
 
     def test_queue_retry_failed(self):
         mock = MagicMock()
         self.queue.upload_list = mock
-        self.queue.failed.append(('127.0.0.1', 89, run_tftp_client.DEFAULT_CLIENT_PATH,
-                                  run_tftp_client.DEFAULT_HOST_PATH))
+        self.queue.failed.append(('127.0.0.1', 89, tftp_client.DEFAULT_CLIENT_PATH,
+                                  tftp_client.DEFAULT_HOST_PATH))
         self.queue.retry_failed()
-        mock.assert_called_once_with(self.queue.failed)
+        mock.assert_called_once_with([('127.0.0.1', 89, tftp_client.DEFAULT_CLIENT_PATH,
+                                  tftp_client.DEFAULT_HOST_PATH)])
 
     def test_upload_list_success(self):
         mock1 = MagicMock()

@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 
-import run_tftp_server
+import tftp_server
 from marketGUI.market_app import MarketApplication, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU, \
     MarketApplicationBank, MarketApplicationABN
 from scenarios.apps import MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneBankRABO, MarketAppSceneBankMONEYOU, \
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         raise SystemExit("Unknown bank")
 
     if start_tftp_server:
-        tftp_server = run_tftp_server.Server()
+        tftp_server = tftp_server.Server()
         tftp_server.set_logging(os.getcwd()+'/logging/', 'INFO')
         tftp_server.start()
 

@@ -7,7 +7,7 @@ import time
 from datetime import timedelta, datetime
 from enum import Enum
 
-import run_tftp_client
+import tftp_client
 from dispersy.candidate import WalkCandidate
 from dispersy.crypto import ECCrypto
 from market.api.crypto import get_public_key
@@ -51,6 +51,7 @@ class MarketAPI(object):
         self.user_candidate = {}
         self.outgoing_queue = OutgoingMessageQueue(self)
         self.incoming_queue = IncomingMessageQueue(self)
+        self.failed_documents = []
 
     @property
     def db(self):
@@ -423,12 +424,13 @@ class MarketAPI(object):
                     for document_id in profile.document_list:
                         document = self.db.get(Document.type, document_id)
                         document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
-                    tq = run_tftp_client.TransferQueue()
+                    tq = tftp_client.TransferQueue()
                     for ip_address in bank_ip_addresses:
                         # Add to queue
                         tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
                                os.getcwd()+'/resources/received/'+str(loan_request.id)+'/')
                     tq.upload_all()
+                    self.failed_documents = tq.failed
 
                 # The loan request won't be changed anymore. Sign it.
                 loan_request.sign(self)
