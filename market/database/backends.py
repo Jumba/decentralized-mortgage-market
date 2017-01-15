@@ -153,6 +153,14 @@ class BlockChain(object):
         """
         raise NotImplementedError
 
+    def check_add_genesis_block(self):
+        """
+        Persist the genesis block if there are no blocks yet.
+        :param public_key_benefactor: The public key of the benefactor
+        :param public_key_beneficiary The public key of the beneficiary
+        """
+        raise NotImplementedError
+
 
 class MemoryBackend(Backend):
     """
