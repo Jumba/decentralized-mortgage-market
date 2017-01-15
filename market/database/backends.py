@@ -511,7 +511,7 @@ class PersistentBackend(Database, Backend, BlockChain):
                          u"sequence_number_benefactor, sequence_number_beneficiary, "
                          u"previous_hash_benefactor, previous_hash_beneficiary, time, "
                          u"hash_block, previous_hash, sequence_number) "
-                         u"VALUES (?,?,?,?,?,?,?,?,?,?,?,?),",
+                         u"VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                          data)
 
             self.commit()
