@@ -1,5 +1,6 @@
 from hashlib import sha256
 from os import path
+import time
 
 from dispersy.database import Database
 from market.community.encoding import encode
@@ -369,7 +370,7 @@ class PersistentBackend(Database, Backend, BlockChain):
             u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, "
             u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, "
             u"time, hash_block, previous_hash, sequence_number) "
-            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
+            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             data)
         self.commit()
 
@@ -465,6 +466,47 @@ class PersistentBackend(Database, Backend, BlockChain):
         db_result = self.execute(db_query).fetchone()
         return db_result[0] if db_result is not None else 0
 
+    def check_add_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+        """
+        Persist the genesis block if there are no blocks yet.
+        :param public_key_benefactor: The public key of the benefactor
+        :param public_key_beneficiary The public key of the beneficiary
+        """
+        db_query = u"SELECT COUNT(*) FROM multi_chain"
+        db_result = self.execute(db_query).fetchone()
+
+        if db_result[0] == 0:
+            insert_time = int(time.time())
+            # hash the block
+            packet = encode(
+                (
+                    unicode(public_key_benefactor),     # benefactor,
+                    unicode(public_key_beneficiary),    # beneficiary,
+                    None,                               # agreement_benefactor,
+                    None,                               # agreement_beneficiary,
+                    0,                                  # sequence_number_benefactor,
+                    0,                                  # sequence_number_beneficiary,
+                    '',                                 # previous_hash_benefactor,
+                    '',                                 # previous_hash_beneficiary,
+                    '',                                 # signature_benefactor,
+                    '',                                 # signature_beneficiary,
+                    insert_time,                        # time,
+                )
+            )
+            hash = sha256(packet).hexdigest()
+
+            data = (unicode(public_key_benefactor), unicode(public_key_beneficiary), None, None, 0, 0, '', '',
+                    insert_time, hash, '', 0)
+
+            self.execute(u"INSERT INTO `multi_chain` (benefactor, beneficiary, "
+                         u"agreement_benefactor, agreement_beneficiary, "
+                         u"sequence_number_benefactor, sequence_number_beneficiary, "
+                         u"previous_hash_benefactor, previous_hash_beneficiary, time, "
+                         u"hash_block, previous_hash, sequence_number) "
+                         u"VALUES (?,?,?,?,?,?,?,?,?,?,?,?),",
+                         data)
+
+            self.commit()
 
 class DatabaseBlock:
     """ DataClass for a multichain block. """
