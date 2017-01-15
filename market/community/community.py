@@ -439,8 +439,6 @@ class MortgageMarketCommunity(Community):
             if encoded_sig == benefactor:
                 message.payload._benefactor_signature = signature[0].encode("HEX")
 
-        self.api.db.backend.check_add_genesis_block(benefactor, '')
-
         self.persist_signature(message)
 
         return message
@@ -486,8 +484,6 @@ class MortgageMarketCommunity(Community):
                     message.payload.signature_benefactor = signature[0].encode("HEX")
                 elif encoded_sig == self.user.id:
                     message.payload.signature_beneficiary = signature[0].encode("HEX")
-
-            self.api.db.backend.check_add_genesis_block('', self.user.id)
 
             self.persist_signature(message)
 
@@ -547,6 +543,11 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+
+        if message.payload.benefactor == self.user.id:
+            self.api.db.backend.check_add_genesis_block(self.user.id, '')
+        elif message.payload.beneficiary == self.user.id:
+            self.api.db.backend.check_add_genesis_block('', self.user.id)
 
         block = DatabaseBlock.from_signed_confirm_message(message)
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
