@@ -413,7 +413,7 @@ class MarketAPI(object):
                 for bank_id in payload['banks']:
                     if bank_id in self.user_candidate:
                         # TODO bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
-                        bank_ip_addresses.append(self.user_candidate[bank_id].lan_address[0])
+                        bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
                     # else:
                     #     # TODO tell the user that the chosen bank is not online
                     #     raise
