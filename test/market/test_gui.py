@@ -304,7 +304,7 @@ class GUITestSuite(unittest.TestCase):
     def create_mortgage_campaign_and_bids(self):
         """
         This function creates two loan requests, both with a mortgage and a loan offer
-        """ # TODO Fix
+        """
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
         self.window.api.create_profile(self.window.app.user, self.payload_investor_profile)
@@ -380,10 +380,12 @@ class GUITestSuite(unittest.TestCase):
         borrower1, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.window.api.create_profile(borrower1, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.window.api.create_user()
         borrower2.role_id = role_id
+        self.window.api.create_profile(borrower2, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create loan requests
@@ -455,6 +457,7 @@ class GUITestSuite(unittest.TestCase):
         borrower, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower.id, borrower)
 
         # Create a loan request
@@ -495,6 +498,7 @@ class GUITestSuite(unittest.TestCase):
         borrower, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower.id, borrower)
 
         # Create a loan request
@@ -777,12 +781,14 @@ class GUITestSuite(unittest.TestCase):
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_borrower_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create an investor
         investor, _, _ = self.window.api.create_user()
         role_id = Role.INVESTOR.value
         investor.role_id = role_id
+        self.window.api.create_profile(investor, self.payload_investor_profile)
         self.window.api.db.put(User.type, investor.id, investor)
 
         # Create a loan request
@@ -825,12 +831,14 @@ class GUITestSuite(unittest.TestCase):
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_borrower_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create an investor
         investor, _, _ = self.window.api.create_user()
         role_id = Role.INVESTOR.value
         investor.role_id = role_id
+        self.window.api.create_profile(investor, self.payload_investor_profile)
         self.window.api.db.put(User.type, investor.id, investor)
 
         # Create a loan request
@@ -873,12 +881,14 @@ class GUITestSuite(unittest.TestCase):
         # Create the borrower user
         role_id = Role.BORROWER.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_borrower_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create an investor
         investor, _, _ = self.window.api.create_user()
         role_id = Role.INVESTOR.value
         investor.role_id = role_id
+        self.window.api.create_profile(investor, self.payload_investor_profile)
         self.window.api.db.put(User.type, investor.id, investor)
 
         # Create a loan request
@@ -996,6 +1006,7 @@ class GUITestSuite(unittest.TestCase):
         # Create the investor user
         role_id = Role.INVESTOR.value
         self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_investor_profile)
         self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
 
         # Create borrowers
@@ -1131,6 +1142,7 @@ class GUITestSuite(unittest.TestCase):
         investor, _, _ = self.window.api.create_user()
         role_id = Role.INVESTOR.value
         investor.role_id = role_id
+        self.window.api.create_profile(investor, self.payload_investor_profile)
         self.window.api.db.put(User.type, investor.id, investor)
 
         # Place loan offer
@@ -1186,10 +1198,12 @@ class GUITestSuite(unittest.TestCase):
         borrower1, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.window.api.create_profile(borrower1, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.window.api.create_user()
         borrower2.role_id = role_id
+        self.window.api.create_profile(borrower2, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create loan requests
@@ -1242,6 +1256,7 @@ class GUITestSuite(unittest.TestCase):
         borrower, _, _ = self.window.api.create_user()
         role_id = Role.BORROWER.value
         borrower.role_id = role_id
+        self.window.api.create_profile(borrower, self.payload_borrower_profile)
         self.window.api.db.put(User.type, borrower.id, borrower)
 
         # Create a loan request
