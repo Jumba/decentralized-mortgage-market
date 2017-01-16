@@ -13,3 +13,6 @@ market.log
 *.db-shm
 peercache.txt
 .coverage
+html_coverage
+coverage.xml
+twisted/plugins/dropin.cache
