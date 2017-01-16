@@ -5,7 +5,7 @@ import time
 from dispersy.community import Community
 from dispersy.conversion import DefaultConversion
 from dispersy.destination import CommunityDestination, CandidateDestination
-from dispersy.distribution import DirectDistribution, FullSyncDistribution
+from dispersy.distribution import DirectDistribution, FullSyncDistribution, SyncDistribution
 from dispersy.message import Message, DelayMessageByProof
 from dispersy.resolution import PublicResolution
 
@@ -62,7 +62,7 @@ class MortgageMarketCommunity(Community):
             Message(self, u"api_message_community",
                     MemberAuthentication(),
                     PublicResolution(),
-                    FullSyncDistribution(synchronization_direction=u"RANDOM", priority=127, enable_sequence_number=True),
+                    FullSyncDistribution(synchronization_direction=u"DESC", priority=200, enable_sequence_number=False),
                     CommunityDestination(node_count=50),
                     APIMessagePayload(),
                     self.check_message,
@@ -133,7 +133,7 @@ class MortgageMarketCommunity(Community):
 
         meta = self.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(), meta.distribution.claim_sequence_number()),
+                            distribution=(self.claim_global_time(),),
                             payload=(request, fields, models),
                             )
         self.dispersy.store_update_forward([message], store, update, forward)
