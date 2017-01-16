@@ -18,7 +18,7 @@ from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
 from market.models.profiles import BorrowersProfile, Profile
 from market.models.user import User
 from market.database.backends import DatabaseBlock, BlockChain
-from payload import DatabaseModelPayload, ModelRequestPayload, APIMessagePayload, SignedConfirmPayload
+from payload import DatabaseModelPayload, APIMessagePayload, SignedConfirmPayload
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -51,22 +51,6 @@ class MortgageMarketCommunity(Community):
 
     def initiate_meta_messages(self):
         return super(MortgageMarketCommunity, self).initiate_meta_messages() + [
-            Message(self, u"model_request",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CommunityDestination(node_count=50),
-                    ModelRequestPayload(),
-                    self.check_message,
-                    self.on_model_request),
-            Message(self, u"model_request_response",
-                    MemberAuthentication(),
-                    PublicResolution(),
-                    DirectDistribution(),
-                    CandidateDestination(),
-                    DatabaseModelPayload(),
-                    self.check_message,
-                    self.on_model_request_response),
             Message(self, u"introduce_user",
                     MemberAuthentication(),
                     PublicResolution(),
@@ -158,25 +142,6 @@ class MortgageMarketCommunity(Community):
         for message in messages:
             self.api.incoming_queue.push(message)
 
-    def send_model_request(self, models, store=True, update=True, forward=True):
-        assert isinstance(models, list)
-
-        meta = self.get_meta_message(u"model_request")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(models,), )
-        self.dispersy.store_update_forward([message], store, update, forward)
-
-    def send_model_request_response(self, fields, models, candidates, store=True, update=True, forward=True):
-        for field in fields:
-            assert isinstance(models[field], DatabaseModel)
-
-        meta = self.get_meta_message(u"model_request_response")
-        message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(),),
-                            payload=(fields, models,),
-                            destination=candidates)
-        self.dispersy.store_update_forward([message], store, update, forward)
 
     def send_introduce_user(self, fields, models, candidate, store=True, update=True, forward=True):
         for field in fields:
@@ -277,7 +242,6 @@ class MortgageMarketCommunity(Community):
 
         # The bank can now initiate a signing step.
         if self.user.id == mortgage.bank:
-            print "Signing the agreement"
             # resign because the status has been changed.
             self.publish_signed_confirm_request_message(user.id, mortgage)
 
@@ -341,8 +305,24 @@ class MortgageMarketCommunity(Community):
 
         # Save the investment to the borrower
         self.user.update(self.api.db)
-        self.user.investment_ids.append(investment.id)
+        if self.user.id != investment.investor_key:
+            self.user.investment_ids.append(investment.id)
         self.user.post_or_put(self.api.db)
+
+        return True
+
+    def on_campaign_bid(self, payload):
+        user = payload.models[User.type]
+        investment = payload.models[Investment.type]
+        campaign = payload.models[Campaign.type]
+
+        assert isinstance(user, User)
+        assert isinstance(investment, Investment)
+        assert isinstance(campaign, Campaign)
+
+        user.post_or_put(self.api.db)
+        investment.post_or_put(self.api.db)
+        campaign.post_or_put(self.api.db)
 
         return True
 
@@ -354,6 +334,10 @@ class MortgageMarketCommunity(Community):
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
         assert isinstance(profile, BorrowersProfile)
+
+        # The investor can now initiate a signing step.
+        if self.user.id == investment.investor_key:
+            self.publish_signed_confirm_request_message(user.id, investment)
 
         user.post_or_put(self.api.db)
         investment.post_or_put(self.api.db)
@@ -373,25 +357,13 @@ class MortgageMarketCommunity(Community):
 
         # Remove the investment from the investor
         self.user.update(self.api.db)
-        self.user.investment_ids.remove(investment.id)
+        if self.user.id == investment.investor_key:
+            self.user.investment_ids.remove(investment.id)
         self.user.post_or_put(self.api.db)
 
         return True
 
     ########## END API MESSAGES
-
-    def on_model_request(self, messages):
-        for message in messages:
-            # Payload is a dictionary with {type : uuid}
-            for model_type, model_id in message.payload.models:
-                obj = self.api.db.get(model_type, model_id)
-                self.send_model_request_response([obj.id], {obj.id: obj})
-
-    def on_model_request_response(self, messages):
-        for message in messages:
-            for field in message.payload.fields:
-                obj = message.payload.models[field]
-                self.api.db.post(obj.type, obj)
 
     def on_user_introduction(self, messages):
         for message in messages:
@@ -533,7 +505,6 @@ class MortgageMarketCommunity(Community):
             agreement = response.payload.agreement_beneficiary
             agreement_local = request.payload.agreement_benefactor
 
-            # TODO: Change the __eq__ function of DatabaseModel to do a deep compare.
             if agreement_local == agreement:
                 if isinstance(agreement, Investment):
                     mortgage = self.api.db.get(Mortgage.type, agreement.mortgage_id)
