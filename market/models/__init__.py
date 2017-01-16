@@ -13,7 +13,7 @@ class DatabaseModel(object):
 
     def __init__(self, id=None):
         self._id = id
-        self._time_signed = None
+        self._time_signed = 0
         self._signature = None
         self._signer = None
 
