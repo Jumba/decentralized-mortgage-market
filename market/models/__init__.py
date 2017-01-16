@@ -13,7 +13,7 @@ class DatabaseModel(object):
 
     def __init__(self, id=None):
         self._id = id
-        self._time_signed = None
+        self._time_signed = 0
         self._signature = None
         self._signer = None
 
@@ -71,10 +71,11 @@ class DatabaseModel(object):
         for attr in vars(self):
             setattr(self, attr, getattr(updated_self, attr))
 
-    def post_or_put(self, database):
+    def post_or_put(self, database, check_time=False):
         me = database.get(self.type, self.id)
         if me:
-            database.put(self.type, self.id, self)
+            if not check_time or (check_time and me.time_signed < self.time_signed):
+                database.put(self.type, self.id, self)
         else:
             database.post(self.type, self)
 
@@ -84,18 +85,6 @@ class DatabaseModel(object):
             output[attr] = getattr(self, attr)
 
         return json.dumps(output)
-
-    # def __hash__(self):
-    #     output = []
-    #     for attr in vars(self):
-    #         if attr not in self._hash_exclude:
-    #             val = getattr(self, attr)
-    #             if isinstance(val, list):
-    #                 output.append(set(list))
-    #             else:
-    #                 output.append()
-    #
-    #     return hash(tuple(output))
 
     def _generate_sha1_hash(self):
         output = []
@@ -125,30 +114,22 @@ class DatabaseModel(object):
         private_key = api.db.backend.get_option('user_key_priv')
         public_key = api.db.backend.get_option('user_key_pub')
         signing_key = ec.key_from_private_bin(private_key.decode('HEX'))
-        decode_key = ec.key_from_public_bin(public_key.decode("HEX"))
 
         self._signature = ec.create_signature(signing_key, hash)
         self._signer = public_key
-        self._time_signed = time.time()
+        self._time_signed = int(time.time())
 
         self.post_or_put(api.db)
 
     def _has_signature(self):
         return self.signature and self.signer
 
-    def _is_valid_signer(self, api=None):
-        if self._has_signature():
-            return True
-        else:
-            return False
 
     def signature_valid(self, api=None):
-        if self._is_valid_signer(api):
-            ec = ECCrypto()
-            signing_key = ec.key_from_public_bin(self._signer.decode("HEX"))
-            signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(), self.signature)
-            return signature_valid
-        return False
+        ec = ECCrypto()
+        signing_key = ec.key_from_public_bin(self._signer.decode("HEX"))
+        signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(), self.signature)
+        return signature_valid
 
 
 

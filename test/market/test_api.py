@@ -208,9 +208,11 @@ class APITestSuite(unittest.TestCase):
         # Create an investor profile
         self.payload['role'] = 2  # investor
         profile = self.api.create_profile(investor, self.payload)
+        self.api.db.put(User.type, investor.id, investor)
         # Create a borrower profile
         self.payload['role'] = 1 # borrower
         profile2 = self.api.create_profile(borrower, self.payload)
+        self.api.db.put(User.type, borrower.id, borrower)
         # Create a bank profile
         self.payload['role'] = 3  # bank
         profile3 = self.api.create_profile(bank, self.payload_bank)
@@ -226,6 +228,9 @@ class APITestSuite(unittest.TestCase):
 
         # Let the bank accept the request
         loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage3)
+
+        # Accept the mortgage
+        self.api.accept_mortgage_offer(borrower, {'mortgage_id': mortgage.id})
 
         # Create loan offer
         self.payload_loan_offer1['user_key'] = borrower.id # set user_key to the investor's public key
@@ -606,6 +611,7 @@ class APITestSuite(unittest.TestCase):
         borrower, _, _ = self.api.create_user()
         role_id = Role(1)
         borrower.role_id = role_id
+        self.api.create_profile(borrower, self.payload)
         self.api.db.put(User.type, borrower.id, borrower)
 
         bank, _, _ = self.api.create_user()
@@ -661,6 +667,7 @@ class APITestSuite(unittest.TestCase):
         user, pub, priv = self.api.create_user()
         role_id = Role(1)
         user.role_id = role_id
+        self.api.create_profile(user, self.payload)
         self.api.db.put(User.type, user.id, user)
 
         # Create banks
@@ -745,16 +752,19 @@ class APITestSuite(unittest.TestCase):
         borrower1, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.api.create_profile(borrower1, self.payload)
         self.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower2.role_id = role_id
+        self.api.create_profile(borrower2, self.payload)
         self.api.db.put(User.type, borrower2.id, borrower2)
 
         borrower3, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower3.role_id = role_id
+        self.api.create_profile(borrower3, self.payload)
         self.api.db.put(User.type, borrower3.id, borrower3)
 
         # Create a bank
@@ -824,6 +834,7 @@ class APITestSuite(unittest.TestCase):
         borrower, pub0, priv0 = self.api.create_user()
         role_id = Role(1)
         borrower.role_id = role_id
+        self.api.create_profile(borrower, self.payload)
         self.api.db.put(User.type, borrower.id, borrower)
 
         # Create a bank
@@ -867,6 +878,7 @@ class APITestSuite(unittest.TestCase):
         borrower, pub0, priv0 = self.api.create_user()
         role_id = Role(1)
         borrower.role_id = role_id
+        self.api.create_profile(borrower, self.payload)
         self.api.db.put(User.type, borrower.id, borrower)
 
         # Create banks
@@ -1031,11 +1043,13 @@ class APITestSuite(unittest.TestCase):
         borrower, _, _ = self.api.create_user()
         role_id = Role(1)
         borrower.role_id = role_id
+        self.api.create_profile(borrower, self.payload)
         self.api.db.put(User.type, borrower.id, borrower)
 
         investor, pub, priv = self.api.create_user()
         role_id = Role(2)
         investor.role_id = role_id
+        self.api.create_profile(investor, self.payload_investor)
         self.api.db.put(User.type, investor.id, investor)
 
         bank, _, _ = self.api.create_user()
@@ -1085,11 +1099,13 @@ class APITestSuite(unittest.TestCase):
         borrower1, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower1.role_id = role_id
+        self.api.create_profile(borrower1, self.payload)
         self.api.db.put(User.type, borrower1.id, borrower1)
 
         borrower2, _, _ = self.api.create_user()
         role_id = Role.BORROWER.value
         borrower2.role_id = role_id
+        self.api.create_profile(borrower2, self.payload)
         self.api.db.put(User.type, borrower2.id, borrower2)
 
         # Create a bank

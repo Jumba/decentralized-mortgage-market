@@ -5,7 +5,7 @@ import time
 from dispersy.community import Community
 from dispersy.conversion import DefaultConversion
 from dispersy.destination import CommunityDestination, CandidateDestination
-from dispersy.distribution import DirectDistribution, FullSyncDistribution
+from dispersy.distribution import DirectDistribution, FullSyncDistribution, SyncDistribution
 from dispersy.message import Message, DelayMessageByProof
 from dispersy.resolution import PublicResolution
 
@@ -62,7 +62,7 @@ class MortgageMarketCommunity(Community):
             Message(self, u"api_message_community",
                     MemberAuthentication(),
                     PublicResolution(),
-                    FullSyncDistribution(synchronization_direction=u"RANDOM", priority=127, enable_sequence_number=True),
+                    FullSyncDistribution(synchronization_direction=u"DESC", priority=200, enable_sequence_number=False),
                     CommunityDestination(node_count=50),
                     APIMessagePayload(),
                     self.check_message,
@@ -133,7 +133,7 @@ class MortgageMarketCommunity(Community):
 
         meta = self.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.my_member,),
-                            distribution=(self.claim_global_time(), meta.distribution.claim_sequence_number()),
+                            distribution=(self.claim_global_time(),),
                             payload=(request, fields, models),
                             )
         self.dispersy.store_update_forward([message], store, update, forward)
@@ -168,10 +168,10 @@ class MortgageMarketCommunity(Community):
         assert isinstance(house, House)
         assert isinstance(profile, BorrowersProfile)
 
-        user.post_or_put(self.api.db)
-        loan_request.post_or_put(self.api.db)
-        house.post_or_put(self.api.db)
-        profile.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        loan_request.post_or_put(self.api.db, check_time=True)
+        house.post_or_put(self.api.db, check_time=True)
+        profile.post_or_put(self.api.db, check_time=True)
 
         # Save the loan request to the bank
         if self.user.id in loan_request.banks:
@@ -188,8 +188,8 @@ class MortgageMarketCommunity(Community):
         assert isinstance(user, User)
         assert isinstance(loan_request, LoanRequest)
 
-        user.post_or_put(self.api.db)
-        loan_request.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        loan_request.post_or_put(self.api.db, check_time=True)
 
         # If not all banks have rejected the loan request, do nothing
         for items in loan_request.status.items():
@@ -211,8 +211,8 @@ class MortgageMarketCommunity(Community):
         assert isinstance(loan_request, LoanRequest)
         assert isinstance(mortgage, Mortgage)
 
-        loan_request.post_or_put(self.api.db)
-        mortgage.post_or_put(self.api.db)
+        loan_request.post_or_put(self.api.db, check_time=True)
+        mortgage.post_or_put(self.api.db, check_time=True)
 
         # Add mortgage to the borrower
         self.user.update(self.api.db)
@@ -236,9 +236,9 @@ class MortgageMarketCommunity(Community):
         assert isinstance(campaign, Campaign)
         assert isinstance(mortgage, Mortgage)
 
-        user.post_or_put(self.api.db)
-        mortgage.post_or_put(self.api.db)
-        campaign.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        mortgage.post_or_put(self.api.db, check_time=True)
+        campaign.post_or_put(self.api.db, check_time=True)
 
         # The bank can now initiate a signing step.
         if self.user.id == mortgage.bank:
@@ -265,11 +265,11 @@ class MortgageMarketCommunity(Community):
         assert isinstance(loan_request, LoanRequest)
         assert isinstance(house, House)
 
-        user.post_or_put(self.api.db)
-        loan_request.post_or_put(self.api.db)
-        mortgage.post_or_put(self.api.db)
-        campaign.post_or_put(self.api.db)
-        house.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        loan_request.post_or_put(self.api.db, check_time=True)
+        mortgage.post_or_put(self.api.db, check_time=True)
+        campaign.post_or_put(self.api.db, check_time=True)
+        house.post_or_put(self.api.db, check_time=True)
 
         return True
 
@@ -280,8 +280,8 @@ class MortgageMarketCommunity(Community):
         assert isinstance(user, User)
         assert isinstance(mortgage, Mortgage)
 
-        user.post_or_put(self.api.db)
-        mortgage.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        mortgage.post_or_put(self.api.db, check_time=True)
 
         # Remove the mortgage from the bank
         self.user.update(self.api.db)
@@ -299,9 +299,9 @@ class MortgageMarketCommunity(Community):
         assert isinstance(investment, Investment)
         assert isinstance(profile, Profile)
 
-        user.post_or_put(self.api.db)
-        investment.post_or_put(self.api.db)
-        profile.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        investment.post_or_put(self.api.db, check_time=True)
+        profile.post_or_put(self.api.db, check_time=True)
 
         # Save the investment to the borrower
         self.user.update(self.api.db)
@@ -320,9 +320,9 @@ class MortgageMarketCommunity(Community):
         assert isinstance(investment, Investment)
         assert isinstance(campaign, Campaign)
 
-        user.post_or_put(self.api.db)
-        investment.post_or_put(self.api.db)
-        campaign.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        investment.post_or_put(self.api.db, check_time=True)
+        campaign.post_or_put(self.api.db, check_time=True)
 
         return True
 
@@ -339,9 +339,9 @@ class MortgageMarketCommunity(Community):
         if self.user.id == investment.investor_key:
             self.publish_signed_confirm_request_message(user.id, investment)
 
-        user.post_or_put(self.api.db)
-        investment.post_or_put(self.api.db)
-        profile.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        investment.post_or_put(self.api.db, check_time=True)
+        profile.post_or_put(self.api.db, check_time=True)
 
         return True
 
@@ -352,8 +352,8 @@ class MortgageMarketCommunity(Community):
         assert isinstance(user, User)
         assert isinstance(investment, Investment)
 
-        user.post_or_put(self.api.db)
-        investment.post_or_put(self.api.db)
+        user.post_or_put(self.api.db, check_time=True)
+        investment.post_or_put(self.api.db, check_time=True)
 
         # Remove the investment from the investor
         self.user.update(self.api.db)

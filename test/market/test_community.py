@@ -3,6 +3,7 @@ import unittest
 from twisted.python.threadable import registerAsIOThread
 
 import mock
+import sys
 from mock import Mock
 
 from dispersy.candidate import LoopbackCandidate
@@ -263,6 +264,14 @@ class CommunityTestSuite(unittest.TestCase):
         user -> investor
         """
         payload = FakePayload()
+
+        # Fake the signing time
+        self.loan_request._time_signed = sys.maxint
+        self.mortgage._time_signed = sys.maxint
+        self.user._time_signed = sys.maxint
+        self.campaign._time_signed = sys.maxint
+        self.house._time_signed = sys.maxint
+
         payload.request = u"mortgage_accept"
         payload.models = {self.loan_request.type: self.loan_request,
                           self.mortgage.type: self.mortgage,
@@ -309,6 +318,8 @@ class CommunityTestSuite(unittest.TestCase):
         self.bank.mortgage_ids.append(self.mortgage.id)
         self.bank.post_or_put(self.api_bank.db)
 
+        self.mortgage._time_signed = sys.maxint
+        self.user._time_signed = sys.maxint
 
         # Create the payload
         payload = FakePayload()
@@ -391,9 +402,14 @@ class CommunityTestSuite(unittest.TestCase):
         user -> investor
         """
         # Pre-condition. Investor has the investment saved with status.PENDING
+
         self.investment.post_or_put(self.api_investor.db)
         self.investor.investment_ids.append(self.investment.id)
         self.investor.post_or_put(self.api_investor.db)
+
+        self.investment._time_signed = sys.maxint
+        self.user._time_signed = sys.maxint
+        self.borrowers_profile._time_signed = sys.maxint
 
         # Create the payload
         payload = FakePayload()
@@ -422,6 +438,10 @@ class CommunityTestSuite(unittest.TestCase):
         self.investment.post_or_put(self.api_investor.db)
         self.investor.investment_ids.append(self.investment.id)
         self.investor.post_or_put(self.api_investor.db)
+
+        # Fake the signing time
+        self.user._time_signed = sys.maxint
+        self.investment._time_signed = sys.maxint
 
         # Create the payload
         payload = FakePayload()
@@ -901,7 +921,7 @@ class ConversionTestCase(unittest.TestCase):
     def test_encode_api_request_community(self):
         meta = self.community.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.member,),
-                            distribution=(self.community.claim_global_time(), meta.distribution.claim_sequence_number()),
+                            distribution=(self.community.claim_global_time(),),
                             payload=(u"unicode_message", [self.user.type], {self.user.type: self.user},),
                             destination=(LoopbackCandidate(),))
 
