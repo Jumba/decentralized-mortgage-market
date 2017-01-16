@@ -32,14 +32,14 @@ class ModelTestSuite(unittest.TestCase):
         model = DatabaseModel()
         model.post_or_put(self.db)
 
-        pre_hash = model._generate_sha1_hash()
+        pre_hash = model.generate_sha1_hash()
         # Sign the model
         model.sign(self.api)
-        post_hash = model._generate_sha1_hash()
+        post_hash = model.generate_sha1_hash()
 
         self.assertEqual(pre_hash, post_hash)
         self.assertEqual(model.signer, self.db.backend.get_option('user_key_pub'))
-        self.assertTrue(model.signature_valid())
+        self.assertTrue(DatabaseModel.signature_valid(model))
 
     def test_signed_model_detect_tamper(self):
         """
@@ -48,18 +48,18 @@ class ModelTestSuite(unittest.TestCase):
         model = DatabaseModel()
         model.post_or_put(self.db)
 
-        pre_hash = model._generate_sha1_hash()
+        pre_hash = model.generate_sha1_hash()
         # Sign the model
         model.sign(self.api)
 
         #Tamper with the model
         model._id = 'different'
 
-        post_hash = model._generate_sha1_hash()
+        post_hash = model.generate_sha1_hash()
 
         self.assertNotEqual(pre_hash, post_hash)
         self.assertEqual(model.signer, self.db.backend.get_option('user_key_pub'))
-        self.assertFalse(model.signature_valid())
+        self.assertFalse(DatabaseModel.signature_valid(model))
 
 
     def test_model_equal(self):
