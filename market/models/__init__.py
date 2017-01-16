@@ -8,6 +8,11 @@ from dispersy.crypto import ECCrypto
 
 
 class DatabaseModel(object):
+    """
+    This DatabaseModel implements all common functions that models that can be saved in the market.database.Database must have.
+
+    All other models extend this class.
+    """
     type = 'database_model'
     _hash_exclude = ['_signature', '_time_signed', '_signer']
 
@@ -37,6 +42,11 @@ class DatabaseModel(object):
         return self._time_signed
 
     def generate_id(self, force=False):
+        """
+        Generate a new id if one doesn't already exist, except if forced to generate a new one.
+        :param force: Force generate a new id even if one already exists.
+        :return: The object id.
+        """
         if not self._id or force:
             self._id = uuid.uuid1()
         return self._id
@@ -65,13 +75,24 @@ class DatabaseModel(object):
         return self.id == other.id
 
     def update(self, database):
+        """
+        Update the current object with the latest data. This is to ensure that the same object pointer is used instead of when
+        a new version of the object is retrieved from the database.
+        """
         updated_self = database.get(self.type, self.id)
         assert isinstance(updated_self, type(self))
         assert updated_self.id == self.id
+
+        # Update all attributes with the newer version.
         for attr in vars(self):
             setattr(self, attr, getattr(updated_self, attr))
 
     def post_or_put(self, database, check_time=False):
+        """
+        Post or Put the object in the database. In the case of `put' the check_time variable can be set to True, which will then ensure
+        that objects are only replaced if the time_signed of the object being placed is greater than that of the object stored in the
+        database
+        """
         me = database.get(self.type, self.id)
         if me:
             if not check_time or (check_time and me.time_signed < self.time_signed):
@@ -79,14 +100,7 @@ class DatabaseModel(object):
         else:
             database.post(self.type, self)
 
-    def serialize(self):
-        output = {'class': type(self).__name__ }
-        for attr in vars(self):
-            output[attr] = getattr(self, attr)
-
-        return json.dumps(output)
-
-    def _generate_sha1_hash(self):
+    def generate_sha1_hash(self):
         output = []
         for attr in vars(self):
             if attr not in self._hash_exclude:
@@ -105,11 +119,14 @@ class DatabaseModel(object):
         return sha1_hash
 
     def sign(self, api):
+        """
+        Sign a model by hashing its contents and signing this hash.
+        """
         if not self.id:
             raise RuntimeError("Can't sign an unsaved model")
 
         ec = ECCrypto()
-        hash = self._generate_sha1_hash()
+        hash = self.generate_sha1_hash()
 
         private_key = api.db.backend.get_option('user_key_priv')
         public_key = api.db.backend.get_option('user_key_pub')
@@ -124,19 +141,9 @@ class DatabaseModel(object):
     def _has_signature(self):
         return self.signature and self.signer
 
-
-    def signature_valid(self, api=None):
+    @classmethod
+    def signature_valid(cls, obj):
         ec = ECCrypto()
-        signing_key = ec.key_from_public_bin(self._signer.decode("HEX"))
-        signature_valid = ec.is_valid_signature(signing_key, self._generate_sha1_hash(), self.signature)
+        signing_key = ec.key_from_public_bin(obj._signer.decode("HEX"))
+        signature_valid = ec.is_valid_signature(signing_key, obj.generate_sha1_hash(), obj.signature)
         return signature_valid
-
-
-
-
-
-
-
-
-
-
