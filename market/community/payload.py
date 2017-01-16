@@ -162,14 +162,3 @@ class SignedConfirmPayload(Payload):
         def time(self):
             return self._time
 
-
-class ModelRequestPayload(Payload):
-    class Implementation(Payload.Implementation):
-        def __init__(self, meta, models):
-            assert isinstance(models, list)
-            super(ModelRequestPayload.Implementation, self).__init__(meta)
-            self._model_ids = models
-
-        @property
-        def models(self):
-            return self._model_ids

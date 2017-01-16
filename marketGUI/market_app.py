@@ -6,6 +6,8 @@ import time
 
 import signal
 
+from market import Global
+
 logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
 
@@ -19,6 +21,7 @@ class MarketApplication(QApplication):
     """
     This class represents the main Market application.
     """
+    bank_status = {}
     port = 1236
     database_prefix = 'market'
 
@@ -111,7 +114,18 @@ class MarketApplication(QApplication):
         LoopingCall(self.api.incoming_queue.process).start(3.0)
 
     def _scenario(self):
-        pass
+        for bank_id in Global.BANKS:
+            user = self.api._get_user(Global.BANKS[bank_id])
+            if user.id in self.api.user_candidate and self.bank_status[bank_id] == False:
+                print bank_id, " is ONLINE"
+                self.bank_status[bank_id] = True
+                self.profile = True
+            else:
+                if not bank_id in self.bank_status:
+                    self.bank_status[bank_id] = False
+                    print bank_id, " is OFFLINE"
+
+        # pass
 
     @property
     def api(self):

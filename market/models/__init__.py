@@ -60,6 +60,7 @@ class DatabaseModel(object):
         except:
             return None
 
+    # TODO: Implement a deep compare.
     def __eq__(self, other):
         return self.id == other.id
 
