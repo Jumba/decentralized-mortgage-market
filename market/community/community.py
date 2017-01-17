@@ -409,7 +409,7 @@ class MortgageMarketCommunity(Community):
         # previous_hash_beneficiary, 7
         # signature_benefactor, 8
         # signature_beneficiary, 9
-        # time 10
+        # insert_time 10
         benefactor = self.user.id
 
         payload_list = []
@@ -470,7 +470,7 @@ class MortgageMarketCommunity(Community):
                 previous_hash_beneficiary,
                 '',
                 '',
-                payload.time,
+                payload.insert_time,
             )
 
             meta = self.get_meta_message(u"signed_confirm")
