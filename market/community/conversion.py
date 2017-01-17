@@ -31,7 +31,7 @@ class MortgageMarketConversion(BinaryConversion):
             raise DropPacket("Invalid payload type")
 
         request, fields, encoded_models = payload
-        if not isinstance(request, unicode):
+        if not isinstance(request, int):
             raise DropPacket("Invalid 'request' type")
         if not isinstance(fields, list):
             raise DropPacket("Invalid 'fields' type")

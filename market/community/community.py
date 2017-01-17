@@ -105,6 +105,9 @@ class MortgageMarketCommunity(Community):
     def api(self, api):
         self._api = api
 
+        # Also set the handlers now
+        api.incoming_queue.assign_message_handlers(self)
+
     @property
     def user(self):
         return self._user
@@ -114,7 +117,7 @@ class MortgageMarketCommunity(Community):
         self._user = user
 
     def send_api_message_candidate(self, request, fields, models, candidates, store=True, update=True, forward=True):
-        assert isinstance(request, unicode)
+        assert isinstance(request, int)
         assert isinstance(fields, list)
         assert isinstance(models, dict)
 
@@ -127,7 +130,7 @@ class MortgageMarketCommunity(Community):
         self.dispersy.store_update_forward([message], store, update, forward)
 
     def send_api_message_community(self, request, fields, models, store=True, update=True, forward=True):
-        assert isinstance(request, unicode)
+        assert isinstance(request, int)
         assert isinstance(fields, list)
         assert isinstance(models, dict)
 
