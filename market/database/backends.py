@@ -153,9 +153,26 @@ class BlockChain(object):
         """
         raise NotImplementedError
 
-    def check_add_genesis_block(self):
+    def get_next_sequence_number(self):
         """
-        Persist the genesis block if there are no blocks yet.
+        Return the next sequence number for this public_key.
+        If no block for the pk is known return 0, else return latest sequence number + 1.
+        :return: sequence number (integer)
+        """
+        raise NotImplementedError
+
+    def create_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+        """
+        Generates the genesis block.
+        :param public_key_benefactor: The public key of the benefactor
+        :param public_key_beneficiary: The public key of the beneficiary
+        :return: DatabaseBlock, the genesis block
+        """
+        raise NotImplementedError
+
+    def check_add_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+        """
+        Persist the genesis block if there are no blocks yet in the blockchain.
         :param public_key_benefactor: The public key of the benefactor
         :param public_key_beneficiary The public key of the beneficiary
         """
