@@ -373,7 +373,7 @@ class PersistentBackend(Database, Backend, BlockChain):
                 buffer(block.previous_hash_benefactor), buffer(block.previous_hash_beneficiary),
                 buffer(block.signature_benefactor), buffer(block.signature_beneficiary),
                 block.insert_time, buffer(block.hash_block), buffer(self.get_latest_hash()),
-                self.get_latest_sequence_number() + 1)
+                self.get_next_sequence_number())
 
         self.execute(
             u"INSERT INTO multi_chain (benefactor, beneficiary, "
@@ -477,6 +477,47 @@ class PersistentBackend(Database, Backend, BlockChain):
         db_result = self.execute(db_query).fetchone()
         return db_result[0] if db_result is not None else 0
 
+    def get_next_sequence_number(self):
+        """
+        Return the next sequence number for this public_key.
+        If no block for the pk is known return 0, else return latest sequence number + 1.
+        :return: sequence number (integer)
+        """
+        sequence_number = self.get_latest_sequence_number()
+
+        if sequence_number == 0:
+            return sequence_number
+        else:
+            return sequence_number + 1
+
+    def create_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+        """
+        Generates the genesis block.
+        :param public_key_benefactor: The public key of the benefactor
+        :param public_key_beneficiary: The public key of the beneficiary
+        :return: DatabaseBlock, the genesis block
+        """
+        insert_time = int(time.time())
+        packet = encode(
+            (
+                str(public_key_benefactor),  # benefactor,
+                str(public_key_beneficiary),  # beneficiary,
+                str(None),  # agreement_benefactor,
+                str(None),  # agreement_beneficiary,
+                0,  # sequence_number_benefactor,
+                0,  # sequence_number_beneficiary,
+                str(''),  # previous_hash_benefactor,
+                str(''),  # previous_hash_beneficiary,
+                str(''),  # signature_benefactor,
+                str(''),  # signature_beneficiary,
+                insert_time  # insert_time
+            )
+        )
+        hash = sha256(packet).hexdigest()
+
+        return DatabaseBlock((str(public_key_benefactor), str(public_key_beneficiary), str(None), str(None),
+                             0, 0, str(''), str(''), str(''), str(''), insert_time, str(hash)))
+
     def check_add_genesis_block(self, public_key_benefactor, public_key_beneficiary):
         """
         Persist the genesis block if there are no blocks yet in the blockchain.
@@ -487,39 +528,8 @@ class PersistentBackend(Database, Backend, BlockChain):
         db_result = self.execute(db_query).fetchone()
 
         if db_result[0] == 0:
-            insert_time = int(time.time())
-            # Hash the block
-            packet = encode(
-                (
-                    str(public_key_benefactor),     # benefactor,
-                    str(public_key_beneficiary),    # beneficiary,
-                    str(None),                      # agreement_benefactor,
-                    str(None),                      # agreement_beneficiary,
-                    0,                              # sequence_number_benefactor,
-                    0,                              # sequence_number_beneficiary,
-                    str(''),                        # previous_hash_benefactor,
-                    str(''),                        # previous_hash_beneficiary,
-                    str(''),                        # signature_benefactor,
-                    str(''),                        # signature_beneficiary,
-                    insert_time                     # insert_time
-                )
-            )
-            hash = sha256(packet).hexdigest()
-
-            data = (buffer(str(public_key_benefactor)), buffer(str(public_key_beneficiary)),
-                    buffer(str(None)), buffer(str(None)), 0, 0, buffer(str('')), buffer(str('')),
-                    buffer(str('')), buffer(str('')), insert_time, buffer(str(hash)), buffer(str('')), 0)
-
-            self.execute(u"INSERT INTO `multi_chain` (benefactor, beneficiary, "
-                         u"agreement_benefactor, agreement_beneficiary, "
-                         u"sequence_number_benefactor, sequence_number_beneficiary, "
-                         u"previous_hash_benefactor, previous_hash_beneficiary, "
-                         u"signature_benefactor, signature_beneficiary, insert_time, "
-                         u"hash_block, previous_hash, sequence_number) "
-                         u"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                         data)
-
-            self.commit()
+            genesis_block = self.create_genesis_block(public_key_benefactor, public_key_beneficiary)
+            self.add_block(genesis_block)
 
 
 class DatabaseBlock:

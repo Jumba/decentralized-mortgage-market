@@ -252,19 +252,15 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         This test checks the functionality of adding a block to an empty blockchain.
         """
 
-        # Add genesis block to the blockchain
+        # Check if there are already blocks in the blockchain, if not add genesis block
         self.db.check_add_genesis_block(self.member_bank, '')
         # Get the genesis block by the public key and sequence number
         genesis_block = self.db.get_by_public_key_and_sequence_number(str(self.member_bank), 0)
 
-        temp_list = list(self.payload)
-        temp_list[6] = str(genesis_block.hash_block)
-        modified_payload = tuple(temp_list)
-
         meta = self.community.get_meta_message(u"signed_confirm")
         message = meta.impl(authentication=([self.member, self.member_bank],),
                             distribution=(self.community.claim_global_time(),),
-                            payload=modified_payload,
+                            payload=self.payload,
                             destination=(LoopbackCandidate(),))
 
         block = DatabaseBlock.from_signed_confirm_message(message)
