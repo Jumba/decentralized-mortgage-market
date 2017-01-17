@@ -70,25 +70,10 @@ class ProfileController:
 
         try:
             # Get the data from the forms
-            payload = {'role': 2, 'first_name': unicode(self.mainwindow.profile_firstname_lineedit.text()),
-                       'last_name': unicode(self.mainwindow.profile_lastname_lineedit.text()),
-                       'email': str(self.mainwindow.profile_email_lineedit.text()),
-                       'iban': str(self.mainwindow.profile_iban_lineedit.text()),
-                       'phonenumber': str(self.mainwindow.profile_phonenumber_lineedit.text())}
+            payload = self.get_data()
 
-            if self.mainwindow.profile_borrower_radiobutton.isChecked():
-                payload['role'] = 1
-                payload['current_postalcode'] = str(self.mainwindow.profile_postcode_lineedit.text())
-                payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text())
-                payload['current_address'] = str(self.mainwindow.profile_address_lineedit.text())
-                # Send only documents that have been filled in.
-                payload['documents_list'] = dict((k, v) for k, v in self.documents.iteritems() if v)
-                # payload['documents_list'] = map(lambda key: self.documents[key], sorted(self.documents))
-
-            # Check if all fields are filled out
-            for _, value in payload.iteritems():
-                if value == '':
-                    raise ValueError
+            # Check if all fields are filled in correctly
+            self.check_data(payload)
 
             # Check if the user can switch roles
             if self.check_role_switch():
@@ -106,13 +91,46 @@ class ProfileController:
         except ValueError:
             self.mainwindow.show_dialog("Profile error", 'You didn\'t enter all of the required information.')
 
+    def get_data(self):
+        """
+        Retrieves data from the forms, and returns the data as a dict.
+
+        :return: The data from the forms
+        """
+        # Retrieve personal information
+        payload = {'role': 2, 'first_name': unicode(self.mainwindow.profile_firstname_lineedit.text()),
+                   'last_name': unicode(self.mainwindow.profile_lastname_lineedit.text()),
+                   'email': str(self.mainwindow.profile_email_lineedit.text()),
+                   'iban': str(self.mainwindow.profile_iban_lineedit.text()),
+                   'phonenumber': str(self.mainwindow.profile_phonenumber_lineedit.text())}
+
+        # Retrieve additional information if the user is a borrower
+        if self.mainwindow.profile_borrower_radiobutton.isChecked():
+            payload['role'] = 1
+            payload['current_postalcode'] = str(self.mainwindow.profile_postcode_lineedit.text())
+            payload['current_housenumber'] = str(self.mainwindow.profile_housenumber_lineedit.text())
+            payload['current_address'] = str(self.mainwindow.profile_address_lineedit.text())
+            # Send only documents that have been added
+            payload['documents_list'] = dict((k, v) for k, v in self.documents.iteritems() if v)
+
+        return payload
+
+    def check_data(self, payload):
+        """
+        Checks if all fields in the form have been filled out. Raises a ValueError if not all fields have been entered
+        correctly.
+        """
+        for _, value in payload.iteritems():
+            if value == '':
+                raise ValueError
+
     def update_form(self, profile):
         """
         Populate the view's form with a profile object.
 
         :param profile: Profile object used to populate form
         """
-        # if self.current_profile:
+        # Fill in personal information from the profile
         self.mainwindow.profile_firstname_lineedit.setText(profile.first_name)
         self.mainwindow.profile_lastname_lineedit.setText(profile.last_name)
         self.mainwindow.profile_email_lineedit.setText(profile.email)
