@@ -161,9 +161,6 @@ class BlockChain(object):
         """
         raise NotImplementedError
 
-    def debug_genesis(self):
-        raise NotImplementedError
-
 
 class MemoryBackend(Backend):
     """
@@ -490,7 +487,7 @@ class PersistentBackend(Database, Backend, BlockChain):
 
         if db_result[0] == 0:
             insert_time = int(time.time())
-            # hash the block
+            # Hash the block
             packet = encode(
                 (
                     str(public_key_benefactor),     # benefactor,
