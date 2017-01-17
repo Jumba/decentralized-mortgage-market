@@ -522,13 +522,6 @@ class PersistentBackend(Database, Backend, BlockChain):
 
             self.commit()
 
-    # For testing purposes
-    def debug_genesis(self):
-        db_query = u"SELECT * FROM multi_chain"
-        db_result = self.execute(db_query).fetchall()
-        list = [t for t in db_result]
-
-        return list
 
 class DatabaseBlock:
     """ DataClass for a multichain block. """
@@ -550,7 +543,7 @@ class DatabaseBlock:
 
         self.hash_block = sha256(self.hash()).hexdigest()
         if len(data) > 12:
-            self.previous_hash = data[12]
+            self.previous_hash = str(data[12])
             self.sequence_number = data[13]
 
     def hash(self):
