@@ -271,6 +271,13 @@ class MarketAPI(object):
             borrower = self.db.get(User.type, borrower.id)
             investors_profile = self.db.get(Profile.type, investor.profile_id)
             campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+
+            investment.sign(self)
+            investor.sign(self)
+            investors_profile.sign(self)
+            borrower.sign(self)
+            campaign.sign(self)
+
             self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type],
                                       {Investment.type: investment, User.type: investor,
                                        Profile.type: investors_profile}, [borrower]))
@@ -451,6 +458,11 @@ class MarketAPI(object):
 
                 # Add message to queue
                 profile = self.load_profile(user)
+                loan_request.sign(self)
+                house.sign(self)
+                profile.sign(self)
+                user.sign(self)
+
                 self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
                                           {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
                                            User.type: user}, banks))
@@ -550,6 +562,12 @@ class MarketAPI(object):
             house = self.db.get(House.type, mortgage.house_id)
 
             # Add message to queue
+            mortgage.sign(self)
+            campaign.sign(self)
+            user.sign(self)
+            loan_request.sign(self)
+            house.sign(self)
+
             self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
             self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type,
@@ -645,6 +663,12 @@ class MarketAPI(object):
             # Add message to queue
             investor = self.db.get(User.type, investment.investor_key)
             borrowers_profile = self.db.get(BorrowersProfile.type, user.profile_id)
+
+            investment.sign(self)
+            user.sign(self)
+            borrowers_profile.sign(self)
+            campaign.sign(self)
+
             self.outgoing_queue.push((u"investment_accept", [Investment.type, User.type, BorrowersProfile.type],
                                       {Investment.type: investment, User.type: user, BorrowersProfile.type:
                                           borrowers_profile}, [investor]))
@@ -685,6 +709,10 @@ class MarketAPI(object):
 
         # Add message to queue
         bank = self.db.get(User.type, mortgage.bank)
+
+        mortgage.sign(self)
+        user.sign(self)
+
         self.outgoing_queue.push((u"mortgage_reject", [Mortgage.type, User.type], {Mortgage.type: mortgage,
                                   User.type: user}, [bank]))
 
@@ -719,6 +747,11 @@ class MarketAPI(object):
 
         # Add message to queue
         investor = self.db.get(User.type, investment.investor_key)
+
+        investment.sign(self)
+        user.sign(self)
+        campaign.sign(self)
+
         self.outgoing_queue.push((u"investment_reject", [Investment.type, User.type], {Investment.type: investment,
                                   User.type: user}, [investor]))
         self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type], {User.type: user,
@@ -830,6 +863,10 @@ class MarketAPI(object):
 
             # Add message to queue
             borrower = self.db.get(User.type, borrower.id)
+
+            loan_request.sign(self)
+            mortgage.sign(self)
+
             self.outgoing_queue.push((u"mortgage_offer", [LoanRequest.type, Mortgage.type],
                                       {LoanRequest.type: loan_request, Mortgage.type: mortgage}, [borrower]))
 
@@ -887,6 +924,10 @@ class MarketAPI(object):
         if self.db.put(LoanRequest.type, loan_request_id, rejected_loan_request):
             # Add message to queue
             borrower = self.db.get(User.type, borrower.id)
+
+            rejected_loan_request.sign(self)
+            user.sign(self)
+
             self.outgoing_queue.push((u"loan_request_reject", [LoanRequest.type, User.type],
                                       {LoanRequest.type: rejected_loan_request, User.type: user}, [borrower]))
 

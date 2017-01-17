@@ -32,14 +32,14 @@ class ModelTestSuite(unittest.TestCase):
         model = DatabaseModel()
         model.post_or_put(self.db)
 
-        pre_hash = model._generate_sha1_hash()
+        pre_hash = model.generate_sha1_hash()
         # Sign the model
         model.sign(self.api)
-        post_hash = model._generate_sha1_hash()
+        post_hash = model.generate_sha1_hash()
 
         self.assertEqual(pre_hash, post_hash)
         self.assertEqual(model.signer, self.db.backend.get_option('user_key_pub'))
-        self.assertTrue(model.signature_valid())
+        self.assertTrue(DatabaseModel.signature_valid(model))
 
     def test_signed_model_detect_tamper(self):
         """
@@ -48,18 +48,18 @@ class ModelTestSuite(unittest.TestCase):
         model = DatabaseModel()
         model.post_or_put(self.db)
 
-        pre_hash = model._generate_sha1_hash()
+        pre_hash = model.generate_sha1_hash()
         # Sign the model
         model.sign(self.api)
 
         #Tamper with the model
         model._id = 'different'
 
-        post_hash = model._generate_sha1_hash()
+        post_hash = model.generate_sha1_hash()
 
         self.assertNotEqual(pre_hash, post_hash)
         self.assertEqual(model.signer, self.db.backend.get_option('user_key_pub'))
-        self.assertFalse(model.signature_valid())
+        self.assertFalse(DatabaseModel.signature_valid(model))
 
 
     def test_model_equal(self):
@@ -84,3 +84,33 @@ class ModelTestSuite(unittest.TestCase):
 
         self.assertNotEqual(hash(model1), hash(model2))
         self.assertNotEqual(model1, model2)
+
+    def test_post_or_put_time(self):
+        model = DatabaseModel()
+
+        # Save the model, sign it, then save the signed version.
+        model.post_or_put(self.db)
+        model.sign(self.api)
+        model.post_or_put(self.db)
+
+        original_sign_time = model.time_signed
+
+        # get a copy
+        model_copy = self.db.get('database_model', model.id)
+
+        self.assertEqual(original_sign_time, model_copy.time_signed)
+
+        model_copy.sign(self.api)
+        new_sign_time = model.time_signed
+        model_copy.post_or_put(self.db)
+
+        model_new_copy = self.db.get('database_model', model.id)
+        self.assertEqual(new_sign_time, model_new_copy.time_signed)
+
+        # Now we check that older models arent saved.
+        model_new_copy._time_signed = 0
+        model_new_copy.post_or_put(self.db, check_time=True)
+
+        model_last_copy = self.db.get('database_model', model.id)
+        self.assertEqual(new_sign_time, model_last_copy.time_signed)
+
