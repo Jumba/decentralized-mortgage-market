@@ -6,7 +6,7 @@ from market.models import DatabaseModel
 
 class MortgageMarketConversion(BinaryConversion):
     def __init__(self, community):
-        super(MortgageMarketConversion, self).__init__(community, "\x03")
+        super(MortgageMarketConversion, self).__init__(community, "\x04")
         self.define_meta_message(chr(13), community.get_meta_message(u"introduce_user"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(14), community.get_meta_message(u"api_message_community"), self._encode_api_message, self._decode_api_message)
         self.define_meta_message(chr(15), community.get_meta_message(u"api_message_candidate"), self._encode_api_message, self._decode_api_message)
