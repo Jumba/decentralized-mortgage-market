@@ -58,8 +58,14 @@ class PlaceLoanRequestController:
             payload['mortgage_type'] = 2
             if self.mainwindow.bplr_linear_radiobutton.isChecked():
                 payload['mortgage_type'] = 1
+            self.mainwindow.show_dialog("Processing loan request",
+                                        'Your request is being processed and '
+                                        'your documents are being uploaded.')
             if self.mainwindow.api.create_loan_request(self.mainwindow.app.user, payload):
-                self.mainwindow.show_dialog("Loan request created", 'Your loan request has been sent.')
+                if self.mainwindow.api.failed_documents:
+                    self.mainwindow.show_dialog("Documents error", 'Some of the documents could not be sent.')
+                else:
+                    self.mainwindow.show_dialog("Loan request created", 'Your loan request has been sent.')
             else:
                 self.mainwindow.show_dialog("Loan request error", 'You can only have a single loan request.')
         except ValueError:

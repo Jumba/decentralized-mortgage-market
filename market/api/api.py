@@ -1,15 +1,19 @@
 """
 Implementation of the Mortgage Market API
 """
-
+import os
+import socket
 import time
 from datetime import timedelta, datetime
 from enum import Enum
 
+import tftp_client
+from dispersy.candidate import WalkCandidate
 from dispersy.crypto import ECCrypto
 from market.api.crypto import get_public_key
 from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
 from market.database.database import Database
+from market.models.document import Document
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Investment, Campaign
 from market.models.profiles import BorrowersProfile
@@ -47,6 +51,7 @@ class MarketAPI(object):
         self.user_candidate = {}
         self.outgoing_queue = OutgoingMessageQueue(self)
         self.incoming_queue = IncomingMessageQueue(self)
+        self.failed_documents = []
 
     @property
     def db(self):
@@ -163,10 +168,16 @@ class MarketAPI(object):
                 profile = Profile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'], payload['phonenumber'])
                 user.profile_id = self.db.post(Profile.type, profile)
             elif role.name == 'BORROWER':
+                documents = []
+                if payload['documents_list']:
+                    for document_name, document_path in payload['documents_list'].iteritems():
+                        document = Document.encode_document(document_name, document_path)
+                        self.db.post(Document.type, document)
+                        documents.append(document.id)
                 profile = BorrowersProfile(payload['first_name'], payload['last_name'], payload['email'], payload['iban'],
                                            payload['phonenumber'], payload['current_postalcode'],
                                            payload['current_housenumber'], payload['current_address'],
-                                           payload['documents_list'])
+                                           documents)
                 user.profile_id = self.db.post(BorrowersProfile.type, profile)
             elif role.name == 'FINANCIAL_INSTITUTION':
                 self.db.put(User.type, user.id, user)
@@ -382,7 +393,7 @@ class MarketAPI(object):
         :type user: :any:`User`
         :param payload: The payload containing the data for the :any:`House` and :any:`LoanRequest`, as described above.
         :type payload: dict
-        :return: The loan request object if succesful, False otherwise
+        :return: The loan request object if successful, False otherwise
         :rtype: :any:`LoanRequest` or False
         """
         assert isinstance(user, User)
@@ -409,6 +420,30 @@ class MarketAPI(object):
                 user.loan_request_ids.append(self.db.post(LoanRequest.type, loan_request))
                 user.post_or_put(self.db)
 
+                # Send the documents to the banks
+                bank_ip_addresses = []
+                for bank_id in payload['banks']:
+                    if bank_id in self.user_candidate:
+                        # TODO bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
+                        bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
+                    # else:
+                    #     # TODO tell the user that the chosen bank is not online
+                    #     raise
+
+                profile = self.load_profile(user)
+                if profile:
+                    # if profile.document_list:
+                    for document_id in profile.document_list:
+                        document = self.db.get(Document.type, document_id)
+                        document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
+                    tq = tftp_client.TransferQueue()
+                    for ip_address in bank_ip_addresses:
+                        # Add to queue
+                        tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
+                               os.getcwd()+'/resources/received/'+str(loan_request.id)+'/')
+                    tq.upload_all()
+                    self.failed_documents = tq.failed
+
                 # The loan request won't be changed anymore. Sign it.
                 loan_request.sign(self)
 
@@ -423,7 +458,6 @@ class MarketAPI(object):
 
                 # Add message to queue
                 profile = self.load_profile(user)
-
                 loan_request.sign(self)
                 house.sign(self)
                 profile.sign(self)
@@ -432,6 +466,7 @@ class MarketAPI(object):
                 self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
                                           {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
                                            User.type: user}, banks))
+                # TODO send a 'document' message
 
                 return loan_request
 
