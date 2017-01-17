@@ -46,7 +46,7 @@ class APIMessagePayload(Payload):
 
     class Implementation(Payload.Implementation):
         def __init__(self, meta, request, fields, models):
-            assert isinstance(request, unicode)
+            assert isinstance(request, int)
             assert isinstance(fields, list)
             assert isinstance(models, dict)
 

@@ -10,6 +10,7 @@ from enum import Enum
 import tftp_client
 from dispersy.candidate import WalkCandidate
 from dispersy.crypto import ECCrypto
+from market.api import APIMessage
 from market.api.crypto import get_public_key
 from market.community.queue import OutgoingMessageQueue, IncomingMessageQueue
 from market.database.database import Database
@@ -30,6 +31,8 @@ class STATUS(Enum):
     PENDING = 1
     ACCEPTED = 2
     REJECTED = 3
+
+
 
 
 CAMPAIGN_LENGTH_DAYS = 30
@@ -278,10 +281,10 @@ class MarketAPI(object):
             borrower.sign(self)
             campaign.sign(self)
 
-            self.outgoing_queue.push((u"investment_offer", [Investment.type, User.type, Profile.type],
+            self.outgoing_queue.push((APIMessage.INVESTMENT_OFFER, [Investment.type, User.type, Profile.type],
                                       {Investment.type: investment, User.type: investor,
                                        Profile.type: investors_profile}, [borrower]))
-            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type],
+            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type],
                                       {User.type: borrower, Investment.type: investment, Campaign.type: campaign}, []))
 
             return investment
@@ -463,7 +466,7 @@ class MarketAPI(object):
                 profile.sign(self)
                 user.sign(self)
 
-                self.outgoing_queue.push((u"loan_request", [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
+                self.outgoing_queue.push((APIMessage.LOAN_REQUEST, [LoanRequest.type, House.type, BorrowersProfile.type, User.type],
                                           {LoanRequest.type: loan_request, House.type: house, BorrowersProfile.type: profile,
                                            User.type: user}, banks))
                 # TODO send a 'document' message
@@ -568,9 +571,9 @@ class MarketAPI(object):
             loan_request.sign(self)
             house.sign(self)
 
-            self.outgoing_queue.push((u"mortgage_accept_signed", [Mortgage.type, Campaign.type, User.type],
+            self.outgoing_queue.push((APIMessage.MORTGAGE_ACCEPT_SIGNED, [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
-            self.outgoing_queue.push((u"mortgage_accept_unsigned", [LoanRequest.type, Mortgage.type, Campaign.type,
+            self.outgoing_queue.push((APIMessage.MORTGAGE_ACCEPT_UNSIGNED, [LoanRequest.type, Mortgage.type, Campaign.type,
                                       User.type, House.type], {LoanRequest.type: loan_request, Mortgage.type: mortgage,
                                       Campaign.type: campaign, User.type: user, House.type: house}, []))
             return self.db.put(User.type, user.id, user)
@@ -669,10 +672,10 @@ class MarketAPI(object):
             borrowers_profile.sign(self)
             campaign.sign(self)
 
-            self.outgoing_queue.push((u"investment_accept", [Investment.type, User.type, BorrowersProfile.type],
+            self.outgoing_queue.push((APIMessage.INVESTMENT_ACCEPT, [Investment.type, User.type, BorrowersProfile.type],
                                       {Investment.type: investment, User.type: user, BorrowersProfile.type:
                                           borrowers_profile}, [investor]))
-            self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type], {User.type: user,
+            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type], {User.type: user,
                                       Investment.type: investment, Campaign.type: campaign}, []))
 
             return self.db.put(Campaign.type, campaign.id, campaign)
@@ -713,7 +716,7 @@ class MarketAPI(object):
         mortgage.sign(self)
         user.sign(self)
 
-        self.outgoing_queue.push((u"mortgage_reject", [Mortgage.type, User.type], {Mortgage.type: mortgage,
+        self.outgoing_queue.push((APIMessage.MORTGAGE_REJECT, [Mortgage.type, User.type], {Mortgage.type: mortgage,
                                   User.type: user}, [bank]))
 
         return self.db.put(LoanRequest.type, loan_request.id, loan_request) and self.db.put(User.type, user.id, user)
@@ -752,9 +755,9 @@ class MarketAPI(object):
         user.sign(self)
         campaign.sign(self)
 
-        self.outgoing_queue.push((u"investment_reject", [Investment.type, User.type], {Investment.type: investment,
+        self.outgoing_queue.push((APIMessage.INVESTMENT_REJECT, [Investment.type, User.type], {Investment.type: investment,
                                   User.type: user}, [investor]))
-        self.outgoing_queue.push((u"campaign_bid", [User.type, Investment.type, Campaign.type], {User.type: user,
+        self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type], {User.type: user,
                                   Investment.type: investment, Campaign.type: campaign}, []))
 
         return investment
@@ -867,7 +870,7 @@ class MarketAPI(object):
             loan_request.sign(self)
             mortgage.sign(self)
 
-            self.outgoing_queue.push((u"mortgage_offer", [LoanRequest.type, Mortgage.type],
+            self.outgoing_queue.push((APIMessage.MORTGAGE_OFFER, [LoanRequest.type, Mortgage.type],
                                       {LoanRequest.type: loan_request, Mortgage.type: mortgage}, [borrower]))
 
             return loan_request, mortgage
@@ -928,7 +931,7 @@ class MarketAPI(object):
             rejected_loan_request.sign(self)
             user.sign(self)
 
-            self.outgoing_queue.push((u"loan_request_reject", [LoanRequest.type, User.type],
+            self.outgoing_queue.push((APIMessage.LOAN_REQUEST_REJECT, [LoanRequest.type, User.type],
                                       {LoanRequest.type: rejected_loan_request, User.type: user}, [borrower]))
 
             return rejected_loan_request

@@ -19,7 +19,8 @@ install:
   - pip install m2crypto
   - pip install netifaces
   - pip install tftpy
+  - pip install xenon
 # command to run tests
 script:
   - nosetests -v --ignore-files=^test_gui.*  test/market
-
+  - xenon -b B -m A -a A --no-assert market
