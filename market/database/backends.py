@@ -372,7 +372,8 @@ class PersistentBackend(Database, Backend, BlockChain):
                 block.sequence_number_benefactor, block.sequence_number_beneficiary,
                 buffer(block.previous_hash_benefactor), buffer(block.previous_hash_beneficiary),
                 buffer(block.signature_benefactor), buffer(block.signature_beneficiary),
-                block.insert_time, buffer(block.hash_block), buffer(self.get_latest_hash()), self.get_latest_sequence_number() + 1)
+                block.insert_time, buffer(block.hash_block), buffer(self.get_latest_hash()),
+                self.get_latest_sequence_number() + 1)
 
         self.execute(
             u"INSERT INTO multi_chain (benefactor, beneficiary, "
@@ -390,8 +391,8 @@ class PersistentBackend(Database, Backend, BlockChain):
         """
         data = (
             buffer(block.beneficiary), buffer(block.agreement_beneficiary),
-            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary), buffer(block.signature_benefactor),
-            buffer(block.signature_beneficiary), buffer(block.hash_block))
+            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary),
+            buffer(block.signature_benefactor), buffer(block.signature_beneficiary), buffer(block.hash_block))
 
         where = (block.insert_time, block.sequence_number_benefactor, buffer(block.benefactor))
 
@@ -505,8 +506,9 @@ class PersistentBackend(Database, Backend, BlockChain):
             )
             hash = sha256(packet).hexdigest()
 
-            data = (buffer(str(public_key_benefactor)), buffer(str(public_key_beneficiary)), buffer(str(None)), buffer(str(None)), 0, 0,
-                    buffer(str('')), buffer(str('')), buffer(str('')), buffer(str('')), insert_time, buffer(str(hash)), buffer(str('')), 0)
+            data = (buffer(str(public_key_benefactor)), buffer(str(public_key_beneficiary)),
+                    buffer(str(None)), buffer(str(None)), 0, 0, buffer(str('')), buffer(str('')),
+                    buffer(str('')), buffer(str('')), insert_time, buffer(str(hash)), buffer(str('')), 0)
 
             self.execute(u"INSERT INTO `multi_chain` (benefactor, beneficiary, "
                          u"agreement_benefactor, agreement_beneficiary, "
