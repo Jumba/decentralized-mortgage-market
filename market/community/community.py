@@ -47,6 +47,7 @@ class MortgageMarketCommunity(Community):
     def on_introduction_response(self, messages):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
         for message in messages:
+            self.user.sign(self.api)
             self.send_introduce_user(['user', ], {'user': self.user}, message.candidate)
 
     def initiate_meta_messages(self):
