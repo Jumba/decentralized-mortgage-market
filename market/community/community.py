@@ -47,6 +47,7 @@ class MortgageMarketCommunity(Community):
     def on_introduction_response(self, messages):
         super(MortgageMarketCommunity, self).on_introduction_response(messages)
         for message in messages:
+            self.user.sign(self.api)
             self.send_introduce_user(['user', ], {'user': self.user}, message.candidate)
 
     def initiate_meta_messages(self):
@@ -105,6 +106,9 @@ class MortgageMarketCommunity(Community):
     def api(self, api):
         self._api = api
 
+        # Also set the handlers now
+        api.incoming_queue.assign_message_handlers(self)
+
     @property
     def user(self):
         return self._user
@@ -114,7 +118,7 @@ class MortgageMarketCommunity(Community):
         self._user = user
 
     def send_api_message_candidate(self, request, fields, models, candidates, store=True, update=True, forward=True):
-        assert isinstance(request, unicode)
+        assert isinstance(request, int)
         assert isinstance(fields, list)
         assert isinstance(models, dict)
 
@@ -127,7 +131,7 @@ class MortgageMarketCommunity(Community):
         self.dispersy.store_update_forward([message], store, update, forward)
 
     def send_api_message_community(self, request, fields, models, store=True, update=True, forward=True):
-        assert isinstance(request, unicode)
+        assert isinstance(request, int)
         assert isinstance(fields, list)
         assert isinstance(models, dict)
 
@@ -409,7 +413,7 @@ class MortgageMarketCommunity(Community):
         # previous_hash_beneficiary, 7
         # signature_benefactor, 8
         # signature_beneficiary, 9
-        # time 10
+        # insert_time 10
         benefactor = self.user.id
 
         payload_list = []
@@ -470,7 +474,7 @@ class MortgageMarketCommunity(Community):
                 previous_hash_beneficiary,
                 '',
                 '',
-                payload.time,
+                payload.insert_time,
             )
 
             meta = self.get_meta_message(u"signed_confirm")
@@ -543,6 +547,8 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+
+        self.api.db.backend.check_add_genesis_block()
 
         block = DatabaseBlock.from_signed_confirm_message(message)
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())

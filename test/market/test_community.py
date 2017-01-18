@@ -10,6 +10,7 @@ from dispersy.candidate import LoopbackCandidate
 from dispersy.dispersy import Dispersy
 from dispersy.endpoint import ManualEnpoint
 from dispersy.member import DummyMember, Member
+from market.api import APIMessage
 from market.api.api import MarketAPI, STATUS
 from market.community.community import MortgageMarketCommunity
 from market.community.conversion import MortgageMarketConversion
@@ -182,7 +183,7 @@ class CommunityTestSuite(unittest.TestCase):
         user --> bank
         """
         payload = FakePayload()
-        payload.request = u"loan_request"
+        payload.request = APIMessage.LOAN_REQUEST
         payload.models = {self.house.type: self.house, self.loan_request.type: self.loan_request,
                           self.user.type: self.user, self.borrowers_profile.type: self.borrowers_profile}
 
@@ -216,7 +217,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Make the payload
         payload = FakePayload()
-        payload.request = u"loan_request_reject"
+        payload.request = APIMessage.LOAN_REQUEST_REJECT
         payload.models = {self.loan_request.type: loan_request_bank,
                           self.user.type: self.bank}
 
@@ -236,7 +237,7 @@ class CommunityTestSuite(unittest.TestCase):
         bank -> user
         """
         payload = FakePayload()
-        payload.request = u"mortgage_offer"
+        payload.request = APIMessage.MORTGAGE_OFFER
         payload.models = {self.loan_request.type: self.loan_request,
                           self.mortgage.type: self.mortgage}
         self.loan_request.status[self.bank.id] = STATUS.ACCEPTED
@@ -272,7 +273,7 @@ class CommunityTestSuite(unittest.TestCase):
         self.campaign._time_signed = sys.maxint
         self.house._time_signed = sys.maxint
 
-        payload.request = u"mortgage_accept"
+        payload.request = APIMessage.MORTGAGE_ACCEPT_UNSIGNED
         payload.models = {self.loan_request.type: self.loan_request,
                           self.mortgage.type: self.mortgage,
                           self.user.type: self.user,
@@ -323,7 +324,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Create the payload
         payload = FakePayload()
-        payload.request = u"mortgage_reject"
+        payload.request = APIMessage.MORTGAGE_REJECT
         payload.models = {
                           self.mortgage.type: self.mortgage,
                           self.user.type: self.user,
@@ -345,7 +346,7 @@ class CommunityTestSuite(unittest.TestCase):
         investor -> user
         """
         payload = FakePayload()
-        payload.request = u"investment_offer"
+        payload.request = APIMessage.INVESTMENT_OFFER
         payload.models = {self.investor.type: self.investor,
                           self.investment.type: self.investment,
                           self.investors_profile.type: self.investors_profile}
@@ -370,7 +371,7 @@ class CommunityTestSuite(unittest.TestCase):
         investor -> investor
         """
         payload = FakePayload()
-        payload.request = u"campaign_bid"
+        payload.request = APIMessage.CAMPAIGN_BID
         payload.models = {self.user.type: self.user,
                           self.investment.type: self.investment,
                           self.campaign.type: self.campaign}
@@ -413,7 +414,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Create the payload
         payload = FakePayload()
-        payload.request = u"investment_accept"
+        payload.request = APIMessage.INVESTMENT_ACCEPT
         payload.models = {self.user.type: self.user,
                           self.investment.type: self.investment,
                           self.borrowers_profile.type: self.borrowers_profile}
@@ -445,7 +446,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Create the payload
         payload = FakePayload()
-        payload.request = u"investment_reject"
+        payload.request = APIMessage.INVESTMENT_REJECT
         payload.models = {self.user.type: self.user,
                           self.investment.type: self.investment}
 
@@ -468,7 +469,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Set them as false to override the defaults
         store = update = forward = False
-        message_name = u"api_message_community"
+        message_name = APIMessage.MORTGAGE_OFFER.value
 
         self.community.send_api_message_community(message_name, [self.loan_request.type],
                                                   {self.loan_request.type: self.loan_request}, store, update, forward)
@@ -477,7 +478,7 @@ class CommunityTestSuite(unittest.TestCase):
         args, kwargs =  patch.call_args
 
         self.assertEqual(type(args[0]), list)
-        self.assertEqual(args[0][0].name, message_name)
+        self.assertEqual(args[0][0].payload.request, message_name)
 
         self.assertEqual(args[1], store)
         self.assertEqual(args[2], update)
@@ -489,7 +490,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         # Set them as false to override the defaults
         store = update = forward = False
-        message_name = u"api_message_candidate"
+        message_name = APIMessage.MORTGAGE_OFFER.value
         candidates = (LoopbackCandidate(),)
 
         self.community.send_api_message_candidate(message_name, [self.loan_request.type],
@@ -501,7 +502,7 @@ class CommunityTestSuite(unittest.TestCase):
 
         message = args[0][0]
 
-        self.assertEqual(message.name, message_name)
+        self.assertEqual(message.payload.request, message_name)
         self.assertEqual(args[1], store)
         self.assertEqual(args[2], update)
         self.assertEqual(args[3], forward)
@@ -666,6 +667,7 @@ class IncomingQueueTestCase(unittest.TestCase):
         self.api = MarketAPI(MockDatabase(MemoryBackend()))
         mock = Mock()
         self.api.community = mock
+        self.api.incoming_queue.assign_message_handlers(mock)
 
         mock.on_loan_request_receive.return_value = True
         mock.on_loan_request_reject.return_value = True
@@ -679,7 +681,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_loan_request(self):
         payload = FakePayload()
-        payload.request = u"loan_request"
+        payload.request = APIMessage.LOAN_REQUEST
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -691,7 +693,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_loan_request_reject(self):
         payload = FakePayload()
-        payload.request = u"loan_request_reject"
+        payload.request = APIMessage.LOAN_REQUEST_REJECT
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -703,7 +705,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_mortgage_accept_signed(self):
         payload = FakePayload()
-        payload.request = u"mortgage_accept_signed"
+        payload.request = APIMessage.MORTGAGE_ACCEPT_SIGNED
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -715,7 +717,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_mortgage_accept_unsigned(self):
         payload = FakePayload()
-        payload.request = u"mortgage_accept_unsigned"
+        payload.request = APIMessage.MORTGAGE_ACCEPT_UNSIGNED
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -727,7 +729,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_investment_accept(self):
         payload = FakePayload()
-        payload.request = u"investment_accept"
+        payload.request = APIMessage.INVESTMENT_ACCEPT
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -739,7 +741,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_investment_offer(self):
         payload = FakePayload()
-        payload.request = u"investment_offer"
+        payload.request = APIMessage.INVESTMENT_OFFER
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -751,7 +753,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_investment_reject(self):
         payload = FakePayload()
-        payload.request = u"investment_reject"
+        payload.request = APIMessage.INVESTMENT_REJECT
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -763,7 +765,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_mortgage_reject(self):
         payload = FakePayload()
-        payload.request = u"mortgage_reject"
+        payload.request = APIMessage.MORTGAGE_REJECT
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -775,7 +777,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
     def test_incoming_mortgage_offer(self):
         payload = FakePayload()
-        payload.request = u"mortgage_offer"
+        payload.request = APIMessage.MORTGAGE_OFFER
         payload.models = {}
 
         message = FakeMessage(payload)
@@ -784,6 +786,11 @@ class IncomingQueueTestCase(unittest.TestCase):
         self.api.incoming_queue.process()
 
         self.assertTrue(self.api.community.on_mortgage_offer.called)
+
+    def test_api_message_handlers_in_queue(self):
+        handler = self.api.incoming_queue.handler
+        for message in list(APIMessage):
+            assert message in handler, "%s has no handler in the queue but can be sent" % message
 
 
 class OutgoingQueueTestCase(unittest.TestCase):
@@ -796,7 +803,7 @@ class OutgoingQueueTestCase(unittest.TestCase):
         mock.send_api_message_community.return_value = True
 
     def test_send_community_message(self):
-        request = u'mortgage_offer'
+        request = APIMessage.MORTGAGE_OFFER
         fields = ['int']
         models = {'int': 4}
         receivers = []
@@ -809,7 +816,7 @@ class OutgoingQueueTestCase(unittest.TestCase):
         self.api.outgoing_queue.process()
 
         self.assertTrue(self.api.community.send_api_message_community.called)
-        self.api.community.send_api_message_community.assert_called_with(request, fields, models)
+        self.api.community.send_api_message_community.assert_called_with(request.value, fields, models)
 
     def test_send_candidate_message(self):
         fake_user = User('ss', 1)
@@ -818,7 +825,7 @@ class OutgoingQueueTestCase(unittest.TestCase):
 
         self.api.user_candidate[fake_user.id] = fake_candidate
 
-        request = u'mortgage_offer'
+        request = APIMessage.MORTGAGE_OFFER
         fields = ['int']
         models = {'int': 4}
         receivers = [fake_user, fake_user2]
@@ -831,7 +838,7 @@ class OutgoingQueueTestCase(unittest.TestCase):
         self.api.outgoing_queue.process()
 
         self.assertTrue(self.api.community.send_api_message_candidate.called)
-        self.api.community.send_api_message_candidate.assert_called_with(request, fields, models, tuple([fake_candidate]))
+        self.api.community.send_api_message_candidate.assert_called_with(request.value, fields, models, tuple([fake_candidate]))
 
         # Confirm that the message is still in the queue since fake_user2 has no candidate.
         self.assertIn((request, fields, models, receivers), self.api.outgoing_queue._queue)
@@ -846,10 +853,11 @@ class OutgoingQueueTestCase(unittest.TestCase):
         self.api.outgoing_queue.process()
 
         self.assertTrue(self.api.community.send_api_message_candidate.called)
-        self.api.community.send_api_message_candidate.assert_called_with(request, fields, models, tuple([fake_candidate2]))
+        self.api.community.send_api_message_candidate.assert_called_with(request.value, fields, models, tuple([fake_candidate2]))
 
         # Confirm that the message is gone
         self.assertNotIn((request, fields, models, receivers), self.api.outgoing_queue._queue)
+
 
 
 class ConversionTestCase(unittest.TestCase):
@@ -922,7 +930,7 @@ class ConversionTestCase(unittest.TestCase):
         meta = self.community.get_meta_message(u"api_message_community")
         message = meta.impl(authentication=(self.member,),
                             distribution=(self.community.claim_global_time(),),
-                            payload=(u"unicode_message", [self.user.type], {self.user.type: self.user},),
+                            payload=(APIMessage.MORTGAGE_OFFER.value, [self.user.type], {self.user.type: self.user},),
                             destination=(LoopbackCandidate(),))
 
         encoded_message = self.conversion._encode_api_message(message)[0]
@@ -934,7 +942,7 @@ class ConversionTestCase(unittest.TestCase):
         meta = self.community.get_meta_message(u"api_message_candidate")
         message = meta.impl(authentication=(self.member,),
                             distribution=(self.community.claim_global_time(),),
-                            payload=(u"unicode_message", [self.user.type], {self.user.type: self.user},),
+                            payload=(APIMessage.MORTGAGE_OFFER.value, [self.user.type], {self.user.type: self.user},),
                             destination=(LoopbackCandidate(),))
 
         encoded_message = self.conversion._encode_api_message(message)[0]
@@ -984,7 +992,7 @@ class ConversionTestCase(unittest.TestCase):
         self.assertEqual(p1.sequence_number_beneficiary, p2.sequence_number_beneficiary)
         self.assertEqual(p1.signature_beneficiary, p2.signature_beneficiary)
         self.assertEqual(p1.signature_benefactor, p1.signature_benefactor)
-        self.assertEqual(p1.time, p2.time)
+        self.assertEqual(p1.insert_time, p2.insert_time)
 
 
 if __name__ == '__main__':

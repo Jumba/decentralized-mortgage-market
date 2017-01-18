@@ -6,7 +6,7 @@ from market.models import DatabaseModel
 
 class MortgageMarketConversion(BinaryConversion):
     def __init__(self, community):
-        super(MortgageMarketConversion, self).__init__(community, "\x03")
+        super(MortgageMarketConversion, self).__init__(community, "\x04")
         self.define_meta_message(chr(13), community.get_meta_message(u"introduce_user"), self._encode_model, self._decode_model)
         self.define_meta_message(chr(14), community.get_meta_message(u"api_message_community"), self._encode_api_message, self._decode_api_message)
         self.define_meta_message(chr(15), community.get_meta_message(u"api_message_candidate"), self._encode_api_message, self._decode_api_message)
@@ -31,7 +31,7 @@ class MortgageMarketConversion(BinaryConversion):
             raise DropPacket("Invalid payload type")
 
         request, fields, encoded_models = payload
-        if not isinstance(request, unicode):
+        if not isinstance(request, int):
             raise DropPacket("Invalid 'request' type")
         if not isinstance(fields, list):
             raise DropPacket("Invalid 'fields' type")
@@ -57,7 +57,7 @@ class MortgageMarketConversion(BinaryConversion):
                     message.payload.previous_hash_beneficiary,
                     message.payload.signature_benefactor,
                     message.payload.signature_beneficiary,
-                    message.payload.time
+                    message.payload.insert_time
                  )
                 )
         return packet,
@@ -82,7 +82,7 @@ class MortgageMarketConversion(BinaryConversion):
         # previous_hash_beneficiary, 7
         # signature_benefactor, 8
         # signature_beneficiary, 9
-        # time 10
+        # insert_time 10
 
         if not isinstance(payload[0], str):
             raise DropPacket("Invalid 'benefactor' type")

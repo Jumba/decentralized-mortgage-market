@@ -1,0 +1,18 @@
+from enum import Enum
+
+
+class APIMessage(Enum):
+    """
+    API Messages
+    """
+    LOAN_REQUEST = 0
+    LOAN_REQUEST_REJECT = 1
+    MORTGAGE_OFFER = 2
+    MORTGAGE_ACCEPT_SIGNED = 3
+    MORTGAGE_ACCEPT_UNSIGNED = 4
+    MORTGAGE_REJECT = 5
+    INVESTMENT_OFFER = 6
+    INVESTMENT_ACCEPT = 7
+    INVESTMENT_REJECT = 8
+    CAMPAIGN_BID = 9
+
