@@ -36,7 +36,7 @@ class CustomAssertions(object):
         self.assertEqual(block1.hash_block, block2.hash_block)
 
 
-class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
+class BlockchainDatabaseTest(unittest.TestCase, CustomAssertions):
     """
     Tests the blockchain functionality.
 
