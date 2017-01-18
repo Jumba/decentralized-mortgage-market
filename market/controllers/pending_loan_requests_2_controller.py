@@ -89,7 +89,6 @@ class PendingLoanRequests2Controller:
         Shows "Request accepted" if the form was filled in correctly.
         Shows "Loan request error"" if the form was not filled in correctly.
         """
-        # TODO Add max_invest_rate and risk to the payload when they are implemented
         try:
             # Create payload
             payload = {'request_id': self.loan_request_id,

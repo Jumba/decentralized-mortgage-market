@@ -12,7 +12,7 @@ class BanksPortfolioController:
 
     def setup_view(self):
         """
-        Update the table of the view with up-to-date data.
+        Sets up the view.
         """
         # Clear table
         self.mortgages_table.setRowCount(0)
@@ -22,24 +22,29 @@ class BanksPortfolioController:
 
         # If the list is empty, do nothing. Otherwise fill table
         if mortgages:
-            # Fill the mortgage table
-            for [mortgage, house, campaign, profile] in mortgages:
-                # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
-                address = house.address + ' ' + house.house_number + ', ' + house.postal_code
+            self.fill_table(mortgages)
 
-                if campaign.completed:
-                    campaign_status = 'Completed'
-                else:
-                    campaign_status = 'Running'
+    def fill_table(self, mortgages):
+        """
+        Fills the table with mortgages.
+        """
+        for [mortgage, house, campaign, profile] in mortgages:
+            # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
+            address = house.address + ' ' + house.house_number + ', ' + house.postal_code
 
-                row_count = self.mortgages_table.rowCount()
-                self.mortgages_table.insertRow(row_count)
-                self.mortgages_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
-                self.mortgages_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
-                self.mortgages_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
-                self.mortgages_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
-                self.mortgages_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
-                self.mortgages_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
-                self.mortgages_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
-                                                                                      profile.last_name))
-                self.mortgages_table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.iban))
+            if campaign.completed:
+                campaign_status = 'Completed'
+            else:
+                campaign_status = 'Running'
+
+            row_count = self.mortgages_table.rowCount()
+            self.mortgages_table.insertRow(row_count)
+            self.mortgages_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
+            self.mortgages_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
+            self.mortgages_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
+            self.mortgages_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
+            self.mortgages_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
+            self.mortgages_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
+            self.mortgages_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
+                                                                                  profile.last_name))
+            self.mortgages_table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.iban))
