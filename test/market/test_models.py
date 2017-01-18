@@ -6,6 +6,7 @@ from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
 from market.database.database import MarketDatabase
 from market.models import DatabaseModel
+from market.models.user import User
 
 
 class ModelTestSuite(unittest.TestCase):
@@ -113,4 +114,21 @@ class ModelTestSuite(unittest.TestCase):
 
         model_last_copy = self.db.get('database_model', model.id)
         self.assertEqual(new_sign_time, model_last_copy.time_signed)
+
+    def test_user_key_immutable(self):
+        """
+        Test is an error is raised when attempting to change the user key.
+        """
+        public_key = 'pk'
+        time_added = 100
+
+        user = User(public_key, time_added)
+        user.post_or_put(self.api.db)
+
+        self.assertEqual(user.time_added, time_added)
+        with self.assertRaises(IndexError) as cm:
+            user.generate_id(force=True)
+
+        exception = cm.exception
+        self.assertEqual(exception.message, "User key is immutable")
 
