@@ -1166,6 +1166,61 @@ class APITestSuite(unittest.TestCase):
         self.assertIn(mortgage1, mortgages[0])
         self.assertEqual(len(mortgages), 1)
 
+    def test_reject_pending_campaign_bids(self):
+        """
+        This test checks the functionality of rejecting all pending bids on a campaign when a campaign has been
+        completed
+        """
+        # Create users
+        investor1, _, _ = self.api.create_user()
+        investor2, _, _ = self.api.create_user()
+        borrower, _, _ = self.api.create_user()
+        bank, _, _ = self.api.create_user()
+
+        # Create an investor's profile
+        self.payload['role'] = 2  # investor
+        self.api.create_profile(investor1, self.payload)
+        self.api.create_profile(investor2, self.payload)
+        # Create a borrower profile
+        self.payload['role'] = 1  # borrower
+        self.api.create_profile(borrower, self.payload)
+        # Create a bank profile
+        self.payload['role'] = 3  # bank
+        self.api.create_profile(bank, self.payload_bank)
+
+        # Create loan request
+        loan_request = self.api.create_loan_request(borrower, self.payload_loan_request2)
+
+        # Set payload
+        self.payload_mortgage3['request_id'] = loan_request.id
+        self.payload_mortgage3['user_key'] = borrower.id
+        self.payload_mortgage3['house_id'] = loan_request.house_id
+        self.payload_mortgage3['bank'] = bank.id
+
+        # Let the bank accept the request
+        loan_request, mortgage = self.api.accept_loan_request(bank, self.payload_mortgage3)
+
+        # the borrower accepts the mortgage offer
+        self.api.accept_mortgage_offer(borrower, {'mortgage_id': mortgage.id})
+
+        # Create loan offers
+        self.payload_loan_offer1['user_key'] = borrower.id  # set user_key to the investor's public key
+        self.payload_loan_offer1['mortgage_id'] = mortgage.id
+        investment1 = self.api.place_loan_offer(investor1, self.payload_loan_offer1)
+        self.payload_loan_offer1['amount'] = 300000
+        investment2 = self.api.place_loan_offer(investor2, self.payload_loan_offer1)
+
+        borrower.update(self.api.db)
+
+        # Accept one investment
+        self.api.accept_investment_offer(borrower, {'investment_id': investment2.id})
+        investment1.update(self.api.db)
+        investment2.update(self.api.db)
+
+        # Check if the investment statuses have been set correctly
+        self.assertEquals(investment1.status, STATUS.REJECTED)
+        self.assertEquals(investment2.status, STATUS.ACCEPTED)
+
 
 class CryptoTestSuite(unittest.TestCase):
     def setUp(self):
