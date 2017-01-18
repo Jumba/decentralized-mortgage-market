@@ -17,12 +17,12 @@ class MarketAppSceneBorrower(MarketApplication):
 
     def initialize_api(self):
         from market.api.api import MarketAPI
-        from market.database.database import MockDatabase
+        from market.database.database import MarketDatabase
         from market.database.backends import PersistentBackend
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MarketDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         # Start fresh
         self._api.db.backend.clear()
-        #self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        #self._api = MarketAPI(MarketDatabase(MemoryBackend()))
 
     def _scenario(self):
         from scenarios.scenario import Scenario
@@ -94,13 +94,13 @@ class MarketAppSceneInvestor(MarketApplication):
 
     def initialize_api(self):
         from market.api.api import MarketAPI
-        from market.database.database import MockDatabase
+        from market.database.database import MarketDatabase
         from market.database.backends import PersistentBackend
 
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MarketDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         # Start fresh
         self._api.db.backend.clear()
-        # self._api = MarketAPI(MockDatabase(MemoryBackend()))
+        # self._api = MarketAPI(MarketDatabase(MemoryBackend()))
 
     def _scenario(self):
         from scenarios.scenario import Scenario
@@ -140,9 +140,9 @@ class MarketAppSceneBank(MarketApplicationABN):
 
     def initialize_api(self):
         from market.api.api import MarketAPI
-        from market.database.database import MockDatabase
+        from market.database.database import MarketDatabase
         from market.database.backends import PersistentBackend
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MarketDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         self._api.db.backend.clear()
 
     def _scenario(self):
@@ -159,9 +159,9 @@ class MarketAppSceneBankING(MarketApplicationING):
 
     def initialize_api(self):
         from market.api.api import MarketAPI
-        from market.database.database import MockDatabase
+        from market.database.database import MarketDatabase
         from market.database.backends import PersistentBackend
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MarketDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         self._api.db.backend.clear()
 
     def _scenario(self):
@@ -178,9 +178,9 @@ class MarketAppSceneBankRABO(MarketApplicationRABO):
 
     def initialize_api(self):
         from market.api.api import MarketAPI
-        from market.database.database import MockDatabase
+        from market.database.database import MarketDatabase
         from market.database.backends import PersistentBackend
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MarketDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         self._api.db.backend.clear()
 
     def _scenario(self):
@@ -197,9 +197,9 @@ class MarketAppSceneBankMONEYOU(MarketApplicationMONEYOU):
 
     def initialize_api(self):
         from market.api.api import MarketAPI
-        from market.database.database import MockDatabase
+        from market.database.database import MarketDatabase
         from market.database.backends import PersistentBackend
-        self._api = MarketAPI(MockDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
+        self._api = MarketAPI(MarketDatabase(PersistentBackend('.', u'sqlite/%s-market.db' % self.database_prefix)))
         self._api.db.backend.clear()
 
     def _scenario(self):

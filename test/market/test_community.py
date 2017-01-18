@@ -16,7 +16,7 @@ from market.community.community import MortgageMarketCommunity
 from market.community.conversion import MortgageMarketConversion
 from market.community.payload import SignedConfirmPayload
 from market.database.backends import MemoryBackend
-from market.database.database import MockDatabase
+from market.database.database import MarketDatabase
 from market.models import DatabaseModel
 from market.models.house import House
 from market.models.loans import LoanRequest, Mortgage, Campaign, Investment
@@ -50,11 +50,11 @@ class CommunityTestSuite(unittest.TestCase):
         # a neutral api to generate the intial id's for loan requests and such to skip
         # having to save the loan request to the (sending) user from each test as that
         # isn't relevant.
-        self.neutral_api = MarketAPI(MockDatabase(MemoryBackend()))
+        self.neutral_api = MarketAPI(MarketDatabase(MemoryBackend()))
 
-        self.api = MarketAPI(MockDatabase(MemoryBackend()))
-        self.api_bank = MarketAPI(MockDatabase(MemoryBackend()))
-        self.api_investor = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api = MarketAPI(MarketDatabase(MemoryBackend()))
+        self.api_bank = MarketAPI(MarketDatabase(MemoryBackend()))
+        self.api_investor = MarketAPI(MarketDatabase(MemoryBackend()))
 
         self.api.db.backend.clear()
         self.api_bank.db.backend.clear()
@@ -529,7 +529,7 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertEqual(args[2], update)
         self.assertEqual(args[3], forward)
 
-    @mock.patch('market.database.database.MockDatabase.post')
+    @mock.patch('market.database.database.MarketDatabase.post')
     @mock.patch('dispersy.dispersy.Dispersy.store_update_forward')
     def test_on_user_introduction(self, store_patch, api_patch):
         # We'll be introducer the user to the bank. So remove user from the bank
@@ -664,7 +664,7 @@ class CommunityTestSuite(unittest.TestCase):
 
 class IncomingQueueTestCase(unittest.TestCase):
     def setUp(self):
-        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api = MarketAPI(MarketDatabase(MemoryBackend()))
         mock = Mock()
         self.api.community = mock
         self.api.incoming_queue.assign_message_handlers(mock)
@@ -795,7 +795,7 @@ class IncomingQueueTestCase(unittest.TestCase):
 
 class OutgoingQueueTestCase(unittest.TestCase):
     def setUp(self):
-        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api = MarketAPI(MarketDatabase(MemoryBackend()))
         mock = Mock()
         self.api.community = mock
 
@@ -867,7 +867,7 @@ class ConversionTestCase(unittest.TestCase):
 
         # Object creation and preperation
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary"))
-        self.api = MarketAPI(MockDatabase(MemoryBackend()))
+        self.api = MarketAPI(MarketDatabase(MemoryBackend()))
         self.api.db.backend.clear()
 
         user, _, priv = self.api.create_user()
