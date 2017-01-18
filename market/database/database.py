@@ -52,7 +52,7 @@ class Database(object):
         raise NotImplementedError
 
 
-class MockDatabase(Database):
+class MarketDatabase(Database):
     """
     Implementation of the database interface.
 

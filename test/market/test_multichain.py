@@ -10,7 +10,7 @@ from dispersy.member import DummyMember
 from market.api.api import STATUS, MarketAPI
 from market.community.community import MortgageMarketCommunity
 from market.database.backends import PersistentBackend
-from market.database.database import MockDatabase
+from market.database.database import MarketDatabase
 from market.models import DatabaseModel
 from market.models.loans import Mortgage
 from market.database.backends import DatabaseBlock
@@ -51,8 +51,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary_mc1"))
         self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary_mc2"))
 
-        self.api = MarketAPI(MockDatabase(PersistentBackend('.', u'borrower.db')))
-        self.api_bank = MarketAPI(MockDatabase(PersistentBackend('.', u'bank.db')))
+        self.api = MarketAPI(MarketDatabase(PersistentBackend('.', u'borrower.db')))
+        self.api_bank = MarketAPI(MarketDatabase(PersistentBackend('.', u'bank.db')))
 
         self.api.db.backend.clear()
         self.api_bank.db.backend.clear()

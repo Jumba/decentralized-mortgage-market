@@ -7,7 +7,7 @@ from dispersy.crypto import ECCrypto
 from market.api.api import MarketAPI
 from market.api.api import STATUS
 from market.database.backends import MemoryBackend
-from market.database.database import MockDatabase
+from market.database.database import MarketDatabase
 from market.models.house import House
 from market.models.loans import Investment
 from market.models.loans import LoanRequest, Mortgage, Campaign
@@ -20,7 +20,7 @@ from market.api.crypto import get_public_key
 
 class APITestSuite(unittest.TestCase):
     def setUp(self):
-        self.database = MockDatabase(MemoryBackend())
+        self.database = MarketDatabase(MemoryBackend())
         self.api = MarketAPI(self.database)
         self.ec = ECCrypto()
 

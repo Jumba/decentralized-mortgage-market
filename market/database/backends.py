@@ -227,7 +227,7 @@ class PersistentBackend(Database, Backend, BlockChain):
     DATABASE_PATH = u"market.db"
     # Version to keep track if the db schema needs to be updated.
     LATEST_DB_VERSION = 1
-    # Schema for the MultiChain DB.
+    # Schema for the DB.
     schema = u"""
     CREATE TABLE IF NOT EXISTS market(
      id		                    TEXT NOT NULL,
@@ -238,7 +238,7 @@ class PersistentBackend(Database, Backend, BlockChain):
      );
 
 
-    CREATE TABLE IF NOT EXISTS multi_chain(
+    CREATE TABLE IF NOT EXISTS block_chain(
      benefactor		              TEXT NOT NULL,
      beneficiary		          TEXT NOT NULL,
 
@@ -365,7 +365,7 @@ class PersistentBackend(Database, Backend, BlockChain):
                 block.time, buffer(block.hash_block), buffer(self.get_latest_hash()), self.get_latest_sequence_number() + 1)
 
         self.execute(
-            u"INSERT INTO multi_chain (benefactor, beneficiary, "
+            u"INSERT INTO block_chain (benefactor, beneficiary, "
             u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, "
             u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, "
             u"time, hash_block, previous_hash, sequence_number) "
@@ -386,7 +386,7 @@ class PersistentBackend(Database, Backend, BlockChain):
         where = (block.time, block.sequence_number_benefactor, buffer(block.benefactor))
 
         self.execute(
-            u"UPDATE multi_chain "
+            u"UPDATE block_chain "
             u"SET beneficiary = ?, agreement_beneficiary = ?, "
             u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, signature_benefactor = ?,"
             u"signature_beneficiary = ?, hash_block = ? "
@@ -400,7 +400,7 @@ class PersistentBackend(Database, Backend, BlockChain):
         :param public_key: The public_key for which the latest hash has to be found.
         :return: the relevant hash
         """
-        db_query = u"SELECT hash_block FROM multi_chain ORDER BY ROWID DESC LIMIT 1;"
+        db_query = u"SELECT hash_block FROM block_chain ORDER BY ROWID DESC LIMIT 1;"
         db_result = self.execute(db_query).fetchone()
 
         return str(db_result[0]) if db_result else ''
@@ -416,7 +416,7 @@ class PersistentBackend(Database, Backend, BlockChain):
                    u"sequence_number_beneficiary, previous_hash_benefactor, " \
                    u"previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
                    u"time, hash_block, previous_hash, sequence_number " \
-                   u"FROM `multi_chain` WHERE hash_block = ? LIMIT 1"
+                   u"FROM `block_chain` WHERE hash_block = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash),)).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
@@ -434,10 +434,10 @@ class PersistentBackend(Database, Backend, BlockChain):
                    u"signature_benefactor, signature_beneficiary, time, hash_block, previous_hash, sequence_number " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_benefactor AS seq_number, " \
-                   u"benefactor AS pk FROM `multi_chain` " \
+                   u"benefactor AS pk FROM `block_chain` " \
                    u"UNION " \
                    u"SELECT *, sequence_number_beneficiary AS seq_number," \
-                   u"beneficiary AS pk FROM `multi_chain`) " \
+                   u"beneficiary AS pk FROM `block_chain`) " \
                    u"WHERE seq_number = ? AND pk = ? LIMIT 1"
         db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchone()
         # Create a DB Block or return None
@@ -461,13 +461,13 @@ class PersistentBackend(Database, Backend, BlockChain):
         :param public_key: Corresponding public key
         :return: sequence number (integer) or 0 if no block is known
         """
-        db_query = u"SELECT sequence_number FROM multi_chain ORDER BY ROWID DESC LIMIT 1;"
+        db_query = u"SELECT sequence_number FROM block_chain ORDER BY ROWID DESC LIMIT 1;"
         db_result = self.execute(db_query).fetchone()
         return db_result[0] if db_result is not None else 0
 
 
 class DatabaseBlock:
-    """ DataClass for a multichain block. """
+    """ DataClass for a blockchain block. """
 
     def __init__(self, data):
         """ Create a block from data """
