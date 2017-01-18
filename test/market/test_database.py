@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import unittest
 
 from market.database.backends import MemoryBackend, PersistentBackend
-from market.database.database import Database, MockDatabase
+from market.database.database import Database, MarketDatabase
 from market.models import DatabaseModel
 
 
@@ -33,18 +33,18 @@ class DatabaseTestSuite(unittest.TestCase):
 
 class MarketDatabaseTestSuite(unittest.TestCase):
     def setUp(self):
-        self.database = MockDatabase(MemoryBackend())
+        self.database = MarketDatabase(MemoryBackend())
 
         # Some database models
         self.model1 = DatabaseModel()
         self.model2 = DatabaseModel()
 
     def test_init(self):
-        database = MockDatabase(MemoryBackend())
+        database = MarketDatabase(MemoryBackend())
 
         # Raise an error if no backend is given
         with self.assertRaises(AssertionError):
-            database2 = MockDatabase(None)
+            database2 = MarketDatabase(None)
 
     def test_post(self):
         # Check if it has no id prior to saving
@@ -123,7 +123,7 @@ class MarketDatabaseTestSuite(unittest.TestCase):
 
 class DatabasePersistentTestSuite(MarketDatabaseTestSuite):
     def setUp(self):
-        self.database = MockDatabase(PersistentBackend('.'))
+        self.database = MarketDatabase(PersistentBackend('.'))
         self.database.backend.clear()
         # Some database models
         self.model1 = DatabaseModel()

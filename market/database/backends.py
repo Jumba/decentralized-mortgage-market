@@ -1,5 +1,6 @@
 from hashlib import sha256
 from os import path
+import time
 
 from dispersy.database import Database
 from market.community.encoding import encode
@@ -152,6 +153,27 @@ class BlockChain(object):
         """
         raise NotImplementedError
 
+    def get_next_sequence_number(self):
+        """
+        Return the next sequence number for this public_key.
+        If no block for the pk is known return 0, else return latest sequence number + 1.
+        :return: sequence number (integer)
+        """
+        raise NotImplementedError
+
+    def create_genesis_block(self):
+        """
+        Generates the genesis block.
+        :return: DatabaseBlock, the genesis block
+        """
+        raise NotImplementedError
+
+    def check_add_genesis_block(self):
+        """
+        Persist the genesis block if there are no blocks yet in the blockchain.
+        """
+        raise NotImplementedError
+
 
 class MemoryBackend(Backend):
     """
@@ -227,7 +249,7 @@ class PersistentBackend(Database, Backend, BlockChain):
     DATABASE_PATH = u"market.db"
     # Version to keep track if the db schema needs to be updated.
     LATEST_DB_VERSION = 1
-    # Schema for the MultiChain DB.
+    # Schema for the DB.
     schema = u"""
     CREATE TABLE IF NOT EXISTS market(
      id		                    TEXT NOT NULL,
@@ -238,7 +260,7 @@ class PersistentBackend(Database, Backend, BlockChain):
      );
 
 
-    CREATE TABLE IF NOT EXISTS multi_chain(
+    CREATE TABLE IF NOT EXISTS block_chain(
      benefactor		              TEXT NOT NULL,
      beneficiary		          TEXT NOT NULL,
 
@@ -251,7 +273,7 @@ class PersistentBackend(Database, Backend, BlockChain):
      signature_benefactor		  TEXT NOT NULL,
      signature_beneficiary		  TEXT NOT NULL,
 
-     time                         TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+     insert_time                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
      hash_block                   TEXT NOT NULL,
      previous_hash                TEXT NOT NULL,
      sequence_number              INTEGER NOT NULL
@@ -336,6 +358,7 @@ class PersistentBackend(Database, Backend, BlockChain):
 
     def clear(self):
         self.execute(u"DELETE FROM market")
+        self.execute(u"DELETE FROM block_chain")
         self.execute(u"DELETE FROM option")
 
     def set_option(self, option_name, value):
@@ -362,14 +385,15 @@ class PersistentBackend(Database, Backend, BlockChain):
                 block.sequence_number_benefactor, block.sequence_number_beneficiary,
                 buffer(block.previous_hash_benefactor), buffer(block.previous_hash_beneficiary),
                 buffer(block.signature_benefactor), buffer(block.signature_beneficiary),
-                block.time, buffer(block.hash_block), buffer(self.get_latest_hash()), self.get_latest_sequence_number() + 1)
+                block.insert_time, buffer(block.hash_block), buffer(self.get_latest_hash()),
+                self.get_next_sequence_number())
 
         self.execute(
-            u"INSERT INTO multi_chain (benefactor, beneficiary, "
+            u"INSERT INTO block_chain (benefactor, beneficiary, "
             u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, sequence_number_beneficiary, "
             u"previous_hash_benefactor, previous_hash_beneficiary, signature_benefactor, signature_beneficiary, "
-            u"time, hash_block, previous_hash, sequence_number) "
-            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
+            u"insert_time, hash_block, previous_hash, sequence_number) "
+            u"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             data)
         self.commit()
 
@@ -380,17 +404,17 @@ class PersistentBackend(Database, Backend, BlockChain):
         """
         data = (
             buffer(block.beneficiary), buffer(block.agreement_beneficiary),
-            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary), buffer(block.signature_benefactor),
-            buffer(block.signature_beneficiary), buffer(block.hash_block))
+            block.sequence_number_beneficiary, buffer(block.previous_hash_beneficiary),
+            buffer(block.signature_benefactor), buffer(block.signature_beneficiary), buffer(block.hash_block))
 
-        where = (block.time, block.sequence_number_benefactor, buffer(block.benefactor))
+        where = (block.insert_time, block.sequence_number_benefactor, buffer(block.benefactor))
 
         self.execute(
-            u"UPDATE multi_chain "
+            u"UPDATE block_chain "
             u"SET beneficiary = ?, agreement_beneficiary = ?, "
             u"sequence_number_beneficiary = ?, previous_hash_beneficiary = ?, signature_benefactor = ?,"
             u"signature_beneficiary = ?, hash_block = ? "
-            u"WHERE time = ? AND sequence_number_benefactor = ? AND benefactor = ?",
+            u"WHERE insert_time = ? AND sequence_number_benefactor = ? AND benefactor = ?",
             data + where)
         self.commit()
 
@@ -400,7 +424,7 @@ class PersistentBackend(Database, Backend, BlockChain):
         :param public_key: The public_key for which the latest hash has to be found.
         :return: the relevant hash
         """
-        db_query = u"SELECT hash_block FROM multi_chain ORDER BY ROWID DESC LIMIT 1;"
+        db_query = u"SELECT hash_block FROM block_chain ORDER BY ROWID DESC LIMIT 1;"
         db_result = self.execute(db_query).fetchone()
 
         return str(db_result[0]) if db_result else ''
@@ -415,8 +439,8 @@ class PersistentBackend(Database, Backend, BlockChain):
                    u"agreement_benefactor, agreement_beneficiary, sequence_number_benefactor, " \
                    u"sequence_number_beneficiary, previous_hash_benefactor, " \
                    u"previous_hash_beneficiary, signature_benefactor, signature_beneficiary, " \
-                   u"time, hash_block, previous_hash, sequence_number " \
-                   u"FROM `multi_chain` WHERE hash_block = ? LIMIT 1"
+                   u"insert_time, hash_block, previous_hash, sequence_number " \
+                   u"FROM `block_chain` WHERE hash_block = ? LIMIT 1"
         db_result = self.execute(db_query, (buffer(hash),)).fetchone()
         # Create a DB Block or return None
         return self._create_database_block(db_result)
@@ -431,13 +455,14 @@ class PersistentBackend(Database, Backend, BlockChain):
                    u"agreement_benefactor, agreement_beneficiary, " \
                    u"sequence_number_benefactor, sequence_number_beneficiary, " \
                    u"previous_hash_benefactor, previous_hash_beneficiary, " \
-                   u"signature_benefactor, signature_beneficiary, time, hash_block, previous_hash, sequence_number " \
+                   u"signature_benefactor, signature_beneficiary, insert_time, " \
+                   u"hash_block, previous_hash, sequence_number " \
                    u"FROM (" \
                    u"SELECT *, sequence_number_benefactor AS seq_number, " \
-                   u"benefactor AS pk FROM `multi_chain` " \
+                   u"benefactor AS pk FROM `block_chain` " \
                    u"UNION " \
                    u"SELECT *, sequence_number_beneficiary AS seq_number," \
-                   u"beneficiary AS pk FROM `multi_chain`) " \
+                   u"beneficiary AS pk FROM `block_chain`) " \
                    u"WHERE seq_number = ? AND pk = ? LIMIT 1"
         db_result = self.execute(db_query, (sequence_number, buffer(public_key))).fetchone()
         # Create a DB Block or return None
@@ -461,13 +486,62 @@ class PersistentBackend(Database, Backend, BlockChain):
         :param public_key: Corresponding public key
         :return: sequence number (integer) or 0 if no block is known
         """
-        db_query = u"SELECT sequence_number FROM multi_chain ORDER BY ROWID DESC LIMIT 1;"
+        db_query = u"SELECT sequence_number FROM block_chain ORDER BY ROWID DESC LIMIT 1;"
         db_result = self.execute(db_query).fetchone()
         return db_result[0] if db_result is not None else 0
 
+    def get_next_sequence_number(self):
+        """
+        Return the next sequence number for this public_key.
+        If no block for the pk is known return 0, else return latest sequence number + 1.
+        :return: sequence number (integer)
+        """
+        sequence_number = self.get_latest_sequence_number()
+
+        if sequence_number == 0:
+            return sequence_number
+        else:
+            return sequence_number + 1
+
+    def create_genesis_block(self):
+        """
+        Generates the genesis block.
+        :return: DatabaseBlock, the genesis block
+        """
+        packet = encode(
+            (
+                str(''),  # benefactor,
+                str(''),  # beneficiary,
+                str(None),  # agreement_benefactor,
+                str(None),  # agreement_beneficiary,
+                0,  # sequence_number_benefactor,
+                0,  # sequence_number_beneficiary,
+                str(''),  # previous_hash_benefactor,
+                str(''),  # previous_hash_beneficiary,
+                str(''),  # signature_benefactor,
+                str(''),  # signature_beneficiary,
+                0  # insert_time
+            )
+        )
+        hash = sha256(packet).hexdigest()
+
+        return DatabaseBlock((str(''), str(''), str(None), str(None), 0, 0,
+                              str(''), str(''), str(''), str(''), 0, str(hash)))
+
+    def check_add_genesis_block(self):
+        """
+        Persist the genesis block if there are no blocks yet in the blockchain.
+        """
+        db_query = u"SELECT COUNT(*) FROM block_chain"
+        db_result = self.execute(db_query).fetchone()
+
+        if db_result[0] == 0:
+            genesis_block = self.create_genesis_block()
+            self.add_block(genesis_block)
+
 
 class DatabaseBlock:
-    """ DataClass for a multichain block. """
+    """ DataClass for a blockchain block. """
 
     def __init__(self, data):
         """ Create a block from data """
@@ -482,11 +556,11 @@ class DatabaseBlock:
         self.signature_benefactor = str(data[8])
         self.signature_beneficiary = str(data[9])
 
-        self.time = data[10]
+        self.insert_time = data[10]
 
         self.hash_block = sha256(self.hash()).hexdigest()
         if len(data) > 12:
-            self.previous_hash = data[12]
+            self.previous_hash = str(data[12])
             self.sequence_number = data[13]
 
     def hash(self):
@@ -502,7 +576,7 @@ class DatabaseBlock:
                 self.previous_hash_beneficiary,
                 self.signature_benefactor,
                 self.signature_beneficiary,
-                self.time,
+                self.insert_time,
             )
         )
         return packet
@@ -515,4 +589,4 @@ class DatabaseBlock:
                     payload.agreement_beneficiary and payload.agreement_beneficiary.encode() or '',
                     payload.sequence_number_benefactor, payload.sequence_number_beneficiary,
                     payload.previous_hash_benefactor, payload.previous_hash_beneficiary,
-                    payload.signature_benefactor, payload.signature_beneficiary, payload.time))
+                    payload.signature_benefactor, payload.signature_beneficiary, payload.insert_time))

@@ -11,8 +11,9 @@ class PendingLoanRequests1Controller:
         self.loan_request_table = self.mainwindow.fiplr1_loan_requests_table
         self.loan_requests = []
 
-        # Add listener to the 'view loan request' button
+        # Add listener to the 'view loan request' button and the table
         self.mainwindow.fiplr1_view_loan_request_pushbutton.clicked.connect(self.show_request)
+        self.loan_request_table.doubleClicked.connect(self.show_request)
 
     def setup_view(self):
         """

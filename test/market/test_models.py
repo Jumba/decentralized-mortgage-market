@@ -4,13 +4,13 @@ import uuid
 
 from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
-from market.database.database import MockDatabase
+from market.database.database import MarketDatabase
 from market.models import DatabaseModel
 
 
 class ModelTestSuite(unittest.TestCase):
     def setUp(self):
-        self.db = MockDatabase(MemoryBackend())
+        self.db = MarketDatabase(MemoryBackend())
         self.api = MarketAPI(self.db)
 
         self.db.backend.set_option('user_key_pub', "3081a7301006072a8648ce3d020106052b810400270381920004040a3d5712482be45375958745cdd3134ff079303bcf0ecf02ff6dff5b49cfde221a4068f1a243e31ba36052ed4836c77df8c1729cb9875ed703b23ccc9488f0b81ddba6e51b1caa01bc4e4c0152554c38b805ae6d9fb9d0a20172266b814a4f20e5ced5eb8f657c521b76dc6c10eb695444d69db8426a39232bd3e166eb22bcb7704642ca26a276774dc13d249b9e29")

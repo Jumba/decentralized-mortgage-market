@@ -10,7 +10,7 @@ from dispersy.member import DummyMember
 from market.api.api import STATUS, MarketAPI
 from market.community.community import MortgageMarketCommunity
 from market.database.backends import PersistentBackend
-from market.database.database import MockDatabase
+from market.database.database import MarketDatabase
 from market.models import DatabaseModel
 from market.models.loans import Mortgage
 from market.database.backends import DatabaseBlock
@@ -32,11 +32,11 @@ class CustomAssertions(object):
         self.assertEqual(block1.previous_hash_beneficiary, block2.previous_hash_beneficiary)
         self.assertEqual(block1.signature_benefactor, block2.signature_benefactor)
         self.assertEqual(block1.signature_beneficiary, block2.signature_beneficiary)
-        self.assertEqual(block1.time, block2.time)
+        self.assertEqual(block1.insert_time, block2.insert_time)
         self.assertEqual(block1.hash_block, block2.hash_block)
 
 
-class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
+class BlockchainDatabaseTest(unittest.TestCase, CustomAssertions):
     """
     Tests the blockchain functionality.
 
@@ -51,8 +51,8 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.dispersy = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary_mc1"))
         self.dispersy_bank = Dispersy(ManualEnpoint(0), unicode("dispersy_temporary_mc2"))
 
-        self.api = MarketAPI(MockDatabase(PersistentBackend('.', u'borrower.db')))
-        self.api_bank = MarketAPI(MockDatabase(PersistentBackend('.', u'bank.db')))
+        self.api = MarketAPI(MarketDatabase(PersistentBackend('.', u'borrower.db')))
+        self.api_bank = MarketAPI(MarketDatabase(PersistentBackend('.', u'bank.db')))
 
         self.api.db.backend.clear()
         self.api_bank.db.backend.clear()
@@ -139,7 +139,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertEqual(block.sequence_number_beneficiary, message.payload.sequence_number_beneficiary)
         self.assertEqual(block.previous_hash_benefactor, message.payload.previous_hash_benefactor)
         self.assertEqual(block.previous_hash_beneficiary, message.payload.previous_hash_beneficiary)
-        self.assertEqual(block.time, message.payload.time)
+        self.assertEqual(block.insert_time, message.payload.insert_time)
 
     def test_add_get(self):
         """
@@ -151,6 +151,7 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
                             distribution=(self.community.claim_global_time(),),
                             payload=self.payload,
                             destination=(LoopbackCandidate(),))
+
         block = DatabaseBlock.from_signed_confirm_message(message)
 
         # Add the block to the blockchain
@@ -246,8 +247,36 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         self.assertEqualBlocks(result_benefactor, result)
         self.assertEqualBlocks(result_beneficiary, result)
 
+    def test_check_add_genesis_block(self):
+        """
+        This test checks the functionality of adding a block to an empty blockchain.
+        """
+
+        # Check if there are already blocks in the blockchain, if not add genesis block
+        self.db.check_add_genesis_block()
+        # Get the genesis block
+        genesis_block = self.db.create_genesis_block()
+
+        meta = self.community.get_meta_message(u"signed_confirm")
+        message = meta.impl(authentication=([self.member, self.member_bank],),
+                            distribution=(self.community.claim_global_time(),),
+                            payload=self.payload,
+                            destination=(LoopbackCandidate(),))
+
+        block = DatabaseBlock.from_signed_confirm_message(message)
+
+        # Add the block to the blockchain
+        self.db.add_block(block)
+        # Get the block by the hash of the block
+        result = self.db.get_by_hash(block.hash_block)
+
+        # Check whether the genesis block and the first block are added correctly
+        self.assertEqual(result.previous_hash, genesis_block.hash_block)
+
     def tearDown(self):
         self.dispersy._database.close()
         self.dispersy_bank._database.close()
+        self.api.db.backend.clear()
+        self.api_bank.db.backend.clear()
         self.api.db.backend.close()
         self.api_bank.db.backend.close()
