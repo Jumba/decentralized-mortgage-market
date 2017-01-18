@@ -605,6 +605,10 @@ class GUITestSuite(unittest.TestCase):
         navigation.switch_to_fiplr2()
         self.assertEqual(self.window.fiplr2_page, self.window.stackedWidget.currentWidget())
 
+        self.create_mortgage_campaign_and_bids()
+        navigation.switch_to_campaign_bids(self.payload_loan_offer['mortgage_id'])
+        self.assertEqual(self.window.icb_page, self.window.stackedWidget.currentWidget())
+
     def test_navigation_user(self):
         """
         This test checks if switching between navigation bars works properly
@@ -1279,6 +1283,11 @@ class GUITestSuite(unittest.TestCase):
         """
         This test checks if the fields in the 'pending loan request' screen are filled correctly
         """
+        # Add documents
+        self.window.fiplr2_controller.search = lambda x: ['TestDocument1.pdf',
+                                                          'TestDocument2.pdf',
+                                                          'TestDocument3.pdf']
+
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1310,6 +1319,11 @@ class GUITestSuite(unittest.TestCase):
         """
         This test checks if the fields in the 'pending loan request' screen are filled correctly
         """
+        # Add documents
+        self.window.fiplr2_controller.search = lambda x: ['TestDocument1.pdf',
+                                                          'TestDocument2.pdf',
+                                                          'TestDocument3.pdf']
+
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1430,3 +1444,48 @@ class GUITestSuite(unittest.TestCase):
         # Check if a dialog opens
         self.window.msg.about.assert_called_with(self.window, "Request rejected",
                                                  'This loan request has been rejected.')
+
+    def test_page_setup_borrower(self):
+        """
+        This test checks if the right screen is displayed if the user logs in as borrower
+        """
+        # Create the user
+        self.window.app.user, _, _ = self.window.api.create_user()
+        role_id = Role.BORROWER.value
+        self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_borrower_profile)
+        self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
+
+        # Check is the right screen is being displayed
+        self.window.setup_view()
+        self.assertEqual(self.window.profile_page, self.window.stackedWidget.currentWidget())
+
+    def test_page_setup_investor(self):
+        """
+        This test checks if the right screen is displayed if the user logs in as investor
+        """
+        # Create the user
+        self.window.app.user, _, _ = self.window.api.create_user()
+        role_id = Role.INVESTOR.value
+        self.window.app.user.role_id = role_id
+        self.window.api.create_profile(self.window.app.user, self.payload_investor_profile)
+        self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
+
+        # Check is the right screen is being displayed
+        self.window.setup_view()
+        self.assertEqual(self.window.profile_page, self.window.stackedWidget.currentWidget())
+
+    def test_page_setup_bank(self):
+        """
+        This test checks if the right screen is displayed if the user logs in as bank
+        """
+        # Create the user
+        self.window.app.user, _, _ = self.window.api.create_user()
+        role_id = Role.FINANCIAL_INSTITUTION.value
+        self.window.app.user.role_id = role_id
+        self.window.api.db.put(User.type, self.window.app.user.id, self.window.app.user)
+
+        # Check is the right screen is being displayed
+        self.window.setup_view()
+        self.assertEqual(self.window.fip_page, self.window.stackedWidget.currentWidget())
+

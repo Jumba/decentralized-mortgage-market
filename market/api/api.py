@@ -291,16 +291,6 @@ class MarketAPI(object):
         else:
             return False
 
-    def resell_investment(self):
-        """
-        Resell an invesment
-
-        Not implemented yet.
-
-        :raise: `NotImplementedError`
-        """
-        raise NotImplementedError
-
     def load_investments(self, user):
         """
         Get the pending and current investments list from the investor.
