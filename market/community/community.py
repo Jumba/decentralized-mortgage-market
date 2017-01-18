@@ -544,10 +544,7 @@ class MortgageMarketCommunity(Community):
         """
         assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
 
-        if message.payload.benefactor == self.user.id:
-            self.api.db.backend.check_add_genesis_block(self.user.id, '')
-        elif message.payload.beneficiary == self.user.id:
-            self.api.db.backend.check_add_genesis_block('', self.user.id)
+        self.api.db.backend.check_add_genesis_block()
 
         block = DatabaseBlock.from_signed_confirm_message(message)
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())

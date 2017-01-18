@@ -253,9 +253,9 @@ class MultichainDatabaseTest(unittest.TestCase, CustomAssertions):
         """
 
         # Check if there are already blocks in the blockchain, if not add genesis block
-        self.db.check_add_genesis_block(self.member_bank, '')
-        # Get the genesis block by the public key and sequence number
-        genesis_block = self.db.get_by_public_key_and_sequence_number(str(self.member_bank), 0)
+        self.db.check_add_genesis_block()
+        # Get the genesis block
+        genesis_block = self.db.create_genesis_block()
 
         meta = self.community.get_meta_message(u"signed_confirm")
         message = meta.impl(authentication=([self.member, self.member_bank],),

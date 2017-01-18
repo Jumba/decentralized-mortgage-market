@@ -161,20 +161,16 @@ class BlockChain(object):
         """
         raise NotImplementedError
 
-    def create_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+    def create_genesis_block(self):
         """
         Generates the genesis block.
-        :param public_key_benefactor: The public key of the benefactor
-        :param public_key_beneficiary: The public key of the beneficiary
         :return: DatabaseBlock, the genesis block
         """
         raise NotImplementedError
 
-    def check_add_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+    def check_add_genesis_block(self):
         """
         Persist the genesis block if there are no blocks yet in the blockchain.
-        :param public_key_benefactor: The public key of the benefactor
-        :param public_key_beneficiary The public key of the beneficiary
         """
         raise NotImplementedError
 
@@ -507,18 +503,17 @@ class PersistentBackend(Database, Backend, BlockChain):
         else:
             return sequence_number + 1
 
-    def create_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+    def create_genesis_block(self):
         """
         Generates the genesis block.
         :param public_key_benefactor: The public key of the benefactor
         :param public_key_beneficiary: The public key of the beneficiary
         :return: DatabaseBlock, the genesis block
         """
-        insert_time = int(time.time())
         packet = encode(
             (
-                str(public_key_benefactor),  # benefactor,
-                str(public_key_beneficiary),  # beneficiary,
+                str(''),  # benefactor,
+                str(''),  # beneficiary,
                 str(None),  # agreement_benefactor,
                 str(None),  # agreement_beneficiary,
                 0,  # sequence_number_benefactor,
@@ -527,15 +522,15 @@ class PersistentBackend(Database, Backend, BlockChain):
                 str(''),  # previous_hash_beneficiary,
                 str(''),  # signature_benefactor,
                 str(''),  # signature_beneficiary,
-                insert_time  # insert_time
+                0  # insert_time
             )
         )
         hash = sha256(packet).hexdigest()
 
-        return DatabaseBlock((str(public_key_benefactor), str(public_key_beneficiary), str(None), str(None),
-                             0, 0, str(''), str(''), str(''), str(''), insert_time, str(hash)))
+        return DatabaseBlock((str(''), str(''), str(None), str(None), 0, 0,
+                              str(''), str(''), str(''), str(''), 0, str(hash)))
 
-    def check_add_genesis_block(self, public_key_benefactor, public_key_beneficiary):
+    def check_add_genesis_block(self):
         """
         Persist the genesis block if there are no blocks yet in the blockchain.
         :param public_key_benefactor: The public key of the benefactor
@@ -545,7 +540,7 @@ class PersistentBackend(Database, Backend, BlockChain):
         db_result = self.execute(db_query).fetchone()
 
         if db_result[0] == 0:
-            genesis_block = self.create_genesis_block(public_key_benefactor, public_key_beneficiary)
+            genesis_block = self.create_genesis_block()
             self.add_block(genesis_block)
 
 
