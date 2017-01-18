@@ -992,7 +992,7 @@ class ConversionTestCase(unittest.TestCase):
         self.assertEqual(p1.sequence_number_beneficiary, p2.sequence_number_beneficiary)
         self.assertEqual(p1.signature_beneficiary, p2.signature_beneficiary)
         self.assertEqual(p1.signature_benefactor, p1.signature_benefactor)
-        self.assertEqual(p1.time, p2.time)
+        self.assertEqual(p1.insert_time, p2.insert_time)
 
 
 if __name__ == '__main__':
