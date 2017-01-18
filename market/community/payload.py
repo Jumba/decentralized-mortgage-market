@@ -81,7 +81,7 @@ class SignedConfirmPayload(Payload):
     class Implementation(Payload.Implementation):
         def __init__(self, meta, benefactor, beneficiary, agreement_benefactor, agreement_beneficiary,
                      sequence_number_benefactor, sequence_number_beneficiary, previous_hash_benefactor,
-                     previous_hash_beneficiary, signature_benefactor, signature_beneficiary, time):
+                     previous_hash_beneficiary, signature_benefactor, signature_beneficiary, insert_time):
             assert isinstance(benefactor, str)
             assert isinstance(beneficiary, str)
             assert isinstance(agreement_benefactor, DatabaseModel)
@@ -94,7 +94,7 @@ class SignedConfirmPayload(Payload):
             assert isinstance(previous_hash_beneficiary, str)
             assert isinstance(signature_benefactor, str)
             assert isinstance(signature_beneficiary, str)
-            assert isinstance(time, int)
+            assert isinstance(insert_time, int)
 
             super(SignedConfirmPayload.Implementation, self).__init__(meta)
 
@@ -108,7 +108,7 @@ class SignedConfirmPayload(Payload):
             self._previous_hash_beneficiary = previous_hash_beneficiary
             self._signature_benefactor = signature_benefactor
             self._signature_beneficiary = signature_beneficiary
-            self._time = time
+            self._insert_time = insert_time
 
         @property
         def benefactor(self):
@@ -159,6 +159,6 @@ class SignedConfirmPayload(Payload):
             self._signature_beneficiary = value
 
         @property
-        def time(self):
-            return self._time
+        def insert_time(self):
+            return self._insert_time
 

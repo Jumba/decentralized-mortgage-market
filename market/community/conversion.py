@@ -57,7 +57,7 @@ class MortgageMarketConversion(BinaryConversion):
                     message.payload.previous_hash_beneficiary,
                     message.payload.signature_benefactor,
                     message.payload.signature_beneficiary,
-                    message.payload.time
+                    message.payload.insert_time
                  )
                 )
         return packet,
@@ -82,7 +82,7 @@ class MortgageMarketConversion(BinaryConversion):
         # previous_hash_beneficiary, 7
         # signature_benefactor, 8
         # signature_beneficiary, 9
-        # time 10
+        # insert_time 10
 
         if not isinstance(payload[0], str):
             raise DropPacket("Invalid 'benefactor' type")
