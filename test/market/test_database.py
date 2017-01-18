@@ -109,6 +109,7 @@ class MarketDatabaseTestSuite(unittest.TestCase):
         self.assertIsNone(self.database.get(self.model1.type, self.model1.id))
 
     def test_get_all(self):
+        self.database.backend.clear()
         self.database.post(self.model1.type, self.model1)
         self.database.post(self.model2.type, self.model2)
         # Get the same object
