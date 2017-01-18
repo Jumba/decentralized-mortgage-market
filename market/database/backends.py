@@ -506,8 +506,6 @@ class PersistentBackend(Database, Backend, BlockChain):
     def create_genesis_block(self):
         """
         Generates the genesis block.
-        :param public_key_benefactor: The public key of the benefactor
-        :param public_key_beneficiary: The public key of the beneficiary
         :return: DatabaseBlock, the genesis block
         """
         packet = encode(
@@ -533,10 +531,8 @@ class PersistentBackend(Database, Backend, BlockChain):
     def check_add_genesis_block(self):
         """
         Persist the genesis block if there are no blocks yet in the blockchain.
-        :param public_key_benefactor: The public key of the benefactor
-        :param public_key_beneficiary The public key of the beneficiary
         """
-        db_query = u"SELECT COUNT(*) FROM multi_chain"
+        db_query = u"SELECT COUNT(*) FROM block_chain"
         db_result = self.execute(db_query).fetchone()
 
         if db_result[0] == 0:
