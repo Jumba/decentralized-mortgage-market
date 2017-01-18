@@ -1,4 +1,4 @@
-# mockchain-market
+# decentralized-mortgage-market
 
 Initialiaze dispersy by running
 
