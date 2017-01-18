@@ -413,7 +413,7 @@ class MortgageMarketCommunity(Community):
         # previous_hash_beneficiary, 7
         # signature_benefactor, 8
         # signature_beneficiary, 9
-        # time 10
+        # insert_time 10
         benefactor = self.user.id
 
         payload_list = []
@@ -474,7 +474,7 @@ class MortgageMarketCommunity(Community):
                 previous_hash_beneficiary,
                 '',
                 '',
-                payload.time,
+                payload.insert_time,
             )
 
             meta = self.get_meta_message(u"signed_confirm")
@@ -547,6 +547,8 @@ class MortgageMarketCommunity(Community):
         :param message:
         """
         assert isinstance(self.api.db.backend, BlockChain), "Not using a BlockChain enabled backend"
+
+        self.api.db.backend.check_add_genesis_block()
 
         block = DatabaseBlock.from_signed_confirm_message(message)
         logger.info("Persisting sr: %s", base64.encodestring(block.hash_block).strip())
