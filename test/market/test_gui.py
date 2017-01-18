@@ -1283,6 +1283,11 @@ class GUITestSuite(unittest.TestCase):
         """
         This test checks if the fields in the 'pending loan request' screen are filled correctly
         """
+        # Add documents
+        self.window.fiplr2_controller.search = lambda x: ['TestDocument1.pdf',
+                                                          'TestDocument2.pdf',
+                                                          'TestDocument3.pdf']
+
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
@@ -1314,6 +1319,11 @@ class GUITestSuite(unittest.TestCase):
         """
         This test checks if the fields in the 'pending loan request' screen are filled correctly
         """
+        # Add documents
+        self.window.fiplr2_controller.search = lambda x: ['TestDocument1.pdf',
+                                                          'TestDocument2.pdf',
+                                                          'TestDocument3.pdf']
+
         # Create the bank user
         self.window.app.user = self.window.app.bank1
 
