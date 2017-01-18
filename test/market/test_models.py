@@ -1,11 +1,16 @@
 from __future__ import absolute_import
+
+import os
 import unittest
 import uuid
+
+import sys
 
 from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
 from market.database.database import MarketDatabase
 from market.models import DatabaseModel
+from market.models.document import Document
 from market.models.user import User
 
 
@@ -131,4 +136,24 @@ class ModelTestSuite(unittest.TestCase):
 
         exception = cm.exception
         self.assertEqual(exception.message, "User key is immutable")
+
+
+    def test_document_model(self):
+        file_name = 'test.py'
+        mime = 'text/x-python'
+        file_path = os.path.join(os.path.dirname(sys.modules['market'].__file__), '__init__.py')
+        document = Document.encode_document(file_name, file_path)
+
+        self.assertTrue(isinstance(document, Document))
+        self.assertEqual(document.name, file_name)
+        self.assertEqual(document.mime, mime)
+
+        this_folder = os.getcwd()
+        document.decode_document(os.path.join(this_folder, file_name))
+        new_file_path = os.path.join(this_folder, file_name)
+
+        self.assertEqual(open(file_path).read(), open(new_file_path).read())
+
+        # Cleanup
+        os.remove(new_file_path)
 
