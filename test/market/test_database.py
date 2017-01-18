@@ -24,14 +24,14 @@ class DatabaseTestSuite(unittest.TestCase):
 
     def test_delete(self):
         with self.assertRaises(NotImplementedError):
-            self.database.delete(None, None)
+            self.database.delete(None)
 
     def test_get_all(self):
         with self.assertRaises(NotImplementedError):
             self.database.get_all(None)
 
 
-class DatabaseTestSuite(unittest.TestCase):
+class MarketDatabaseTestSuite(unittest.TestCase):
     def setUp(self):
         self.database = MockDatabase(MemoryBackend())
 
@@ -121,7 +121,7 @@ class DatabaseTestSuite(unittest.TestCase):
         self.assertIsNone(self.database.get_all('hi'))
 
 
-class DatabasePersistentTestSuite(DatabaseTestSuite):
+class DatabasePersistentTestSuite(MarketDatabaseTestSuite):
     def setUp(self):
         self.database = MockDatabase(PersistentBackend('.'))
         self.database.backend.clear()

@@ -10,6 +10,7 @@ from dispersy.candidate import LoopbackCandidate
 from dispersy.dispersy import Dispersy
 from dispersy.endpoint import ManualEnpoint
 from dispersy.member import DummyMember, Member
+from market import Global
 from market.api.api import MarketAPI, STATUS
 from market.community.community import MortgageMarketCommunity
 from market.community.conversion import MortgageMarketConversion
@@ -174,6 +175,11 @@ class CommunityTestSuite(unittest.TestCase):
         self.assertIsInstance(self.user, User)
         self.assertIsInstance(self.member, Member)
         self.assertEqual(self.user.id, self.member.public_key.encode("HEX"))
+
+    def test_master_member(self):
+        master_member = MortgageMarketCommunity.get_master_members(self.dispersy)[0]
+        self.assertEqual(Global.MASTER_KEY, master_member.public_key)
+
 
     def test_on_loan_request_receive(self):
         """
