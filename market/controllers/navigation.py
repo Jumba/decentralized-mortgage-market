@@ -7,13 +7,6 @@ class NavigateUser:
         self.mainwindow = mainwindow
         self.set_navigation_visible(False, 0)
 
-    def prepare_views_for_user(self):
-        """
-        Starts the preparation of the screens for the user and redirects him to the first screen.
-        """
-        self.user_screen_navigation()
-        self.mainwindow.navigation_pushbutton_1.click()
-
     def user_screen_navigation(self):
         """
         Set the navigation bar depending on the role of the user.

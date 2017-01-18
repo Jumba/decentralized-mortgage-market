@@ -605,6 +605,10 @@ class GUITestSuite(unittest.TestCase):
         navigation.switch_to_fiplr2()
         self.assertEqual(self.window.fiplr2_page, self.window.stackedWidget.currentWidget())
 
+        self.create_mortgage_campaign_and_bids()
+        navigation.switch_to_campaign_bids(self.payload_loan_offer['mortgage_id'])
+        self.assertEqual(self.window.icb_page, self.window.stackedWidget.currentWidget())
+
     def test_navigation_user(self):
         """
         This test checks if switching between navigation bars works properly
