@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 import unittest
 
+from mock import mock, Mock
+
 from market.database.backends import MemoryBackend, PersistentBackend
 from market.database.database import Database, MarketDatabase
 from market.models import DatabaseModel
@@ -106,9 +108,8 @@ class MarketDatabaseTestSuite(unittest.TestCase):
         self.assertTrue(self.database.delete(self.model1))
         self.assertIsNone(self.database.get(self.model1.type, self.model1.id))
 
-
-
     def test_get_all(self):
+        self.database.backend.clear()
         self.database.post(self.model1.type, self.model1)
         self.database.post(self.model2.type, self.model2)
         # Get the same object
@@ -119,6 +120,24 @@ class MarketDatabaseTestSuite(unittest.TestCase):
 
         # Get a noneexisting model
         self.assertIsNone(self.database.get_all('hi'))
+
+    @mock.patch('market.models.DatabaseModel.encode')
+    def test_generate_id_on_clash(self, encode_patch):
+        encode_patch.return_value = True
+
+        model = DatabaseModel()
+        self.database.post(model.type, model)
+
+        model2 = DatabaseModel()
+        unique_id = 'unique_id'
+
+        model2.generate_id = Mock()
+        model2.generate_id.side_effect = [model.id, unique_id]
+
+        self.database.post(model2.type, model2)
+
+        self.assertEqual(model2.id, unique_id)
+        self.assertEqual(model2.generate_id.call_count, 2)
 
 
 class DatabasePersistentTestSuite(MarketDatabaseTestSuite):
