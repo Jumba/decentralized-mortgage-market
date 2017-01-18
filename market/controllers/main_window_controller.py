@@ -1,4 +1,6 @@
 from PyQt5 import uic
+
+from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtWidgets import *
 from market.controllers.banks_portfolio_controller import BanksPortfolioController
 from market.controllers.campaign_bids_controller import CampaignBidsController
@@ -41,6 +43,42 @@ class MainWindowController(QMainWindow):
         self.profile_controller = ProfileController(self)
         self.msg = QMessageBox
         self.setup_view()
+
+    @staticmethod
+    def filter_table(table, string, amount_column, amount_max, amount_min, interest_column, interest_max, interest_min,
+                     duration_column, duration_max, duration_min):
+        MainWindowController.show_hidden(table)
+        MainWindowController.filter_matching(table, string)
+        MainWindowController.filter_in_range(table, amount_column, amount_max, amount_min)
+        MainWindowController.filter_in_range(table, interest_column, interest_max, interest_min)
+        MainWindowController.filter_in_range(table, duration_column, duration_max, duration_min)
+
+    @staticmethod
+    def filter_matching(table, string):
+        for i in range(0, table.rowCount()):
+            matched = False
+            for j in range(0, table.columnCount()):
+                if string in str(table.item(i, j).text()):
+                    matched = True
+                    break
+            if matched is False:
+                table.hideRow(i)
+
+    @staticmethod
+    def filter_in_range(table, column, lower_bound, upper_bound):
+        if lower_bound and upper_bound:
+            try:
+                for i in range(0, table.rowCount()):
+                    if not float(lower_bound) <= float(table.item(i, column).text()) <= float(upper_bound):
+                        table.hideRow(i)
+            except ValueError as e:
+                print('Given input for lower or upper bound cannot be used.')
+                print(e.message)
+
+    @staticmethod
+    def show_hidden(table):
+        for i in range(0, table.rowCount()):
+            table.showRow(i)
 
     def closeEvent(self, event):
         self.app.close()

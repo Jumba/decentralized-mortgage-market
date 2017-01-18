@@ -424,7 +424,6 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 2).text(), '5.5')
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 3).text(), '30')
         self.assertEqual(self.window.openmarket_open_market_table.item(0, 4).text(), '29')
-        self.assertEqual(self.window.openmarket_open_market_table.item(0, 5).text(), 'hi')
 
         # Check if the second campaign is in the table with the right values
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 0).text(), 'straat 11, 1111AA')
@@ -432,7 +431,6 @@ class GUITestSuite(unittest.TestCase):
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 2).text(), '5.5')
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 3).text(), '30')
         self.assertEqual(self.window.openmarket_open_market_table.item(1, 4).text(), '29')
-        self.assertEqual(self.window.openmarket_open_market_table.item(1, 5).text(), 'hi')
 
     def test_openmarket_view_campaign_unselected(self):
         """
