@@ -17,6 +17,7 @@ class PendingLoanRequests2Controller:
         self.mainwindow = mainwindow
         self.table = self.mainwindow.fiplr2_documents_table
         self.loan_request_id = None
+        self.search = glob
 
         # Add listener to the 'accept' and 'reject' buttons
         self.mainwindow.fiplr2_accept_pushbutton.clicked.connect(self.accept_request)
@@ -55,7 +56,7 @@ class PendingLoanRequests2Controller:
         self.mainwindow.fiplr2_property_value_lineedit.setText(str(house.price))
         self.mainwindow.fiplr2_description_textedit.setText(str(loan_request.description))
 
-        documents = glob(os.getcwd() + '/resources/received/'+str(loan_request_id)+'/*.pdf')
+        documents = self.search(os.getcwd() + '/resources/received/'+str(loan_request_id)+'/*.pdf')
         for i in range(0, len(documents)):
             self.table.insertRow(i)
             edit_button = QPushButton('View')
@@ -89,7 +90,6 @@ class PendingLoanRequests2Controller:
         Shows "Request accepted" if the form was filled in correctly.
         Shows "Loan request error"" if the form was not filled in correctly.
         """
-        # TODO Add max_invest_rate and risk to the payload when they are implemented
         try:
             # Create payload
             payload = {'request_id': self.loan_request_id,

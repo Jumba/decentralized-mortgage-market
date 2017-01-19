@@ -1,8 +1,10 @@
 from __future__ import absolute_import
 import unittest
 
+from mock import mock, Mock
+
 from market.database.backends import MemoryBackend, PersistentBackend
-from market.database.database import Database, MockDatabase
+from market.database.database import Database, MarketDatabase
 from market.models import DatabaseModel
 
 
@@ -24,27 +26,27 @@ class DatabaseTestSuite(unittest.TestCase):
 
     def test_delete(self):
         with self.assertRaises(NotImplementedError):
-            self.database.delete(None, None)
+            self.database.delete(None)
 
     def test_get_all(self):
         with self.assertRaises(NotImplementedError):
             self.database.get_all(None)
 
 
-class DatabaseTestSuite(unittest.TestCase):
+class MarketDatabaseTestSuite(unittest.TestCase):
     def setUp(self):
-        self.database = MockDatabase(MemoryBackend())
+        self.database = MarketDatabase(MemoryBackend())
 
         # Some database models
         self.model1 = DatabaseModel()
         self.model2 = DatabaseModel()
 
     def test_init(self):
-        database = MockDatabase(MemoryBackend())
+        database = MarketDatabase(MemoryBackend())
 
         # Raise an error if no backend is given
         with self.assertRaises(AssertionError):
-            database2 = MockDatabase(None)
+            database2 = MarketDatabase(None)
 
     def test_post(self):
         # Check if it has no id prior to saving
@@ -106,9 +108,8 @@ class DatabaseTestSuite(unittest.TestCase):
         self.assertTrue(self.database.delete(self.model1))
         self.assertIsNone(self.database.get(self.model1.type, self.model1.id))
 
-
-
     def test_get_all(self):
+        self.database.backend.clear()
         self.database.post(self.model1.type, self.model1)
         self.database.post(self.model2.type, self.model2)
         # Get the same object
@@ -120,10 +121,28 @@ class DatabaseTestSuite(unittest.TestCase):
         # Get a noneexisting model
         self.assertIsNone(self.database.get_all('hi'))
 
+    @mock.patch('market.models.DatabaseModel.encode')
+    def test_generate_id_on_clash(self, encode_patch):
+        encode_patch.return_value = True
 
-class DatabasePersistentTestSuite(DatabaseTestSuite):
+        model = DatabaseModel()
+        self.database.post(model.type, model)
+
+        model2 = DatabaseModel()
+        unique_id = 'unique_id'
+
+        model2.generate_id = Mock()
+        model2.generate_id.side_effect = [model.id, unique_id]
+
+        self.database.post(model2.type, model2)
+
+        self.assertEqual(model2.id, unique_id)
+        self.assertEqual(model2.generate_id.call_count, 2)
+
+
+class DatabasePersistentTestSuite(MarketDatabaseTestSuite):
     def setUp(self):
-        self.database = MockDatabase(PersistentBackend('.'))
+        self.database = MarketDatabase(PersistentBackend('.'))
         self.database.backend.clear()
         # Some database models
         self.model1 = DatabaseModel()

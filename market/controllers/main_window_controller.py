@@ -1,6 +1,5 @@
 from PyQt5 import uic
 
-from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtWidgets import *
 from market.controllers.banks_portfolio_controller import BanksPortfolioController
 from market.controllers.campaign_bids_controller import CampaignBidsController

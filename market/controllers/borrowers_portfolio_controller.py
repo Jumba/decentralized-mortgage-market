@@ -19,10 +19,22 @@ class BorrowersPortfolioController:
         """
         Setup the portfolio screen with up-to-date data.
         """
+        # Clear the table
         self.accepted_table.setRowCount(0)
         self.pending_table.setRowCount(0)
+
+        # Retrieve the loans
         self.accepted_loans = self.mainwindow.api.load_borrowers_loans(self.mainwindow.app.user)
         self.pending_loans = self.mainwindow.api.load_borrowers_offers(self.mainwindow.app.user)
+
+        # Fill the table with loans
+        self.add_accepted_loans()
+        self.add_pending_loans()
+
+    def add_accepted_loans(self):
+        """
+        Adds the accepted loans to the table.
+        """
         for loan, profile in self.accepted_loans:
             default_rate = ' '
             name = ' '
@@ -37,6 +49,11 @@ class BorrowersPortfolioController:
             self.mainwindow.insert_row(self.accepted_table, [loan.amount, loan.interest_rate,
                                                              default_rate, loan.duration,
                                                              loan.type, name, iban])
+
+    def add_pending_loans(self):
+        """
+        Adds the pending loans to the table.
+        """
         for offer in self.pending_loans:
             if isinstance(offer, Mortgage):
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,

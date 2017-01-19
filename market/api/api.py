@@ -291,16 +291,6 @@ class MarketAPI(object):
         else:
             return False
 
-    def resell_investment(self):
-        """
-        Resell an invesment
-
-        Not implemented yet.
-
-        :raise: `NotImplementedError`
-        """
-        raise NotImplementedError
-
     def load_investments(self, user):
         """
         Get the pending and current investments list from the investor.
@@ -663,6 +653,9 @@ class MarketAPI(object):
             campaign.subtract_amount(investment.amount)
             self.db.put(Investment.type, investment.id, investment)
 
+            # Check if the campaign has been completed. If so, reject all pending bids
+            self.reject_pending_campaign_bids(user, campaign)
+
             # Add message to queue
             investor = self.db.get(User.type, investment.investor_key)
             borrowers_profile = self.db.get(BorrowersProfile.type, user.profile_id)
@@ -680,6 +673,20 @@ class MarketAPI(object):
 
             return self.db.put(Campaign.type, campaign.id, campaign)
         return False
+
+    def reject_pending_campaign_bids(self, user, campaign):
+        """
+        Checks if the campaign is completed. If so, rejects all pending bis on the campaign.
+
+        :param user: The user accepting an investment offer.
+        :type user: :any:`User`
+        :param campaign: The campaign that needs to be checked
+        """
+        if campaign.completed:
+            for investment_id in user.investment_ids:
+                investment = self.db.get(Investment.type, investment_id)
+                if investment.status == STATUS.PENDING:
+                    self.reject_investment_offer(user, {'investment_id': investment_id})
 
     def reject_mortgage_offer(self, user, payload):
         """

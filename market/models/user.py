@@ -62,18 +62,3 @@ class User(DatabaseModel):
     def role_id(self, value):
         self._role_id = value
 
-    @property
-    def candidate(self):
-        return self._candidate
-
-    @candidate.setter
-    def candidate(self,value):
-        self._candidate = value
-
-# @loan_request_id.setter
-#    def loan_request_id(self, value):
-#        self._loan_request_id = value
-
-#    @property
-#    def pending_loan_request_ids(self):
-#        return self._pending_loan_request_ids

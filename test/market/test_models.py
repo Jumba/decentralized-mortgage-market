@@ -1,16 +1,22 @@
 from __future__ import absolute_import
+
+import os
 import unittest
 import uuid
 
+import sys
+
 from market.api.api import MarketAPI
 from market.database.backends import MemoryBackend
-from market.database.database import MockDatabase
+from market.database.database import MarketDatabase
 from market.models import DatabaseModel
+from market.models.document import Document
+from market.models.user import User
 
 
 class ModelTestSuite(unittest.TestCase):
     def setUp(self):
-        self.db = MockDatabase(MemoryBackend())
+        self.db = MarketDatabase(MemoryBackend())
         self.api = MarketAPI(self.db)
 
         self.db.backend.set_option('user_key_pub', "3081a7301006072a8648ce3d020106052b810400270381920004040a3d5712482be45375958745cdd3134ff079303bcf0ecf02ff6dff5b49cfde221a4068f1a243e31ba36052ed4836c77df8c1729cb9875ed703b23ccc9488f0b81ddba6e51b1caa01bc4e4c0152554c38b805ae6d9fb9d0a20172266b814a4f20e5ced5eb8f657c521b76dc6c10eb695444d69db8426a39232bd3e166eb22bcb7704642ca26a276774dc13d249b9e29")
@@ -113,4 +119,41 @@ class ModelTestSuite(unittest.TestCase):
 
         model_last_copy = self.db.get('database_model', model.id)
         self.assertEqual(new_sign_time, model_last_copy.time_signed)
+
+    def test_user_key_immutable(self):
+        """
+        Test is an error is raised when attempting to change the user key.
+        """
+        public_key = 'pk'
+        time_added = 100
+
+        user = User(public_key, time_added)
+        user.post_or_put(self.api.db)
+
+        self.assertEqual(user.time_added, time_added)
+        with self.assertRaises(IndexError) as cm:
+            user.generate_id(force=True)
+
+        exception = cm.exception
+        self.assertEqual(exception.message, "User key is immutable")
+
+
+    def test_document_model(self):
+        file_name = 'test.py'
+        mime = 'text/x-python'
+        file_path = os.path.join(os.path.dirname(sys.modules['market'].__file__), '__init__.py')
+        document = Document.encode_document(file_name, file_path)
+
+        self.assertTrue(isinstance(document, Document))
+        self.assertEqual(document.name, file_name)
+        self.assertEqual(document.mime, mime)
+
+        this_folder = os.getcwd()
+        document.decode_document(os.path.join(this_folder, file_name))
+        new_file_path = os.path.join(this_folder, file_name)
+
+        self.assertEqual(open(file_path).read(), open(new_file_path).read())
+
+        # Cleanup
+        os.remove(new_file_path)
 
