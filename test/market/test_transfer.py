@@ -16,7 +16,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.server = Server(os.path.normpath(os.getcwd()+'/../../resources/'))
+        cls.server = Server(os.getcwd())
         cls.server.start()
         time.sleep(1)
 
