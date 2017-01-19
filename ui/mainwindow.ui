@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>9</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -719,7 +719,7 @@
        <rect>
         <x>60</x>
         <y>60</y>
-        <width>291</width>
+        <width>381</width>
         <height>40</height>
        </rect>
       </property>
@@ -1111,7 +1111,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
+           <width>825</width>
            <height>1000</height>
           </rect>
          </property>
@@ -1315,7 +1315,7 @@
               <rect>
                <x>50</x>
                <y>40</y>
-               <width>361</width>
+               <width>381</width>
                <height>40</height>
               </rect>
              </property>
@@ -1843,7 +1843,7 @@
      <widget class="QLabel" name="openmarket_duration_label">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>430</x>
         <y>170</y>
         <width>141</width>
         <height>16</height>
@@ -1862,7 +1862,7 @@
      <widget class="QLineEdit" name="openmarket_min_amount_lineedit">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>290</x>
         <y>190</y>
         <width>113</width>
         <height>20</height>
@@ -1875,23 +1875,10 @@
        <string>Min</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="openmarket_rating_checkbox_b">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>170</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>B</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="openmarket_interest_label">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>430</x>
         <y>130</y>
         <width>81</width>
         <height>16</height>
@@ -1912,8 +1899,8 @@
        <rect>
         <x>60</x>
         <y>150</y>
-        <width>121</width>
-        <height>23</height>
+        <width>210</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
@@ -1926,7 +1913,7 @@
      <widget class="QLineEdit" name="openmarket_max_amount_lineedit">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>290</x>
         <y>150</y>
         <width>113</width>
         <height>20</height>
@@ -1942,7 +1929,7 @@
      <widget class="QLineEdit" name="openmarket_interest1_lineedit">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>430</x>
         <y>150</y>
         <width>45</width>
         <height>20</height>
@@ -1958,7 +1945,7 @@
      <widget class="QLineEdit" name="openmarket_duration2_lineedit">
       <property name="geometry">
        <rect>
-        <x>480</x>
+        <x>490</x>
         <y>190</y>
         <width>45</width>
         <height>20</height>
@@ -1969,51 +1956,6 @@
       </property>
       <property name="placeholderText">
        <string>Max</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="openmarket_rating_checkbox_c">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>190</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>C</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="openmarket_search_pushbutton">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>150</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Search</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="openmarket_rating_label">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>130</y>
-        <width>71</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Risk Rating</string>
       </property>
      </widget>
      <widget class="QLabel" name="openmarket_sorting_options_label">
@@ -2056,23 +1998,10 @@
        <string>Open Market</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="openmarket_rating_checkbox_a">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>150</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>A</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="openmarket_amount_label">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>290</x>
         <y>130</y>
         <width>121</width>
         <height>16</height>
@@ -2091,7 +2020,7 @@
      <widget class="QLineEdit" name="openmarket_duration1_lineedit">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>430</x>
         <y>190</y>
         <width>45</width>
         <height>20</height>
@@ -2107,7 +2036,7 @@
      <widget class="QLineEdit" name="openmarket_interest2_lineedit">
       <property name="geometry">
        <rect>
-        <x>480</x>
+        <x>490</x>
         <y>150</y>
         <width>45</width>
         <height>20</height>
@@ -2218,7 +2147,7 @@
      <widget class="QLabel" name="openmarket_duration_dash_label">
       <property name="geometry">
        <rect>
-        <x>470</x>
+        <x>480</x>
         <y>190</y>
         <width>16</width>
         <height>16</height>
@@ -2231,7 +2160,7 @@
      <widget class="QLabel" name="openmarket_interest_dash_label">
       <property name="geometry">
        <rect>
-        <x>470</x>
+        <x>480</x>
         <y>150</y>
         <width>16</width>
         <height>16</height>
@@ -2497,7 +2426,7 @@
        <rect>
         <x>60</x>
         <y>60</y>
-        <width>221</width>
+        <width>251</width>
         <height>40</height>
        </rect>
       </property>
@@ -2955,7 +2884,7 @@
        <rect>
         <x>60</x>
         <y>150</y>
-        <width>141</width>
+        <width>210</width>
         <height>20</height>
        </rect>
       </property>
@@ -2996,19 +2925,6 @@
       </property>
       <property name="placeholderText">
        <string>Min</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="ip_search_pushbutton">
-      <property name="geometry">
-       <rect>
-        <x>210</x>
-        <y>150</y>
-        <width>75</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Search</string>
       </property>
      </widget>
      <widget class="QLabel" name="ip_sorting_options_label">
@@ -3554,19 +3470,6 @@
        <string>-</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="fip_search_pushbutton">
-      <property name="geometry">
-       <rect>
-        <x>210</x>
-        <y>150</y>
-        <width>75</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Search</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="fip_amount_invested_label">
       <property name="geometry">
        <rect>
@@ -3591,7 +3494,7 @@
        <rect>
         <x>60</x>
         <y>150</y>
-        <width>141</width>
+        <width>210</width>
         <height>20</height>
        </rect>
       </property>
@@ -4034,16 +3937,12 @@
   <tabstop>fiplr2_mortgage_type_lineedit</tabstop>
   <tabstop>fiplr2_property_value_lineedit</tabstop>
   <tabstop>openmarket_search_lineedit</tabstop>
-  <tabstop>openmarket_search_pushbutton</tabstop>
   <tabstop>openmarket_max_amount_lineedit</tabstop>
   <tabstop>openmarket_min_amount_lineedit</tabstop>
   <tabstop>openmarket_interest1_lineedit</tabstop>
   <tabstop>openmarket_interest2_lineedit</tabstop>
   <tabstop>openmarket_duration1_lineedit</tabstop>
   <tabstop>openmarket_duration2_lineedit</tabstop>
-  <tabstop>openmarket_rating_checkbox_a</tabstop>
-  <tabstop>openmarket_rating_checkbox_b</tabstop>
-  <tabstop>openmarket_rating_checkbox_c</tabstop>
   <tabstop>openmarket_open_market_table</tabstop>
   <tabstop>openmarket_view_loan_bids_pushbutton</tabstop>
   <tabstop>icb_property_address_lineedit</tabstop>
@@ -4053,7 +3952,6 @@
   <tabstop>icb_interest_lineedit</tabstop>
   <tabstop>icb_place_bid_pushbutton</tabstop>
   <tabstop>ip_search_lineedit</tabstop>
-  <tabstop>ip_search_pushbutton</tabstop>
   <tabstop>ip_interest1_lineedit</tabstop>
   <tabstop>ip_interest2_lineedit</tabstop>
   <tabstop>ip_duration1_lineedit</tabstop>
@@ -4066,7 +3964,6 @@
   <tabstop>bp_reject_pushbutton</tabstop>
   <tabstop>bp_accept_pushbutton</tabstop>
   <tabstop>fip_search_lineedit</tabstop>
-  <tabstop>fip_search_pushbutton</tabstop>
   <tabstop>fip_interest1_lineedit</tabstop>
   <tabstop>fip_interest2_lineedit</tabstop>
   <tabstop>fip_duration1_lineedit</tabstop>
