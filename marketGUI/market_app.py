@@ -49,6 +49,7 @@ class MarketApplication(QApplication):
         #
         signal.signal(signal.SIGINT, self.close)
         signal.signal(signal.SIGQUIT, self.close)
+        self.aboutToQuit.connect(self.close)
 
     def run(self):
         #print reactor

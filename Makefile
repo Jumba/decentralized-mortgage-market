@@ -7,4 +7,4 @@ test:
 	xdg-open html_coverage/index.html
 
 clean:
-	rm -rf html_coverage dispersy_temp* *.db
+	rm -rf html_coverage dispersy_temp* *.db test/dispersy_temp* test/market/*.db
