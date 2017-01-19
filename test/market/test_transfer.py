@@ -42,7 +42,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.assertTrue(self.server.is_running())
 
     def test_server_not_running(self):
-        server2 = Server(os.getcwd()+'/../../resources/')
+        server2 = Server(os.getcwd())
         self.assertFalse(server2.is_running())
 
     def test_set_logging(self):
