@@ -80,11 +80,6 @@ class MainWindowController(QMainWindow):
         for i in range(0, table.rowCount()):
             table.showRow(i)
 
-    @staticmethod
-    def clear_filter(table):
-        # TODO
-        pass
-
     def closeEvent(self, event):
         self.app.close()
 
