@@ -993,8 +993,10 @@ class MarketAPI(object):
         borrower = self.db.get(User.type, loan_request.user_key)
 
         bids = []
-        for investment_bid in borrower.investment_ids:
-            bids.append(self.db.get(Investment.type, investment_bid))
+        for investment_id in borrower.investment_ids:
+            investment = self.db.get(Investment.type, investment_id)
+            if investment:
+                bids.append(investment)
 
         house = self.db.get(House.type, loan_request.house_id)
         campaign = self.db.get(Campaign.type, borrower.campaign_ids[0])
