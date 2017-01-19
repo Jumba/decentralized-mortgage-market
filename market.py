@@ -1,10 +1,10 @@
+import argparse
 import os
 import sys
-import argparse
 
 import tftp_server
-from marketGUI.market_app import MarketApplication, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU, \
-    MarketApplicationBank, MarketApplicationABN
+from market.market_app import MarketApplication, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU, \
+    MarketApplicationABN
 from scenarios.apps import MarketAppSceneBank, MarketAppSceneBankING, MarketAppSceneBankRABO, MarketAppSceneBankMONEYOU, \
     MarketAppSceneBorrower, MarketAppSceneInvestor
 

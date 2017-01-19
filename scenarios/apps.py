@@ -1,4 +1,4 @@
-from marketGUI.market_app import MarketApplication, MarketApplicationABN, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU
+from market.market_app import MarketApplication, MarketApplicationABN, MarketApplicationING, MarketApplicationRABO, MarketApplicationMONEYOU
 
 
 class MarketAppSceneBorrower(MarketApplication):
