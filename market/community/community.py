@@ -317,7 +317,10 @@ class MortgageMarketCommunity(Community):
         mortgage = payload.models[Mortgage.type]
         campaign = payload.models[Campaign.type]
         house = payload.models[House.type]
-        investment = payload.models[Investment.type]
+        if Investment.type in payload.fields:
+            investment = payload.models[Investment.type]
+        else:
+            investment = None
 
         assert isinstance(user, User)
         assert isinstance(campaign, Campaign)
@@ -326,7 +329,7 @@ class MortgageMarketCommunity(Community):
         assert isinstance(house, House)
 
         # Investment can be None
-        if investment is not None:
+        if investment:
             assert isinstance(investment, Investment)
             investment.post_or_put(self.api.db, check_time=True)
 
