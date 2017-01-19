@@ -4,7 +4,10 @@ python:
   - "2.7"
 virtualenv:
   system_site_packages: true
+before install:
+  - chmod +x travis-libsodium13.sh
 install:
+  - ./travis-libsodium13.sh
   - pip install tftpy nose coverage decorator cryptography faker twisted m2crypto netifaces enum mock xenon
 # command to run tests
 script:
