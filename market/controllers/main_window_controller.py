@@ -45,13 +45,13 @@ class MainWindowController(QMainWindow):
         self.setup_view()
 
     @staticmethod
-    def filter_table(table, string, amount_column, amount_max, amount_min, interest_column, interest_max, interest_min,
-                     duration_column, duration_max, duration_min):
+    def filter_table(table, string, amount_column, amount_min, amount_max,  interest_column, interest_min, interest_max,
+                     duration_column, duration_min, duration_max):
         MainWindowController.show_hidden(table)
         MainWindowController.filter_matching(table, string)
-        MainWindowController.filter_in_range(table, amount_column, amount_max, amount_min)
-        MainWindowController.filter_in_range(table, interest_column, interest_max, interest_min)
-        MainWindowController.filter_in_range(table, duration_column, duration_max, duration_min)
+        MainWindowController.filter_in_range(table, amount_column, amount_min, amount_max)
+        MainWindowController.filter_in_range(table, interest_column, interest_min, interest_max)
+        MainWindowController.filter_in_range(table, duration_column, duration_min, duration_max)
 
     @staticmethod
     def filter_matching(table, string):
@@ -80,6 +80,11 @@ class MainWindowController(QMainWindow):
         for i in range(0, table.rowCount()):
             table.showRow(i)
 
+    @staticmethod
+    def clear_filter(table):
+        # TODO
+        pass
+
     def closeEvent(self, event):
         self.app.close()
 
@@ -101,8 +106,8 @@ class MainWindowController(QMainWindow):
         else:
             self.navigation.switch_to_profile()
 
-    # @staticmethod
-    def insert_row(self, table, row):
+    @staticmethod
+    def insert_row(table, row):
         """
 
             General method used by the controllers to insert rows with data into tables.

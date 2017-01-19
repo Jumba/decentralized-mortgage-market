@@ -8,14 +8,22 @@ class BanksPortfolioController:
     """
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
-        self.mortgages_table = self.mainwindow.fip_campaigns_table
+        self.table = self.mainwindow.fip_campaigns_table
+
+        self.mainwindow.fip_search_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.fip_min_amount_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.fip_max_amount_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.fip_interest1_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.fip_interest2_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.fip_duration1_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.fip_duration2_lineedit.textChanged.connect(self.set_filters)
 
     def setup_view(self):
         """
         Update the table of the view with up-to-date data.
         """
         # Clear table
-        self.mortgages_table.setRowCount(0)
+        self.table.setRowCount(0)
 
         # Getting the mortgages from the bank
         mortgages = self.mainwindow.api.load_mortgages(self.mainwindow.app.user)
@@ -32,14 +40,27 @@ class BanksPortfolioController:
                 else:
                     campaign_status = 'Running'
 
-                row_count = self.mortgages_table.rowCount()
-                self.mortgages_table.insertRow(row_count)
-                self.mortgages_table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
-                self.mortgages_table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
-                self.mortgages_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
-                self.mortgages_table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
-                self.mortgages_table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
-                self.mortgages_table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
-                self.mortgages_table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
-                                                                                      profile.last_name))
-                self.mortgages_table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.iban))
+                row_count = self.table.rowCount()
+                self.table.insertRow(row_count)
+                self.table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
+                self.table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
+                self.table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
+                self.table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
+                self.table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
+                self.table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
+                self.table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
+                                                                            profile.last_name))
+                self.table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.iban))
+
+    def set_filters(self):
+        self.mainwindow.filter_table(self.table,
+                                     self.mainwindow.fip_search_lineedit.text(),
+                                     2,
+                                     self.mainwindow.fip_min_amount_lineedit.text(),
+                                     self.mainwindow.fip_max_amount_lineedit.text(),
+                                     3,
+                                     self.mainwindow.fip_interest1_lineedit.text(),
+                                     self.mainwindow.fip_interest2_lineedit.text(),
+                                     5,
+                                     self.mainwindow.fip_duration1_lineedit.text(),
+                                     self.mainwindow.fip_duration2_lineedit.text())

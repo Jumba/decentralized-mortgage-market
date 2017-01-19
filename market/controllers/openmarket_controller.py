@@ -16,6 +16,14 @@ class OpenMarketController:
         self.table.doubleClicked.connect(self.view_campaign)
         self.mainwindow.openmarket_view_loan_bids_pushbutton.clicked.connect(self.view_campaign)
 
+        self.mainwindow.openmarket_search_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.openmarket_max_amount_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.openmarket_min_amount_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.openmarket_interest1_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.openmarket_interest2_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.openmarket_duration1_lineedit.textChanged.connect(self.set_filters)
+        self.mainwindow.openmarket_duration2_lineedit.textChanged.connect(self.set_filters)
+
     def setup_view(self):
         """
         Setup the open market table with up-to-date data.
@@ -42,3 +50,16 @@ class OpenMarketController:
             self.mainwindow.navigation.switch_to_campaign_bids(self.content[selected_row][0].id)
         else:
             self.mainwindow.show_dialog("Select campaign", 'No campaigns have been selected.')
+
+    def set_filters(self):
+        self.mainwindow.filter_table(self.table,
+                                     self.mainwindow.openmarket_search_lineedit.text(),
+                                     1,
+                                     self.mainwindow.openmarket_min_amount_lineedit.text(),
+                                     self.mainwindow.openmarket_max_amount_lineedit.text(),
+                                     2,
+                                     self.mainwindow.openmarket_interest1_lineedit.text(),
+                                     self.mainwindow.openmarket_interest2_lineedit.text(),
+                                     3,
+                                     self.mainwindow.openmarket_duration1_lineedit.text(),
+                                     self.mainwindow.openmarket_duration2_lineedit.text())
