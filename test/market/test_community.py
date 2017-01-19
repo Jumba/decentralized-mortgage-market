@@ -378,6 +378,7 @@ class CommunityTestSuite(unittest.TestCase):
         """
         payload = FakePayload()
         payload.request = APIMessage.CAMPAIGN_BID
+        payload.fields = [User.type, Investment.type, Campaign.type, LoanRequest.type, Mortgage.type, House.type]
         payload.models = {self.user.type: self.user,
                           self.investment.type: self.investment,
                           self.campaign.type: self.campaign,
