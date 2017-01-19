@@ -2,13 +2,11 @@
 Implementation of the Mortgage Market API
 """
 import os
-import socket
 import time
 from datetime import timedelta, datetime
 from enum import Enum
 
 import tftp_client
-from dispersy.candidate import WalkCandidate
 from dispersy.crypto import ECCrypto
 from market.api import APIMessage
 from market.api.crypto import get_public_key
@@ -31,8 +29,6 @@ class STATUS(Enum):
     PENDING = 1
     ACCEPTED = 2
     REJECTED = 3
-
-
 
 
 CAMPAIGN_LENGTH_DAYS = 30
@@ -274,18 +270,29 @@ class MarketAPI(object):
             borrower = self.db.get(User.type, borrower.id)
             investors_profile = self.db.get(Profile.type, investor.profile_id)
             campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+            mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
+            loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
+            house = self.db.get(House.type, mortgage.house_id)
 
             investment.sign(self)
             investor.sign(self)
             investors_profile.sign(self)
             borrower.sign(self)
             campaign.sign(self)
+            mortgage.sign(self)
+            loan_request.sign(self)
+            house.sign(self)
 
             self.outgoing_queue.push((APIMessage.INVESTMENT_OFFER, [Investment.type, User.type, Profile.type],
                                       {Investment.type: investment, User.type: investor,
                                        Profile.type: investors_profile}, [borrower]))
-            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type],
-                                      {User.type: borrower, Investment.type: investment, Campaign.type: campaign}, []))
+            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type,
+                                                                Mortgage.type, LoanRequest.type, House.type], {User.type: borrower,
+                                                                                                               Investment.type: investment,
+                                                                                                               Campaign.type: campaign,
+                                                                                                               Mortgage.type: mortgage,
+                                                                                                               LoanRequest.type: loan_request,
+                                                                                                               House.type: house}, []))
 
             return investment
         else:
@@ -419,16 +426,16 @@ class MarketAPI(object):
                     if bank_id in self.user_candidate:
                         # TODO bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
                         bank_ip_addresses.append(self.user_candidate[bank_id].wan_address[0])
-                    # else:
-                    #     # TODO tell the user that the chosen bank is not online
-                    #     raise
+                        # else:
+                        #     # TODO tell the user that the chosen bank is not online
+                        #     raise
 
                 profile = self.load_profile(user)
-                if profile:
+                if profile and False:
                     # if profile.document_list:
                     for document_id in profile.document_list:
                         document = self.db.get(Document.type, document_id)
-                        document.decode_document(os.getcwd()+'/resources/documents/'+document.name+'.pdf')
+                        document.decode_document(os.getcwd() + '/resources/documents/' + document.name + '.pdf')
                     tq = tftp_client.TransferQueue()
                     for ip_address in bank_ip_addresses:
                         # Add to queue
@@ -562,9 +569,9 @@ class MarketAPI(object):
 
             self.outgoing_queue.push((APIMessage.MORTGAGE_ACCEPT_SIGNED, [Mortgage.type, Campaign.type, User.type],
                                       {Mortgage.type: mortgage, Campaign.type: campaign, User.type: user}, [bank]))
-            self.outgoing_queue.push((APIMessage.MORTGAGE_ACCEPT_UNSIGNED, [LoanRequest.type, Mortgage.type, Campaign.type,
-                                      User.type, House.type], {LoanRequest.type: loan_request, Mortgage.type: mortgage,
-                                      Campaign.type: campaign, User.type: user, House.type: house}, []))
+            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Campaign.type, Mortgage.type, LoanRequest.type, House.type],
+                                      {User.type: user, Campaign.type: campaign, Mortgage.type: mortgage,
+                                       LoanRequest.type: loan_request, House.type: house}, []))
             return self.db.put(User.type, user.id, user)
         return False
 
@@ -658,17 +665,28 @@ class MarketAPI(object):
             # Add message to queue
             investor = self.db.get(User.type, investment.investor_key)
             borrowers_profile = self.db.get(BorrowersProfile.type, user.profile_id)
+            mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
+            loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
+            house = self.db.get(House.type, mortgage.house_id)
 
             investment.sign(self)
             user.sign(self)
             borrowers_profile.sign(self)
             campaign.sign(self)
+            mortgage.sign(self)
+            loan_request.sign(self)
+            house.sign(self)
 
             self.outgoing_queue.push((APIMessage.INVESTMENT_ACCEPT, [Investment.type, User.type, BorrowersProfile.type],
                                       {Investment.type: investment, User.type: user, BorrowersProfile.type:
                                           borrowers_profile}, [investor]))
-            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type], {User.type: user,
-                                      Investment.type: investment, Campaign.type: campaign}, []))
+            self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type,
+                                                                Mortgage.type, LoanRequest.type, House.type], {User.type: user,
+                                                                                                               Investment.type: investment,
+                                                                                                               Campaign.type: campaign,
+                                                                                                               Mortgage.type: mortgage,
+                                                                                                               LoanRequest.type: loan_request,
+                                                                                                               House.type: house}, []))
 
             return self.db.put(Campaign.type, campaign.id, campaign)
         return False
@@ -723,7 +741,7 @@ class MarketAPI(object):
         user.sign(self)
 
         self.outgoing_queue.push((APIMessage.MORTGAGE_REJECT, [Mortgage.type, User.type], {Mortgage.type: mortgage,
-                                  User.type: user}, [bank]))
+                                                                                           User.type: user}, [bank]))
 
         return self.db.put(LoanRequest.type, loan_request.id, loan_request) and self.db.put(User.type, user.id, user)
 
@@ -756,15 +774,26 @@ class MarketAPI(object):
 
         # Add message to queue
         investor = self.db.get(User.type, investment.investor_key)
+        mortgage = self.db.get(Mortgage.type, investment.mortgage_id)
+        loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
+        house = self.db.get(House.type, mortgage.house_id)
 
         investment.sign(self)
         user.sign(self)
         campaign.sign(self)
+        mortgage.sign(self)
+        loan_request.sign(self)
+        house.sign(self)
 
         self.outgoing_queue.push((APIMessage.INVESTMENT_REJECT, [Investment.type, User.type], {Investment.type: investment,
-                                  User.type: user}, [investor]))
-        self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type], {User.type: user,
-                                  Investment.type: investment, Campaign.type: campaign}, []))
+                                                                                               User.type: user}, [investor]))
+        self.outgoing_queue.push((APIMessage.CAMPAIGN_BID, [User.type, Investment.type, Campaign.type,
+                                                            Mortgage.type, LoanRequest.type, House.type], {User.type: user,
+                                                                                                           Investment.type: investment,
+                                                                                                           Campaign.type: campaign,
+                                                                                                           Mortgage.type: mortgage,
+                                                                                                           LoanRequest.type: loan_request,
+                                                                                                           House.type: house}, []))
 
         return investment
 
@@ -967,8 +996,10 @@ class MarketAPI(object):
         borrower = self.db.get(User.type, loan_request.user_key)
 
         bids = []
-        for investment_bid in borrower.investment_ids:
-            bids.append(self.db.get(Investment.type, investment_bid))
+        for investment_id in borrower.investment_ids:
+            investment = self.db.get(Investment.type, investment_id)
+            if investment:
+                bids.append(investment)
 
         house = self.db.get(House.type, loan_request.house_id)
         campaign = self.db.get(Campaign.type, borrower.campaign_ids[0])
