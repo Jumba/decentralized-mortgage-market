@@ -88,3 +88,4 @@ class MainWindowController(QMainWindow):
 
         """
         self.msg.about(self, title, message)
+
