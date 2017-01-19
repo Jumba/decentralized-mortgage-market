@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>7</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -2819,7 +2819,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QLineEdit" name="ip_max_lineedit">
+     <widget class="QLineEdit" name="ip_max_amount_lineedit">
       <property name="geometry">
        <rect>
         <x>470</x>
@@ -3720,7 +3720,7 @@
        <string>0</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="fip_max_lineedit">
+     <widget class="QLineEdit" name="fip_max_amount_lineedit">
       <property name="geometry">
        <rect>
         <x>470</x>
@@ -4058,7 +4058,7 @@
   <tabstop>ip_interest2_lineedit</tabstop>
   <tabstop>ip_duration1_lineedit</tabstop>
   <tabstop>ip_duration2_lineedit</tabstop>
-  <tabstop>ip_max_lineedit</tabstop>
+  <tabstop>ip_max_amount_lineedit</tabstop>
   <tabstop>ip_min_amount_lineedit</tabstop>
   <tabstop>ip_investments_table</tabstop>
   <tabstop>bp_ongoing_loans_table</tabstop>
@@ -4071,7 +4071,7 @@
   <tabstop>fip_interest2_lineedit</tabstop>
   <tabstop>fip_duration1_lineedit</tabstop>
   <tabstop>fip_duration2_lineedit</tabstop>
-  <tabstop>fip_max_lineedit</tabstop>
+  <tabstop>fip_max_amount_lineedit</tabstop>
   <tabstop>fip_min_amount_lineedit</tabstop>
   <tabstop>fip_campaigns_table</tabstop>
   <tabstop>fiplr2_offer_amount_lineedit</tabstop>
