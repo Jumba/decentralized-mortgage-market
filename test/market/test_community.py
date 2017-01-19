@@ -366,7 +366,7 @@ class CommunityTestSuite(unittest.TestCase):
         # Check if the user has the investment
         self.assertTrue(self.isModelInDB(self.api, self.investment))
 
-    def test_on_campaign_bid(self):
+    def test_on_campaign_bid_with_investment(self):
         """
         Test sending a campaign bid
         user -> user
@@ -380,28 +380,107 @@ class CommunityTestSuite(unittest.TestCase):
         payload.request = APIMessage.CAMPAIGN_BID
         payload.models = {self.user.type: self.user,
                           self.investment.type: self.investment,
-                          self.campaign.type: self.campaign}
+                          self.campaign.type: self.campaign,
+                          self.loan_request.type: self.loan_request,
+                          self.mortgage.type: self.mortgage,
+                          self.house.type: self.house}
 
-        # Check if user doesn't have the investment yet
+        # Check if user doesn't have the models yet
         self.assertFalse(self.isModelInDB(self.api, self.investment))
         self.assertFalse(self.isModelInDB(self.api_bank, self.investment))
         self.assertFalse(self.isModelInDB(self.api_investor, self.investment))
         self.assertFalse(self.isModelInDB(self.api, self.campaign))
         self.assertFalse(self.isModelInDB(self.api_bank, self.campaign))
         self.assertFalse(self.isModelInDB(self.api_investor, self.campaign))
+        self.assertFalse(self.isModelInDB(self.api, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api, self.mortgage))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.mortgage))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.mortgage))
+        self.assertFalse(self.isModelInDB(self.api, self.house))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.house))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.house))
 
         # Send campaign bid
         self.community.on_campaign_bid(payload)
         self.community_bank.on_campaign_bid(payload)
         self.community_investor.on_campaign_bid(payload)
 
-        # Check if the user has the investment
+        # Check if the user has the models
         self.assertTrue(self.isModelInDB(self.api, self.investment))
         self.assertTrue(self.isModelInDB(self.api_bank, self.investment))
         self.assertTrue(self.isModelInDB(self.api_investor, self.investment))
         self.assertTrue(self.isModelInDB(self.api, self.campaign))
         self.assertTrue(self.isModelInDB(self.api_bank, self.campaign))
         self.assertTrue(self.isModelInDB(self.api_investor, self.campaign))
+        self.assertTrue(self.isModelInDB(self.api, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api, self.house))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.house))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.house))
+
+    def test_on_campaign_bid_without_investment(self):
+        """
+        Test sending a campaign bid
+        user -> user
+        user -> bank
+        user -> investor
+        investor -> user
+        investor -> bank
+        investor -> investor
+        """
+        payload = FakePayload()
+        payload.request = APIMessage.CAMPAIGN_BID
+        payload.models = {self.user.type: self.user,
+                          self.investment.type: None,
+                          self.campaign.type: self.campaign,
+                          self.loan_request.type: self.loan_request,
+                          self.mortgage.type: self.mortgage,
+                          self.house.type: self.house}
+
+        # Check if user doesn't have the models yet
+        self.assertFalse(self.isModelInDB(self.api, self.investment))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.investment))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.investment))
+        self.assertFalse(self.isModelInDB(self.api, self.campaign))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.campaign))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.campaign))
+        self.assertFalse(self.isModelInDB(self.api, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.loan_request))
+        self.assertFalse(self.isModelInDB(self.api, self.mortgage))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.mortgage))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.mortgage))
+        self.assertFalse(self.isModelInDB(self.api, self.house))
+        self.assertFalse(self.isModelInDB(self.api_bank, self.house))
+        self.assertFalse(self.isModelInDB(self.api_investor, self.house))
+
+        # Send campaign bid
+        self.community.on_campaign_bid(payload)
+        self.community_bank.on_campaign_bid(payload)
+        self.community_investor.on_campaign_bid(payload)
+
+        # Check if the user has the models
+        # self.assertFalse(self.isModelInDB(self.api, None))
+        # self.assertFalse(self.isModelInDB(self.api_bank, None))
+        # self.assertFalse(self.isModelInDB(self.api_investor, None))
+        self.assertTrue(self.isModelInDB(self.api, self.campaign))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.campaign))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.campaign))
+        self.assertTrue(self.isModelInDB(self.api, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.loan_request))
+        self.assertTrue(self.isModelInDB(self.api, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.mortgage))
+        self.assertTrue(self.isModelInDB(self.api, self.house))
+        self.assertTrue(self.isModelInDB(self.api_bank, self.house))
+        self.assertTrue(self.isModelInDB(self.api_investor, self.house))
 
     def test_on_investment_accept(self):
         """

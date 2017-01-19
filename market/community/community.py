@@ -313,16 +313,28 @@ class MortgageMarketCommunity(Community):
 
     def on_campaign_bid(self, payload):
         user = payload.models[User.type]
-        investment = payload.models[Investment.type]
+        loan_request = payload.models[LoanRequest.type]
+        mortgage = payload.models[Mortgage.type]
         campaign = payload.models[Campaign.type]
+        house = payload.models[House.type]
+        investment = payload.models[Investment.type]
 
         assert isinstance(user, User)
-        assert isinstance(investment, Investment)
         assert isinstance(campaign, Campaign)
+        assert isinstance(mortgage, Mortgage)
+        assert isinstance(loan_request, LoanRequest)
+        assert isinstance(house, House)
+
+        # Investment can be None
+        if investment is not None:
+            assert isinstance(investment, Investment)
+            investment.post_or_put(self.api.db, check_time=True)
 
         user.post_or_put(self.api.db, check_time=True)
-        investment.post_or_put(self.api.db, check_time=True)
+        loan_request.post_or_put(self.api.db, check_time=True)
+        mortgage.post_or_put(self.api.db, check_time=True)
         campaign.post_or_put(self.api.db, check_time=True)
+        house.post_or_put(self.api.db, check_time=True)
 
         return True
 
