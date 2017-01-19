@@ -16,7 +16,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.server = Server()
+        cls.server = Server(os.path.normpath(os.getcwd()+'/../../resources/'))
         cls.server.start()
         time.sleep(1)
 
@@ -29,7 +29,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.tftp_client = self.client.client
         self.queue = TransferQueue()
         self.document_path_client = os.path.normpath(os.getcwd()+'/../../resources/documents/')
-        self.document_path_host = os.path.normpath(os.getcwd()+'/../../resources/')
+        self.document_path_host = os.path.normpath('/../../resources/')
 
     def throw(self, exception):
         raise exception()
@@ -42,7 +42,7 @@ class DocumentTransferTestSuite(unittest.TestCase):
         self.assertTrue(self.server.is_running())
 
     def test_server_not_running(self):
-        server2 = Server()
+        server2 = Server(os.getcwd()+'/../../resources/')
         self.assertFalse(server2.is_running())
 
     def test_set_logging(self):
@@ -67,8 +67,8 @@ class DocumentTransferTestSuite(unittest.TestCase):
     def test_client_upload_default_remote_path(self):
         mock = MagicMock()
         self.tftp_client.upload = mock
-        self.client.upload('file1.pdf')
-        mock.assert_called_once_with(os.getcwd()+'/resources/received/file1.pdf', 'file1.pdf')
+        self.client.upload(self.document_path_client+'/file1.pdf')
+        mock.assert_called_once_with('file1.pdf', self.document_path_client+'/file1.pdf')
 
     def test_client_upload_folder_default_path(self):
         mock = MagicMock()

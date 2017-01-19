@@ -432,8 +432,7 @@ class MarketAPI(object):
                     tq = tftp_client.TransferQueue()
                     for ip_address in bank_ip_addresses:
                         # Add to queue
-                        tq.add(ip_address, 50000, os.getcwd()+'/resources/documents',
-                               os.getcwd()+'/resources/received/'+str(loan_request.id)+'/')
+                        tq.add(ip_address, 50000, os.getcwd()+'/resources/documents', str(loan_request.id)+'/')
                     tq.upload_all()
                     self.failed_documents = tq.failed
 

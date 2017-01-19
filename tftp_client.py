@@ -9,7 +9,7 @@ import time
 import logging
 
 DEFAULT_CLIENT_PATH = os.getcwd()+'/resources/documents/'
-DEFAULT_HOST_PATH = os.getcwd()+'/resources/received/'
+DEFAULT_HOST_PATH = ''
 DEFAULT_PORT = 50000
 
 
