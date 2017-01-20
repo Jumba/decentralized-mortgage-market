@@ -47,7 +47,6 @@ class BorrowersPortfolioController:
                 for bank, bank_id in Global.BANKS.iteritems():
                     if bank_id == loan.bank:
                         name = bank
-                print loan.bank
             elif isinstance(loan, Investment):
                 name = profile.first_name + ' ' + profile.last_name
                 iban = profile.iban
