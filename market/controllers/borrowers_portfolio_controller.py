@@ -1,3 +1,4 @@
+from market import Global
 from market.models.loans import Mortgage, Investment
 
 
@@ -42,6 +43,11 @@ class BorrowersPortfolioController:
 
             if isinstance(loan, Mortgage):
                 default_rate = loan.default_rate
+
+                for bank, bank_id in Global.BANKS.iteritems():
+                    if bank_id == loan.bank:
+                        name = bank
+                print loan.bank
             elif isinstance(loan, Investment):
                 name = profile.first_name + ' ' + profile.last_name
                 iban = profile.iban
@@ -56,12 +62,18 @@ class BorrowersPortfolioController:
         """
         for offer in self.pending_loans:
             if isinstance(offer, Mortgage):
+                bank_name = ' '
+
+                for bank, bank_id in Global.BANKS.iteritems():
+                    if bank_id == offer.bank:
+                        bank_name = bank
+
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,
                                                                 offer.default_rate, offer.duration,
-                                                                offer.type])
+                                                                offer.type, bank_name])
             elif isinstance(offer, Investment):
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,
-                                                                ' ', offer.duration, offer.type])
+                                                                ' ', offer.duration, offer.type, ' '])
 
     def accept_offer(self):
         """
