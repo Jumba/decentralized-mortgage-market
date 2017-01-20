@@ -7,17 +7,15 @@ from uuid import UUID
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
+from mock import MagicMock
 
 from market.api.api import STATUS
 from market.controllers.main_window_controller import MainWindowController, QTableWidget
 from market.controllers.navigation import NavigateUser
 from market.controllers.openmarket_controller import OpenMarketController
+from market.market_app import TestMarketApplication
 from market.models.role import Role
 from market.models.user import User
-
-from marketGUI.market_app import TestMarketApplication
-
-from mock import MagicMock
 
 
 class GUITestSuite(unittest.TestCase):
