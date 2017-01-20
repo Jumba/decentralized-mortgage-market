@@ -5,14 +5,15 @@ import time
 import logging
 
 DEFAULT_PORT = 50000
+DEFAULT_ROOT = os.getcwd()+'/resources/received/'
 
 
 class Server:
     """
         Create a Server object that uses the tftpy module to host a TFTP server
     """
-    def __init__(self, port=DEFAULT_PORT):
-        self.server = tftpy.TftpServer(os.getcwd())
+    def __init__(self, root_folder=DEFAULT_ROOT, port=DEFAULT_PORT):
+        self.server = tftpy.TftpServer(root_folder)
         self.port = port
         self.thread = threading.Thread(target=self.server_listen)
 
