@@ -52,6 +52,9 @@ class OpenMarketController:
             self.mainwindow.show_dialog("Select campaign", 'No campaigns have been selected.')
 
     def set_filters(self):
+        """
+        Sets the method that gets called every time there is a change to the fields.
+        """
         self.mainwindow.filter_table(self.table,
                                      self.mainwindow.openmarket_search_lineedit.text(),
                                      1,

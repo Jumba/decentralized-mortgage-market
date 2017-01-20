@@ -68,6 +68,9 @@ class InvestorsPortfolioController:
             self.table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(iban))
 
     def set_filters(self):
+        """
+        Sets the method that gets called every time there is a change to the fields.
+        """
         self.mainwindow.filter_table(self.table,
                                      self.mainwindow.ip_search_lineedit.text(),
                                      3,
