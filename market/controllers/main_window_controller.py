@@ -1,4 +1,5 @@
 from PyQt5 import uic
+
 from PyQt5.QtWidgets import *
 from market.controllers.banks_portfolio_controller import BanksPortfolioController
 from market.controllers.campaign_bids_controller import CampaignBidsController
@@ -42,6 +43,66 @@ class MainWindowController(QMainWindow):
         self.msg = QMessageBox
         self.setup_view()
 
+    @staticmethod
+    def filter_table(table, string, amount_column, amount_min, amount_max,  interest_column, interest_min, interest_max,
+                     duration_column, duration_min, duration_max):
+        """
+            Passes all inputs to filter the given table with the filter_matching and filter_in_range methods.
+        """
+        MainWindowController.show_hidden(table)
+        MainWindowController.filter_matching(table, string)
+        MainWindowController.filter_in_range(table, amount_column, amount_min, amount_max)
+        MainWindowController.filter_in_range(table, interest_column, interest_min, interest_max)
+        MainWindowController.filter_in_range(table, duration_column, duration_min, duration_max)
+
+    @staticmethod
+    def filter_matching(table, string):
+        """
+            Hides all rows that don't contain the given substring.
+        :param table: The given table that will be filtered.
+        :param string: The substring that will be used to match the items in the table.
+        """
+        for i in range(0, table.rowCount()):
+            matched = False
+            for j in range(0, table.columnCount()):
+                if string in str(table.item(i, j).text()):
+                    matched = True
+                    break
+            if matched is False:
+                table.hideRow(i)
+
+    @staticmethod
+    def filter_in_range(table, column, lower_bound, upper_bound):
+        """
+            Hides all rows which do not fit within a domain for a specific column.
+        :param table: The given table that will be filtered.
+        :param column: The column which will be checked.
+        :param lower_bound: Lower bound of the domain.
+        :param upper_bound: Upper bound of the domain.
+        """
+        if lower_bound or upper_bound:
+            if not lower_bound:
+                lower_bound = float('-inf')
+            elif not upper_bound:
+                upper_bound = float('inf')
+            try:
+                for i in range(0, table.rowCount()):
+                    if not float(lower_bound) <= float(table.item(i, column).text()) <= float(upper_bound):
+                        table.hideRow(i)
+            except ValueError as e:
+                print('Given input for lower or upper bound cannot be used. ', e.message)
+
+    @staticmethod
+    def show_hidden(table):
+        """
+            Shows all rows of the given table.
+        """
+        for i in range(0, table.rowCount()):
+            table.showRow(i)
+
+    def closeEvent(self, event):
+        self.app.close()
+
     def setup_view(self):
         """
             Calls the right user's navigation bar and redirects to the user's starting page.
@@ -60,8 +121,8 @@ class MainWindowController(QMainWindow):
         else:
             self.navigation.switch_to_profile()
 
-    # @staticmethod
-    def insert_row(self, table, row):
+    @staticmethod
+    def insert_row(table, row):
         """
 
             General method used by the controllers to insert rows with data into tables.
