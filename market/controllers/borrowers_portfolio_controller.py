@@ -1,5 +1,6 @@
 from market import Global
-from market.models.loans import Mortgage, Investment
+from market.api.api import STATUS
+from market.models.loans import Mortgage, Investment, Campaign, LoanRequest
 
 
 class BorrowersPortfolioController:
@@ -31,6 +32,26 @@ class BorrowersPortfolioController:
         # Fill the table with loans
         self.add_accepted_loans()
         self.add_pending_loans()
+
+        # Update the borrower's loan status
+        self.add_loan_status()
+
+    def add_loan_status(self):
+        """
+        Updates loan status label
+        """
+        loan = self.mainwindow.api.load_borrowers_loan_status(self.mainwindow.app.user)
+
+        if isinstance(loan, Campaign):
+            if loan.completed:
+                self.mainwindow.bp_status_label.setText('You currently have no active loan request.')
+            else:
+                self.mainwindow.bp_status_label.setText('You currently have a running campaign. Amount needed: ' +
+                                                        str(loan.amount) + u' \u20ac')
+        elif isinstance(loan, LoanRequest):
+            self.mainwindow.bp_status_label.setText('You currently have a pending loan request.')
+        else:
+            self.mainwindow.bp_status_label.setText('You currently have no active loan request.')
 
     def add_accepted_loans(self):
         """

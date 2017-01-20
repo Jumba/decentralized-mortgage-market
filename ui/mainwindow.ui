@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>8</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -2969,7 +2969,7 @@
       <property name="geometry">
        <rect>
         <x>510</x>
-        <y>520</y>
+        <y>580</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -2982,7 +2982,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>130</y>
+        <y>190</y>
         <width>731</width>
         <height>161</height>
        </rect>
@@ -3114,7 +3114,7 @@
       <property name="geometry">
        <rect>
         <x>590</x>
-        <y>520</y>
+        <y>580</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -3127,7 +3127,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>310</y>
+        <y>370</y>
         <width>121</width>
         <height>31</height>
        </rect>
@@ -3147,7 +3147,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>100</y>
+        <y>160</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -3187,7 +3187,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>340</y>
+        <y>400</y>
         <width>731</width>
         <height>161</height>
        </rect>
@@ -3303,6 +3303,24 @@
         </font>
        </property>
       </column>
+     </widget>
+     <widget class="QLabel" name="bp_status_label">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>120</y>
+        <width>481</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>You currently have no active loan request.</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="fip_page">

@@ -549,8 +549,12 @@ class MarketAPI(object):
         # Add the newly created campaign to the database
         end_date = datetime.now() + timedelta(days=CAMPAIGN_LENGTH_DAYS)
         finance_goal = loan_request.amount_wanted - mortgage.amount
+        complete = False
 
-        campaign = Campaign(mortgage.id, finance_goal, end_date, False)
+        if finance_goal <= 0:
+            complete = True
+
+        campaign = Campaign(mortgage.id, finance_goal, end_date, complete)
         if self.db.post(Campaign.type, campaign):
             user.campaign_ids.append(campaign.id)
             bank.campaign_ids.append(campaign.id)
@@ -1037,3 +1041,19 @@ class MarketAPI(object):
                     mortgages.append([mortgage, house, None, borrowers_profile])
 
         return mortgages
+
+    def load_borrowers_loan_status(self, user):
+        """
+        Get the borrower's campaign if it exists or loan request if it exists
+        :param user: User-object, in this case the user has the role of a borrower
+        :return: Campaign if it exists, else LoanRequest if it exists, None otherwise
+        """
+        user = self._get_user(user)
+
+        for campaign_id in user.campaign_ids:
+            return self.db.get(Campaign.type, campaign_id)
+
+        for loan_request_id in user.loan_request_ids:
+            return self.db.get(LoanRequest.type, loan_request_id)
+
+        return None
