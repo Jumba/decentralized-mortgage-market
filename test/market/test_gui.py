@@ -1161,22 +1161,22 @@ class GUITestSuite(unittest.TestCase):
         # Check if the first mortgage is in the table with the right values
         self.assertEqual(self.window.fip_campaigns_table.item(0, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.fip_campaigns_table.item(0, 1).text(), 'Completed')
-        self.assertEqual(self.window.fip_campaigns_table.item(0, 2).text(), '123000')
-        self.assertEqual(self.window.fip_campaigns_table.item(0, 3).text(), '5.5')
-        self.assertEqual(self.window.fip_campaigns_table.item(0, 4).text(), '9.0')
-        self.assertEqual(self.window.fip_campaigns_table.item(0, 5).text(), '30')
-        self.assertEqual(self.window.fip_campaigns_table.item(0, 6).text(), 'Bob Saget')
-        self.assertEqual(self.window.fip_campaigns_table.item(0, 7).text(), 'NL53 INGBB 04027 30393')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 3).text(), '123000')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 4).text(), '5.5')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 5).text(), '9.0')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 6).text(), '30')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 7).text(), 'Bob Saget')
+        self.assertEqual(self.window.fip_campaigns_table.item(0, 8).text(), 'NL53 INGBB 04027 30393')
 
         # Check if the second mortgage is in the table with the right values
         self.assertEqual(self.window.fip_campaigns_table.item(1, 0).text(), 'straat 11, 1111AA')
         self.assertEqual(self.window.fip_campaigns_table.item(1, 1).text(), 'Running')
-        self.assertEqual(self.window.fip_campaigns_table.item(1, 2).text(), '123000')
-        self.assertEqual(self.window.fip_campaigns_table.item(1, 3).text(), '5.5')
-        self.assertEqual(self.window.fip_campaigns_table.item(1, 4).text(), '9.0')
-        self.assertEqual(self.window.fip_campaigns_table.item(1, 5).text(), '30')
-        self.assertEqual(self.window.fip_campaigns_table.item(1, 6).text(), 'Bob Saget')
-        self.assertEqual(self.window.fip_campaigns_table.item(1, 7).text(), 'NL53 INGBB 04027 30393')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 3).text(), '123000')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 4).text(), '5.5')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 5).text(), '9.0')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 6).text(), '30')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 7).text(), 'Bob Saget')
+        self.assertEqual(self.window.fip_campaigns_table.item(1, 8).text(), 'NL53 INGBB 04027 30393')
 
     def test_pending_loan_requests_table_empty(self):
         """

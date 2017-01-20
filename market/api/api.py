@@ -1008,7 +1008,7 @@ class MarketAPI(object):
 
     def load_mortgages(self, user):
         """
-            Display all pending running mortgages for the bank
+            Display all pending and running mortgages for the bank
 
             :param user: The bank :any:`User`
             :type user: :any:`User`
@@ -1024,12 +1024,16 @@ class MarketAPI(object):
         for mortgage_id in user.mortgage_ids:
             mortgage = self.db.get(Mortgage.type, mortgage_id)
             assert isinstance(mortgage, Mortgage)
-            if mortgage.status == STATUS.ACCEPTED:
+            if mortgage.status == STATUS.ACCEPTED or mortgage.status == STATUS.PENDING:
                 house = self.db.get(House.type, mortgage.house_id)
-                campaign = self.db.get(Campaign.type, mortgage.campaign_id)
                 loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
                 borrower = self.db.get(User.type, loan_request.user_key)
                 borrowers_profile = self.db.get(BorrowersProfile.type, borrower.profile_id)
-                mortgages.append([mortgage, house, campaign, borrowers_profile])
+
+                if mortgage.status == STATUS.ACCEPTED:
+                    campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+                    mortgages.append([mortgage, house, campaign, borrowers_profile])
+                elif mortgage.status == STATUS.PENDING:
+                    mortgages.append([mortgage, house, None, borrowers_profile])
 
         return mortgages

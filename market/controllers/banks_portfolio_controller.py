@@ -1,5 +1,7 @@
 from PyQt5 import QtWidgets
 
+from market.api.api import STATUS
+
 
 class BanksPortfolioController:
     """
@@ -40,23 +42,32 @@ class BanksPortfolioController:
         for [mortgage, house, campaign, profile] in mortgages:
             # Property Address, Campaign Status, Investment Status, Amount Invested, Interest, Duration
             address = house.address + ' ' + house.house_number + ', ' + house.postal_code
+            campaign_status = ' '
+            mortgage_status = ' '
 
-            if campaign.completed:
-                campaign_status = 'Completed'
-            else:
-                campaign_status = 'Running'
+            if campaign:
+                if campaign.completed:
+                    campaign_status = 'Completed'
+                else:
+                    campaign_status = 'Running'
+
+            if mortgage.status == STATUS.PENDING:
+                mortgage_status = 'Pending'
+            elif mortgage.status == STATUS.ACCEPTED:
+                mortgage_status = 'Accepted'
 
             row_count = self.table.rowCount()
             self.table.insertRow(row_count)
             self.table.setItem(row_count, 0, QtWidgets.QTableWidgetItem(address))
             self.table.setItem(row_count, 1, QtWidgets.QTableWidgetItem(campaign_status))
-            self.table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
-            self.table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
-            self.table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
-            self.table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
-            self.table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
+            self.table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(mortgage_status))
+            self.table.setItem(row_count, 3, QtWidgets.QTableWidgetItem(str(mortgage.amount)))
+            self.table.setItem(row_count, 4, QtWidgets.QTableWidgetItem(str(mortgage.interest_rate)))
+            self.table.setItem(row_count, 5, QtWidgets.QTableWidgetItem(str(mortgage.default_rate)))
+            self.table.setItem(row_count, 6, QtWidgets.QTableWidgetItem(str(mortgage.duration)))
+            self.table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.first_name + ' ' +
                                                                         profile.last_name))
-            self.table.setItem(row_count, 7, QtWidgets.QTableWidgetItem(profile.iban))
+            self.table.setItem(row_count, 8, QtWidgets.QTableWidgetItem(profile.iban))
 
     def set_filters(self):
         """
