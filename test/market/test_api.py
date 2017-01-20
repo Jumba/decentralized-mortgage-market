@@ -1110,7 +1110,7 @@ class APITestSuite(unittest.TestCase):
     def test_load_mortgages(self):
         """
         This test checks the functionality of displaying all running mortgages for a bank
-        Mortgages should only show when they're accepted
+        Mortgages should only show when they're accepted or pending
         """
 
         # Create borrowers
@@ -1162,9 +1162,10 @@ class APITestSuite(unittest.TestCase):
         bank = self.api.db.get(User.type, bank.id)
         mortgages = self.api.load_mortgages(bank)
 
-        # Check if only the accepted mortgage is in the bank's list
+        # Check if both the pending and accepted mortgages are in the bank's list
         self.assertIn(mortgage1, mortgages[0])
-        self.assertEqual(len(mortgages), 1)
+        self.assertIn(mortgage2, mortgages[1])
+        self.assertEqual(len(mortgages), 2)
 
     def test_reject_pending_campaign_bids(self):
         """

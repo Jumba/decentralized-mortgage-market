@@ -549,8 +549,12 @@ class MarketAPI(object):
         # Add the newly created campaign to the database
         end_date = datetime.now() + timedelta(days=CAMPAIGN_LENGTH_DAYS)
         finance_goal = loan_request.amount_wanted - mortgage.amount
+        complete = False
 
-        campaign = Campaign(mortgage.id, finance_goal, end_date, False)
+        if finance_goal <= 0:
+            complete = True
+
+        campaign = Campaign(mortgage.id, finance_goal, end_date, complete)
         if self.db.post(Campaign.type, campaign):
             user.campaign_ids.append(campaign.id)
             bank.campaign_ids.append(campaign.id)
@@ -1008,7 +1012,7 @@ class MarketAPI(object):
 
     def load_mortgages(self, user):
         """
-            Display all pending running mortgages for the bank
+            Display all pending and running mortgages for the bank
 
             :param user: The bank :any:`User`
             :type user: :any:`User`
@@ -1024,12 +1028,32 @@ class MarketAPI(object):
         for mortgage_id in user.mortgage_ids:
             mortgage = self.db.get(Mortgage.type, mortgage_id)
             assert isinstance(mortgage, Mortgage)
-            if mortgage.status == STATUS.ACCEPTED:
+            if mortgage.status == STATUS.ACCEPTED or mortgage.status == STATUS.PENDING:
                 house = self.db.get(House.type, mortgage.house_id)
-                campaign = self.db.get(Campaign.type, mortgage.campaign_id)
                 loan_request = self.db.get(LoanRequest.type, mortgage.request_id)
                 borrower = self.db.get(User.type, loan_request.user_key)
                 borrowers_profile = self.db.get(BorrowersProfile.type, borrower.profile_id)
-                mortgages.append([mortgage, house, campaign, borrowers_profile])
+
+                if mortgage.status == STATUS.ACCEPTED:
+                    campaign = self.db.get(Campaign.type, mortgage.campaign_id)
+                    mortgages.append([mortgage, house, campaign, borrowers_profile])
+                elif mortgage.status == STATUS.PENDING:
+                    mortgages.append([mortgage, house, None, borrowers_profile])
 
         return mortgages
+
+    def load_borrowers_loan_status(self, user):
+        """
+        Get the borrower's campaign if it exists or loan request if it exists
+        :param user: User-object, in this case the user has the role of a borrower
+        :return: Campaign if it exists, else LoanRequest if it exists, None otherwise
+        """
+        user = self._get_user(user)
+
+        for campaign_id in user.campaign_ids:
+            return self.db.get(Campaign.type, campaign_id)
+
+        for loan_request_id in user.loan_request_ids:
+            return self.db.get(LoanRequest.type, loan_request_id)
+
+        return None

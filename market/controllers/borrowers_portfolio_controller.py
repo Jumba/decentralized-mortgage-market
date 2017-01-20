@@ -1,4 +1,6 @@
-from market.models.loans import Mortgage, Investment
+from market import Global
+from market.api.api import STATUS
+from market.models.loans import Mortgage, Investment, Campaign, LoanRequest
 
 
 class BorrowersPortfolioController:
@@ -31,6 +33,26 @@ class BorrowersPortfolioController:
         self.add_accepted_loans()
         self.add_pending_loans()
 
+        # Update the borrower's loan status
+        self.add_loan_status()
+
+    def add_loan_status(self):
+        """
+        Updates loan status label
+        """
+        loan = self.mainwindow.api.load_borrowers_loan_status(self.mainwindow.app.user)
+
+        if isinstance(loan, Campaign):
+            if loan.completed:
+                self.mainwindow.bp_status_label.setText('You currently have no active loan request.')
+            else:
+                self.mainwindow.bp_status_label.setText('You currently have a running campaign. Amount needed: ' +
+                                                        str(loan.amount) + u' \u20ac')
+        elif isinstance(loan, LoanRequest):
+            self.mainwindow.bp_status_label.setText('You currently have a pending loan request.')
+        else:
+            self.mainwindow.bp_status_label.setText('You currently have no active loan request.')
+
     def add_accepted_loans(self):
         """
         Adds the accepted loans to the table.
@@ -42,6 +64,10 @@ class BorrowersPortfolioController:
 
             if isinstance(loan, Mortgage):
                 default_rate = loan.default_rate
+
+                for bank, bank_id in Global.BANKS.iteritems():
+                    if bank_id == loan.bank:
+                        name = bank
             elif isinstance(loan, Investment):
                 name = profile.first_name + ' ' + profile.last_name
                 iban = profile.iban
@@ -56,12 +82,18 @@ class BorrowersPortfolioController:
         """
         for offer in self.pending_loans:
             if isinstance(offer, Mortgage):
+                bank_name = ' '
+
+                for bank, bank_id in Global.BANKS.iteritems():
+                    if bank_id == offer.bank:
+                        bank_name = bank
+
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,
                                                                 offer.default_rate, offer.duration,
-                                                                offer.type])
+                                                                offer.type, bank_name])
             elif isinstance(offer, Investment):
                 self.mainwindow.insert_row(self.pending_table, [offer.amount, offer.interest_rate,
-                                                                ' ', offer.duration, offer.type])
+                                                                ' ', offer.duration, offer.type, ' '])
 
     def accept_offer(self):
         """
