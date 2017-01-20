@@ -80,14 +80,17 @@ class MainWindowController(QMainWindow):
         :param lower_bound: Lower bound of the domain.
         :param upper_bound: Upper bound of the domain.
         """
-        if lower_bound and upper_bound:
+        if lower_bound or upper_bound:
+            if not lower_bound:
+                lower_bound = float('-inf')
+            elif not upper_bound:
+                upper_bound = float('inf')
             try:
                 for i in range(0, table.rowCount()):
                     if not float(lower_bound) <= float(table.item(i, column).text()) <= float(upper_bound):
                         table.hideRow(i)
             except ValueError as e:
-                print('Given input for lower or upper bound cannot be used.')
-                print(e.message)
+                print('Given input for lower or upper bound cannot be used. ', e.message)
 
     @staticmethod
     def show_hidden(table):
