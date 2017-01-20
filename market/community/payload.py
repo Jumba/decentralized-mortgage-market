@@ -52,7 +52,7 @@ class APIMessagePayload(Payload):
 
             for field in fields:
                 assert field in models
-                assert isinstance(models[field], DatabaseModel)
+                assert isinstance(models[field], DatabaseModel), "%s is %s which is not a DatabaseModel" % (field, models[field])
 
             super(APIMessagePayload.Implementation, self).__init__(meta)
 

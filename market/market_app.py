@@ -8,7 +8,7 @@ import signal
 
 from market import Global
 
-logging.basicConfig(level=logging.WARNING, filename="market.log", filemode="a+",
+logging.basicConfig(level=logging.WARNING, filename="logging/market.log", filemode="a+",
                     format="%(asctime)-15s %(levelname)-8s %(message)s")
 
 from PyQt5.QtWidgets import QApplication
@@ -49,6 +49,7 @@ class MarketApplication(QApplication):
         #
         signal.signal(signal.SIGINT, self.close)
         signal.signal(signal.SIGQUIT, self.close)
+        self.aboutToQuit.connect(self.close)
 
     def run(self):
         #print reactor
