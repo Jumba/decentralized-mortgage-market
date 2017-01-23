@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QPushButton, QTableWidget
 from PyQt5.QtWidgets import QTableWidgetItem
 
 
-DOCUMENT_NAMES = ['Example Document 1', 'Example Document 2', 'Example Document 3']
+DOCUMENT_NAMES = ['Paspoort', 'Loonstrook', 'Werkgeversverklaring']
 
 
 class ProfileController:

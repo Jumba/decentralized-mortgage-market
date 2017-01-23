@@ -56,7 +56,8 @@ class PendingLoanRequests2Controller:
         self.mainwindow.fiplr2_property_value_lineedit.setText(str(house.price))
         self.mainwindow.fiplr2_description_textedit.setText(str(loan_request.description))
 
-        documents = self.search(os.getcwd() + '/resources/received/'+str(loan_request_id)+'/*.pdf')
+        # documents = self.search(os.getcwd() + '/resources/received/'+str(loan_request_id)+'/*.pdf')
+        documents = self.search(os.getcwd() + '/resources/*.pdf')
         self.table.setRowCount(0)
         for i in range(0, len(documents)):
             self.table.insertRow(i)
