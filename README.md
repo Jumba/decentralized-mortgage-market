@@ -1,13 +1,13 @@
 # decentralized-mortgage-market
-After cloning the repository initialize dispersy by running
+After cloning the repository initialize dispersy by running:
 
 `git submodule update --init --recursive`
 
-Install the dependencies with
+Install the dependencies with:
 
 `pip install tftpy nose coverage decorator cryptography faker twisted m2crypto netifaces enum34 mock`
 
-Run the market using market.py
+Run the market using `python market.py` which additionally accepts the following optional arguments:
 ```
   usage: market.py [-h] [--headless] [--bank {abn,ing,rabo,moneyou}]
                    [--scenario {bank,borrower,investor}]
