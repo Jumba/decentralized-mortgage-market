@@ -8,7 +8,7 @@ Install the dependencies with
 `pip install tftpy nose coverage decorator cryptography faker twisted m2crypto netifaces enum34 mock`
 
 Run the market using market.py
-
+```
   usage: market.py [-h] [--headless] [--bank {abn,ing,rabo,moneyou}]
                    [--scenario {bank,borrower,investor}]
 
@@ -19,9 +19,9 @@ Run the market using market.py
                           Run the market as a bank.
     --scenario {bank,borrower,investor}
                           Select a scenario to enable
-                          
-Generate the API docs by running `make html` in the docs directory.
+```
 
+Generate the API docs by running `make html` in the docs directory.
 
 
 Travis CI build status: [![Build Status](https://travis-ci.org/Jumba/decentralized-mortgage-market.svg?branch=master)](https://travis-ci.org/Jumba/decentralized-mortgage-market)
