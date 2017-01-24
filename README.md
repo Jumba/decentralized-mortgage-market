@@ -6,7 +6,7 @@ Initialiaze dispersy by running
 
 Install the dependencies with
 
-`pip install tftpy nose coverage decorator cryptography faker twisted m2crypto netifaces enum mock`
+`pip install tftpy nose coverage decorator cryptography faker twisted m2crypto netifaces enum Mock34`
 
 
 Travis CI build status: [![Build Status](https://travis-ci.org/Jumba/decentralized-mortgage-market.svg?branch=master)](https://travis-ci.org/Jumba/decentralized-mortgage-market)
