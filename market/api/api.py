@@ -431,7 +431,7 @@ class MarketAPI(object):
                         #     raise
 
                 profile = self.load_profile(user)
-                if profile:
+                if profile and False:
                     # if profile.document_list:
                     for document_id in profile.document_list:
                         document = self.db.get(Document.type, document_id)
