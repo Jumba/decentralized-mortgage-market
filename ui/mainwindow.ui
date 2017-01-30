@@ -30,7 +30,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>8</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="login_page">
      <widget class="QLabel" name="login_title">
@@ -1111,7 +1111,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
+           <width>825</width>
            <height>1000</height>
           </rect>
          </property>
@@ -2468,6 +2468,9 @@
       </property>
      </widget>
      <widget class="QLabel" name="icb_euro_sign_label">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -2489,6 +2492,9 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="icb_remaining_amount_lineedit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>70</x>
@@ -4012,16 +4018,17 @@
   <tabstop>fip_min_amount_lineedit</tabstop>
   <tabstop>fip_campaigns_table</tabstop>
   <tabstop>fiplr2_offer_amount_lineedit</tabstop>
+  <tabstop>fiplr2_offer_interest_lineedit</tabstop>
+  <tabstop>fiplr2_default_rate_lineedit</tabstop>
+  <tabstop>fiplr2_loan_duration_lineedit</tabstop>
+  <tabstop>fiplr2_reject_pushbutton</tabstop>
   <tabstop>fiplr2_accept_pushbutton</tabstop>
   <tabstop>icb_remaining_amount_lineedit</tabstop>
-  <tabstop>fiplr2_loan_duration_lineedit</tabstop>
   <tabstop>fiplr2_description_textedit</tabstop>
-  <tabstop>ip_reject_pushbutton</tabstop>
-  <tabstop>fiplr2_default_rate_lineedit</tabstop>
-  <tabstop>fiplr2_reject_pushbutton</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>ip_accept_pushbutton</tabstop>
-  <tabstop>fiplr2_offer_interest_lineedit</tabstop>
+  <tabstop>ip_reject_pushbutton</tabstop>
+  <tabstop>profile_documents_table</tabstop>
  </tabstops>
  <resources/>
  <connections>
